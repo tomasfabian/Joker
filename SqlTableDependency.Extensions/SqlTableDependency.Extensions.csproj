@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Provide basic extensions fo SqlTableDependency</Description>
+    <Company>Tomas Fabian</Company>
+    <Authors>Tomas Fabian</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SqlTableDependency" Version="8.5.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
+  </ItemGroup>
+
+</Project>
