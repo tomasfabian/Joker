@@ -4,7 +4,7 @@ SqlTableDependency extensions
 ## See:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
 
-Following package is based on christiandelbianco's SqlTableDependency. SqlTableDependencyProvider provides periodic reconnection.
+Following package is based on christiandelbianco's SqlTableDependency. SqlTableDependencyProvider provides periodic reconnection in case of any error like lost connection etc.
 
 ## Basic usage:
 ```C#
