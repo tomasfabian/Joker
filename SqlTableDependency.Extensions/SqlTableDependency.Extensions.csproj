@@ -5,12 +5,24 @@
     <Description>Provide basic extensions fo SqlTableDependency</Description>
     <Company>Tomas Fabian</Company>
     <Authors>Tomas Fabian</Authors>
+    <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageTags>SQL Server dependency notifications record table change recovery</PackageTags>
+    <PackageLicenseFile>README.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="SqlTableDependency" Version="8.5.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

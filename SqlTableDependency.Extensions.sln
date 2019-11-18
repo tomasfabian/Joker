@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions", "SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj", "{889EA023-4804-4D80-9337-A61E317A1A68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions", "SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj", "{889EA023-4804-4D80-9337-A61E317A1A68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.Sample", "SqlTableDependency.Extensions.Sample\SqlTableDependency.Extensions.Sample.csproj", "{2F93F2B7-4E17-459F-BAB9-3AE8E01B1371}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Sample", "SqlTableDependency.Extensions.Sample\SqlTableDependency.Extensions.Sample.csproj", "{2F93F2B7-4E17-459F-BAB9-3AE8E01B1371}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7C3B0334-137C-4DAC-BABB-05AB79C18BDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.Tests", "SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj", "{965FB490-0CFC-4D34-88A2-4026349AD899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Tests", "SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj", "{965FB490-0CFC-4D34-88A2-4026349AD899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.Redis", "SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj", "{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{965FB490-0CFC-4D34-88A2-4026349AD899}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{965FB490-0CFC-4D34-88A2-4026349AD899}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{965FB490-0CFC-4D34-88A2-4026349AD899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

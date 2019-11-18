@@ -221,3 +221,5 @@ NuPkg/**
 /img/
 LICENSE
 README.md
+SqlTableDependency.Extensions/SqlTableDependency.Extensions.nuspec
+*.pubxml

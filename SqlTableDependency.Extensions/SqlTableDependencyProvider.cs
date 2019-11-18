@@ -8,6 +8,7 @@ using System.Reactive.Subjects;
 using SqlTableDependency.Extensions.Disposables;
 using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base;
+using TableDependency.SqlClient.Base.Abstracts;
 using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 
@@ -71,7 +72,7 @@ namespace SqlTableDependency.Extensions
 
     private readonly TimeSpan testConnectionTimeout = TimeSpan.FromSeconds(2);
 
-    protected bool IsDatabaseAvailable
+    protected virtual bool IsDatabaseAvailable
     {
       get
       {
@@ -80,6 +81,12 @@ namespace SqlTableDependency.Extensions
         return connected;
       }
     }
+
+    #endregion
+
+    #region ReconnectionTimeSpan
+
+    public virtual TimeSpan ReconnectionTimeSpan => TimeSpan.FromSeconds(5);
 
     #endregion
 
@@ -102,7 +109,7 @@ namespace SqlTableDependency.Extensions
 
     private void TryReconnect()
     {
-      reconnectSubscription.Disposable = Observable.Timer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), scheduler)
+      reconnectSubscription.Disposable = Observable.Timer(ReconnectionTimeSpan, ReconnectionTimeSpan, scheduler)
         .Where(c => IsDatabaseAvailable)
         .Take(1)
         .Subscribe(_ =>
@@ -123,9 +130,20 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
+    #region CreateSqlTableDependency
+
+    protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
+    {
+      var sqlTableDependency = new SqlTableDependency<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+
+      return sqlTableDependency;
+    }
+
+    #endregion
+
     #region TrySubscribeToTableChanges
 
-    private SqlTableDependency<TEntity> sqlTableDependency;
+    private ITableDependency<TEntity> sqlTableDependency;
 
     private void TrySubscribeToTableChanges()
     {
@@ -135,7 +153,7 @@ namespace SqlTableDependency.Extensions
 
       try
       {
-        sqlTableDependency = new SqlTableDependency<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+        sqlTableDependency = CreateSqlTableDependency(modelToTableMapper);
 
         sqlTableDependency.OnChanged += SqlTableDependency_OnChanged;
         sqlTableDependency.OnError += SqlTableDependencyOnError;
@@ -239,7 +257,7 @@ namespace SqlTableDependency.Extensions
 
     #region TryStopLastConnection
 
-    private void TryStopLastConnection()
+    protected void TryStopLastConnection()
     {
       if (sqlTableDependency == null)
         return;
