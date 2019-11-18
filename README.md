@@ -78,5 +78,21 @@ Following package is based on christiandelbianco's SqlTableDependency. SqlTableD
 ```
 //Program.cs
 ```C#
-  using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
-  productsProvider.SubscribeToEntityChanges();
+using System.Configuration;
+using System.Reactive.Concurrency;
+
+namespace SqlTableDependency.Extensions.Sample
+{
+  class Program
+  {
+    static void Main(string[] args)
+    {
+      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+      
+      using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
+      productsProvider.SubscribeToEntityChanges();
+      
+      Console.ReadKey();
+    }
+  }
+}
