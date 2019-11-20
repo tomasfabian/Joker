@@ -57,6 +57,26 @@ namespace SqlTableDependency.Extensions.Tests
     }
 
     [TestMethod]
+    public void OnError_TryReconnect_ReconnectionAfterTimeSpanFailed()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+      sqlDependencyProvider.IsDatabaseAvailableTestOverride = false;
+      sqlDependencyProvider.SubscribeToEntityChanges();
+
+      var errorEventArgs = CreateErrorEventArgs();
+
+      //Act
+      tableDependencyMoq.Raise(m => m.OnError += null, new[] { tableDependencyMoq.Object, errorEventArgs });
+
+      TestScheduler.AdvanceBy(TimeSpan.FromSeconds(10).Ticks);
+
+      //Assert
+      tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
+      tableDependencyMoq.Verify(c => c.Start(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+    }
+
+    [TestMethod]
     public void Dispose_TryStopLastConnection_DisposeWasCalled()
     {
       //Arrange
@@ -74,7 +94,9 @@ namespace SqlTableDependency.Extensions.Tests
     {
       return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object);
     }
-    
+
+    #region CreateErrorEventArgs
+
     private static object CreateErrorEventArgs()
     {
       var args = new object[] { new Exception(), string.Empty, string.Empty, string.Empty };
@@ -86,6 +108,8 @@ namespace SqlTableDependency.Extensions.Tests
 
       return errorEventArgs;
     }
+
+    #endregion
 
     [TestCleanup]
     public void CleanUp()

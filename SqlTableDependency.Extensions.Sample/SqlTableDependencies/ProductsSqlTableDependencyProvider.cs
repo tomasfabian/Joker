@@ -4,6 +4,7 @@ using System.Reactive.Concurrency;
 using SqlTableDependency.Extensions.Sample.Logging;
 using SqlTableDependency.Extensions.Sample.Models;
 using TableDependency.SqlClient.Base;
+using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 {
@@ -28,6 +29,32 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
+
+    #endregion
+
+    #region Properties
+
+    #region IsDatabaseAvailable
+
+    private readonly TimeSpan testConnectionTimeout = TimeSpan.FromSeconds(2);
+
+    protected override bool IsDatabaseAvailable
+    {
+      get
+      {
+        Console.WriteLine("Checking database connection...");
+
+        bool isDatabaseAvailable =  base.IsDatabaseAvailable;
+
+        Console.WriteLine($"IsDatabaseAvailable: {isDatabaseAvailable}");
+
+        Console.WriteLine(Environment.NewLine);
+
+        return isDatabaseAvailable;
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -83,14 +110,70 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #endregion
 
+    #region SqlTableDependencyOnStatusChanged
+
+    protected override void SqlTableDependencyOnStatusChanged(object sender, StatusChangedEventArgs e)
+    {
+      base.SqlTableDependencyOnStatusChanged(sender, e);
+      
+      Console.WriteLine(Environment.NewLine);
+
+      Console.WriteLine($"Status changed {e.Status}");
+    }
+
+    #endregion
+
+    #region OnConnected
+
+    protected override void OnConnected()
+    {
+      base.OnConnected();
+
+      Console.WriteLine(Environment.NewLine);
+
+      Console.WriteLine("Subscription started");
+    }
+
+    #endregion
+
+    #region OnBeforeServiceBrokerSubscription
+
+    protected override void OnBeforeServiceBrokerSubscription()
+    {
+      base.OnBeforeServiceBrokerSubscription();
+
+      Console.WriteLine(Environment.NewLine);
+
+      Console.WriteLine("Trying to reconnect...");
+    }
+
+    #endregion
+
+    #region OnError
+
+    protected override void OnError(Exception exception)
+    {
+      base.OnError(exception);
+
+      Console.WriteLine(Environment.NewLine);
+      Console.ForegroundColor = ConsoleColor.DarkRed;
+
+      Console.WriteLine("Error:");
+      Console.WriteLine(exception.Message);
+
+      Console.ResetColor();
+    }
+
+    #endregion
+
     #region LogChangeInfo
 
     private void LogChangeInfo(Product product)
     {
       Console.WriteLine(Environment.NewLine);
 
-      Console.WriteLine("Id: " + product.Id);
-      Console.WriteLine("Name: " + product.Name);
+      Console.WriteLine($"Id: {product.Id}");
+      Console.WriteLine($"Name: {product.Name}");
 
       Console.WriteLine("#####");
       Console.WriteLine(Environment.NewLine);

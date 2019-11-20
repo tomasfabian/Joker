@@ -27,6 +27,8 @@ namespace SqlTableDependency.Extensions.Tests.SqlTableDependencies
       return tableDependency;
     }
 
-    protected override bool IsDatabaseAvailable => true;
+    protected override bool IsDatabaseAvailable => IsDatabaseAvailableTestOverride;
+
+    public bool IsDatabaseAvailableTestOverride { get; set; } = true;
   }
 }

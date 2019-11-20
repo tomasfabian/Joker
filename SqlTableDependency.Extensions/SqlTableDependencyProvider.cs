@@ -14,7 +14,7 @@ using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions
 {
-  public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject
+  public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider
       where TEntity : class, new()
   {
     #region Fields
@@ -155,11 +155,13 @@ namespace SqlTableDependency.Extensions
       {
         sqlTableDependency = CreateSqlTableDependency(modelToTableMapper);
 
-        sqlTableDependency.OnChanged += SqlTableDependency_OnChanged;
+        sqlTableDependency.OnChanged += SqlTableDependencyOnChanged;
         sqlTableDependency.OnError += SqlTableDependencyOnError;
         sqlTableDependency.OnStatusChanged += SqlTableDependencyOnStatusChanged;
 
         sqlTableDependency.Start();
+
+        OnConnected();
       }
       catch (Exception error)
       {
@@ -167,6 +169,14 @@ namespace SqlTableDependency.Extensions
 
         TryReconnect();
       }
+    }
+
+    #endregion
+
+    #region OnConnected
+
+    protected virtual void OnConnected()
+    {
     }
 
     #endregion
@@ -179,9 +189,9 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
-    #region SqlTableDependency_OnChanged
+    #region SqlTableDependencyOnChanged
 
-    private void SqlTableDependency_OnChanged(object sender, RecordChangedEventArgs<TEntity> eventArgs)
+    private void SqlTableDependencyOnChanged(object sender, RecordChangedEventArgs<TEntity> eventArgs)
     {
       var entity = eventArgs.Entity;
 
@@ -264,7 +274,7 @@ namespace SqlTableDependency.Extensions
 
       sqlTableDependency.OnError -= SqlTableDependencyOnError;
       sqlTableDependency.OnStatusChanged -= SqlTableDependencyOnStatusChanged;
-      sqlTableDependency.OnChanged -= SqlTableDependency_OnChanged;
+      sqlTableDependency.OnChanged -= SqlTableDependencyOnChanged;
 
       try
       {
