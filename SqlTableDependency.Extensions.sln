@@ -11,7 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7C3B0334
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Tests", "SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj", "{965FB490-0CFC-4D34-88A2-4026349AD899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.Redis", "SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj", "{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Redis", "SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj", "{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9A38AC52-C490-403F-AFF0-76EE1F3C1A39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.WPFSample", "SqlTableDependency.Extensions.WPFSample\SqlTableDependency.Extensions.WPFSample.csproj", "{B350B3C4-68DE-403A-8EBB-32AB18BC31F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +39,18 @@ Global
 		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B350B3C4-68DE-403A-8EBB-32AB18BC31F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B350B3C4-68DE-403A-8EBB-32AB18BC31F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B350B3C4-68DE-403A-8EBB-32AB18BC31F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B350B3C4-68DE-403A-8EBB-32AB18BC31F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{2F93F2B7-4E17-459F-BAB9-3AE8E01B1371} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{965FB490-0CFC-4D34-88A2-4026349AD899} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
+		{B350B3C4-68DE-403A-8EBB-32AB18BC31F6} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}

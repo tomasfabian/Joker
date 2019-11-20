@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj" />
+    <ProjectReference Include="..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+  </ItemGroup>
+
+</Project>
