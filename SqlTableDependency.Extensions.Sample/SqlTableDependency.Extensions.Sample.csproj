@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sample.Data\Sample.Data.csproj" />
+    <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
   </ItemGroup>
 

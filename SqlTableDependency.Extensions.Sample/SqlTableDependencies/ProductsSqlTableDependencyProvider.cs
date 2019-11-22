@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Reactive.Concurrency;
+using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Sample.Logging;
-using SqlTableDependency.Extensions.Sample.Models;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.EventArgs;
 
@@ -33,6 +33,12 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     #endregion
 
     #region Properties
+
+    #region TableName
+
+    protected override string TableName => base.TableName+"s";
+
+    #endregion
 
     #region IsDatabaseAvailable
 

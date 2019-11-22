@@ -14,7 +14,7 @@ using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions
 {
-  public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider
+  public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider<TEntity>
       where TEntity : class, new()
   {
     #region Fields
@@ -322,7 +322,7 @@ namespace SqlTableDependency.Extensions
 
           return true;
         }
-        catch
+        catch(Exception e)
         {
           return false;
         }

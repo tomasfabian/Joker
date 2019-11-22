@@ -47,7 +47,7 @@ namespace SqlTableDependency.Extensions.Tests
       var errorEventArgs = CreateErrorEventArgs();
 
       //Act
-      tableDependencyMoq.Raise(m => m.OnError += null, new[] { tableDependencyMoq.Object, errorEventArgs });
+      tableDependencyMoq.Raise(m => m.OnError += null, tableDependencyMoq.Object, errorEventArgs);
 
       TestScheduler.AdvanceBy(TimeSpan.FromSeconds(10).Ticks);
 
@@ -67,9 +67,9 @@ namespace SqlTableDependency.Extensions.Tests
       var errorEventArgs = CreateErrorEventArgs();
 
       //Act
-      tableDependencyMoq.Raise(m => m.OnError += null, new[] { tableDependencyMoq.Object, errorEventArgs });
+      tableDependencyMoq.Raise(m => m.OnError += null, tableDependencyMoq.Object, errorEventArgs);
 
-      TestScheduler.AdvanceBy(TimeSpan.FromSeconds(10).Ticks);
+      TestScheduler.AdvanceBy(TimeSpan.FromSeconds(55510).Ticks);
 
       //Assert
       tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
