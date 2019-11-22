@@ -1,5 +1,4 @@
 # SqlTableDependency.Extensions
-SqlTableDependency extensions
 
 ## See:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
