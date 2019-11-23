@@ -11,9 +11,8 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
   {
     #region Fields
 
-    private readonly ISqlTableDependencyProvider sqlTableDependencyProvider;
+    private readonly ISqlTableDependencyProvider<TEntity> sqlTableDependencyProvider;
     private readonly IRedisPublisher redisPublisher;
-    private readonly IDisposable entityChangesSubscription;
 
     #endregion
 
@@ -24,24 +23,36 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
       this.sqlTableDependencyProvider = sqlTableDependencyProvider ?? throw new ArgumentNullException(nameof(sqlTableDependencyProvider));
       this.redisPublisher = redisPublisher ?? throw new ArgumentNullException(nameof(redisPublisher));
 
-      entityChangesSubscription =
-        sqlTableDependencyProvider.WhenEntityRecordChanges
-        .Subscribe(OnSqlTableDependencyOnChanged);
     }
 
     #endregion
 
     #region ChannelName
 
-    protected virtual string ChannelName => nameof(TEntity);
+    protected virtual string ChannelName => typeof(TEntity).Name;
 
     #endregion
 
     #region Methods
 
-    #region OnqlTableDependencyOnChangedj
+    #region StartPublishing
 
-    protected void OnSqlTableDependencyOnChanged(RecordChangedEventArgs<TEntity> eventArgs)
+    private IDisposable entityChangesSubscription;
+
+    public SqlTableDependencyRedisProvider<TEntity> StartPublishing()
+    {
+      entityChangesSubscription =
+        sqlTableDependencyProvider.WhenEntityRecordChanges
+          .Subscribe(OnSqlTableDependencyRecordChanged);
+
+      return this;
+    }
+
+    #endregion
+
+    #region OnSqlTableDependencyRecordChanged
+
+    protected virtual void OnSqlTableDependencyRecordChanged(RecordChangedEventArgs<TEntity> eventArgs)
     {
       string json = Serialize(eventArgs);
 
