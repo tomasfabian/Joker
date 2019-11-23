@@ -98,7 +98,6 @@ namespace SqlTableDependency.Extensions.Sample
 
 # SqlTableDependency.Extensions.Redis
 
-```C#
 Preview
   public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
   {
