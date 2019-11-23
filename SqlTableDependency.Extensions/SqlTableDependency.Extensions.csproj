@@ -9,7 +9,8 @@
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageTags>SQL Server dependency notifications record table change recovery</PackageTags>
-    <PackageLicenseFile>README.md</PackageLicenseFile>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <Copyright>@tomasfabian</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <None Include="..\SqlTableDependency.Extensions.Redis\License.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

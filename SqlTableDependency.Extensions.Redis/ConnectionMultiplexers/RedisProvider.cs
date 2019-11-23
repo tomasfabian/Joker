@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using SqlTableDependency.Extensions.Disposables;
 using StackExchange.Redis;
 
@@ -9,6 +12,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
     #region Fields
 
     private ConnectionMultiplexer connectionMultiplexer;
+    private bool isConnected;
 
     #endregion
 
@@ -28,7 +32,24 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     #region IsConnected
 
-    public bool IsConnected { get; set; }
+    public bool IsConnected
+    {
+      get => isConnected;
+      set
+      {
+        isConnected = value;
+
+        whenIsConnectedChangesSubject.OnNext(isConnected);
+      }
+    }
+
+    #endregion
+
+    #region WhenIsConnectedChanges
+
+    private readonly ISubject<bool> whenIsConnectedChangesSubject = new ReplaySubject<bool>(1);
+
+    public IObservable<bool> WhenIsConnectedChanges => whenIsConnectedChangesSubject.DistinctUntilChanged().AsObservable();
 
     #endregion
 
@@ -44,8 +65,10 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
       connectionMultiplexer = await ConnectionMultiplexer.ConnectAsync(configuration);
 
-      OnConnected();
+      IsConnected = connectionMultiplexer.IsConnected;
 
+      Initialize();
+      
       Subject = connectionMultiplexer.GetSubscriber();
 
       return Subject;
@@ -53,11 +76,30 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     #endregion
 
-    #region OnConnected
+    #region Initialize
 
-    protected void OnConnected()
+    public void Initialize()
+    {
+      connectionMultiplexer.ConnectionRestored += OnConnectionRestored;
+      connectionMultiplexer.ConnectionFailed += OnConnectionFailed;
+    }
+
+    #endregion
+
+    #region OnConnectionRestored
+
+    private void OnConnectionRestored(object sender, ConnectionFailedEventArgs args)
     {
       IsConnected = true;
+    }
+
+    #endregion
+
+    #region OnConnectionFailed
+
+    private void OnConnectionFailed(object sender, ConnectionFailedEventArgs args)
+    {
+      IsConnected = false;
     }
 
     #endregion
@@ -100,6 +142,11 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
     protected override void OnDispose()
     {
       base.OnDispose();
+
+      whenIsConnectedChangesSubject.OnCompleted();
+
+      connectionMultiplexer.ConnectionRestored -= OnConnectionFailed;
+      connectionMultiplexer.ConnectionFailed -= OnConnectionRestored;
 
       using (connectionMultiplexer)
       {
