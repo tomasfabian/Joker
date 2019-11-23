@@ -95,3 +95,15 @@ namespace SqlTableDependency.Extensions.Sample
     }
   }
 }
+
+# SqlTableDependency.Extensions.Redis
+
+```C#
+Preview
+  public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
+  {
+    public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher) 
+      : base(sqlTableDependencyProvider, redisPublisher)
+    {
+    }
+  }
