@@ -1,4 +1,5 @@
 ﻿using System;
+using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions
@@ -12,5 +13,6 @@ namespace SqlTableDependency.Extensions
     where TEntity : class, new()
   {
     IObservable<RecordChangedEventArgs<TEntity>> WhenEntityRecordChanges { get; }
+    IObservable<TableDependencyStatus> WhenStatusChanges { get; }
   }
 }

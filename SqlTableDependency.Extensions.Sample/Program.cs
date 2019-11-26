@@ -4,12 +4,16 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
+using SqlTableDependency.Extensions.Redis.SqlTableDependency;
 using SqlTableDependency.Extensions.Sample.Logging;
 using SqlTableDependency.Extensions.Sample.Redis;
 using SqlTableDependency.Extensions.Sample.SqlTableDependencies;
+using TableDependency.SqlClient.Base.Enums;
 
 namespace SqlTableDependency.Extensions.Sample
 {
@@ -23,7 +27,7 @@ namespace SqlTableDependency.Extensions.Sample
       using var redisSubscriber = await CreateRedisSubscriber(redisUrl);
 
       var redisPublisher = new RedisPublisher(redisUrl);
-      await redisPublisher.Publish("messages", "hello");
+      await redisPublisher.PublishAsync("messages", "hello");
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 
@@ -38,6 +42,9 @@ namespace SqlTableDependency.Extensions.Sample
 
       Console.WriteLine("Press a key to stop.");
       Console.ReadKey();
+
+      redisSubscriber.Unsubscribe(nameof(Product) + "-Changes");
+      redisSubscriber.Unsubscribe(nameof(Product) + "-Status");
 
       redisSubscriber.Dispose();
       redisPublisher.Dispose();
@@ -58,6 +65,19 @@ namespace SqlTableDependency.Extensions.Sample
 
       await redisSubscriber.Subscribe(channelMessage => { Console.WriteLine($"OnNext({channelMessage.Message})"); },
         "messages");
+      
+      await redisSubscriber.Subscribe(channelMessage =>
+                                      {
+                                        var recordChange = JsonConvert.DeserializeObject<RecordChangedNotification<Product>>(channelMessage.Message);
+                                        Console.WriteLine($"OnNext Product changed({recordChange.ChangeType})");
+                                        Console.WriteLine($"OnNext Product changed({recordChange.Entity.Id})");
+                                      }, nameof(Product)+"-Changes");      
+      
+      await redisSubscriber.Subscribe(channelMessage =>
+                                      {
+                                        var tableDependencyStatus = JsonConvert.DeserializeObject<TableDependencyStatus>(channelMessage.Message);
+                                        Console.WriteLine($"OnNext tableDependencyStatus changed({tableDependencyStatus})");
+                                      }, nameof(Product)+"-Status");
 
       redisSubscriber.WhenIsConnectedChanges.Subscribe(c => Console.WriteLine($"REDIS is connected: {c}"));
       return redisSubscriber;

@@ -62,6 +62,14 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
+    #region WhenStatusChanges
+
+    private readonly ISubject<TableDependencyStatus> whenStatusChanges = new ReplaySubject<TableDependencyStatus>(1);
+
+    public IObservable<TableDependencyStatus> WhenStatusChanges => whenStatusChanges.AsObservable();
+
+    #endregion
+
     #region TableName
 
     protected virtual string TableName => typeof(TEntity).Name;
@@ -185,6 +193,7 @@ namespace SqlTableDependency.Extensions
 
     protected virtual void OnError(Exception error)
     {
+      whenStatusChanges.OnNext(TableDependencyStatus.StopDueToError);
     }
 
     #endregion
@@ -217,6 +226,7 @@ namespace SqlTableDependency.Extensions
 
     protected virtual void SqlTableDependencyOnStatusChanged(object sender, StatusChangedEventArgs e)
     {
+      whenStatusChanges.OnNext(e.Status);
     }
 
     #endregion

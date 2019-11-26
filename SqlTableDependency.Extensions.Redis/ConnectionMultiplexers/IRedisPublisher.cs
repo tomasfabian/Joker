@@ -5,6 +5,6 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 {
   public interface IRedisPublisher
   {
-    Task Publish(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None);
+    Task PublishAsync(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None);
   }
 }

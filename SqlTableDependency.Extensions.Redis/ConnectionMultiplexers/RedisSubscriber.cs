@@ -21,5 +21,15 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
       
       channel.OnMessage(onMessage);
     }
+
+    public void Unsubscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler = null, CommandFlags flags = CommandFlags.None)
+    {
+      Subject.Unsubscribe(channel, handler, flags);
+    }
+
+    protected override void OnDispose()
+    {
+      base.OnDispose();
+    }
   }
 }

@@ -13,7 +13,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
       this.url = url ?? throw new ArgumentNullException(nameof(url));
     }
 
-    public async Task Publish(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None)
+    public async Task PublishAsync(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None)
     {
       Subject = await CreateSubject(url);
 

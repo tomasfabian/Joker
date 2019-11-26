@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
+using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
@@ -27,9 +28,15 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 
     #endregion
 
-    #region ChannelName
+    #region ChangesChannelName
 
-    protected virtual string ChannelName => typeof(TEntity).Name;
+    protected virtual string ChangesChannelName => typeof(TEntity).Name + "-Changes";
+
+    #endregion
+
+    #region StatusChannelName
+
+    protected virtual string StatusChannelName => typeof(TEntity).Name + "-Status";
 
     #endregion
 
@@ -38,12 +45,17 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
     #region StartPublishing
 
     private IDisposable entityChangesSubscription;
+    private IDisposable statusChangesSubscription;
 
     public SqlTableDependencyRedisProvider<TEntity> StartPublishing()
     {
       entityChangesSubscription =
         sqlTableDependencyProvider.WhenEntityRecordChanges
           .Subscribe(OnSqlTableDependencyRecordChanged);
+
+      statusChangesSubscription =
+        sqlTableDependencyProvider.WhenStatusChanges
+          .Subscribe(OnSqlTableDependencyStatusChanged);
 
       return this;
     }
@@ -54,9 +66,26 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 
     protected virtual void OnSqlTableDependencyRecordChanged(RecordChangedEventArgs<TEntity> eventArgs)
     {
-      string json = Serialize(eventArgs);
+      var recordChangedNotification = new RecordChangedNotification<TEntity>()
+                                      {
+                                        Entity = eventArgs.Entity,
+                                        ChangeType = eventArgs.ChangeType
+                                      };
 
-      redisPublisher.Publish(ChannelName, json);
+      string json = Serialize(recordChangedNotification);
+
+      redisPublisher.PublishAsync(ChangesChannelName, json);
+    }
+
+    #endregion
+
+    #region OnSqlTableDependencyStatusChanged
+
+    protected virtual void OnSqlTableDependencyStatusChanged(TableDependencyStatus status)
+    {
+      string json = Serialize(status);
+
+      redisPublisher.PublishAsync(StatusChannelName, json);
     }
 
     #endregion
@@ -79,6 +108,7 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
       base.OnDispose();
 
       using (entityChangesSubscription)
+      using (statusChangesSubscription)
       {
       }
     }
