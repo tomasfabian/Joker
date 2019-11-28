@@ -7,7 +7,7 @@ using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 {
-  public abstract class SqlTableDependencyRedisProvider<TEntity> : DisposableObject
+  public abstract class SqlTableDependencyRedisProvider<TEntity> : DisposableObject, ISqlTableDependencyRedisProvider<TEntity>
     where TEntity : class, new()
   {
     #region Fields

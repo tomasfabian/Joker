@@ -7,15 +7,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\SqlTableDependency.Extensions.Tests\Models\TestModel.cs" Link="Models\TestModel.cs" />
+    <Compile Include="..\SqlTableDependency.Extensions.Tests\TestBase.cs" Link="TestBase.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Microsoft.Reactive.Testing" Version="4.2.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="Ninject.MockingKernel.Moq" Version="3.3.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
