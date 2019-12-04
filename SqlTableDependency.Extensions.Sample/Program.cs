@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sample.Data.Context;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
 using SqlTableDependency.Extensions.Redis.SqlTableDependency;
 using SqlTableDependency.Extensions.Sample.Logging;
@@ -31,7 +32,7 @@ namespace SqlTableDependency.Extensions.Sample
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 
-      using var productSqlTableDependencyRedisProvider = new ProductSqlTableDependencyRedisProvider(productsProvider, redisPublisher)
+      using var productSqlTableDependencyRedisProvider = new ProductSqlTableDependencyRedisProvider(productsProvider, redisPublisher, ThreadPoolScheduler.Instance)
         .StartPublishing();
 
       Console.WriteLine("Trying to connect...");

@@ -3,23 +3,20 @@ using System.Reactive.Subjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject;
-using Ninject.MockingKernel.Moq;
-using SqlTableDependency.Extensions.Redis.SqlTableDependency;
+using SqlTableDependency.Extensions.Notifications;
+using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
 using SqlTableDependency.Extensions.Tests;
 using SqlTableDependency.Extensions.Tests.Models;
+using StackExchange.Redis;
 using TableDependency.SqlClient.Base.Enums;
-using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
 {
   [TestClass]
-  public class SqlTableDependencyRedisProviderTests : TestBase
+  public class SqlTableDependencyRedisProviderTests : TestBase<TestSqlTableDependencyRedisProvider>
   {
-    private readonly MoqMockingKernel mockingKernel = new MoqMockingKernel();
-    private Mock<ISqlTableDependencyRedisProvider<TestModel>> ClassUnderTest;
-
-    private readonly ISubject<RecordChangedEventArgs<TestModel>> recordChangedSubject =
-      new Subject<RecordChangedEventArgs<TestModel>>();
+    private readonly ISubject<RecordChangedNotification<TestModel>> recordChangedSubject =
+      new Subject<RecordChangedNotification<TestModel>>();
 
     private readonly ISubject<TableDependencyStatus> statusChangedSubject = new Subject<TableDependencyStatus>();
 
@@ -28,7 +25,7 @@ namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
     {
       base.TestInitialize();
 
-      var sqlTableDependencyProvider = mockingKernel.GetMock<ISqlTableDependencyProvider<TestModel>>();
+      var sqlTableDependencyProvider = MockingKernel.GetMock<ISqlTableDependencyProvider<TestModel>>();
 
       sqlTableDependencyProvider.Setup(c => c.WhenEntityRecordChanges)
         .Returns(recordChangedSubject);
@@ -36,19 +33,36 @@ namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
       sqlTableDependencyProvider.Setup(c => c.WhenStatusChanges)
         .Returns(statusChangedSubject);
 
-      ClassUnderTest = mockingKernel.GetMock<ISqlTableDependencyRedisProvider<TestModel>>();
+      ClassUnderTest = MockingKernel.Get<TestSqlTableDependencyRedisProvider>();
     }
 
     [TestMethod]
-    public void StartPublishing()
+    public void OnSqlTableDependencyRecordChanged()
     {
       //Arrange
+      ClassUnderTest.StartPublishing();
 
       //Act
-      ClassUnderTest.Object.StartPublishing();
+      recordChangedSubject.OnNext(new RecordChangedNotification<TestModel>());
+      RunSchedulers();
 
       ////Assert
-      ClassUnderTest.Verify(c => c.StartPublishing(), Times.Exactly(1));
+      MockingKernel.GetMock<IRedisPublisher>().Verify(c => c.PublishAsync(It.IsAny<RedisChannel>(), It.IsAny<RedisValue>(), CommandFlags.None), Times.Exactly(1));
+    }
+
+    [TestMethod]
+    public void OnSqlTableDependencyStatusChanged()
+    {
+      //Arrange
+      ClassUnderTest.StartPublishing();
+
+      //Act
+      statusChangedSubject.OnNext(TableDependencyStatus.Started);
+      RunSchedulers();
+
+      ////Assert
+      MockingKernel.GetMock<IRedisPublisher>()
+        .Verify(c => c.PublishAsync(It.IsAny<RedisChannel>(), It.IsAny<RedisValue>(), CommandFlags.None), Times.Exactly(1));
     }
   }
 }

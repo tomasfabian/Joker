@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using SqlTableDependency.Extensions.Disposables;
+using SqlTableDependency.Extensions.Notifications;
 using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.Abstracts;
@@ -45,15 +46,15 @@ namespace SqlTableDependency.Extensions
 
     #region WhenEntityRecordChanges
 
-    private Subject<RecordChangedEventArgs<TEntity>> whenEntityRecordChangesSubject;
+    private Subject<RecordChangedNotification<TEntity>> whenEntityRecordChangesSubject;
 
-    public IObservable<RecordChangedEventArgs<TEntity>> WhenEntityRecordChanges
+    public IObservable<RecordChangedNotification<TEntity>> WhenEntityRecordChanges
     {
       get
       {
         if (whenEntityRecordChangesSubject == null)
         {
-          whenEntityRecordChangesSubject = new Subject<RecordChangedEventArgs<TEntity>>();
+          whenEntityRecordChangesSubject = new Subject<RecordChangedNotification<TEntity>>();
         }
 
         return whenEntityRecordChangesSubject.AsObservable();
@@ -217,7 +218,13 @@ namespace SqlTableDependency.Extensions
           break;
       }
 
-      whenEntityRecordChangesSubject.OnNext(eventArgs);
+      var recordChangedNotification = new RecordChangedNotification<TEntity>()
+                                      {
+                                        Entity = eventArgs.Entity,
+                                        ChangeType = eventArgs.ChangeType
+                                      };
+
+      whenEntityRecordChangesSubject.OnNext(recordChangedNotification);
     }
 
     #endregion

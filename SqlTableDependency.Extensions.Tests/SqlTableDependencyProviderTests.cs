@@ -72,7 +72,6 @@ namespace SqlTableDependency.Extensions.Tests
       TestScheduler.AdvanceBy(TimeSpan.FromSeconds(55510).Ticks);
 
       //Assert
-      tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
       tableDependencyMoq.Verify(c => c.Start(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 

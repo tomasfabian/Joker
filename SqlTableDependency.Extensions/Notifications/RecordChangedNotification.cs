@@ -1,6 +1,6 @@
 ﻿using TableDependency.SqlClient.Base.Enums;
 
-namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
+namespace SqlTableDependency.Extensions.Notifications
 {
   public class RecordChangedNotification<TEntity>
   {

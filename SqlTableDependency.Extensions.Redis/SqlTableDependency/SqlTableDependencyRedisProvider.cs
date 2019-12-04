@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions.Disposables;
+using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
 using TableDependency.SqlClient.Base.Enums;
-using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 {
@@ -14,16 +16,17 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 
     private readonly ISqlTableDependencyProvider<TEntity> sqlTableDependencyProvider;
     private readonly IRedisPublisher redisPublisher;
+    private readonly IScheduler scheduler;
 
     #endregion
 
     #region Constructors
 
-    protected SqlTableDependencyRedisProvider(ISqlTableDependencyProvider<TEntity> sqlTableDependencyProvider, IRedisPublisher redisPublisher)
+    protected SqlTableDependencyRedisProvider(ISqlTableDependencyProvider<TEntity> sqlTableDependencyProvider, IRedisPublisher redisPublisher, IScheduler scheduler)
     {
       this.sqlTableDependencyProvider = sqlTableDependencyProvider ?? throw new ArgumentNullException(nameof(sqlTableDependencyProvider));
       this.redisPublisher = redisPublisher ?? throw new ArgumentNullException(nameof(redisPublisher));
-
+      this.scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
     }
 
     #endregion
@@ -51,10 +54,12 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
     {
       entityChangesSubscription =
         sqlTableDependencyProvider.WhenEntityRecordChanges
+          .ObserveOn(scheduler)
           .Subscribe(OnSqlTableDependencyRecordChanged);
 
       statusChangesSubscription =
         sqlTableDependencyProvider.WhenStatusChanges
+          .ObserveOn(scheduler)
           .Subscribe(OnSqlTableDependencyStatusChanged);
 
       return this;
@@ -64,14 +69,8 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
 
     #region OnSqlTableDependencyRecordChanged
 
-    protected virtual void OnSqlTableDependencyRecordChanged(RecordChangedEventArgs<TEntity> eventArgs)
+    protected virtual void OnSqlTableDependencyRecordChanged(RecordChangedNotification<TEntity> recordChangedNotification)
     {
-      var recordChangedNotification = new RecordChangedNotification<TEntity>()
-                                      {
-                                        Entity = eventArgs.Entity,
-                                        ChangeType = eventArgs.ChangeType
-                                      };
-
       string json = Serialize(recordChangedNotification);
 
       redisPublisher.PublishAsync(ChangesChannelName, json);
