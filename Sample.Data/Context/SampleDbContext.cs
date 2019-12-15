@@ -3,7 +3,7 @@ using Sample.Domain.Models;
 
 namespace Sample.Data.Context
 {
-  public class SampleDbContext : DbContext
+  public class SampleDbContext : DbContext, ISampleDbContext
   {
     #region Constructors
 

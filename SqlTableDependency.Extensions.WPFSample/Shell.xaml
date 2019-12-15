@@ -3,10 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SqlTableDependency.Extensions.WPFSample"
         mc:Ignorable="d"
         Title="Shell" Height="450" Width="800">
-    <Grid>
-      <TextBlock Text="TODO:"></TextBlock>
-    </Grid>
+  <Grid DataContext="{Binding ProductsViewModel}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"></RowDefinition>
+      <RowDefinition Height="*"></RowDefinition>
+    </Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="IsOffline: "></TextBlock>
+      <TextBlock Text="{Binding IsOffline}"></TextBlock>
+    </StackPanel>
+
+    <ItemsControl Grid.Row="1" ItemsSource="{Binding Products}" Margin="13">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Name}"></TextBlock>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+  </Grid>
 </Window>

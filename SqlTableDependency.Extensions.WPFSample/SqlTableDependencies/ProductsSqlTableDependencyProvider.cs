@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Configuration;
-using System.Reactive.Concurrency;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.EventArgs;
 
@@ -16,13 +15,8 @@ namespace SqlTableDependency.Extensions.WPFSample.SqlTableDependencies
 
     #region Constructors
 
-    internal ProductsSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler)
-      : base(connectionStringSettings, scheduler)
-    {
-    }
-
-    internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler)
-      : base(connectionString, scheduler)
+    public ProductsSqlTableDependencyProvider(string connectionString, ISchedulerProvider schedulerProvider)
+      : base(connectionString, schedulerProvider.ThreadPool)
     {
     }
 
