@@ -7,7 +7,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Notifications;
-using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.Abstracts;
 using TableDependency.SqlClient.Base.Enums;
@@ -143,7 +142,7 @@ namespace SqlTableDependency.Extensions
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
-      var sqlTableDependency = new SqlTableDependency<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+      var sqlTableDependency = new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
 
       return sqlTableDependency;
     }
@@ -156,6 +155,12 @@ namespace SqlTableDependency.Extensions
 
     private void TrySubscribeToTableChanges()
     {
+      if (sqlTableDependency != null)
+      {
+        sqlTableDependency.Start();
+        return;
+      }
+
       TryStopLastConnection();
 
       var modelToTableMapper = OnInitializeMapper(new ModelToTableMapper<TEntity>());
@@ -169,7 +174,7 @@ namespace SqlTableDependency.Extensions
         sqlTableDependency.OnStatusChanged += SqlTableDependencyOnStatusChanged;
 
         sqlTableDependency.Start();
-
+        
         OnConnected();
       }
       catch (Exception error)
@@ -192,8 +197,15 @@ namespace SqlTableDependency.Extensions
 
     #region OnError
 
+    private int TheConversationHandleIsNotFound = 8426;
+
     protected virtual void OnError(Exception error)
     {
+      sqlTableDependency?.Stop();
+
+      if (error is SqlException sqlException && sqlException.Number == TheConversationHandleIsNotFound)
+        TryStopLastConnection();
+
       whenStatusChanges.OnNext(TableDependencyStatus.StopDueToError);
     }
 
@@ -296,6 +308,7 @@ namespace SqlTableDependency.Extensions
       try
       {
         sqlTableDependency.Dispose();
+        sqlTableDependency = null;
       }
       catch (Exception e)
       {

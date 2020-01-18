@@ -42,8 +42,6 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #region IsDatabaseAvailable
 
-    private readonly TimeSpan testConnectionTimeout = TimeSpan.FromSeconds(2);
-
     protected override bool IsDatabaseAvailable
     {
       get
