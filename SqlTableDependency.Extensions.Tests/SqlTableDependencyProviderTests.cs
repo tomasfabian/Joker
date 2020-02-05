@@ -5,7 +5,6 @@ using Moq;
 using SqlTableDependency.Extensions.Tests.Models;
 using SqlTableDependency.Extensions.Tests.SqlTableDependencies;
 using TableDependency.SqlClient.Base.Abstracts;
-using Should.Fluent;
 using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Tests
@@ -16,6 +15,8 @@ namespace SqlTableDependency.Extensions.Tests
     private Mock<ITableDependency<TestModel>> tableDependencyMoq;
     private string connectionString = @"TestConnection";
 
+    private readonly TimeSpan testConnectionTimeStamp = TimeSpan.FromSeconds(10);
+
     [TestInitialize]
     public override void TestInitialize()
     {
@@ -23,6 +24,8 @@ namespace SqlTableDependency.Extensions.Tests
 
       tableDependencyMoq = new Mock<ITableDependency<TestModel>>();
     }
+
+    #region DontPreserveDatabaseObjects
 
     [TestMethod]
     public void SubscribeToEntityChanges_SuccessfulSubscription_StartWasCalled()
@@ -49,7 +52,7 @@ namespace SqlTableDependency.Extensions.Tests
       //Act
       tableDependencyMoq.Raise(m => m.OnError += null, tableDependencyMoq.Object, errorEventArgs);
 
-      TestScheduler.AdvanceBy(TimeSpan.FromSeconds(10).Ticks);
+      TestScheduler.AdvanceBy(testConnectionTimeStamp.Ticks);
 
       //Assert
       tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
@@ -59,20 +62,11 @@ namespace SqlTableDependency.Extensions.Tests
     [TestMethod]
     public void OnError_TryReconnect_ReconnectionAfterTimeSpanFailed()
     {
-      //Arrange
-      var sqlDependencyProvider = CreateClassUnderTest();
-      sqlDependencyProvider.IsDatabaseAvailableTestOverride = false;
-      sqlDependencyProvider.SubscribeToEntityChanges();
-
-      var errorEventArgs = CreateErrorEventArgs();
-
-      //Act
-      tableDependencyMoq.Raise(m => m.OnError += null, tableDependencyMoq.Object, errorEventArgs);
-
-      TestScheduler.AdvanceBy(TimeSpan.FromSeconds(55510).Ticks);
+      SubscribeAndRaiseError();
 
       //Assert
-      tableDependencyMoq.Verify(c => c.Start(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+      tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
+      tableDependencyMoq.Verify(c => c.Start(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(2));
     }
 
     [TestMethod]
@@ -89,10 +83,52 @@ namespace SqlTableDependency.Extensions.Tests
       tableDependencyMoq.Verify(c => c.Dispose(), Times.Once);
     }
 
-    private TestSqlTableDependencyProvider CreateClassUnderTest()
+    #endregion
+
+    #region PreserveDatabaseObjects
+
+    [TestMethod]
+    [TestCategory("PreserveDatabaseObjects")]
+    public void OnError_TryReconnectWithPreserveDatabaseObjects_SuccessfulReconnectionAfterTimeSpan()
     {
-      return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object);
+      SubscribeAndRaiseError(preserveDatabaseObjects: true);
+
+      //Assert
+      tableDependencyMoq.Verify(c => c.Dispose(), Times.Never);
+      tableDependencyMoq.Verify(c => c.Start(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(2));
     }
+
+    #endregion
+
+    #region Helpers
+
+    #region SubscribeAndRaiseError
+
+    private void SubscribeAndRaiseError(bool preserveDatabaseObjects = false)
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest(preserveDatabaseObjects);
+      sqlDependencyProvider.IsDatabaseAvailableTestOverride = true;
+      sqlDependencyProvider.SubscribeToEntityChanges();
+
+      var errorEventArgs = CreateErrorEventArgs();
+
+      //Act
+      tableDependencyMoq.Raise(m => m.OnError += null, tableDependencyMoq.Object, errorEventArgs);
+
+      TestScheduler.AdvanceBy(testConnectionTimeStamp.Ticks);
+    }
+
+    #endregion
+
+    #region CreateClassUnderTest
+
+    private TestSqlTableDependencyProvider CreateClassUnderTest(bool preserveDatabaseObjects = false)
+    {
+      return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object, preserveDatabaseObjects);
+    }
+
+    #endregion
 
     #region CreateErrorEventArgs
 
@@ -107,8 +143,12 @@ namespace SqlTableDependency.Extensions.Tests
 
       return errorEventArgs;
     }
+    
+    #endregion
 
     #endregion
+
+    #region CleanUp
 
     [TestCleanup]
     public void CleanUp()
@@ -117,5 +157,7 @@ namespace SqlTableDependency.Extensions.Tests
       {
       }
     }
+
+    #endregion
   }
 }

@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Notifications;
+using SqlTableDependency.Extensions.Providers.Sql;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.Abstracts;
 using TableDependency.SqlClient.Base.Enums;
@@ -21,27 +22,35 @@ namespace SqlTableDependency.Extensions
 
     private readonly string connectionString;
     private readonly IScheduler scheduler;
+    private readonly bool preserveDatabaseObjects;
 
     #endregion
 
     #region Constructors
 
-    protected SqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler)
+    protected SqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, bool preserveDatabaseObjects = true)
       : this(connectionStringSettings.ConnectionString, scheduler)
     {
     }
 
-    protected SqlTableDependencyProvider(string connectionString, IScheduler scheduler)
+    protected SqlTableDependencyProvider(string connectionString, IScheduler scheduler, bool preserveDatabaseObjects = true)
     {
       if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
 
       this.connectionString = connectionString;
       this.scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
+      this.preserveDatabaseObjects = preserveDatabaseObjects;
     }
 
     #endregion
 
     #region Properties
+
+    #region SqlConnectionProvider
+
+    protected virtual ISqlConnectionProvider SqlConnectionProvider { get; } = new SqlConnectionProvider();
+
+    #endregion
 
     #region WhenEntityRecordChanges
 
@@ -84,7 +93,7 @@ namespace SqlTableDependency.Extensions
     {
       get
       {
-        var connected = TestConnection(connectionString, testConnectionTimeout);
+        var connected = SqlConnectionProvider.TestConnection(connectionString, testConnectionTimeout);
 
         return connected;
       }
@@ -142,9 +151,10 @@ namespace SqlTableDependency.Extensions
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
-      var sqlTableDependency = new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+      if(preserveDatabaseObjects)
+        return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
 
-      return sqlTableDependency;
+      return new TableDependency.SqlClient.SqlTableDependency<TEntity>(connectionString, TableName, mapper: modelToTableMapper);;
     }
 
     #endregion
@@ -155,7 +165,7 @@ namespace SqlTableDependency.Extensions
 
     private void TrySubscribeToTableChanges()
     {
-      if (sqlTableDependency != null)
+      if (preserveDatabaseObjects && sqlTableDependency != null)
       {
         sqlTableDependency.Start();
         return;
@@ -330,33 +340,6 @@ namespace SqlTableDependency.Extensions
       }
 
       TryStopLastConnection();
-    }
-
-    #endregion
-
-    #region TestConnection
-
-    public static bool TestConnection(string connectionString, TimeSpan testConnectionTimeout)
-    {
-      var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
-      {
-        ConnectionString = connectionString,
-        ConnectTimeout = (int)testConnectionTimeout.TotalSeconds
-      };
-
-      using (var connection = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
-      {
-        try
-        {
-          connection.Open();
-
-          return true;
-        }
-        catch(Exception e)
-        {
-          return false;
-        }
-      }
     }
 
     #endregion

@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SqlTableDependency.Extensions.Providers.Sql;
 using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base.Abstracts;
 using TableDependency.SqlClient.Base.Delegates;
 using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.Exceptions;
-using TableDependency.SqlClient.Base.Messages;
-using TableDependency.SqlClient.Enumerations;
-using TableDependency.SqlClient.Exceptions;
-using TableDependency.SqlClient.Extensions;
-using TableDependency.SqlClient.Messages;
 
 namespace SqlTableDependency.Extensions
 {
-  public class SqlTableDependencyWithReconnection<T> : SqlTableDependency<T> where T : class, new()
+  public class SqlTableDependencyWithReconnection<TEntity> : SqlTableDependency<TEntity>, ISqlTableDependencyWithReconnection<TEntity>
+    where TEntity : class, new()
   {
     #region Constructors
 
-    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<T> mapper = null, IUpdateOfModel<T> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false) 
+    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false) 
       : base(connectionString, tableName, schemaName, mapper, updateOf, filter, notifyOn, executeUserPermissionCheck, includeOldValues)
     {
     }
@@ -30,7 +26,17 @@ namespace SqlTableDependency.Extensions
 
     #region Properties
 
+    #region OriginalGuid
+
     private Guid OriginalGuid { get; set; }
+
+    #endregion
+
+    #region SqlConnectionProvider
+
+    public virtual ISqlConnectionProvider SqlConnectionProvider { get; } = new SqlConnectionProvider();
+
+    #endregion
 
     #endregion
 
@@ -38,7 +44,7 @@ namespace SqlTableDependency.Extensions
 
     public override event ErrorEventHandler OnError;
 
-    public override event ChangedEventHandler<T> OnChanged;
+    public override event ChangedEventHandler<TEntity> OnChanged;
 
     public override event StatusEventHandler OnStatusChanged;
 
@@ -66,11 +72,11 @@ namespace SqlTableDependency.Extensions
       var onErrorSubscribedList = OnError?.GetInvocationList();
       var onStatusChangedSubscribedList = OnStatusChanged?.GetInvocationList();
 
-      this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.Starting);
+      NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.Starting);
 
       _disposed = false;
 
-      if (ConversationHandle == Guid.Empty || !CheckConversationHandler())
+      if (ConversationHandle == Guid.Empty || !SqlConnectionProvider.CheckConversationHandler(_connectionString, ConversationHandle.ToString()))
       {
         if(ConversationHandle != Guid.Empty)
           DropDatabaseObjects();
@@ -103,28 +109,6 @@ namespace SqlTableDependency.Extensions
       var name = $"{_schemaName}_{_tableName}";
 
       return $"{name}_{OriginalGuid}";
-    }
-
-    #endregion
-
-    #region CheckConversationHandler
-
-    private bool CheckConversationHandler()
-    {
-      bool result;
-
-      using (var sqlConnection = new SqlConnection(_connectionString))
-      {
-        sqlConnection.Open();
-        string command =
-          $"SELECT COUNT(*) FROM sys.conversation_endpoints WITH (NOLOCK) WHERE conversation_handle = N'{ConversationHandle.ToString()}' AND state in (N'{ConversationEndpointState.CO.ToString()}', N'{ConversationEndpointState.SI.ToString()}', N'{ConversationEndpointState.SO.ToString()}');";
-
-        var sqlCommand = new SqlCommand(command, sqlConnection);
-        result = (int)sqlCommand.ExecuteScalar() > 0;
-        sqlConnection.Close();
-      }
-
-      return result;
     }
 
     #endregion
