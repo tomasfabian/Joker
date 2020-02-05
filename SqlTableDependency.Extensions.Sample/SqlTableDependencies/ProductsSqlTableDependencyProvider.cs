@@ -162,7 +162,7 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
       Console.WriteLine(Environment.NewLine);
       Console.ForegroundColor = ConsoleColor.DarkRed;
 
-      Console.WriteLine("Error:");
+      Console.WriteLine("Error: ");
       Console.WriteLine(exception.Message);
 
       Console.ResetColor();
