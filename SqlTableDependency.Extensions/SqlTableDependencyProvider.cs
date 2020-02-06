@@ -54,20 +54,9 @@ namespace SqlTableDependency.Extensions
 
     #region WhenEntityRecordChanges
 
-    private Subject<RecordChangedNotification<TEntity>> whenEntityRecordChangesSubject;
+    private readonly Subject<RecordChangedNotification<TEntity>> whenEntityRecordChangesSubject = new Subject<RecordChangedNotification<TEntity>>();
 
-    public IObservable<RecordChangedNotification<TEntity>> WhenEntityRecordChanges
-    {
-      get
-      {
-        if (whenEntityRecordChangesSubject == null)
-        {
-          whenEntityRecordChangesSubject = new Subject<RecordChangedNotification<TEntity>>();
-        }
-
-        return whenEntityRecordChangesSubject.AsObservable();
-      }
-    }
+    public IObservable<RecordChangedNotification<TEntity>> WhenEntityRecordChanges => whenEntityRecordChangesSubject.AsObservable();
 
     #endregion
 
