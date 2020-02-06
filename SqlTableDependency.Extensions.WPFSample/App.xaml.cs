@@ -11,6 +11,7 @@ using Prism.Ioc;
 using Prism.Ninject.Ioc;
 using Sample.Data.Context;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.WPFSample.Modularity;
 using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using SqlTableDependency.Extensions.WPFSample.SqlTableDependencies;
@@ -47,7 +48,8 @@ namespace SqlTableDependency.Extensions.WPFSample
       
       kernel.Bind<ISqlTableDependencyProvider<Product>>().To<ProductsSqlTableDependencyProvider>()
         .InTransientScope()
-        .WithConstructorArgument("connectionString", connectionString);
+        .WithConstructorArgument("connectionString", connectionString)
+        .WithConstructorArgument("lifetimeScope", LifetimeScope.UniqueScope);
     }
 
     #endregion

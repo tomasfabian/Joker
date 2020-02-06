@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Reactive.Concurrency;
 using Moq;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Providers.Sql;
 using SqlTableDependency.Extensions.Tests.Models;
 using TableDependency.SqlClient.Base.Abstracts;
@@ -12,14 +13,14 @@ namespace SqlTableDependency.Extensions.Tests.SqlTableDependencies
   {
     private readonly ITableDependency<TestModel> tableDependency;
 
-    public TestSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ITableDependency<TestModel> tableDependency, bool preserveDatabaseObjects = true)
-      : this(connectionStringSettings.ConnectionString, scheduler, tableDependency, preserveDatabaseObjects)
+    public TestSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ITableDependency<TestModel> tableDependency, LifetimeScope lifetimeScope)
+      : this(connectionStringSettings.ConnectionString, scheduler, tableDependency, lifetimeScope)
     {
       this.tableDependency = tableDependency ?? throw new ArgumentNullException(nameof(tableDependency));
     }
 
-    public TestSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ITableDependency<TestModel> tableDependency, bool preserveDatabaseObjects = true) 
-      : base(connectionString, scheduler, preserveDatabaseObjects)
+    public TestSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ITableDependency<TestModel> tableDependency, LifetimeScope lifetimeScope) 
+      : base(connectionString, scheduler, lifetimeScope)
     {
       this.tableDependency = tableDependency ?? throw new ArgumentNullException(nameof(tableDependency));
 

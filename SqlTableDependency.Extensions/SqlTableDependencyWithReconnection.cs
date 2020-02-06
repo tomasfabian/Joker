@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Providers.Sql;
 using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base.Abstracts;
 using TableDependency.SqlClient.Base.Delegates;
 using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.Exceptions;
+using TableDependency.SqlClient.Base.Messages;
+using TableDependency.SqlClient.Base.Utilities;
+using TableDependency.SqlClient.Exceptions;
+using TableDependency.SqlClient.Extensions;
+using TableDependency.SqlClient.Messages;
 
 namespace SqlTableDependency.Extensions
 {
@@ -17,7 +26,7 @@ namespace SqlTableDependency.Extensions
   {
     #region Constructors
 
-    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false) 
+    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false)
       : base(connectionString, tableName, schemaName, mapper, updateOf, filter, notifyOn, executeUserPermissionCheck, includeOldValues)
     {
     }
@@ -35,6 +44,18 @@ namespace SqlTableDependency.Extensions
     #region SqlConnectionProvider
 
     public virtual ISqlConnectionProvider SqlConnectionProvider { get; } = new SqlConnectionProvider();
+
+    #endregion
+
+    #region LifetimeScope
+
+    public virtual LifetimeScope LifetimeScope { get; } = LifetimeScope.ConnectionScope;
+
+    #endregion
+
+    #region UniqueName
+
+    public virtual string UniqueName => Environment.MachineName;
 
     #endregion
 
@@ -76,13 +97,7 @@ namespace SqlTableDependency.Extensions
 
       _disposed = false;
 
-      if (ConversationHandle == Guid.Empty || !SqlConnectionProvider.CheckConversationHandler(_connectionString, ConversationHandle.ToString()))
-      {
-        if(ConversationHandle != Guid.Empty)
-          DropDatabaseObjects();
-
-        _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
-      }
+      CreateOrReuseConversation(timeOut, watchDogTimeOut);
 
       _cancellationTokenSource = new CancellationTokenSource();
 
@@ -95,18 +110,199 @@ namespace SqlTableDependency.Extensions
                                         timeOut,
                                         watchDogTimeOut),
         _cancellationTokenSource.Token);
+
+      WriteTraceMessage(TraceLevel.Info, "Waiting for receiving " + _tableName + "'s records change notifications.", (Exception) null);
     }
-    
+
+    #endregion
+
+    #region CreateOrReuseConversation
+
+    private void CreateOrReuseConversation(int timeOut, int watchDogTimeOut)
+    {
+      switch (LifetimeScope)
+      {
+        case LifetimeScope.ConnectionScope:
+          _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
+          break;
+        case LifetimeScope.UniqueScope:
+          ConversationHandle = SqlConnectionProvider.GetConversationHandler(_connectionString, GetBaseObjectsNamingConvention());
+
+          if (ConversationHandle == Guid.Empty)
+            _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
+          else
+            _processableMessages = GetProcessableMessages();
+
+          break;
+        case LifetimeScope.ApplicationScope:
+
+          if (ConversationHandle == Guid.Empty ||
+              !SqlConnectionProvider.CheckConversationHandler(_connectionString, ConversationHandle.ToString()))
+          {
+            if (ConversationHandle != Guid.Empty)
+              DropDatabaseObjects();
+
+            _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
+          }
+
+          break;
+      }
+    }
+
+    #endregion
+
+    #region GetProcessableMessages
+
+    protected virtual IList<string> GetProcessableMessages()
+    {
+      var processableMessages = new List<string>();
+
+      var userInterestedColumns = _userInterestedColumns as TableColumnInfo[] ?? _userInterestedColumns.ToArray();
+      var tableColumns = userInterestedColumns as IList<TableColumnInfo>;
+
+      // Messages
+      var startMessageInsert = string.Format(StartMessageTemplate, _dataBaseObjectsNamingConvention, ChangeType.Insert);
+      processableMessages.Add(startMessageInsert);
+
+      var startMessageUpdate = string.Format(StartMessageTemplate, _dataBaseObjectsNamingConvention, ChangeType.Update);
+      processableMessages.Add(startMessageUpdate);
+
+      var startMessageDelete = string.Format(StartMessageTemplate, _dataBaseObjectsNamingConvention, ChangeType.Delete);
+      processableMessages.Add(startMessageDelete);
+
+      var interestedColumns = userInterestedColumns ?? tableColumns.ToArray();
+      foreach (var userInterestedColumn in interestedColumns)
+      {
+        var message = $"{_dataBaseObjectsNamingConvention}/{userInterestedColumn.Name}";
+        processableMessages.Add(message);
+
+        if (this.IncludeOldValues)
+        {
+          message = $"{_dataBaseObjectsNamingConvention}/{userInterestedColumn.Name}/old";
+          processableMessages.Add(message);
+        }
+      }
+
+      var endMessage = string.Format(EndMessageTemplate, _dataBaseObjectsNamingConvention);
+      processableMessages.Add(endMessage);
+
+      return processableMessages;
+    }
+
+    #endregion
+
+    #region WaitForNotifications
+
+    protected override async Task WaitForNotifications(
+      CancellationToken cancellationToken,
+      Delegate[] onChangeSubscribedList,
+      Delegate[] onErrorSubscribedList,
+      Delegate[] onStatusChangedSubscribedList,
+      int timeOut,
+      int timeOutWatchDog)
+    {      
+      if (LifetimeScope == LifetimeScope.ConnectionScope)
+      {
+        await base.WaitForNotifications(cancellationToken, onChangeSubscribedList, onErrorSubscribedList, onStatusChangedSubscribedList, timeOut, timeOutWatchDog);
+
+        return;
+      }
+
+      this.WriteTraceMessage(TraceLevel.Verbose, "Get in WaitForNotifications.");
+
+      var messagesBag = this.CreateMessagesBag(this.Encoding, _processableMessages);
+      var messageNumber = _userInterestedColumns.Count() * (this.IncludeOldValues ? 2 : 1) + 2;
+
+      var waitForSqlScript =
+        $"BEGIN CONVERSATION TIMER ('{this.ConversationHandle.ToString().ToUpper()}') TIMEOUT = " + timeOutWatchDog + ";" +
+        $"WAITFOR (RECEIVE TOP({messageNumber}) [message_type_name], [message_body] FROM [{_schemaName}].[{_dataBaseObjectsNamingConvention}_Receiver]), TIMEOUT {timeOut * 1000};";
+
+      this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.Started);
+
+      try
+      {
+        using (var sqlConnection = new SqlConnection(_connectionString))
+        {
+          await sqlConnection.OpenAsync(cancellationToken);
+          this.WriteTraceMessage(TraceLevel.Verbose, "Connection opened.");
+          this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.WaitingForNotification);
+
+          while (true)
+          {
+            messagesBag.Reset();
+
+            using (var sqlCommand = new SqlCommand(waitForSqlScript, sqlConnection))
+            {
+              sqlCommand.CommandTimeout = 0;
+              this.WriteTraceMessage(TraceLevel.Verbose, "Executing WAITFOR command.");
+
+              using (var sqlDataReader = await sqlCommand.ExecuteReaderAsync(cancellationToken).WithCancellation(cancellationToken))
+              {
+                while (sqlDataReader.Read())
+                {
+                  var message = new Message(sqlDataReader.GetSqlString(0).Value, sqlDataReader.IsDBNull(1) ? null : sqlDataReader.GetSqlBytes(1).Value);
+                  if (message.MessageType == SqlMessageTypes.ErrorType) throw new QueueContainingErrorMessageException();
+                  messagesBag.AddMessage(message);
+                  this.WriteTraceMessage(TraceLevel.Verbose, $"Received message type = {message.MessageType}.");
+                }
+              }
+            }
+
+            if (messagesBag.Status == MessagesBagStatus.Collecting)
+            {
+              throw new MessageMisalignedException("Received a number of messages lower than expected.");
+            }
+
+            if (messagesBag.Status == MessagesBagStatus.Ready)
+            {
+              this.WriteTraceMessage(TraceLevel.Verbose, "Message ready to be notified.");
+              this.NotifyListenersAboutChange(onChangeSubscribedList, messagesBag);
+              this.WriteTraceMessage(TraceLevel.Verbose, "Message notified.");
+            }
+          }
+        }
+      }
+      catch (OperationCanceledException)
+      {
+        this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.StopDueToCancellation);
+        this.WriteTraceMessage(TraceLevel.Info, "Operation canceled.");
+      }
+      catch (AggregateException aggregateException)
+      {
+        this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.StopDueToError);
+        if (cancellationToken.IsCancellationRequested == false) this.NotifyListenersAboutError(onErrorSubscribedList, aggregateException.InnerException);
+        this.WriteTraceMessage(TraceLevel.Error, "Exception in WaitForNotifications.", aggregateException.InnerException);
+      }
+      catch (SqlException sqlException)
+      {
+        this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.StopDueToError);
+        if (cancellationToken.IsCancellationRequested == false) this.NotifyListenersAboutError(onErrorSubscribedList, sqlException);
+        this.WriteTraceMessage(TraceLevel.Error, "Exception in WaitForNotifications.", sqlException);
+      }
+      catch (Exception exception)
+      {
+        this.NotifyListenersAboutStatus(onStatusChangedSubscribedList, TableDependencyStatus.StopDueToError);
+        if (cancellationToken.IsCancellationRequested == false) this.NotifyListenersAboutError(onErrorSubscribedList, exception);
+        this.WriteTraceMessage(TraceLevel.Error, "Exception in WaitForNotifications.", exception);
+      }
+    }
+
     #endregion
 
     #region GetBaseObjectsNamingConvention
 
     protected override string GetBaseObjectsNamingConvention()
     {
-      if (OriginalGuid == Guid.Empty)
-        OriginalGuid = Guid.NewGuid();
+      if (LifetimeScope == LifetimeScope.ConnectionScope)
+        return base.GetBaseObjectsNamingConvention();
 
       var name = $"{_schemaName}_{_tableName}";
+
+      if(LifetimeScope == LifetimeScope.UniqueScope)
+        return $"{name}_{UniqueName}";
+      
+      if (OriginalGuid == Guid.Empty)
+        OriginalGuid = Guid.NewGuid();
 
       return $"{name}_{OriginalGuid}";
     }
@@ -117,6 +313,13 @@ namespace SqlTableDependency.Extensions
 
     public override void Stop()
     {
+      if (LifetimeScope == LifetimeScope.ConnectionScope)
+      {
+        base.Stop();
+
+        return;
+      }
+
       if (_task != null)
       {
         _cancellationTokenSource.Cancel(true);
@@ -125,8 +328,8 @@ namespace SqlTableDependency.Extensions
 
       _task = null;
       _disposed = true;
-      
-      this.WriteTraceMessage(TraceLevel.Info, "Stopped waiting for notification.");
+
+      WriteTraceMessage(TraceLevel.Info, "Stopped waiting for notification.");
     }
 
     #endregion
@@ -135,8 +338,9 @@ namespace SqlTableDependency.Extensions
 
     protected override void Dispose(bool disposing)
     {
-      DropDatabaseObjects();
-      
+      if(LifetimeScope != LifetimeScope.UniqueScope)
+        DropDatabaseObjects();
+
       base.Dispose(disposing);
     }
 

@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Reactive.Concurrency;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Sample.Logging;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.EventArgs;
@@ -19,13 +20,13 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     #region Constructors
 
     internal ProductsSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ILogger logger)
-      : base(connectionStringSettings, scheduler)
+      : base(connectionStringSettings, scheduler, LifetimeScope.ApplicationScope)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger)
-      : base(connectionString, scheduler)
+      : base(connectionString, scheduler, LifetimeScope.ConnectionScope)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }

@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Tests.Models;
 using SqlTableDependency.Extensions.Tests.SqlTableDependencies;
 using TableDependency.SqlClient.Base.Abstracts;
@@ -91,7 +92,7 @@ namespace SqlTableDependency.Extensions.Tests
     [TestCategory("PreserveDatabaseObjects")]
     public void OnError_TryReconnectWithPreserveDatabaseObjects_SuccessfulReconnectionAfterTimeSpan()
     {
-      SubscribeAndRaiseError(preserveDatabaseObjects: true);
+      SubscribeAndRaiseError(lifetimeScope: LifetimeScope.UniqueScope);
 
       //Assert
       tableDependencyMoq.Verify(c => c.Dispose(), Times.Never);
@@ -104,10 +105,10 @@ namespace SqlTableDependency.Extensions.Tests
 
     #region SubscribeAndRaiseError
 
-    private void SubscribeAndRaiseError(bool preserveDatabaseObjects = false)
+    private void SubscribeAndRaiseError(LifetimeScope lifetimeScope = LifetimeScope.ConnectionScope)
     {
       //Arrange
-      var sqlDependencyProvider = CreateClassUnderTest(preserveDatabaseObjects);
+      var sqlDependencyProvider = CreateClassUnderTest(lifetimeScope);
       sqlDependencyProvider.IsDatabaseAvailableTestOverride = true;
       sqlDependencyProvider.SubscribeToEntityChanges();
 
@@ -123,9 +124,9 @@ namespace SqlTableDependency.Extensions.Tests
 
     #region CreateClassUnderTest
 
-    private TestSqlTableDependencyProvider CreateClassUnderTest(bool preserveDatabaseObjects = false)
+    private TestSqlTableDependencyProvider CreateClassUnderTest(LifetimeScope lifetimeScope = LifetimeScope.ConnectionScope)
     {
-      return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object, preserveDatabaseObjects);
+      return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object, lifetimeScope);
     }
 
     #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.EventArgs;
@@ -15,8 +16,8 @@ namespace SqlTableDependency.Extensions.WPFSample.SqlTableDependencies
 
     #region Constructors
 
-    public ProductsSqlTableDependencyProvider(string connectionString, ISchedulerProvider schedulerProvider)
-      : base(connectionString, schedulerProvider.ThreadPool)
+    public ProductsSqlTableDependencyProvider(string connectionString, ISchedulerProvider schedulerProvider, LifetimeScope lifetimeScope)
+      : base(connectionString, schedulerProvider.ThreadPool, lifetimeScope)
     {
     }
 

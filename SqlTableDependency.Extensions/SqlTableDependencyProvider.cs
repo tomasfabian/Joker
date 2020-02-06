@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using SqlTableDependency.Extensions.Disposables;
+using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Providers.Sql;
 using TableDependency.SqlClient.Base;
@@ -22,24 +23,30 @@ namespace SqlTableDependency.Extensions
 
     private readonly string connectionString;
     private readonly IScheduler scheduler;
-    private readonly bool preserveDatabaseObjects;
+    private readonly LifetimeScope lifetimeScope;
 
     #endregion
 
     #region Constructors
 
-    protected SqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, bool preserveDatabaseObjects = true)
-      : this(connectionStringSettings.ConnectionString, scheduler)
+    protected SqlTableDependencyProvider(
+      ConnectionStringSettings connectionStringSettings, 
+      IScheduler scheduler, 
+      LifetimeScope lifetimeScope)
+      : this(connectionStringSettings.ConnectionString, scheduler, lifetimeScope)
     {
     }
 
-    protected SqlTableDependencyProvider(string connectionString, IScheduler scheduler, bool preserveDatabaseObjects = true)
+    protected SqlTableDependencyProvider(
+      string connectionString,
+      IScheduler scheduler,
+      LifetimeScope lifetimeScope)
     {
       if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
 
       this.connectionString = connectionString;
       this.scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
-      this.preserveDatabaseObjects = preserveDatabaseObjects;
+      this.lifetimeScope = lifetimeScope;
     }
 
     #endregion
@@ -140,10 +147,17 @@ namespace SqlTableDependency.Extensions
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
-      if(preserveDatabaseObjects)
-        return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
-
-      return new TableDependency.SqlClient.SqlTableDependency<TEntity>(connectionString, TableName, mapper: modelToTableMapper);;
+      switch (lifetimeScope)
+      {
+        case LifetimeScope.ConnectionScope:
+          return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+        case LifetimeScope.ApplicationScope:
+          return new SqlTableDependencyWitApplicationScope<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+        case LifetimeScope.UniqueScope:
+          return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+        default:
+          return null;
+      }
     }
 
     #endregion
@@ -154,7 +168,7 @@ namespace SqlTableDependency.Extensions
 
     private void TrySubscribeToTableChanges()
     {
-      if (preserveDatabaseObjects && sqlTableDependency != null)
+      if (lifetimeScope != LifetimeScope.ConnectionScope && sqlTableDependency != null)
       {
         sqlTableDependency.Start();
         return;
