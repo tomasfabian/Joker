@@ -3,7 +3,19 @@
 ## See:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
 
-Following package is based on christiandelbianco's SqlTableDependency. SqlTableDependencyProvider provides periodic reconnection in case of any error like lost connection etc.
+Following package is based on christiandelbianco's SqlTableDependency.
+
+SqlTableDependency.Extension.SqlTableDependencyProvider provides periodic reconnections in case of any error, like lost connection etc.
+
+Currently there are 3 LifetimeScopes:
+## ConnectionScope:
+in case that the connection is lost, database objects will be deleted after timeout period or during disposal. During all reconnections the database objects are newly (re)created.
+
+## UniqueScope:
+in case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
+
+## ApplicationScope:
+in case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart.
 
 ## Basic usage:
 ```C#
