@@ -76,6 +76,13 @@ Following package is based on christiandelbianco's SqlTableDependency. SqlTableD
       Console.WriteLine("#####");
       Console.WriteLine(Environment.NewLine);
     }
+    
+    protected override void OnError(Exception exception)
+    {
+      base.OnError(exception);
+
+      logSource.Error(exception);
+    }
   }
 ```
 //Program.cs
