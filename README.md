@@ -11,20 +11,23 @@ Following package is based on christiandelbianco's SqlTableDependency. SqlTableD
   {
       public int Id { get; set; }
       public string Name { get; set; }
-  }   
-    
+  } 
+  
+  using SqlTableDependency.Extensions;
+  using SqlTableDependency.Extensions.Enums;
+  
   internal class ProductsSqlTableDependencyProvider : SqlTableDependencyProvider<Product>
   {
     private readonly ILogger logger;
 
     internal ProductsSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ILogger logger)
-      : base(connectionStringSettings, scheduler)
+      : base(connectionStringSettings, scheduler, LifetimeScope.UniqueScope)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger)
-      : base(connectionString, scheduler)
+      : base(connectionString, scheduler, LifetimeScope.UniqueScope)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
