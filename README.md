@@ -6,9 +6,8 @@ I don't think so.
 Please use data streaming and process it with the help of reactive programming and event driven paradigms. 
 
 ## See:
+Following package is based on christiandelbianco's SqlTableDependency:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
-
-Following package is based on christiandelbianco's SqlTableDependency.
 
 SqlTableDependency.Extension.SqlTableDependencyProvider provides periodic reconnections in case of any error, like lost connection etc.
 
