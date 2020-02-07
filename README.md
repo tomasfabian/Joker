@@ -1,4 +1,9 @@
 # SqlTableDependency.Extensions
+If sharing increases coupling, should we share at all? Is it time for decoupling?
+
+I don't think so.
+
+Please use data streaming and process it with the help of reactive programming and event driven paradigms. 
 
 ## See:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
