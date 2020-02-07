@@ -338,7 +338,6 @@ namespace SqlTableDependency.Extensions
       base.OnDispose();
 
       using (reconnectSubscription)
-      using (whenEntityRecordChangesSubject)
       {
       }
 

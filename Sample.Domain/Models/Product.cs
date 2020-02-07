@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Sample.Domain.Models
+﻿namespace Sample.Domain.Models
 {
-  public class Product
+  public class Product : DomainEntity
   {
-    [Key]
-    public int Id { get; set; }
     public string Name { get; set; }
   }
 }
