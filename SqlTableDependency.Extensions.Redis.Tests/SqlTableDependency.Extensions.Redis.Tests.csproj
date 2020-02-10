@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\SqlTableDependency.Extensions.Tests\Models\TestModel.cs" Link="Models\TestModel.cs" />
     <Compile Include="..\SqlTableDependency.Extensions.Tests\TestBase.cs" Link="TestBase.cs" />
   </ItemGroup>
 
@@ -24,10 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

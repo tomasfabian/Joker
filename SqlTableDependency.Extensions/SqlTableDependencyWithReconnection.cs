@@ -125,15 +125,6 @@ namespace SqlTableDependency.Extensions
         case LifetimeScope.ConnectionScope:
           _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
           break;
-        case LifetimeScope.UniqueScope:
-          ConversationHandle = SqlConnectionProvider.GetConversationHandler(_connectionString, GetBaseObjectsNamingConvention());
-
-          if (ConversationHandle == Guid.Empty)
-            _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
-          else
-            _processableMessages = GetProcessableMessages();
-
-          break;
         case LifetimeScope.ApplicationScope:
 
           if (ConversationHandle == Guid.Empty ||
@@ -144,6 +135,15 @@ namespace SqlTableDependency.Extensions
 
             _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
           }
+
+          break;
+        case LifetimeScope.UniqueScope:
+          ConversationHandle = SqlConnectionProvider.GetConversationHandler(_connectionString, GetBaseObjectsNamingConvention());
+
+          if (ConversationHandle == Guid.Empty)
+            _processableMessages = CreateDatabaseObjects(timeOut, watchDogTimeOut);
+          else
+            _processableMessages = GetProcessableMessages();
 
           break;
       }

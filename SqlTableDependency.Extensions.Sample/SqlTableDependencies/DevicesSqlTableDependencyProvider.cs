@@ -19,7 +19,7 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     }
 
     internal DevicesSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger)
-      : base(connectionString, scheduler, logger, LifetimeScope.ConnectionScope)
+      : base(connectionString, scheduler, logger, LifetimeScope.UniqueScope)
     {
     }
 

@@ -5,8 +5,8 @@ using Moq;
 using Ninject;
 using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
+using SqlTableDependency.Extensions.Redis.Tests.Models;
 using SqlTableDependency.Extensions.Tests;
-using SqlTableDependency.Extensions.Tests.Models;
 using StackExchange.Redis;
 using TableDependency.SqlClient.Base.Enums;
 
