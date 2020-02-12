@@ -1,10 +1,37 @@
-﻿using System;
+﻿#region License
+// TableDependency, SqlTableDependency
+// Copyright (c) 2019-2020 Tomas Fabian. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+#endregion
+
+using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Notifications;
@@ -16,6 +43,9 @@ using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions
 {
+  /// <summary>
+  /// SqlTableDependencyProvider notifies about database table changes and reconnects in case of error.
+  /// </summary>
   public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider<TEntity>
       where TEntity : class, new()
   {
@@ -28,7 +58,10 @@ namespace SqlTableDependency.Extensions
     #endregion
 
     #region Constructors
-
+    
+    /// <param name="connectionStringSettings">Database connection string settings.</param
+    /// <param name="scheduler">Scheduler to run reconnection timers on.</param>
+    /// <param name="lifetimeScope">Generated database objects lifetime scope.</param>
     protected SqlTableDependencyProvider(
       ConnectionStringSettings connectionStringSettings, 
       IScheduler scheduler, 
@@ -37,6 +70,9 @@ namespace SqlTableDependency.Extensions
     {
     }
 
+    /// <param name="connectionString">Database connection string.</param
+    /// <param name="scheduler">Scheduler to run reconnection timers on.</param>
+    /// <param name="lifetimeScope">Generated database objects lifetime scope.</param>
     protected SqlTableDependencyProvider(
       string connectionString,
       IScheduler scheduler,
@@ -63,6 +99,9 @@ namespace SqlTableDependency.Extensions
 
     private readonly Subject<RecordChangedNotification<TEntity>> whenEntityRecordChangesSubject = new Subject<RecordChangedNotification<TEntity>>();
 
+    /// <summary>
+    /// Gets an observable for when RecordChangedNotification was emitted.
+    /// </summary>
     public IObservable<RecordChangedNotification<TEntity>> WhenEntityRecordChanges => whenEntityRecordChangesSubject.AsObservable();
 
     #endregion
@@ -71,6 +110,9 @@ namespace SqlTableDependency.Extensions
 
     private readonly ISubject<TableDependencyStatus> whenStatusChanges = new ReplaySubject<TableDependencyStatus>(1);
 
+    /// <summary>
+    /// Gets an observable for when table dependency status changed.
+    /// </summary>
     public IObservable<TableDependencyStatus> WhenStatusChanges => whenStatusChanges.AsObservable();
 
     #endregion
@@ -109,8 +151,19 @@ namespace SqlTableDependency.Extensions
 
     #region SubscribeToEntityChanges
 
+    private int subscriptionsCounter;
+
+    /// <summary>
+    /// Start record change subscriptions with database reconnection.
+    /// </summary>
     public void SubscribeToEntityChanges()
     {
+      if (Interlocked.Increment(ref subscriptionsCounter) != 1)
+        throw new NotSupportedException("Multiple subscriptions are not allowed");
+      
+      if(IsDisposed)
+        throw new ObjectDisposedException(GetType().Name);
+
       TrySubscribeToTableChanges();
     }
 
@@ -210,7 +263,7 @@ namespace SqlTableDependency.Extensions
 
     #region OnError
 
-    private int TheConversationHandleIsNotFound = 8426;
+    private readonly int TheConversationHandleIsNotFound = 8426;
 
     protected virtual void OnError(Exception error)
     {
@@ -303,6 +356,36 @@ namespace SqlTableDependency.Extensions
 
     protected virtual void OnDeleted(TEntity entity)
     {
+    }
+
+    #endregion
+    
+    #region CreateBulkRecordChangesNotifier
+
+    /// <summary>
+    /// Creates buffered observable sequence of record changes. Buffer is sent out when either it's full or a given amount of time has elapsed, using the specified scheduler to run timers.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the elements in the source sequence, and in the lists in the result sequence.</typeparam>
+    /// <param name="timeSpan">Maximum time length of a buffer.</param>
+    /// <param name="count">Maximum element count of a buffer.</param>
+    /// <param name="bulkScheduler">Scheduler to run buffering timers on.</param>
+    /// <returns>An observable sequence of buffered record change notifications.</returns>
+    public IObservable<RecordsChangedNotification<TEntity>> CreateBulkRecordChangesNotifier(TimeSpan timeSpan, int count = 50, IScheduler bulkScheduler = null)
+    {
+      if (timeSpan < TimeSpan.Zero)
+        throw new ArgumentOutOfRangeException(nameof(timeSpan));
+
+      if (count <= 0)
+        throw new ArgumentOutOfRangeException(nameof(count));
+
+      if (bulkScheduler == null)
+        bulkScheduler = scheduler;
+
+      return whenEntityRecordChangesSubject
+        .Buffer(timeSpan, count, bulkScheduler)
+        .Where(recordChangedNotifications => recordChangedNotifications.Count > 0)
+        .Select(c => new RecordsChangedNotification<TEntity>(c))
+        .AsObservable();
     }
 
     #endregion

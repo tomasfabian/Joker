@@ -4,9 +4,9 @@ namespace SqlTableDependency.Extensions.Disposables
 {
   public class DisposableObject : IDisposable
   {
-    #region Fields
+    #region Properties
 
-    private bool isDisposed;
+    public bool IsDisposed { get; private set; }
 
     #endregion
 
@@ -21,14 +21,14 @@ namespace SqlTableDependency.Extensions.Disposables
 
     protected virtual void Dispose(bool disposing)
     {
-      if (!isDisposed)
+      if (!IsDisposed)
       {
         if (disposing)
         {
           OnDispose();
         }
 
-        isDisposed = true;
+        IsDisposed = true;
       }
     }
 
