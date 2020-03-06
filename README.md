@@ -144,13 +144,54 @@ namespace SqlTableDependency.Extensions.Sample
 
 Download and run redis-server (https://redis.io/download)
 
+Server side:
 ```C#
-  public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
+public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
+{
+  public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher) 
+    : base(sqlTableDependencyProvider, redisPublisher)
   {
-    public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher) 
-      : base(sqlTableDependencyProvider, redisPublisher)
-    {
-    }
   }
+}
 
+```
+
+```C#
+string redisUrl = ConfigurationManager.AppSettings["RedisUrl"]; //localhost
+
+var redisPublisher = new RedisPublisher(redisUrl);
+await redisPublisher.PublishAsync("messages", "hello");
+
+using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
+
+using var productSqlTableDependencyRedisProvider = new ProductSqlTableDependencyRedisProvider(productsProvider, redisPublisher, ThreadPoolScheduler.Instance)
+  .StartPublishing();
+```
+
+Client side:
+```C#
+private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl)
+{
+  var redisSubscriber = new RedisSubscriber(redisUrl);
+
+  await redisSubscriber.Subscribe(channelMessage => { Console.WriteLine($"OnNext({channelMessage.Message})"); },
+  "messages");
+
+  await redisSubscriber.Subscribe(channelMessage =>
+  {
+    var recordChange = JsonConvert.DeserializeObject<RecordChangedNotification<Product>>(channelMessage.Message);
+    Console.WriteLine($"OnNext Product changed({recordChange.ChangeType})");
+    Console.WriteLine($"OnNext Product changed({recordChange.Entity.Id})");
+  }, nameof(Product) + "-Changes");
+
+  await redisSubscriber.Subscribe(channelMessage =>
+  {
+    var tableDependencyStatus = JsonConvert.DeserializeObject<TableDependencyStatus>(channelMessage.Message);
+    Console.WriteLine($"OnNext tableDependencyStatus changed({tableDependencyStatus})");
+  }, nameof(Product) + "-Status");
+
+  redisSubscriber.WhenIsConnectedChanges.Subscribe(c => Console.WriteLine($"REDIS is connected: {c}"));
+
+  return redisSubscriber;
+}
 ```
