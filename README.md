@@ -5,6 +5,15 @@ I don't think so.
 
 Please use data streaming and process it with the help of reactive programming and event driven paradigms. 
 
+## Install:
+https://www.nuget.org/packages/SqlTableDependency.Extensions/
+
+Install-Package SqlTableDependency.Extensions -Version 2.0.0
+
+or
+
+dotnet add package SqlTableDependency.Extensions --version 2.0.0
+
 ## See:
 Following package is based on christiandelbianco's SqlTableDependency:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
@@ -22,6 +31,14 @@ In case that the connection is lost, database objects will be deleted only after
 In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
 
 ## Basic usage:
+
+Enable Service Broker in MS SQL SERVER
+
+```SQL
+ALTER DATABASE [DatabaseName]
+    SET ENABLE_BROKER WITH ROLLBACK IMMEDIATE;
+```
+// C#
 ```C#
   public class Product
   {
@@ -122,9 +139,12 @@ namespace SqlTableDependency.Extensions.Sample
   }
 }
 
-# SqlTableDependency.Extensions.Redis
+```
+# SqlTableDependency.Extensions.Redis Preview
 
-Preview
+Download and run redis-server (https://redis.io/download)
+
+```C#
   public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
   {
     public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher) 
@@ -132,3 +152,5 @@ Preview
     {
     }
   }
+
+```
