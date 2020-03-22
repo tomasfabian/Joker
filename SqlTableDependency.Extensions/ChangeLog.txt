@@ -1,2 +1,2 @@
 ﻿2.1.0
-- added SqlTableDependencySettings for additional SqlTableDependency settings like schemaName, includeOldValues, etc
+- added SqlTableDependencySettings for additional SqlTableDependency settings like schemaName, includeOldValues, etc.
