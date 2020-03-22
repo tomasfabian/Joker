@@ -71,6 +71,19 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #endregion
 
+    #region OnCreateSettings
+
+    protected override SqlTableDependencySettings<TEntity> OnCreateSettings()
+    {
+      var settings =  base.OnCreateSettings();
+
+      settings.SchemaName = "dbo";
+
+      return settings;
+    }
+
+    #endregion
+
     #region OnInserted
 
     protected override void OnInserted(TEntity entity)

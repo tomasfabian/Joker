@@ -59,7 +59,7 @@ namespace SqlTableDependency.Extensions
 
     #region Constructors
     
-    /// <param name="connectionStringSettings">Database connection string settings.</param
+    /// <param name="connectionStringSettings">Database connection string settings.</param>
     /// <param name="scheduler">Scheduler to run reconnection timers on.</param>
     /// <param name="lifetimeScope">Generated database objects lifetime scope.</param>
     protected SqlTableDependencyProvider(
@@ -196,18 +196,47 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
+    #region OnCreateSettings
+
+    /// <summary>
+    /// Creates additional SqlTableDependency settings.
+    /// </summary>
+    /// <returns>SqlTableDependencySettings for setting schemaName etc.</returns>
+    protected virtual SqlTableDependencySettings<TEntity> OnCreateSettings()
+    {
+      return new SqlTableDependencySettings<TEntity>();
+    }
+
+    #endregion
+
     #region CreateSqlTableDependency
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
+      var settings = OnCreateSettings();
+
       switch (lifetimeScope)
       {
         case LifetimeScope.ConnectionScope:
-          return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+          return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName,
+            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            filter: settings.Filter, notifyOn: settings.NotifyOn,
+            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
+            includeOldValues: settings.IncludeOldValues);
+
         case LifetimeScope.ApplicationScope:
-          return new SqlTableDependencyWitApplicationScope<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+          return new SqlTableDependencyWitApplicationScope<TEntity>(connectionString, TableName,
+            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            filter: settings.Filter, notifyOn: settings.NotifyOn,
+            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
+            includeOldValues: settings.IncludeOldValues);
         case LifetimeScope.UniqueScope:
-          return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName, mapper: modelToTableMapper);
+
+          return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName,
+            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            filter: settings.Filter, notifyOn: settings.NotifyOn,
+            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
+            includeOldValues: settings.IncludeOldValues);
         default:
           return null;
       }
