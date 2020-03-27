@@ -15,6 +15,7 @@ using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 using TableDependency.SqlClient.Base.Messages;
 using TableDependency.SqlClient.Base.Utilities;
+using UnitTests;
 
 namespace SqlTableDependency.Extensions.Tests
 {

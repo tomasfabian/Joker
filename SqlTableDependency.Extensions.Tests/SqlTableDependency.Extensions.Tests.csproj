@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

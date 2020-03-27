@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\SqlTableDependency.Extensions.Tests\TestBase.cs" Link="TestBase.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Microsoft.Reactive.Testing" Version="4.3.2" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
@@ -26,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj" />
+    <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 
 </Project>
