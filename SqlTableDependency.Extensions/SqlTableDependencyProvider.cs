@@ -237,6 +237,7 @@ namespace SqlTableDependency.Extensions
             filter: settings.Filter, notifyOn: settings.NotifyOn,
             executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
             includeOldValues: settings.IncludeOldValues);
+
         default:
           return null;
       }

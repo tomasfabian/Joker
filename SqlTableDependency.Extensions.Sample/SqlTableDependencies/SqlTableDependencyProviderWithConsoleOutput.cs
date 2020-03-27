@@ -5,6 +5,7 @@ using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Sample.Logging;
 using TableDependency.SqlClient.Base;
+using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 
 namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
@@ -78,6 +79,11 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
       var settings =  base.OnCreateSettings();
 
       settings.SchemaName = "dbo";
+      settings.UpdateOf = null;
+      settings.Filter = null;
+      settings.NotifyOn = DmlTriggerType.All;
+      settings.ExecuteUserPermissionCheck = true;
+      settings.IncludeOldValues = false;
 
       return settings;
     }
