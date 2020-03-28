@@ -2,7 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Copyright>@tomasfabian</Copyright>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <Authors>Tomas Fabian</Authors>
+    <Company />
+    <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
+    <Description>Reactive view models for data changes</Description>
+    <PackageTags>MVVM reactive changes</PackageTags>
+    <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
+    <Version>1.0.0-alpha</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\SqlTableDependency.Extensions.Redis\License.txt" Link="License.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.2.0" />
@@ -10,5 +23,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\SqlTableDependency.Extensions.Redis\License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

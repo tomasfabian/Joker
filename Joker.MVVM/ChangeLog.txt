@@ -1,0 +1,4 @@
+﻿1.0.0
+- ViewModel
+- ViewModelsList
+- ReactiveListViewModel

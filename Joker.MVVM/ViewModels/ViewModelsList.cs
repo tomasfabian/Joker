@@ -17,6 +17,32 @@ namespace Joker.MVVM.ViewModels
     private ReadOnlyObservableCollection<TViewModel> readOnlyViewModels;
 
     public ReadOnlyObservableCollection<TViewModel> Items => readOnlyViewModels ?? (readOnlyViewModels = new ReadOnlyObservableCollection<TViewModel>(viewModels));
+    
+    private bool isLoading;
+
+    public bool IsLoading
+    {
+      get => isLoading;
+      set
+      {
+        if(value == isLoading)
+          return;
+        
+        isLoading = value;
+        
+        isLoadingChangedSubject.OnNext(value);
+
+        NotifyPropertyChanged();
+      }
+    }
+    
+    #region IsLoadingChanged
+
+    private readonly ISubject<bool> isLoadingChangedSubject = new ReplaySubject<bool>(1);
+
+    public IObservable<bool> IsLoadingChanged => isLoadingChangedSubject.AsObservable();
+
+    #endregion
 
     #region SelectionChanged
 

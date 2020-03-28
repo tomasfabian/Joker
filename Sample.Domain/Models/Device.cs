@@ -1,4 +1,5 @@
 ﻿using System;
+using Joker.Domain;
 
 namespace Sample.Domain.Models
 {

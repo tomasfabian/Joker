@@ -1,8 +1,9 @@
 ﻿using System;
 using Joker.MVVM.Contracts;
 
-namespace Joker.MVVM.Tests.ViewModels
+namespace Joker.MVVM.Tests.Helpers
 {
+  [Serializable]
   public class TestModel : IVersion
   {
     public int Id { get; set; }

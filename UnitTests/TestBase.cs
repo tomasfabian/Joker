@@ -42,10 +42,10 @@ namespace UnitTests
     public void RunSchedulers()
     {
       TestScheduler.Start();
-
-      schedulersFactory.Dispatcher.Start();
-      schedulersFactory.TaskPool.Start();
+      
       schedulersFactory.ThreadPool.Start();
+      schedulersFactory.TaskPool.Start();
+      schedulersFactory.Dispatcher.Start();
     }
 
     #endregion

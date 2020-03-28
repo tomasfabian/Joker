@@ -1,22 +1,23 @@
 ﻿using System;
-using Prism.Mvvm;
+using Joker.MVVM.Contracts;
+using Joker.MVVM.ViewModels;
 using Sample.Domain.Models;
 
 namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Products
 {
-  public class ProductViewModel : BindableBase
+  public class ProductViewModel : ViewModel<Product>, IVersion
   {
     private readonly Product product;
 
     public ProductViewModel(Product product)
+      : base(product)
     {
       this.product = product ?? throw new ArgumentNullException(nameof(product));
     }
 
-    public int Id
-    {
-      get => product.Id;
-    }
+    public int Id => product.Id;
+
+    public DateTime Timestamp => product.Timestamp;
 
     public string Name
     {
@@ -28,7 +29,7 @@ namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Products
 
         product.Name = value;
 
-        RaisePropertyChanged();
+        NotifyPropertyChanged();
       }
     }
 

@@ -25,40 +25,39 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Joker.Disposables;
+using Joker.Extensions.Cloning;
+using Joker.Factories.Schedulers;
 using Joker.MVVM.Contracts;
 using Joker.MVVM.Enums;
 
 namespace Joker.MVVM.ViewModels
 {
-  public abstract class ReactiveViewModel<TModel, TViewModel> : ViewModelsList<TViewModel>, IDisposable
-    where TModel : IVersion
+  public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TViewModel>, IDisposable
+    where TModel : class, IVersion
     where TViewModel : ViewModel<TModel>, IVersion
   {
     #region Fields
 
     private readonly IReactive<TModel> reactive;
-    private readonly IDisposable disposable;
+    private readonly ISchedulersFactory schedulersFactory;
+    private IDisposable disposable;
 
     #endregion
 
     #region Constructors
 
-    protected ReactiveViewModel(IReactive<TModel> reactive)
+    protected ReactiveListViewModel(IReactive<TModel> reactive, ISchedulersFactory schedulersFactory)
     {
       this.reactive = reactive ?? throw new ArgumentNullException(nameof(reactive));
+      this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
-      disposable = DisposableObject.Create(() =>
-                                           {
-                                             using (whenDataChangesSubscription)
-                                             {
-                                             }
-                                           });
+      Init();
     }
 
     #endregion
@@ -67,25 +66,93 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IScheduler DispatcherScheduler { get; }
 
+    protected abstract IEnumerable<TModel> Query { get; }
+
     #endregion
 
     #region Methods
 
-    private IDisposable whenDataChangesSubscription;
+    private void Init()
+    {
+      disposable = DisposableObject.Create(() =>
+      {
+        OnDispose();
+
+        using (whenDataChangesSubscription)
+        using (loadEntitiesSubscription)
+        {
+        }
+      });
+    }
+
+    private SerialDisposable loadEntitiesSubscription;
+
+    private void LoadEntities()
+    {
+      if (loadEntitiesSubscription == null)
+        loadEntitiesSubscription = new SerialDisposable();
+
+      IsLoading = true;
+
+      ViewModels.Clear();
+
+      loadEntitiesSubscription.Disposable =
+        Observable.Start(() => Query.ToList(), schedulersFactory.ThreadPool)
+          .ObserveOn(DispatcherScheduler)
+          .Finally(() => IsLoading = false)
+          .Subscribe(models =>
+          {
+            foreach (var model in models)
+            {
+              AddViewModel(model);
+            }
+          }, OnException);
+    }
+
+    protected virtual void OnException(Exception error)
+    {
+    }
+
+    protected virtual IObservable<IList<EntityChange<TModel>>> DataChanges => reactive.WhenDataChanges
+      .Buffer(TimeSpan.FromMilliseconds(250), 100, schedulersFactory.TaskPool);
+
+    private SerialDisposable whenDataChangesSubscription;
 
     public void SubscribeToDataChanges()
     {
-      using (whenDataChangesSubscription)
-      { }
+      if (whenDataChangesSubscription == null)
+        whenDataChangesSubscription = new SerialDisposable();
 
-      whenDataChangesSubscription = reactive.WhenDataChanges
+      var changes = DataChanges;
+
+      var loadingBuffer = changes
+        .Buffer(IsLoadingChanged.Where(isLoading => isLoading),
+          c => IsLoadingChanged.Where(isLoading => !isLoading))
+        .Take(1);
+
+      changes = changes
+        .Where(_ => !IsLoading)
+        .Merge(loadingBuffer.SelectMany(c => c));
+
+      whenDataChangesSubscription.Disposable = changes
+        .Where(c => c.Count > 0)
         .ObserveOn(DispatcherScheduler)
-        .Subscribe(OnDataChangeReceived);
+        .Subscribe(OnDataChangesReceived);
+
+      LoadEntities();
+    }
+
+    private void OnDataChangesReceived(IList<EntityChange<TModel>> entityChanges)
+    {
+      foreach (var entityChange in entityChanges)
+      {
+        OnDataChangeReceived(entityChange);
+      }
     }
 
     private void OnDataChangeReceived(EntityChange<TModel> entityChange)
     {
-      var entity = entityChange.Entity;
+      var entity = GetModel(entityChange);
 
       switch (entityChange.ChangeType)
       {
@@ -99,6 +166,13 @@ namespace Joker.MVVM.ViewModels
           OnEntityDeleted(entity);
           break;
       }
+    }
+
+    protected virtual TModel GetModel(EntityChange<TModel> entityChange)
+    {
+      var entity = entityChange.Entity?.CloneObjectSerializable();
+
+      return entity;
     }
 
     protected virtual Action<TModel, TViewModel> UpdateViewModel()
@@ -121,18 +195,33 @@ namespace Joker.MVVM.ViewModels
 
       if (viewModel == null)
       {
-        viewModel = CreateViewModel(model);
-
-        ViewModels.Add(viewModel);
+        AddViewModel(model);
       }
+    }
+
+    private void AddViewModel(TModel model)
+    {
+      TViewModel viewModel = CreateViewModel(model);
+
+      ViewModels.Add(viewModel);
     }
 
     protected virtual void OnEntityUpdated(TModel model, Action<TModel, TViewModel> update)
     {
+      var viewModel = Find(model);
+
+      if (viewModel == null)
+      {
+        AddViewModel(model);
+
+        return;
+      }
+
+      if (viewModel.Timestamp >= model.Timestamp)
+        return;
+
       if (update != null)
       {
-        var viewModel = Find(model);
-
         update(model, viewModel);
       }
       else
@@ -151,6 +240,10 @@ namespace Joker.MVVM.ViewModels
     }
 
     protected abstract TViewModel CreateViewModel(TModel model);
+
+    protected virtual void OnDispose()
+    {
+    }
 
     public void Dispose()
     {

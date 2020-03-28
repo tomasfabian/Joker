@@ -1,4 +1,5 @@
-﻿using Sample.Domain.Models;
+﻿using Joker.Domain;
+using Sample.Domain.Models;
 
 namespace SqlTableDependency.Extensions.Redis.Tests.Models
 {

@@ -12,6 +12,7 @@ using Prism.Ninject.Ioc;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
+using SqlTableDependency.Extensions.WPFSample.Factories.Schedulers;
 using SqlTableDependency.Extensions.WPFSample.Modularity;
 using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using SqlTableDependency.Extensions.WPFSample.SqlTableDependencies;
@@ -44,6 +45,7 @@ namespace SqlTableDependency.Extensions.WPFSample
       var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
       kernel.Bind<ISchedulerProvider>().To<SchedulerProvider>().InSingletonScope();
+      kernel.Bind<IWpfSchedulersFactory>().To<WpfSchedulersFactory>().InSingletonScope();
       kernel.Bind<ISampleDbContext>().To<SampleDbContext>().InTransientScope().WithConstructorArgument("nameOrConnectionString", connectionString);
       
       kernel.Bind<ISqlTableDependencyProvider<Product>>().To<ProductsSqlTableDependencyProvider>()
@@ -54,10 +56,14 @@ namespace SqlTableDependency.Extensions.WPFSample
 
     #endregion
 
+    #region CreateShell
+
     protected override Window CreateShell()
     {
       return new Shell();
     }
+
+    #endregion
 
     #region InitializeShell
 

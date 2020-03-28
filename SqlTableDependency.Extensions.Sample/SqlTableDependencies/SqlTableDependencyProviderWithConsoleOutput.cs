@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Reactive.Concurrency;
+using Joker.Domain;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Sample.Logging;
