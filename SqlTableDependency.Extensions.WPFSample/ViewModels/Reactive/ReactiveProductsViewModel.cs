@@ -20,7 +20,7 @@ namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Reactive
 
     public ReactiveProductsViewModel(
       ISampleDbContext sampleDbContext,
-      IReactive<Product> reactive,
+      IReactiveData<Product> reactive,
       IWpfSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
