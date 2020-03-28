@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 using Joker.MVVM.Contracts;
 using Joker.MVVM.Enums;
 
-namespace Joker.Tests.ViewModels
+namespace Joker.MVVM.Tests.ViewModels
 {
   public class ReactiveTest : IReactive<TestModel>
   {

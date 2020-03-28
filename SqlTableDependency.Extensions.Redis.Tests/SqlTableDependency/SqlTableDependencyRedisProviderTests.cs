@@ -6,9 +6,9 @@ using Ninject;
 using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
 using SqlTableDependency.Extensions.Redis.Tests.Models;
-using SqlTableDependency.Extensions.Tests;
 using StackExchange.Redis;
 using TableDependency.SqlClient.Base.Enums;
+using UnitTests;
 
 namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
 {

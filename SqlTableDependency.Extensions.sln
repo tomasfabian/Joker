@@ -25,11 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.MVVM", "Joker.MVVM\Joker.MVVM.csproj", "{3A359530-27F7-4AD1-9C2C-2051D95D7451}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Tests", "Joker.Tests\Joker.Tests.csproj", "{0EC04A9D-8AE3-400D-A277-78DC66942C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.MVVM.Tests", "Joker.Tests\Joker.MVVM.Tests.csproj", "{0EC04A9D-8AE3-400D-A277-78DC66942C0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{59B30EBA-EE8D-404F-A757-A431B2F83781}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Joker", "Joker\Joker.csproj", "{90895AFE-4199-45D7-926D-12C0B8FDD5E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker", "Joker\Joker.csproj", "{90895AFE-4199-45D7-926D-12C0B8FDD5E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

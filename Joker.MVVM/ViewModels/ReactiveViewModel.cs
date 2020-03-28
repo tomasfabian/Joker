@@ -108,7 +108,7 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IEqualityComparer<TModel> Comparer { get; }
 
-    private TViewModel Find(TModel model)
+    public TViewModel Find(TModel model)
     {
       var viewModel = ViewModels.FirstOrDefault(c => Comparer.Equals(c.Model, model));
 

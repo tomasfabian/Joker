@@ -6,7 +6,7 @@ using Joker.MVVM.Contracts;
 using Joker.MVVM.ViewModels;
 using UnitTests.Schedulers;
 
-namespace Joker.Tests.ViewModels
+namespace Joker.MVVM.Tests.ViewModels
 {
   public class ReactiveTestViewModel : ReactiveViewModel<TestModel, TestViewModel>
   {
