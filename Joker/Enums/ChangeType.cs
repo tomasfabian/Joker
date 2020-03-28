@@ -1,4 +1,4 @@
-﻿namespace Joker.MVVM.Enums
+﻿namespace Joker.Enums
 {
   public enum ChangeType
   {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Joker.MVVM.Contracts;
+using Joker.Contracts;
 
 namespace Joker.Domain
 {

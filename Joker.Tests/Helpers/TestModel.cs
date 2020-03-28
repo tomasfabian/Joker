@@ -1,5 +1,5 @@
 ﻿using System;
-using Joker.MVVM.Contracts;
+using Joker.Contracts;
 
 namespace Joker.MVVM.Tests.Helpers
 {

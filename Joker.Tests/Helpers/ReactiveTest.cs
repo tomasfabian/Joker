@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Joker.MVVM.Contracts;
-using Joker.MVVM.Enums;
+using Joker.Contracts;
+using Joker.Enums;
 
 namespace Joker.MVVM.Tests.Helpers
 {

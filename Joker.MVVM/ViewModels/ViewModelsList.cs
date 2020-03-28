@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Joker.MVVM.Contracts;
+using Joker.Contracts;
 
 namespace Joker.MVVM.ViewModels
 {

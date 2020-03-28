@@ -1,6 +1,6 @@
-﻿using Joker.MVVM.Contracts;
+﻿using Joker.Contracts;
 
-namespace Joker.MVVM.Enums
+namespace Joker.Enums
 {
   public class EntityChange<TEntity>
     where TEntity : IVersion

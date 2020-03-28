@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Joker.MVVM.Enums;
 using Joker.MVVM.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using FluentAssertions;
+using Joker.Enums;
 using Joker.MVVM.Tests.Helpers;
 
 namespace Joker.MVVM.Tests.ViewModels

@@ -30,11 +30,11 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Joker.Contracts;
 using Joker.Disposables;
+using Joker.Enums;
 using Joker.Extensions.Cloning;
 using Joker.Factories.Schedulers;
-using Joker.MVVM.Contracts;
-using Joker.MVVM.Enums;
 
 namespace Joker.MVVM.ViewModels
 {

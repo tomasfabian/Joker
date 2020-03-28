@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Joker.MVVM.Contracts
+namespace Joker.Contracts
 {
   public interface IVersion
   {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Joker.MVVM.Enums;
+using Joker.Enums;
 
-namespace Joker.MVVM.Contracts
+namespace Joker.Contracts
 {
   public interface IReactive<TEntity>
     where TEntity : IVersion

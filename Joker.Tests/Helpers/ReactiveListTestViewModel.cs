@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using Joker.Comparators;
-using Joker.MVVM.Contracts;
-using Joker.MVVM.Enums;
+using Joker.Contracts;
+using Joker.Enums;
 using Joker.MVVM.ViewModels;
 using UnitTests.Schedulers;
 
