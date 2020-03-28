@@ -140,6 +140,9 @@ namespace SqlTableDependency.Extensions.Sample
 }
 
 ```
+# Joker Model-View-ViewModel:
+* [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
+
 # SqlTableDependency.Extensions.Redis Preview
 
 Download and run redis-server (https://redis.io/download)
