@@ -13,7 +13,7 @@ namespace Joker.MVVM.Tests.Helpers
   {
     private readonly ReactiveTestSchedulersFactory schedulersFactory;
 
-    public ReactiveListTestViewModel(IReactive<TestModel> reactive, ReactiveTestSchedulersFactory schedulersFactory) 
+    public ReactiveListTestViewModel(IReactiveData<TestModel> reactive, ReactiveTestSchedulersFactory schedulersFactory) 
       : base(reactive, schedulersFactory)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));

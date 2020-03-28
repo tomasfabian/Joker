@@ -14,7 +14,7 @@ namespace Joker.MVVM.Tests.ViewModels
   {
     #region TestInitialize
 
-    private readonly ReactiveTest reactiveTest = new ReactiveTest();
+    private readonly TestModelReactiveData reactiveTest = new TestModelReactiveData();
 
     [TestInitialize]
     public override void TestInitialize()

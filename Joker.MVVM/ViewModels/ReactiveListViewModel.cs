@@ -44,7 +44,7 @@ namespace Joker.MVVM.ViewModels
   {
     #region Fields
 
-    private readonly IReactive<TModel> reactive;
+    private readonly IReactiveData<TModel> reactive;
     private readonly ISchedulersFactory schedulersFactory;
     private IDisposable disposable;
 
@@ -52,7 +52,7 @@ namespace Joker.MVVM.ViewModels
 
     #region Constructors
 
-    protected ReactiveListViewModel(IReactive<TModel> reactive, ISchedulersFactory schedulersFactory)
+    protected ReactiveListViewModel(IReactiveData<TModel> reactive, ISchedulersFactory schedulersFactory)
     {
       this.reactive = reactive ?? throw new ArgumentNullException(nameof(reactive));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));

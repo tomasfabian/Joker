@@ -3,7 +3,7 @@ using Joker.Enums;
 
 namespace Joker.Contracts
 {
-  public interface IReactive<TEntity>
+  public interface IReactiveData<TEntity>
     where TEntity : IVersion
   {
     IObservable<EntityChange<TEntity>> WhenDataChanges { get; }

@@ -18,7 +18,10 @@ namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Reactive
     private readonly ISampleDbContext sampleDbContext;
     private readonly IWpfSchedulersFactory schedulersFactory;
 
-    public ReactiveProductsViewModel(ISampleDbContext sampleDbContext, IReactive<Product> reactive, IWpfSchedulersFactory schedulersFactory)
+    public ReactiveProductsViewModel(
+      ISampleDbContext sampleDbContext,
+      IReactive<Product> reactive,
+      IWpfSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
       this.sampleDbContext = sampleDbContext ?? throw new ArgumentNullException(nameof(sampleDbContext));
@@ -27,50 +30,15 @@ namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Reactive
       Comparer = new GenericEqualityComparer<DomainEntity>((x, y) => x.Id == y.Id);
     }
 
-    #region Properties
-
     protected override IScheduler DispatcherScheduler => schedulersFactory.Dispatcher;
 
     protected override IEnumerable<Product> Query => sampleDbContext.Products.ToList();
 
     protected override IEqualityComparer<Product> Comparer { get; }
-    
-    private bool isOffline = true;
-
-    public bool IsOffline
-    {
-      get => isOffline;
-      set
-      {
-        if(isOffline == value)
-          return;
-
-        isOffline = value;
-
-        NotifyPropertyChanged();
-      }
-    }
-
-    #endregion
-
-    #region Methods
 
     protected override ProductViewModel CreateViewModel(Product model)
     {
       return new ProductViewModel(model);
     }
-
-    public void Initialize()
-    {
-      SubscribeToDataChanges();
-    }
-
-    protected override void OnDispose()
-    {
-      base.OnDispose();
-
-    }
-
-    #endregion
   }
 }
