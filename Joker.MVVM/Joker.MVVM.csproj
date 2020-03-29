@@ -8,9 +8,9 @@
     <Company />
     <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
     <Description>Reactive view models for data changes</Description>
-    <PackageTags>MVVM reactive changes</PackageTags>
+    <PackageTags>MVVM reactive changes push notification</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.0.0-alpha</Version>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

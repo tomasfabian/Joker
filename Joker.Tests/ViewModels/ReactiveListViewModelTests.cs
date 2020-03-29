@@ -6,6 +6,7 @@ using UnitTests;
 using FluentAssertions;
 using Joker.Enums;
 using Joker.MVVM.Tests.Helpers;
+using System.Reactive.Concurrency;
 
 namespace Joker.MVVM.Tests.ViewModels
 {
@@ -21,20 +22,45 @@ namespace Joker.MVVM.Tests.ViewModels
     {
       base.TestInitialize();
 
-      ClassUnderTest = new ReactiveListTestViewModel(reactiveTest, schedulersFactory);
+      ClassUnderTest = CreateReactiveListTestViewModel();
+
+      Init();
 
       SubscribeToDataChanges();
+    }
+
+    private TestModel model2;
+    private TestModel model3;
+    private TestModel model4;
+
+    private void Init()
+    {
+      model2 = originalModel.Clone();
+      model2.Id = 2;      
+
+      model3 = originalModel.Clone();
+      model3.Id = 3;
+
+      model4 = originalModel.Clone();
+      model4.Id = 4;
+    }
+
+    private ReactiveListTestViewModel CreateReactiveListTestViewModel()
+    {
+      return new ReactiveListTestViewModel(reactiveTest, schedulersFactory);
     }
 
     private void SubscribeToDataChanges()
     {
       ClassUnderTest.SubscribeToDataChanges();
 
-      //load entities
+      LoadEntitiesFromQuery();
+    }
+
+    private void LoadEntitiesFromQuery()
+    {
       schedulersFactory.ThreadPool.AdvanceBy(100);
       schedulersFactory.Dispatcher.AdvanceBy(100);
-
-      AdvanceChangesBuffer();
     }
 
     #endregion
@@ -47,14 +73,13 @@ namespace Joker.MVVM.Tests.ViewModels
       //Arrange
       ClassUnderTest.Dispose();
       
-      ClassUnderTest = new ReactiveListTestViewModel(reactiveTest, schedulersFactory);
+      ClassUnderTest = CreateReactiveListTestViewModel();
       
       ClassUnderTest.SubscribeToDataChanges();
       ClassUnderTest.IsLoading.Should().BeTrue();
 
       //Act
-      schedulersFactory.ThreadPool.AdvanceBy(100);
-      schedulersFactory.Dispatcher.AdvanceBy(100);
+      LoadEntitiesFromQuery();
 
       //Assert
       ClassUnderTest.IsLoading.Should().BeFalse();
@@ -112,7 +137,7 @@ namespace Joker.MVVM.Tests.ViewModels
     }
         
     [TestMethod]
-    public void UpdateForNotExistingModel_ViewModelWasCreated()
+    public void UpdateForNotFoundModel_CanAddMissingEntityOnUpdate_ViewModelWasCreated()
     {
       //Arrange
       var model = originalModel.Clone();
@@ -128,6 +153,26 @@ namespace Joker.MVVM.Tests.ViewModels
       var viewModel = ClassUnderTest.Find(originalModel);
 
       viewModel.Should().NotBeNull();
+    }        
+
+    [TestMethod]
+    public void UpdateForNotFoundModel_CanNotAddMissingEntityOnUpdate_ViewModelWasCreated()
+    {
+      //Arrange
+      ClassUnderTest.CanAddMissingEntityOnUpdateOverride = false;
+      var model = originalModel.Clone();
+
+      model.Name = null;
+      model.Timestamp = originalModel.Timestamp.AddHours(-1);
+
+      //Act
+      PublishEntityUpdatedEvent(model);
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(1);
+      var viewModel = ClassUnderTest.Find(originalModel);
+
+      viewModel.Should().BeNull();
     }
 
     [TestMethod]
@@ -160,6 +205,72 @@ namespace Joker.MVVM.Tests.ViewModels
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(1);
+    }
+
+    #endregion
+
+    #region DataChange buffering
+
+    [TestMethod]
+    public void ThirdEntityCreationWasPublishedAfterBufferTimeSpan()
+    {
+      //Arrange
+      SchedulePublishChangeEvent(ChangeType.Create, model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, model3, 200);
+
+      SchedulePublishChangeEvent(ChangeType.Create, model4, defaultBufferTimeSpan);
+      
+      ClassUnderTest.Items.Count.Should().Be(1);
+
+      //Act
+      AdvanceChangesBuffer();
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(3);
+
+      //Act
+      AdvanceChangesBuffer();
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(4);
+    }
+
+    [TestMethod]
+    public void DataChangesBufferCountWasReachedBeforeTimeSpan()
+    {
+      //Arrange
+      SchedulePublishChangeEvent(ChangeType.Create, model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, model4, 300);
+      
+      ClassUnderTest.Items.Count.Should().Be(1);
+
+      //Act
+      AdvanceChangesBuffer(300);
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(4);
+    }
+
+    [TestMethod]
+    public void LoadingData_OnCreatedWasBuffered()
+    {
+      //Arrange
+      ClassUnderTest.Dispose();
+      ClassUnderTest = CreateReactiveListTestViewModel();
+      ClassUnderTest.SubscribeToDataChanges();
+
+      SchedulePublishChangeEvent(ChangeType.Create, model2, 10);
+      AdvanceChangesBuffer(20);
+      
+      ClassUnderTest.Items.Count.Should().Be(0);
+
+      //Act
+      LoadEntitiesFromQuery();
+      AdvanceChangesBuffer();
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(2);
     }
 
     #endregion
@@ -228,12 +339,27 @@ namespace Joker.MVVM.Tests.ViewModels
 
     #region Methods
 
-    readonly long bufferTicks = TimeSpan.FromMilliseconds(250).Ticks;
+    readonly TimeSpan defaultBufferTimeSpan = TimeSpan.FromMilliseconds(250);
 
-    private void AdvanceChangesBuffer()
+    private void AdvanceChangesBuffer(long bufferTicks)
     {
       schedulersFactory.TaskPool.AdvanceBy(bufferTicks);
       schedulersFactory.Dispatcher.AdvanceBy(bufferTicks);
+    }    
+    
+    private void AdvanceChangesBuffer()
+    {
+      AdvanceChangesBuffer(defaultBufferTimeSpan.Ticks);
+    }
+
+    private void SchedulePublishChangeEvent(ChangeType changeType, TestModel model, long ticks)
+    {
+      SchedulePublishChangeEvent(changeType, model, TimeSpan.FromTicks(ticks));
+    }
+
+    private void SchedulePublishChangeEvent(ChangeType changeType, TestModel model, TimeSpan timeSpan)
+    {
+      schedulersFactory.TaskPool.Schedule(timeSpan, () => { PublishChangeEvent(changeType, model); });
     }
 
     private void PublishChangeEvent(ChangeType changeType, TestModel model)
@@ -243,6 +369,11 @@ namespace Joker.MVVM.Tests.ViewModels
         ChangeType = changeType,
         Entity = model
       });
+    }
+
+    private void PublishChangeEventAndAdvanceTime(ChangeType changeType, TestModel model)
+    {
+      PublishChangeEvent(changeType, model);
 
       AdvanceChangesBuffer();
     }
@@ -256,7 +387,7 @@ namespace Joker.MVVM.Tests.ViewModels
 
     private void PublishEntityAddedEvent()
     {
-      PublishChangeEvent(ChangeType.Create, originalModel);
+      PublishChangeEventAndAdvanceTime(ChangeType.Create, originalModel);
     }
 
     private void PublishEntityUpdatedEvent(TestModel model = null)
@@ -269,7 +400,7 @@ namespace Joker.MVVM.Tests.ViewModels
         model.Timestamp = originalModel.Timestamp.AddDays(1);
       }
       
-      PublishChangeEvent(ChangeType.Update, model);
+      PublishChangeEventAndAdvanceTime(ChangeType.Update, model);
     }
 
     private void PublishEntityDeletedEvent()
@@ -278,7 +409,7 @@ namespace Joker.MVVM.Tests.ViewModels
 
       clone.Timestamp = originalModel.Timestamp.AddMonths(1);
 
-      PublishChangeEvent(ChangeType.Delete, clone);
+      PublishChangeEventAndAdvanceTime(ChangeType.Delete, clone);
     }
 
     #endregion

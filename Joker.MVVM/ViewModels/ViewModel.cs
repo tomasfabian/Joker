@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Joker.Contracts;
 
 namespace Joker.MVVM.ViewModels
 {
-  public class ViewModel<TModel> : ViewModel
+  public class ViewModel<TModel> : ViewModel, IViewModel<TModel>
+    where TModel : IVersion
   {
     public ViewModel(TModel model)
     {

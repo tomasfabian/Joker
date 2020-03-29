@@ -21,6 +21,8 @@ namespace Joker.MVVM.Tests.Helpers
       Comparer = new GenericEqualityComparer<TestModel>((x, y) => x.Id == y.Id);
     }
 
+    protected override int DataChangesBufferCount => 3;
+
     protected override IScheduler DispatcherScheduler => schedulersFactory.Dispatcher;
     
     protected override IEnumerable<TestModel> Query => new[]
@@ -48,8 +50,15 @@ namespace Joker.MVVM.Tests.Helpers
         return (model, viewModel) => viewModel.UpdateFrom(model);
 
       return null;
-    }    
-    
+    }
+
+    public bool CanAddMissingEntityOnUpdateOverride { get; set; } = true;
+
+    protected override bool CanAddMissingEntityOnUpdate(TestModel model)
+    {
+      return CanAddMissingEntityOnUpdateOverride;
+    }
+
     protected override TestModel GetModel(EntityChange<TestModel> entityChange)
     {
       var entity = entityChange.Entity?.Clone();

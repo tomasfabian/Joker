@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Joker.Contracts;
 
 namespace Joker.MVVM.ViewModels
 {
   public class ViewModelsList<TViewModel> : ViewModel
-    where TViewModel : ViewModel, IVersion
+    where TViewModel : class, IViewModel
   {
     private readonly ObservableCollection<TViewModel> viewModels = new ObservableCollection<TViewModel>();
 
@@ -62,7 +61,7 @@ namespace Joker.MVVM.ViewModels
       get => selectedItem;
       set
       {
-        if(value == selectedItem)
+        if(Equals(value, selectedItem))
           return;
 
         var oldValue = selectedItem;

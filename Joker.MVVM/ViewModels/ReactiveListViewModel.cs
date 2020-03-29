@@ -40,7 +40,7 @@ namespace Joker.MVVM.ViewModels
 {
   public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TViewModel>, IDisposable
     where TModel : class, IVersion
-    where TViewModel : ViewModel<TModel>, IVersion
+    where TViewModel : class, IViewModel<TModel>
   {
     #region Fields
 
@@ -68,6 +68,13 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IEnumerable<TModel> Query { get; }
 
+    protected virtual IObservable<IList<EntityChange<TModel>>> DataChanges => reactive.WhenDataChanges
+      .Buffer(DataChangesBufferTimeSpan, DataChangesBufferCount, schedulersFactory.TaskPool);
+
+    protected virtual TimeSpan DataChangesBufferTimeSpan => TimeSpan.FromMilliseconds(250);
+
+    protected virtual int DataChangesBufferCount => 100;
+    
     #endregion
 
     #region Methods
@@ -113,9 +120,6 @@ namespace Joker.MVVM.ViewModels
     {
     }
 
-    protected virtual IObservable<IList<EntityChange<TModel>>> DataChanges => reactive.WhenDataChanges
-      .Buffer(TimeSpan.FromMilliseconds(250), 100, schedulersFactory.TaskPool);
-
     private SerialDisposable whenDataChangesSubscription;
 
     public void SubscribeToDataChanges()
@@ -157,13 +161,13 @@ namespace Joker.MVVM.ViewModels
       switch (entityChange.ChangeType)
       {
         case ChangeType.Create:
-          OnEntityCreated(entity);
+          OnEntityCreatedNotification(entity);
           break;
         case ChangeType.Update:
-          OnEntityUpdated(entity, UpdateViewModel());
+          OnEntityUpdatedNotification(entity, UpdateViewModel());
           break;
         case ChangeType.Delete:
-          OnEntityDeleted(entity);
+          OnEntityDeletedNotification(entity);
           break;
       }
     }
@@ -189,7 +193,7 @@ namespace Joker.MVVM.ViewModels
       return viewModel;
     }
 
-    protected virtual void OnEntityCreated(TModel model)
+    protected virtual void OnEntityCreatedNotification(TModel model)
     {
       var viewModel = Find(model);
 
@@ -206,18 +210,29 @@ namespace Joker.MVVM.ViewModels
       ViewModels.Add(viewModel);
     }
 
-    protected virtual void OnEntityUpdated(TModel model, Action<TModel, TViewModel> update)
+    protected virtual bool CanAddMissingEntityOnUpdate(TModel model)
+    {
+      return model != null;
+    }
+
+    protected virtual bool ShouldIgnoreUpdate(TModel currentModel, TModel receivedModel)
+    {
+      return currentModel.Timestamp >= receivedModel.Timestamp;
+    }
+
+    protected virtual void OnEntityUpdatedNotification(TModel model, Action<TModel, TViewModel> update)
     {
       var viewModel = Find(model);
 
       if (viewModel == null)
       {
-        AddViewModel(model);
+        if(CanAddMissingEntityOnUpdate(model))
+          AddViewModel(model);
 
         return;
       }
 
-      if (viewModel.Timestamp >= model.Timestamp)
+      if (ShouldIgnoreUpdate(viewModel.Model, model))
         return;
 
       if (update != null)
@@ -226,13 +241,13 @@ namespace Joker.MVVM.ViewModels
       }
       else
       {
-        OnEntityDeleted(model);
+        OnEntityDeletedNotification(model);
 
-        OnEntityCreated(model);
+        OnEntityCreatedNotification(model);
       }
     }
 
-    protected virtual bool OnEntityDeleted(TModel model)
+    protected virtual bool OnEntityDeletedNotification(TModel model)
     {
       var viewModel = Find(model);
 
