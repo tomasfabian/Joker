@@ -7,6 +7,9 @@ jobs:
 
     runs-on: windows-latest
 
+    env:
+      Test_Project_Path: Joker.MVVM\Joker.MVVM.csproj
+
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -15,3 +18,7 @@ jobs:
         dotnet-version: 3.0.100
     - name: Build with dotnet
       run: dotnet build --configuration Release
+    
+    # Test
+    - name: Execute Unit Tests
+      run: dotnet test $env:Test_Project_Path
