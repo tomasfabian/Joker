@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
+namespace Joker.Redis.ConnectionMultiplexers
 {
   public class RedisPublisher : RedisProvider, IRedisPublisher
   {

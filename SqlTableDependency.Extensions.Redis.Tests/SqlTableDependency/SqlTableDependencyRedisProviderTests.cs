@@ -1,16 +1,16 @@
-﻿using System;
-using System.Reactive.Subjects;
+﻿using System.Reactive.Subjects;
+using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject;
+using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Notifications;
-using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
-using SqlTableDependency.Extensions.Redis.Tests.Models;
 using StackExchange.Redis;
 using TableDependency.SqlClient.Base.Enums;
 using UnitTests;
 
-namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
+namespace Joker.Redis.Tests.SqlTableDependency
 {
   [TestClass]
   public class SqlTableDependencyRedisProviderTests : TestBase<TestSqlTableDependencyRedisProvider>

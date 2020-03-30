@@ -1,9 +1,10 @@
 ﻿using System.Reactive.Concurrency;
-using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
-using SqlTableDependency.Extensions.Redis.SqlTableDependency;
-using SqlTableDependency.Extensions.Redis.Tests.Models;
+using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.SqlTableDependency;
+using Joker.Redis.Tests.Models;
+using SqlTableDependency.Extensions;
 
-namespace SqlTableDependency.Extensions.Redis.Tests.SqlTableDependency
+namespace Joker.Redis.Tests.SqlTableDependency
 {
   public class TestSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<TestModel>
   {

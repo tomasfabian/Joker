@@ -1,4 +1,4 @@
-﻿namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
+﻿namespace Joker.Redis.ConnectionMultiplexers
 {
   public interface IRedisProvider
   {

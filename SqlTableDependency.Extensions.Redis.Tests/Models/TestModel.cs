@@ -1,7 +1,6 @@
 ﻿using Joker.Domain;
-using Sample.Domain.Models;
 
-namespace SqlTableDependency.Extensions.Redis.Tests.Models
+namespace Joker.Redis.Tests.Models
 {
   public class TestModel : DomainEntity
   {

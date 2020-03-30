@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SqlTableDependency.Extensions.Disposables;
 using StackExchange.Redis;
 
-namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
+namespace Joker.Redis.ConnectionMultiplexers
 {
   public abstract class RedisProvider : DisposableObject, IRedisProvider
   {

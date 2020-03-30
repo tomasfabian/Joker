@@ -2,13 +2,14 @@
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
+using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Notifications;
-using SqlTableDependency.Extensions.Redis.ConnectionMultiplexers;
 using TableDependency.SqlClient.Base.Enums;
 
-namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
+namespace Joker.Redis.SqlTableDependency
 {
   public abstract class SqlTableDependencyRedisProvider<TEntity> : DisposableObject, ISqlTableDependencyRedisProvider<TEntity>
     where TEntity : class, new()

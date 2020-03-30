@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
+namespace Joker.Redis.SqlTableDependency
 {
   public interface ISqlTableDependencyRedisProvider<TEntity> : IDisposable
     where TEntity : class, new()

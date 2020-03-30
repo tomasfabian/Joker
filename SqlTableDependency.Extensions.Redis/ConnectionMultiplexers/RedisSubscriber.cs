@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
+namespace Joker.Redis.ConnectionMultiplexers
 {
   public class RedisSubscriber : RedisProvider, IRedisSubscriber
   {
