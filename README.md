@@ -1,3 +1,10 @@
+# Joker Model-View-ViewModel:
+Reactive view models for data changes
+
+* [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
+
+Install-Package Joker.MVVM -Version 1.0.0
+
 # SqlTableDependency.Extensions
 If sharing increases coupling, should we share at all? Is it time for decoupling?
 
@@ -140,10 +147,11 @@ namespace SqlTableDependency.Extensions.Sample
 }
 
 ```
-# Joker Model-View-ViewModel:
-* [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-# SqlTableDependency.Extensions.Redis Preview
+# Joker.Redis
+SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
+
+Install-Package Joker.Redis -Version 1.0.0
 
 Download and run redis-server (https://redis.io/download)
 
