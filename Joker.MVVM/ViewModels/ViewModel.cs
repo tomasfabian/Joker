@@ -5,10 +5,10 @@ using Joker.Contracts;
 
 namespace Joker.MVVM.ViewModels
 {
-  public class ViewModel<TModel> : ViewModel, IViewModel<TModel>
+  public abstract class ViewModel<TModel> : ViewModel, IViewModel<TModel>
     where TModel : IVersion
   {
-    public ViewModel(TModel model)
+    protected ViewModel(TModel model)
     {
       if(model == null)
         throw new ArgumentNullException(nameof(model));
@@ -19,7 +19,7 @@ namespace Joker.MVVM.ViewModels
     public TModel Model { get; }
   }
 
-  public class ViewModel : INotifyPropertyChanged
+  public abstract class ViewModel : INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
 

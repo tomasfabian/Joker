@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -141,9 +142,30 @@ namespace Joker.MVVM.ViewModels
       whenDataChangesSubscription.Disposable = changes
         .Where(c => c.Count > 0)
         .ObserveOn(DispatcherScheduler)
-        .Subscribe(OnDataChangesReceived);
+        .Finally(OnDataChangesSubscriptionFinished)
+        .Select(CloneEntityChanges)
+        .Subscribe(CreateDataChangesObserver());
 
       LoadEntities();
+    }
+
+    private List<EntityChange<TModel>> CloneEntityChanges(IList<EntityChange<TModel>> entityChanges)
+    {
+      return entityChanges.Select(entityChange =>
+      {
+        var entity = GetModel(entityChange);
+
+        return new EntityChange<TModel>(entity, entityChange.ChangeType);
+      }).ToList();
+    }
+
+    protected virtual IObserver<IList<EntityChange<TModel>>> CreateDataChangesObserver()
+    {
+      return Observer.Create<IList<EntityChange<TModel>>>(OnDataChangesReceived, error => throw error);
+    }
+
+    protected virtual void OnDataChangesSubscriptionFinished()
+    {
     }
 
     private void OnDataChangesReceived(IList<EntityChange<TModel>> entityChanges)

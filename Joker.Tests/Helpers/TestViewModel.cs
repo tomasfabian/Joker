@@ -1,56 +1,34 @@
-﻿using System;
-using Joker.Contracts;
-using Joker.MVVM.ViewModels;
+﻿using Joker.MVVM.ViewModels.Domain;
 
 namespace Joker.MVVM.Tests.Helpers
 {
-  public class TestViewModel : ViewModel<TestModel>, IVersion
+  public class TestViewModel : DomainEntityViewModel<TestModel>
   {
-    private readonly TestModel model;
-
     public TestViewModel(TestModel model)
       : base(model)
     {
-      this.model = model ?? throw new ArgumentNullException(nameof(model));
-    }
-
-    public DateTime Timestamp
-    {
-      get => model.Timestamp;
-
-      set
-      {
-        if(value == model.Timestamp)
-          return;
-
-        model.Timestamp = value;
-
-        NotifyPropertyChanged();
-      }
     }
 
     public string Name
     {
-      get => model.Name;
+      get => Model.Name;
 
       set
       {
-        if(value == model.Name)
+        if(value == Model.Name)
           return;
 
-        model.Name = value;
+        Model.Name = value;
 
         NotifyPropertyChanged();
       }
     }
 
-    public void UpdateFrom(TestModel updatedModel)
+    protected override void OnUpdateFrom(TestModel updatedModel)
     {
-      if(updatedModel == null || updatedModel.Id != model.Id)
-        return;
-
+      base.OnUpdateFrom(updatedModel);
+      
       Name = updatedModel.Name;
-      Timestamp = updatedModel.Timestamp;
     }
   }
 }

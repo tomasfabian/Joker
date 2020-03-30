@@ -1,11 +1,21 @@
-﻿using Joker.Contracts;
+﻿using System;
+using Joker.Contracts;
 
 namespace Joker.Enums
 {
   public class EntityChange<TEntity>
     where TEntity : IVersion
   {
-    public TEntity Entity { get; set; }
-    public ChangeType ChangeType { get; set; }
+    public EntityChange(TEntity entity, ChangeType changeType)
+    {
+      if (entity == null)
+        throw new ArgumentNullException(nameof(entity));
+        
+      Entity = entity;
+      ChangeType = changeType;
+    }
+
+    public TEntity Entity { get; }
+    public ChangeType ChangeType { get; }
   }
 }

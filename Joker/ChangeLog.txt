@@ -1,0 +1,10 @@
+﻿1.0.0
+- IVersion, IDomainEntity, IReactiveData
+- GenericEqualityComparer
+- DisposableObject
+- EntityChange, ChangeType
+- SchedulersFactory
+
+1.1.0
+- DomainEntity
+- DomainEntityComparer

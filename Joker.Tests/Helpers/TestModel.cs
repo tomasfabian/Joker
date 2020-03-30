@@ -1,15 +1,11 @@
 ﻿using System;
-using Joker.Contracts;
+using Joker.Domain;
 
 namespace Joker.MVVM.Tests.Helpers
 {
   [Serializable]
-  public class TestModel : IVersion
+  public class TestModel : DomainEntity
   {
-    public int Id { get; set; }
-
-    public DateTime Timestamp { get; set; }
-
     public string Name { get; set; }
 
     public TestModel Clone()

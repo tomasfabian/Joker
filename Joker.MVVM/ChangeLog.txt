@@ -2,3 +2,8 @@
 - ViewModel
 - ViewModelsList
 - ReactiveListViewModel
+
+1.1.0
+- DomainEntityViewModel
+- ReactiveListDomainEntityViewModel
+- added ReactiveListViewModel<TModel, TViewModel>.CreateDataChangesObserver and cloning of EntityChange notifications. Rethrowing of subscription exceptions.

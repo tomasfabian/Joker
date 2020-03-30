@@ -18,7 +18,7 @@ namespace Joker.MVVM.Tests.Helpers
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
-      Comparer = new GenericEqualityComparer<TestModel>((x, y) => x.Id == y.Id);
+      Comparer = new DomainEntityComparer();
     }
 
     protected override int DataChangesBufferCount => 3;

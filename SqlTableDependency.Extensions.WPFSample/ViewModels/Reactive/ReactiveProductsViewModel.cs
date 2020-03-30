@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using Joker.Comparators;
 using Joker.Contracts;
-using Joker.Domain;
+using Joker.Enums;
 using Joker.MVVM.ViewModels;
 using Sample.Data.Context;
 using Sample.Domain.Models;
@@ -24,21 +24,35 @@ namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Reactive
       IWpfSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
-      this.sampleDbContext = sampleDbContext ?? throw new ArgumentNullException(nameof(sampleDbContext));
+      this.sampleDbContext = sampleDbContext;
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
-      Comparer = new GenericEqualityComparer<DomainEntity>((x, y) => x.Id == y.Id);
+      Comparer = new DomainEntityComparer();
     }
 
     protected override IScheduler DispatcherScheduler => schedulersFactory.Dispatcher;
 
-    protected override IEnumerable<Product> Query => sampleDbContext.Products.ToList();
+    protected override IEnumerable<Product> Query
+    {
+      get
+      {
+        if(sampleDbContext != null)
+          return sampleDbContext.Products.ToList();
+
+        return new[] {new Product() {Id = 1}};
+      }
+    }
 
     protected override IEqualityComparer<Product> Comparer { get; }
 
     protected override ProductViewModel CreateViewModel(Product model)
     {
       return new ProductViewModel(model);
+    }
+
+    protected override Product GetModel(EntityChange<Product> entityChange)
+    {
+      return entityChange.Entity.Clone();
     }
   }
 }

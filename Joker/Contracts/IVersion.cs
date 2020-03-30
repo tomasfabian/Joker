@@ -4,6 +4,6 @@ namespace Joker.Contracts
 {
   public interface IVersion
   {
-    DateTime Timestamp { get; }
+    DateTime Timestamp { get; set; }
   }
 }

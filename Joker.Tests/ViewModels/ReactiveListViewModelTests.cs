@@ -2,20 +2,16 @@
 using System.Linq;
 using Joker.MVVM.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnitTests;
 using FluentAssertions;
 using Joker.Enums;
 using Joker.MVVM.Tests.Helpers;
-using System.Reactive.Concurrency;
 
 namespace Joker.MVVM.Tests.ViewModels
 {
   [TestClass]
-  public class ReactiveListViewModelTests : TestBase<ReactiveListTestViewModel>
+  public class ReactiveListViewModelTests : ReactiveListViewModelTestsBase
   {
     #region TestInitialize
-
-    private readonly TestModelReactiveData reactiveTest = new TestModelReactiveData();
 
     [TestInitialize]
     public override void TestInitialize()
@@ -23,67 +19,13 @@ namespace Joker.MVVM.Tests.ViewModels
       base.TestInitialize();
 
       ClassUnderTest = CreateReactiveListTestViewModel();
-
-      Init();
-
+      
       SubscribeToDataChanges();
-    }
-
-    private TestModel model2;
-    private TestModel model3;
-    private TestModel model4;
-
-    private void Init()
-    {
-      model2 = originalModel.Clone();
-      model2.Id = 2;      
-
-      model3 = originalModel.Clone();
-      model3.Id = 3;
-
-      model4 = originalModel.Clone();
-      model4.Id = 4;
-    }
-
-    private ReactiveListTestViewModel CreateReactiveListTestViewModel()
-    {
-      return new ReactiveListTestViewModel(reactiveTest, schedulersFactory);
-    }
-
-    private void SubscribeToDataChanges()
-    {
-      ClassUnderTest.SubscribeToDataChanges();
-
-      LoadEntitiesFromQuery();
-    }
-
-    private void LoadEntitiesFromQuery()
-    {
-      schedulersFactory.ThreadPool.AdvanceBy(100);
-      schedulersFactory.Dispatcher.AdvanceBy(100);
     }
 
     #endregion
 
     #region Tests
-    
-    [TestMethod]
-    public void IsLoading()
-    {
-      //Arrange
-      ClassUnderTest.Dispose();
-      
-      ClassUnderTest = CreateReactiveListTestViewModel();
-      
-      ClassUnderTest.SubscribeToDataChanges();
-      ClassUnderTest.IsLoading.Should().BeTrue();
-
-      //Act
-      LoadEntitiesFromQuery();
-
-      //Assert
-      ClassUnderTest.IsLoading.Should().BeFalse();
-    }
 
     #region EntityChanges
 
@@ -110,10 +52,10 @@ namespace Joker.MVVM.Tests.ViewModels
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(2);
-      var viewModel = ClassUnderTest.Find(originalModel);
+      var viewModel = ClassUnderTest.Find(OriginalModel);
 
       viewModel.Should().NotBeNull();
-      viewModel.Name.Should().NotBe(originalModel.Name);
+      viewModel.Name.Should().NotBe(OriginalModel.Name);
     }
     
     [TestMethod]
@@ -140,17 +82,17 @@ namespace Joker.MVVM.Tests.ViewModels
     public void UpdateForNotFoundModel_CanAddMissingEntityOnUpdate_ViewModelWasCreated()
     {
       //Arrange
-      var model = originalModel.Clone();
+      var model = OriginalModel.Clone();
 
       model.Name = null;
-      model.Timestamp = originalModel.Timestamp.AddHours(-1);
+      model.Timestamp = OriginalModel.Timestamp.AddHours(-1);
 
       //Act
       PublishEntityUpdatedEvent(model);
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(2);
-      var viewModel = ClassUnderTest.Find(originalModel);
+      var viewModel = ClassUnderTest.Find(OriginalModel);
 
       viewModel.Should().NotBeNull();
     }        
@@ -160,17 +102,17 @@ namespace Joker.MVVM.Tests.ViewModels
     {
       //Arrange
       ClassUnderTest.CanAddMissingEntityOnUpdateOverride = false;
-      var model = originalModel.Clone();
+      var model = OriginalModel.Clone();
 
       model.Name = null;
-      model.Timestamp = originalModel.Timestamp.AddHours(-1);
+      model.Timestamp = OriginalModel.Timestamp.AddHours(-1);
 
       //Act
       PublishEntityUpdatedEvent(model);
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(1);
-      var viewModel = ClassUnderTest.Find(originalModel);
+      var viewModel = ClassUnderTest.Find(OriginalModel);
 
       viewModel.Should().BeNull();
     }
@@ -188,10 +130,10 @@ namespace Joker.MVVM.Tests.ViewModels
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(2);
-      var viewModel = ClassUnderTest.Find(originalModel);
+      var viewModel = ClassUnderTest.Find(OriginalModel);
 
       viewModel.Should().NotBeNull();
-      viewModel.Name.Should().NotBe(originalModel.Name);
+      viewModel.Name.Should().NotBe(OriginalModel.Name);
     }
     
     [TestMethod]
@@ -215,10 +157,10 @@ namespace Joker.MVVM.Tests.ViewModels
     public void ThirdEntityCreationWasPublishedAfterBufferTimeSpan()
     {
       //Arrange
-      SchedulePublishChangeEvent(ChangeType.Create, model2, 100);
-      SchedulePublishChangeEvent(ChangeType.Create, model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, Model3, 200);
 
-      SchedulePublishChangeEvent(ChangeType.Create, model4, defaultBufferTimeSpan);
+      SchedulePublishChangeEvent(ChangeType.Create, Model4, DefaultBufferTimeSpan);
       
       ClassUnderTest.Items.Count.Should().Be(1);
 
@@ -239,9 +181,9 @@ namespace Joker.MVVM.Tests.ViewModels
     public void DataChangesBufferCountWasReachedBeforeTimeSpan()
     {
       //Arrange
-      SchedulePublishChangeEvent(ChangeType.Create, model2, 100);
-      SchedulePublishChangeEvent(ChangeType.Create, model3, 200);
-      SchedulePublishChangeEvent(ChangeType.Create, model4, 300);
+      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, Model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, Model4, 300);
       
       ClassUnderTest.Items.Count.Should().Be(1);
 
@@ -250,27 +192,6 @@ namespace Joker.MVVM.Tests.ViewModels
 
       //Assert
       ClassUnderTest.Items.Count.Should().Be(4);
-    }
-
-    [TestMethod]
-    public void LoadingData_OnCreatedWasBuffered()
-    {
-      //Arrange
-      ClassUnderTest.Dispose();
-      ClassUnderTest = CreateReactiveListTestViewModel();
-      ClassUnderTest.SubscribeToDataChanges();
-
-      SchedulePublishChangeEvent(ChangeType.Create, model2, 10);
-      AdvanceChangesBuffer(20);
-      
-      ClassUnderTest.Items.Count.Should().Be(0);
-
-      //Act
-      LoadEntitiesFromQuery();
-      AdvanceChangesBuffer();
-
-      //Assert
-      ClassUnderTest.Items.Count.Should().Be(2);
     }
 
     #endregion
@@ -337,88 +258,14 @@ namespace Joker.MVVM.Tests.ViewModels
 
     #endregion
 
-    #region Methods
-
-    readonly TimeSpan defaultBufferTimeSpan = TimeSpan.FromMilliseconds(250);
-
-    private void AdvanceChangesBuffer(long bufferTicks)
-    {
-      schedulersFactory.TaskPool.AdvanceBy(bufferTicks);
-      schedulersFactory.Dispatcher.AdvanceBy(bufferTicks);
-    }    
-    
-    private void AdvanceChangesBuffer()
-    {
-      AdvanceChangesBuffer(defaultBufferTimeSpan.Ticks);
-    }
-
-    private void SchedulePublishChangeEvent(ChangeType changeType, TestModel model, long ticks)
-    {
-      SchedulePublishChangeEvent(changeType, model, TimeSpan.FromTicks(ticks));
-    }
-
-    private void SchedulePublishChangeEvent(ChangeType changeType, TestModel model, TimeSpan timeSpan)
-    {
-      schedulersFactory.TaskPool.Schedule(timeSpan, () => { PublishChangeEvent(changeType, model); });
-    }
-
-    private void PublishChangeEvent(ChangeType changeType, TestModel model)
-    {
-      reactiveTest.Publish(new EntityChange<TestModel>
-      {
-        ChangeType = changeType,
-        Entity = model
-      });
-    }
-
-    private void PublishChangeEventAndAdvanceTime(ChangeType changeType, TestModel model)
-    {
-      PublishChangeEvent(changeType, model);
-
-      AdvanceChangesBuffer();
-    }
-
-    private readonly TestModel originalModel = new TestModel
-    {
-      Id = 2,
-      Timestamp = new DateTime(2020, 3, 27, 16, 0, 0),
-      Name = "Original"
-    };
-
-    private void PublishEntityAddedEvent()
-    {
-      PublishChangeEventAndAdvanceTime(ChangeType.Create, originalModel);
-    }
-
-    private void PublishEntityUpdatedEvent(TestModel model = null)
-    {
-      if(model == null)
-      {
-        model = originalModel.Clone();
-
-        model.Name = "Renamed";
-        model.Timestamp = originalModel.Timestamp.AddDays(1);
-      }
-      
-      PublishChangeEventAndAdvanceTime(ChangeType.Update, model);
-    }
-
-    private void PublishEntityDeletedEvent()
-    {
-      var clone = originalModel.Clone();
-
-      clone.Timestamp = originalModel.Timestamp.AddMonths(1);
-
-      PublishChangeEventAndAdvanceTime(ChangeType.Delete, clone);
-    }
-
-    #endregion
-
     #region CleanUp
 
     [TestCleanup]
     public void CleanUp()
     {
+      using (ClassUnderTest)
+      {
+      }
     }
 
     #endregion

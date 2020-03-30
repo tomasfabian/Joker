@@ -10,7 +10,7 @@
     <Copyright>@tomasfabian</Copyright>
     <Description>.NET helper classes for modular and reactive applications</Description>
     <PackageTags>modular reactive applications</PackageTags>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

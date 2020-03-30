@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Concurrency;
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,7 @@ namespace UnitTests
     protected readonly MoqMockingKernel MockingKernel = new MoqMockingKernel();
     protected TestScheduler TestScheduler = new TestScheduler();
 
-    protected ReactiveTestSchedulersFactory schedulersFactory;
+    protected ReactiveTestSchedulersFactory SchedulersFactory;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
@@ -26,10 +27,10 @@ namespace UnitTests
     [TestInitialize]
     public virtual void TestInitialize()
     {
-      schedulersFactory = new ReactiveTestSchedulersFactory();
+      SchedulersFactory = new ReactiveTestSchedulersFactory();
 
       MockingKernel.Bind<IScheduler>().ToConstant(TestScheduler);
-      MockingKernel.Bind<ReactiveTestSchedulersFactory>().ToConstant(schedulersFactory);
+      MockingKernel.Bind<ReactiveTestSchedulersFactory>().ToConstant(SchedulersFactory);
     }
 
     [TestCleanup]
@@ -43,9 +44,9 @@ namespace UnitTests
     {
       TestScheduler.Start();
       
-      schedulersFactory.ThreadPool.Start();
-      schedulersFactory.TaskPool.Start();
-      schedulersFactory.Dispatcher.Start();
+      SchedulersFactory.ThreadPool.Start();
+      SchedulersFactory.TaskPool.Start();
+      SchedulersFactory.Dispatcher.Start();
     }
 
     #endregion
@@ -57,6 +58,21 @@ namespace UnitTests
       TestScheduler.AdvanceBy(time);
     }
 
-    #endregion
+    #endregion    
+    
+    protected void Schedule(TestScheduler testScheduler, TimeSpan timeSpan, Action action)
+    {
+      testScheduler.Schedule(timeSpan, action);
+    }
+    
+    protected void ScheduleOnTaskPool(TimeSpan timeSpan, Action action)
+    {
+      Schedule(SchedulersFactory.TaskPool, timeSpan, action);
+    }
+    
+    protected void ScheduleOnThreadPool(TimeSpan timeSpan, Action action)
+    {
+      Schedule(SchedulersFactory.ThreadPool, timeSpan, action);
+    }
   }
 }
