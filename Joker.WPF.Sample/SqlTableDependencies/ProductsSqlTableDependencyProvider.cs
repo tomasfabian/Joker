@@ -1,11 +1,12 @@
 ﻿using System;
+using Joker.WPF.Sample.Providers.Scheduling;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Enums;
-using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using TableDependency.SqlClient.Base;
 using TableDependency.SqlClient.Base.EventArgs;
 
-namespace SqlTableDependency.Extensions.WPFSample.SqlTableDependencies
+namespace Joker.WPF.Sample.SqlTableDependencies
 {
   internal class ProductsSqlTableDependencyProvider : SqlTableDependencyProvider<Product>
   {

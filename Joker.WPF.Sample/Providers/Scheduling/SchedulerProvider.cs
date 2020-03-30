@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reactive.Concurrency;
+﻿using System.Reactive.Concurrency;
 
-namespace SqlTableDependency.Extensions.WPFSample.Providers.Scheduling
+namespace Joker.WPF.Sample.Providers.Scheduling
 {
   public class SchedulerProvider : ISchedulerProvider
   {

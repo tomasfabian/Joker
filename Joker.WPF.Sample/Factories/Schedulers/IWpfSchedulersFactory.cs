@@ -1,7 +1,7 @@
 ﻿using System.Reactive.Concurrency;
 using Joker.Factories.Schedulers;
 
-namespace SqlTableDependency.Extensions.WPFSample.Factories.Schedulers
+namespace Joker.WPF.Sample.Factories.Schedulers
 {
   public interface IWpfSchedulersFactory : ISchedulersFactory
   {

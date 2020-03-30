@@ -4,14 +4,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Joker.WPF.Sample.Providers.Scheduling;
 using Prism.Mvvm;
 using Sample.Data.Context;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Notifications;
-using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
 using TableDependency.SqlClient.Base.Enums;
 
-namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Products
+namespace Joker.WPF.Sample.ViewModels.Products
 {
   public class ProductsViewModel : BindableBase, IDisposable
   {

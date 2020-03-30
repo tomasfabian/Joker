@@ -1,7 +1,7 @@
 ﻿using Joker.MVVM.ViewModels.Domain;
 using Sample.Domain.Models;
 
-namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Products
+namespace Joker.WPF.Sample.ViewModels.Products
 {
   public class ProductViewModel : DomainEntityViewModel<Product>
   {

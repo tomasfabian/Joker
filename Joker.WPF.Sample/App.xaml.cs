@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 using System.Windows;
 using CommonServiceLocator;
+using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.WPF.Sample.Modularity;
+using Joker.WPF.Sample.Providers.Scheduling;
+using Joker.WPF.Sample.SqlTableDependencies;
+using Joker.WPF.Sample.ViewModels;
 using Ninject;
 using Prism.Ioc;
 using Prism.Ninject.Ioc;
 using Sample.Data.Context;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Enums;
-using SqlTableDependency.Extensions.WPFSample.Factories.Schedulers;
-using SqlTableDependency.Extensions.WPFSample.Modularity;
-using SqlTableDependency.Extensions.WPFSample.Providers.Scheduling;
-using SqlTableDependency.Extensions.WPFSample.SqlTableDependencies;
-using SqlTableDependency.Extensions.WPFSample.ViewModels;
 
-namespace SqlTableDependency.Extensions.WPFSample
+namespace Joker.WPF.Sample
 {
   /// <summary>
   /// Interaction logic for App.xaml

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using CommonServiceLocator;
 using Ninject;
 using Prism;
 using Prism.Ioc;
 using Prism.Ninject.Ioc;
 
-namespace SqlTableDependency.Extensions.WPFSample.Modularity
+namespace Joker.WPF.Sample.Modularity
 {
   public class ApplicationBase : PrismApplicationBase
   {

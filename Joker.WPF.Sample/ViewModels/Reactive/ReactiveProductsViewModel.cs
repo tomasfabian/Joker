@@ -6,12 +6,12 @@ using Joker.Comparators;
 using Joker.Contracts;
 using Joker.Enums;
 using Joker.MVVM.ViewModels;
+using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.WPF.Sample.ViewModels.Products;
 using Sample.Data.Context;
 using Sample.Domain.Models;
-using SqlTableDependency.Extensions.WPFSample.Factories.Schedulers;
-using SqlTableDependency.Extensions.WPFSample.ViewModels.Products;
 
-namespace SqlTableDependency.Extensions.WPFSample.ViewModels.Reactive
+namespace Joker.WPF.Sample.ViewModels.Reactive
 {
   public class ReactiveProductsViewModel : ReactiveListViewModel<Product, ProductViewModel>
   {
