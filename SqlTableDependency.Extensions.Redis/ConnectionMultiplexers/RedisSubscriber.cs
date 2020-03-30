@@ -15,7 +15,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     public async Task Subscribe(Action<ChannelMessage> onMessage, RedisChannel redisChannel, CommandFlags commandFlags = CommandFlags.None)
     {
-      Subject = await CreateSubject(url);
+      await CreateSubject(url);
 
       var channel = await Subject.SubscribeAsync(redisChannel);
       
@@ -24,12 +24,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     public void Unsubscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler = null, CommandFlags flags = CommandFlags.None)
     {
-      Subject.Unsubscribe(channel, handler, flags);
-    }
-
-    protected override void OnDispose()
-    {
-      base.OnDispose();
+      Subject?.Unsubscribe(channel, handler, flags);
     }
   }
 }

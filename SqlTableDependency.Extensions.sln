@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7C3B0334
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Tests", "SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj", "{965FB490-0CFC-4D34-88A2-4026349AD899}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Redis", "SqlTableDependency.Extensions.Redis\SqlTableDependency.Extensions.Redis.csproj", "{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Redis", "SqlTableDependency.Extensions.Redis\Joker.Redis.csproj", "{FF15AD3E-4B39-4E15-9E16-A95EEC6645D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9A38AC52-C490-403F-AFF0-76EE1F3C1A39}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Domain", "Sample.Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Data", "Sample.Data\Sample.Data.csproj", "{1311E88D-1239-467B-B8F9-60E4D5F265B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Redis.Tests", "SqlTableDependency.Extensions.Redis.Tests\SqlTableDependency.Extensions.Redis.Tests.csproj", "{352BFB2D-AB84-4530-AE89-F53CF26AAF1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Redis.Tests", "SqlTableDependency.Extensions.Redis.Tests\Joker.Redis.Tests.csproj", "{352BFB2D-AB84-4530-AE89-F53CF26AAF1B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.MVVM", "Joker.MVVM\Joker.MVVM.csproj", "{3A359530-27F7-4AD1-9C2C-2051D95D7451}"
 EndProject

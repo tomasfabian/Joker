@@ -29,6 +29,7 @@ namespace SqlTableDependency.Extensions.Sample
 
       var redisPublisher = new RedisPublisher(redisUrl);
       await redisPublisher.PublishAsync("messages", "hello");
+      await redisPublisher.PublishAsync("messages", "hello2");
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 
@@ -81,6 +82,7 @@ namespace SqlTableDependency.Extensions.Sample
                                       }, nameof(Product)+"-Status");
 
       redisSubscriber.WhenIsConnectedChanges.Subscribe(c => Console.WriteLine($"REDIS is connected: {c}"));
+
       return redisSubscriber;
     }
   }

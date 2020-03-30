@@ -1,0 +1,5 @@
+﻿1.0.0
+- SqlTableDependencyRedisProvider
+- RedisProvider
+- RedisPublisher
+- RedisSubscriber

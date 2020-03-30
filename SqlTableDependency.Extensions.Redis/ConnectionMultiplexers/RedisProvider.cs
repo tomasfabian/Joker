@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using SqlTableDependency.Extensions.Disposables;
 using StackExchange.Redis;
@@ -20,7 +21,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     #region Subject
 
-    protected ISubscriber Subject { get; set; }
+    protected ISubscriber Subject { get; private set; }
 
     #endregion
 
@@ -35,7 +36,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
     public bool IsConnected
     {
       get => isConnected;
-      set
+      private set
       {
         isConnected = value;
 
@@ -56,20 +57,36 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
     #endregion
 
     #region Methods
-
+    
     #region CreateSubject
+
+    private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
     protected async Task<ISubscriber> CreateSubject(string url)
     {
-      var configuration = CreateConfigurationOptions(url);
+      await semaphore.WaitAsync();    
 
-      connectionMultiplexer = await ConnectionMultiplexer.ConnectAsync(configuration);
+      try 
+      {
+        if(Subject == null)
+        {      
+          var configuration = CreateConfigurationOptions(url);
 
-      IsConnected = connectionMultiplexer.IsConnected;
+          connectionMultiplexer = await ConnectionMultiplexer.ConnectAsync(configuration);
 
-      Initialize();
+          IsConnected = connectionMultiplexer.IsConnected;
+
+          Initialize();
       
-      Subject = connectionMultiplexer.GetSubscriber();
+          Subject = connectionMultiplexer.GetSubscriber();
+          
+          Console.WriteLine("Subject created");
+        }
+      }
+      finally
+      {
+        semaphore.Release();
+      }
 
       return Subject;
     }
@@ -78,7 +95,7 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
 
     #region Initialize
 
-    public void Initialize()
+    private void Initialize()
     {
       connectionMultiplexer.ConnectionRestored += OnConnectionRestored;
       connectionMultiplexer.ConnectionFailed += OnConnectionFailed;
@@ -142,17 +159,17 @@ namespace SqlTableDependency.Extensions.Redis.ConnectionMultiplexers
     protected override void OnDispose()
     {
       base.OnDispose();
+      
+      IsConnected = false;
 
       whenIsConnectedChangesSubject.OnCompleted();
 
-      connectionMultiplexer.ConnectionRestored -= OnConnectionFailed;
-      connectionMultiplexer.ConnectionFailed -= OnConnectionRestored;
+      connectionMultiplexer.ConnectionRestored -= OnConnectionRestored;
+      connectionMultiplexer.ConnectionFailed -= OnConnectionFailed;
 
       using (connectionMultiplexer)
       {
       }
-
-      IsConnected = false;
     }
 
     #endregion

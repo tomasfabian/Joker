@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
@@ -55,14 +56,41 @@ namespace SqlTableDependency.Extensions.Redis.SqlTableDependency
       entityChangesSubscription =
         sqlTableDependencyProvider.WhenEntityRecordChanges
           .ObserveOn(scheduler)
-          .Subscribe(OnSqlTableDependencyRecordChanged);
+          .Finally(OnSqlTableDependencyRecordChangedSubscriptionFinished)
+          .Subscribe(CreateSqlTableDependencyRecordChangedObserver());
 
       statusChangesSubscription =
         sqlTableDependencyProvider.WhenStatusChanges
           .ObserveOn(scheduler)
-          .Subscribe(OnSqlTableDependencyStatusChanged);
+          .Subscribe(CreateSqlTableDependencyStatusChangedObserver());
 
       return this;
+    }
+
+    #endregion
+
+    #region CreateSqlTableDependencyRecordChangedObserver
+
+    protected virtual IObserver<RecordChangedNotification<TEntity>> CreateSqlTableDependencyRecordChangedObserver()
+    {
+      return Observer.Create<RecordChangedNotification<TEntity>>(OnSqlTableDependencyRecordChanged);
+    }
+
+    #endregion
+    
+    #region CreateSqlTableDependencyStatusChangedObserver
+
+    protected virtual IObserver<TableDependencyStatus> CreateSqlTableDependencyStatusChangedObserver()
+    {
+      return Observer.Create<TableDependencyStatus>(OnSqlTableDependencyStatusChanged);
+    }
+
+    #endregion
+
+    #region OnSqlTableDependencyRecordChangedSubscriptionFinished
+
+    protected virtual void OnSqlTableDependencyRecordChangedSubscriptionFinished()
+    {
     }
 
     #endregion
