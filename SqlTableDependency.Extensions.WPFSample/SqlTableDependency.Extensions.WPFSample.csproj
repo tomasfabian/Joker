@@ -12,9 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
-    <ProjectReference Include="..\SqlTableDependency.Extensions.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
   </ItemGroup>
 
