@@ -8,3 +8,6 @@
 1.1.0
 - DomainEntity
 - DomainEntityComparer
+
+1.2.0
+- added IPublisher interface to ReactiveData

@@ -6,7 +6,6 @@ using System.Reactive.Concurrency;
 using System.Threading.Tasks;
 using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Notifications;
