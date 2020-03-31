@@ -47,7 +47,7 @@ namespace Joker.MVVM.ViewModels
 
     private readonly IReactiveData<TModel> reactive;
     private readonly ISchedulersFactory schedulersFactory;
-    private IDisposable disposable;
+    private DisposableObject disposable;
 
     #endregion
 
@@ -82,25 +82,19 @@ namespace Joker.MVVM.ViewModels
 
     private void Init()
     {
-      disposable = DisposableObject.Create(() =>
-      {
-        OnDispose();
-
-        using (whenDataChangesSubscription)
-        using (loadEntitiesSubscription)
-        {
-        }
-      });
+      disposable = DisposableObject.Create(OnDispose);
     }
 
     private SerialDisposable loadEntitiesSubscription;
 
     private void LoadEntities()
     {
+      IsLoading = true;
+
       if (loadEntitiesSubscription == null)
         loadEntitiesSubscription = new SerialDisposable();
-
-      IsLoading = true;
+      else
+        loadEntitiesSubscription.Disposable = Disposable.Empty;
 
       ViewModels.Clear();
 
@@ -124,7 +118,10 @@ namespace Joker.MVVM.ViewModels
     private SerialDisposable whenDataChangesSubscription;
 
     public void SubscribeToDataChanges()
-    {
+    {      
+      if (disposable.IsDisposed)
+        throw new ObjectDisposedException("Object has already been disposed.");
+      
       if (whenDataChangesSubscription == null)
         whenDataChangesSubscription = new SerialDisposable();
 
@@ -280,6 +277,12 @@ namespace Joker.MVVM.ViewModels
 
     protected virtual void OnDispose()
     {
+      using (whenDataChangesSubscription)
+      using (loadEntitiesSubscription)
+      {
+      }
+
+      ViewModels.Clear();
     }
 
     public void Dispose()

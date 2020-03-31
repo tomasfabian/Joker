@@ -12,7 +12,7 @@ namespace Joker.Disposables
 
     #region Create
 
-    public static IDisposable Create(Action action)
+    public static DisposableObject Create(Action action)
     {
       return new Disposable(action);
     }

@@ -14,19 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\SqlTableDependency.Extensions.Redis\License.txt" Link="License.txt" />
+    <Content Include="..\Joker.Redis\License.txt" Link="License.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\SqlTableDependency.Extensions.Redis\License.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>

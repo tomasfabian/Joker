@@ -101,7 +101,7 @@ namespace Joker.MVVM.Tests.ViewModels
       LoadEntitiesFromQuery();
     }
 
-    private void LoadEntitiesFromQuery()
+    protected void LoadEntitiesFromQuery()
     {
       SchedulersFactory.ThreadPool.AdvanceBy(100);
       SchedulersFactory.Dispatcher.AdvanceBy(100);

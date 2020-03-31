@@ -256,6 +256,73 @@ namespace Joker.MVVM.Tests.ViewModels
 
     #endregion
 
+    #region SubscribeSecondTime
+
+    [TestMethod]
+    public void SubscribeSecondTime_EverythingShouldBeReset()
+    {
+      //Arrange
+      
+      //Act
+      ClassUnderTest.SubscribeToDataChanges();
+
+      //Assert
+      ClassUnderTest.IsLoading.Should().BeTrue();
+      ClassUnderTest.Items.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void SubscribeSecondTime_ItemsWereReloadedAndObserved()
+    {
+      //Arrange
+      ClassUnderTest.SubscribeToDataChanges();
+      
+      //Act
+      LoadEntitiesFromQuery();
+
+      //Assert
+      ClassUnderTest.IsLoading.Should().BeFalse();
+      ClassUnderTest.Items.Count.Should().Be(1);
+
+      //Act
+      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
+      AdvanceChangesBuffer();
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(2);
+    }
+
+    #endregion
+
+    #region Dispose
+    
+    [TestMethod]
+    public void Dispose_ItemsWereCleared()
+    {
+      //Arrange
+      
+      //Act
+      ClassUnderTest.Dispose();
+
+      //Assert
+      ClassUnderTest.Items.Should().BeEmpty();
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ObjectDisposedException))]
+    public void Dispose_CannotSubscribeToDisposed()
+    {
+      //Arrange
+      ClassUnderTest.Dispose();
+      
+      //Act
+      ClassUnderTest.SubscribeToDataChanges();
+
+      //Assert
+    }
+
+    #endregion
+
     #endregion
 
     #region CleanUp

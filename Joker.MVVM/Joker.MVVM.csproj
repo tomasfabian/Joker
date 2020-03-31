@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\SqlTableDependency.Extensions.Redis\License.txt" Link="License.txt" />
+    <Content Include="..\Joker.Redis\License.txt" Link="License.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +23,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\SqlTableDependency.Extensions.Redis\License.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 </Project>

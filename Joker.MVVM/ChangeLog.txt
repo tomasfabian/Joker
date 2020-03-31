@@ -7,3 +7,7 @@
 - DomainEntityViewModel
 - ReactiveListDomainEntityViewModel
 - added ReactiveListViewModel<TModel, TViewModel>.CreateDataChangesObserver and cloning of EntityChange notifications. Rethrowing of subscription exceptions.
+
+1.2.0
+- ReactiveListViewModel Items are cleared during disposal
+- ReactiveListViewModel cannot subscribe to disposed viewmodel (ObjectDisposedException).

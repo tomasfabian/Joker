@@ -16,16 +16,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
+    <Content Include="..\Joker.Redis\License.txt" Link="License.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\SqlTableDependency.Extensions.Redis\License.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
   </ItemGroup>
 
 </Project>
