@@ -1,22 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Joker.Collections;
+using Joker.Extensions.Sorting;
 
 namespace Joker.MVVM.ViewModels
 {
   public class ViewModelsList<TViewModel> : ViewModel
     where TViewModel : class, IViewModel
   {
-    private readonly ObservableCollection<TViewModel> viewModels = new ObservableCollection<TViewModel>();
+    private ObservableCollection<TViewModel> viewModels = new ObservableCollection<TViewModel>();
 
-    protected ObservableCollection<TViewModel> ViewModels => viewModels;
+    protected ObservableCollection<TViewModel> ViewModels
+    {
+      get => viewModels;
+      set
+      {
+        if(viewModels == value)
+          return;
+
+        viewModels = value;
+
+        Items = new ReadOnlyObservableCollection<TViewModel>(viewModels);
+
+        NotifyPropertyChanged();
+      }
+    }
 
     private ReadOnlyObservableCollection<TViewModel> readOnlyViewModels;
 
-    public ReadOnlyObservableCollection<TViewModel> Items => readOnlyViewModels ?? (readOnlyViewModels = new ReadOnlyObservableCollection<TViewModel>(viewModels));
-    
+    public ReadOnlyObservableCollection<TViewModel> Items
+    {
+      get => readOnlyViewModels;
+      private set
+      {
+        if(readOnlyViewModels == value)
+          return;
+
+        readOnlyViewModels = value;
+
+        NotifyPropertyChanged();
+      }
+    }
+
     private bool isLoading;
 
     public bool IsLoading
@@ -72,6 +101,27 @@ namespace Joker.MVVM.ViewModels
 
         NotifyPropertyChanged();
       }
+    }
+
+    protected void SetSortDescriptions(IEnumerable<Sort<TViewModel>> sorts)
+    {
+      SetSortDescriptions(sorts.ToArray());
+    }
+
+    protected void SetSortDescriptions(params Sort<TViewModel>[] sorts)
+    {
+      if(!sorts.Any())
+      {
+        ViewModels = new ObservableCollection<TViewModel>(ViewModels);
+
+        return;
+      }
+
+      var comparer = sorts.ToComparer();
+
+      SortedObservableCollection<TViewModel> sortedObservableCollection = new SortedObservableCollection<TViewModel>(comparer);
+      
+      ViewModels = sortedObservableCollection;
     }
   }
 }

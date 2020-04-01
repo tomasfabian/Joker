@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
-using Joker.Comparators;
 using Joker.Contracts;
 using Joker.Enums;
 using Joker.MVVM.ViewModels;
@@ -17,8 +16,6 @@ namespace Joker.MVVM.Tests.Helpers
       : base(reactive, schedulersFactory)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
-
-      Comparer = new DomainEntityComparer();
     }
 
     protected override int DataChangesBufferCount => 3;
@@ -35,7 +32,10 @@ namespace Joker.MVVM.Tests.Helpers
       }
     };
 
-    protected override IEqualityComparer<TestModel> Comparer { get; }
+    protected override IComparable GetId(TestModel model)
+    {
+      return model.Id;
+    }
 
     protected override TestViewModel CreateViewModel(TestModel model)
     {

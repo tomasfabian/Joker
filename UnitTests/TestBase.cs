@@ -7,12 +7,12 @@ using UnitTests.Schedulers;
 
 namespace UnitTests
 {
-  public class TestBase<TClassUnderTest> : TestBase
+  public abstract class TestBase<TClassUnderTest> : TestBase
   {
     protected TClassUnderTest ClassUnderTest { get; set; }
   }
 
-  public class TestBase
+  public abstract class TestBase
   {
     protected readonly MoqMockingKernel MockingKernel = new MoqMockingKernel();
     protected TestScheduler TestScheduler = new TestScheduler();

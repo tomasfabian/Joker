@@ -1,4 +1,5 @@
-﻿using Joker.MVVM.ViewModels.Domain;
+﻿using System;
+using Joker.MVVM.ViewModels.Domain;
 
 namespace Joker.MVVM.Tests.Helpers
 {
@@ -29,6 +30,11 @@ namespace Joker.MVVM.Tests.Helpers
       base.OnUpdateFrom(updatedModel);
       
       Name = updatedModel.Name;
+    }
+
+    public override string ToString()
+    {
+      return $"Id: {Id}, Version: { Timestamp }";
     }
   }
 }

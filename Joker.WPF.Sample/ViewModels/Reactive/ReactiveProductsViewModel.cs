@@ -45,6 +45,11 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
     protected override IEqualityComparer<Product> Comparer { get; }
 
+    protected override IComparable GetId(Product model)
+    {
+      return model.Id;
+    }
+
     protected override ProductViewModel CreateViewModel(Product model)
     {
       return new ProductViewModel(model);

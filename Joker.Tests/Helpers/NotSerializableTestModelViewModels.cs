@@ -29,6 +29,11 @@ namespace Joker.MVVM.Tests.Helpers
       }
     };
 
+    protected override IComparable GetId(NotSerializableTestModel model)
+    {
+      return model.Id;
+    }
+
     protected override NotSerializableTestModelViewModel CreateViewModel(NotSerializableTestModel model)
     {
       return new NotSerializableTestModelViewModel(model);

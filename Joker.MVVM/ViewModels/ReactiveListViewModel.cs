@@ -26,11 +26,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Joker.Collections;
+using Joker.Comparators;
 using Joker.Contracts;
 using Joker.Disposables;
 using Joker.Enums;
@@ -44,7 +47,7 @@ namespace Joker.MVVM.ViewModels
     where TViewModel : class, IViewModel<TModel>
   {
     #region Fields
-
+    
     private readonly IReactiveData<TModel> reactive;
     private readonly ISchedulersFactory schedulersFactory;
     private DisposableObject disposable;
@@ -57,6 +60,8 @@ namespace Joker.MVVM.ViewModels
     {
       this.reactive = reactive ?? throw new ArgumentNullException(nameof(reactive));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
+      
+      Comparer = new GenericEqualityComparer<TModel>((x,y) => Equals(GetId(x), GetId(y)));
 
       Init();
     }
@@ -76,6 +81,10 @@ namespace Joker.MVVM.ViewModels
 
     protected virtual int DataChangesBufferCount => 100;
     
+    protected virtual IEqualityComparer<TModel> Comparer { get; }
+
+    protected abstract IComparable GetId(TModel model);
+
     #endregion
 
     #region Methods
@@ -83,6 +92,20 @@ namespace Joker.MVVM.ViewModels
     private void Init()
     {
       disposable = DisposableObject.Create(OnDispose);
+    }
+
+    protected Sort<TViewModel>[] CreateSortDescriptions()
+    {      
+      var sortById = new Sort<TViewModel>(vm => GetId(vm.Model));
+
+      return OnCreateSortDescriptions().Append(sortById).ToArray();
+    }
+
+    protected virtual Sort<TViewModel>[] OnCreateSortDescriptions()
+    {      
+      var sortByTimeStamp = new Sort<TViewModel>(vm => vm.Model.Timestamp, ListSortDirection.Descending);
+
+      return new [] { sortByTimeStamp };
     }
 
     private SerialDisposable loadEntitiesSubscription;
@@ -97,6 +120,8 @@ namespace Joker.MVVM.ViewModels
         loadEntitiesSubscription.Disposable = Disposable.Empty;
 
       ViewModels.Clear();
+      
+      SetSortDescriptions(CreateSortDescriptions());
 
       loadEntitiesSubscription.Disposable =
         Observable.Start(() => Query.ToList(), schedulersFactory.ThreadPool)
@@ -202,8 +227,6 @@ namespace Joker.MVVM.ViewModels
     {
       return null;
     }
-
-    protected abstract IEqualityComparer<TModel> Comparer { get; }
 
     public TViewModel Find(TModel model)
     {
