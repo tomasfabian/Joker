@@ -14,3 +14,4 @@
 - GenericComparer
 - Sort and SortExtensions
 - SortedObservableCollection
+- added tracking of INotifyPropertyChanged for SortedObservableCollection reordering

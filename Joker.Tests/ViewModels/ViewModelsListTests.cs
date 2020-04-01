@@ -125,6 +125,23 @@ namespace Joker.MVVM.Tests.ViewModels
       originalOrder.Reverse();
       ClassUnderTest.Items.ToList().SequenceEqual(originalOrder).Should().BeTrue();
     }
+    
+    [TestMethod]
+    public void Sort_NameChanged()
+    {
+      //Arrange
+      ClassUnderTest.Add(TestModelProvider.Model2);
+      ClassUnderTest.Add(TestModelProvider.Model3);
+
+      var model1ViewModel = ClassUnderTest.Items.First(c => c.Id == 1);
+      model1ViewModel.Should().BeSameAs(ClassUnderTest.Items[2]);
+
+      //Act
+      model1ViewModel.Name = "z";
+
+      //Assert
+      model1ViewModel.Should().BeSameAs(ClassUnderTest.Items[0]);
+    }
 
     #endregion
   }

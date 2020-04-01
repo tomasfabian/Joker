@@ -41,6 +41,14 @@ namespace Joker.MVVM.Tests.Joker.Collections
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void AddNull()
+    {
+      //Act
+      ClassUnderTest.Add(null);
+    }
+
+    [TestMethod]
     public void Ctor_FillWithValuesFromAnotherCollection()
     {
       //Arrange    

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Joker.Collections
 {
   public class SortedObservableCollection<TValue> : ObservableCollection<TValue>
-    where TValue : class
+    where TValue : class, INotifyPropertyChanged
   {
     private readonly IComparer<TValue> comparer;
 
@@ -26,7 +28,7 @@ namespace Joker.Collections
     }
 
     private TValue[] keys;
-
+    
     private void EnsureCapacity(int min)
     {
       int newCapacity = keys.Length == 0 ? DefaultCapacity : keys.Length * 2;
@@ -69,7 +71,7 @@ namespace Joker.Collections
       }
     }
 
-    public int IndexOfKey(TValue key)
+    private int IndexOfKey(TValue key)
     {
       if (key == null)
         throw new ArgumentNullException(nameof(key));
@@ -79,8 +81,18 @@ namespace Joker.Collections
       return index >= 0 ? index : -1;
     }
 
+    private int IndexOfValue(TValue value)
+    {
+      return Array.IndexOf(Items.ToArray(), value, 0, Count);
+    }
+
     protected override void ClearItems()
     {
+      foreach (var item in Items)
+      {
+        item.PropertyChanged -= OnNotifyPropertyChanged;
+      }
+
       Array.Clear(keys, 0, Count);
 
       base.ClearItems();
@@ -88,9 +100,13 @@ namespace Joker.Collections
 
     protected override void RemoveItem(int index)
     {
+      var item = this[index];
+
       RemoveKeyAt(index);
 
       base.RemoveItem(index);
+      
+      item.PropertyChanged -= OnNotifyPropertyChanged;  
     }
 
     private void RemoveKeyAt(int index)
@@ -108,6 +124,9 @@ namespace Joker.Collections
 
     protected override void InsertItem(int index, TValue item)
     {
+      if(item == null)
+        throw new ArgumentNullException();
+
       int i = Array.BinarySearch(keys, 0, Count, item, comparer);
       if (i >= 0)
         throw new ArgumentException("Adding duplicate");
@@ -115,6 +134,22 @@ namespace Joker.Collections
       InsertKey(item, ~i);
 
       base.InsertItem(~i, item);
+
+      item.PropertyChanged += OnNotifyPropertyChanged;    
+    }
+
+    private void OnNotifyPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      var item = sender as TValue;
+      
+      var index = IndexOfValue(item);
+
+      int i = Array.BinarySearch(keys, 0, Count, item, comparer);
+
+      if (i == -1)
+        i = 0;
+
+      base.MoveItem(index, i);
     }
 
     private void InsertKey(TValue key, int index)
