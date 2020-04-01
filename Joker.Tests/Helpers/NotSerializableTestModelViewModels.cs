@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using Joker.Contracts;
 using Joker.MVVM.ViewModels.Domain;
 using UnitTests.Schedulers;
@@ -19,7 +20,7 @@ namespace Joker.MVVM.Tests.Helpers
     
     protected override IScheduler DispatcherScheduler => schedulersFactory.Dispatcher;
 
-    protected override IEnumerable<NotSerializableTestModel> Query => new[]
+    protected override IObservable<IEnumerable<NotSerializableTestModel>> Query => Observable.Start(() => new[]
     {
       new NotSerializableTestModel
       {
@@ -27,7 +28,7 @@ namespace Joker.MVVM.Tests.Helpers
         Timestamp = new DateTime(2019, 3, 27, 16, 0, 0),
         Name = "Model 1"
       }
-    };
+    }, schedulersFactory.ThreadPool);
 
     protected override IComparable GetId(NotSerializableTestModel model)
     {

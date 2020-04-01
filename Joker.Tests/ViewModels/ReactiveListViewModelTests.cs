@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using Joker.MVVM.ViewModels;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Joker.Enums;
-using Joker.MVVM.Tests.Helpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
 namespace Joker.MVVM.Tests.ViewModels
 {
@@ -19,7 +17,7 @@ namespace Joker.MVVM.Tests.ViewModels
       base.TestInitialize();
 
       ClassUnderTest = CreateReactiveListTestViewModel();
-      
+       
       SubscribeToDataChanges();
     }
 
@@ -157,10 +155,10 @@ namespace Joker.MVVM.Tests.ViewModels
     public void ThirdEntityCreationWasPublishedAfterBufferTimeSpan()
     {
       //Arrange
-      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
-      SchedulePublishChangeEvent(ChangeType.Create, Model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model3, 200);
 
-      SchedulePublishChangeEvent(ChangeType.Create, Model4, DefaultBufferTimeSpan);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model4, DefaultBufferTimeSpan);
       
       ClassUnderTest.Items.Count.Should().Be(1);
 
@@ -181,9 +179,9 @@ namespace Joker.MVVM.Tests.ViewModels
     public void DataChangesBufferCountWasReachedBeforeTimeSpan()
     {
       //Arrange
-      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
-      SchedulePublishChangeEvent(ChangeType.Create, Model3, 200);
-      SchedulePublishChangeEvent(ChangeType.Create, Model4, 300);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model4, 300);
       
       ClassUnderTest.Items.Count.Should().Be(1);
 
@@ -196,62 +194,25 @@ namespace Joker.MVVM.Tests.ViewModels
 
     #endregion
 
-    #region SelectionChanged
+    #region Sorting
 
     [TestMethod]
-    public void SelectionChanged_NotificationIsPublished()
+    public void SortedByTimeStampDescThenById()
     {
       //Arrange
-      SelectionChangedEventArgs<TestViewModel> selectionChangedEventArgs = null;
-      var subscription = ClassUnderTest.SelectionChanged.Subscribe(ea => selectionChangedEventArgs = ea);
+      TestModelProvider.Model2.Timestamp = DateTime.Now;
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model3, 200);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model4, 300);
+      
+      ClassUnderTest.Items.Count.Should().Be(1);
 
       //Act
-      ClassUnderTest.SelectedItem = ClassUnderTest.Items.FirstOrDefault();
+      AdvanceChangesBuffer(300);
 
       //Assert
-      selectionChangedEventArgs.Should().NotBeNull();
-      selectionChangedEventArgs.OldValue.Should().BeNull();
-      selectionChangedEventArgs.NewValue.Should().Be(ClassUnderTest.SelectedItem);
-
-      subscription.Dispose();
-    }
-
-    [TestMethod]
-    public void LastSelectionChangeWasObserved()
-    {
-      //Arrange
-      ClassUnderTest.SelectedItem = ClassUnderTest.Items.FirstOrDefault();
-
-      SelectionChangedEventArgs<TestViewModel> selectionChangedEventArgs = null;
-      var subscription = ClassUnderTest.SelectionChanged.Subscribe(ea => selectionChangedEventArgs = ea);
-
-      //Act
-      ClassUnderTest.SelectedItem = ClassUnderTest.Items.FirstOrDefault();
-
-      //Assert
-      selectionChangedEventArgs.Should().NotBeNull();
-
-      subscription.Dispose();
-    }
-
-    [TestMethod]
-    public void SelectionChangedSecondTime_OldValueWasPublished()
-    {
-      //Arrange
-      var originalSelectedItem = ClassUnderTest.SelectedItem = ClassUnderTest.Items.FirstOrDefault();
-
-      SelectionChangedEventArgs<TestViewModel> selectionChangedEventArgs = null;
-      var subscription = ClassUnderTest.SelectionChanged.Subscribe(ea => selectionChangedEventArgs = ea);
-
-      //Act
-      ClassUnderTest.SelectedItem = null;
-
-      //Assert
-      selectionChangedEventArgs.Should().NotBeNull();
-      selectionChangedEventArgs.OldValue.Should().Be(originalSelectedItem);
-      selectionChangedEventArgs.NewValue.Should().BeNull();
-
-      subscription.Dispose();
+      var expectedOrder = new[] {TestModelProvider.Model2, TestModelProvider.Model3, TestModelProvider.Model4, TestModelProvider.Model1}.Select(c => c.Id).ToList();
+      ClassUnderTest.Items.Select(c => c.Id).SequenceEqual(expectedOrder).Should().BeTrue();
     }
 
     #endregion
@@ -285,7 +246,7 @@ namespace Joker.MVVM.Tests.ViewModels
       ClassUnderTest.Items.Count.Should().Be(1);
 
       //Act
-      SchedulePublishChangeEvent(ChangeType.Create, Model2, 100);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 100);
       AdvanceChangesBuffer();
 
       //Assert

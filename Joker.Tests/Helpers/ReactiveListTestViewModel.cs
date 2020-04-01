@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using Joker.Contracts;
 using Joker.Enums;
 using Joker.MVVM.ViewModels;
@@ -22,15 +23,10 @@ namespace Joker.MVVM.Tests.Helpers
 
     protected override IScheduler DispatcherScheduler => schedulersFactory.Dispatcher;
     
-    protected override IEnumerable<TestModel> Query => new[]
+    protected override IObservable<IEnumerable<TestModel>> Query => Observable.Start(() => new[]
     {
-      new TestModel
-      {
-        Id = 1,
-        Timestamp = new DateTime(2019, 3, 27, 16, 0, 0),
-        Name = "Model 1"
-      }
-    };
+      new TestModelProvider().Model1
+    }, schedulersFactory.ThreadPool);
 
     protected override IComparable GetId(TestModel model)
     {

@@ -11,15 +11,14 @@ namespace Joker.MVVM.Tests.ViewModels
   public class ReactiveListViewModelTestsBase : TestBase<ReactiveListTestViewModel>
   {
     #region TestInitialize
-
+    
+    protected readonly TestModelProvider TestModelProvider = new TestModelProvider();
     protected readonly TestModelReactiveData ReactiveData = new TestModelReactiveData();
 
     [TestInitialize]
     public override void TestInitialize()
     {
       base.TestInitialize();
-
-      Init();
     }
     
     protected readonly TestModel OriginalModel = new TestModel
@@ -28,22 +27,6 @@ namespace Joker.MVVM.Tests.ViewModels
       Timestamp = new DateTime(2020, 3, 27, 16, 0, 0),
       Name = "Original"
     };
-
-    protected TestModel Model2;
-    protected TestModel Model3;
-    protected TestModel Model4;
-
-    private void Init()
-    {
-      Model2 = OriginalModel.Clone();
-      Model2.Id = 2;      
-
-      Model3 = OriginalModel.Clone();
-      Model3.Id = 3;
-
-      Model4 = OriginalModel.Clone();
-      Model4.Id = 4;
-    }
 
     #endregion
 
@@ -72,7 +55,7 @@ namespace Joker.MVVM.Tests.ViewModels
       ClassUnderTest = CreateReactiveListTestViewModel();
       ClassUnderTest.SubscribeToDataChanges();
 
-      SchedulePublishChangeEvent(ChangeType.Create, Model2, 10);
+      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 10);
       AdvanceChangesBuffer(20);
       
       ClassUnderTest.Items.Count.Should().Be(0);

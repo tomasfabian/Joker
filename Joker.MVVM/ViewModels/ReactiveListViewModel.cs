@@ -72,7 +72,7 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IScheduler DispatcherScheduler { get; }
 
-    protected abstract IEnumerable<TModel> Query { get; }
+    protected abstract IObservable<IEnumerable<TModel>> Query { get; }
 
     protected virtual IObservable<IList<EntityChange<TModel>>> DataChanges => reactive.WhenDataChanges
       .Buffer(DataChangesBufferTimeSpan, DataChangesBufferCount, schedulersFactory.TaskPool);
@@ -124,7 +124,7 @@ namespace Joker.MVVM.ViewModels
       SetSortDescriptions(CreateSortDescriptions());
 
       loadEntitiesSubscription.Disposable =
-        Observable.Start(() => Query.ToList(), schedulersFactory.ThreadPool)
+        Query
           .ObserveOn(DispatcherScheduler)
           .Finally(() => IsLoading = false)
           .Subscribe(models =>

@@ -9,5 +9,8 @@
 - added ReactiveListViewModel<TModel, TViewModel>.CreateDataChangesObserver and cloning of EntityChange notifications. Rethrowing of subscription exceptions.
 
 1.2.0
-- ReactiveListViewModel Items are cleared during disposal
-- ReactiveListViewModel cannot subscribe to disposed viewmodel (ObjectDisposedException).
+- ReactiveListViewModel Items are cleared during disposal (breaking change)
+- ReactiveListViewModel cannot subscribe to disposed viewmodel (ObjectDisposedException). (breaking change)
+- ListViewModel.CreateSortDescriptions. ViewModels use SortedObservableCollection in case of sorting.
+- ReactiveListViewModel default sorted by model Timestamp desc and Id asc. Sorting by unique Id is mandatory. 
+- ReactiveListViewModel IEnumerable<TModel> Query was change to IObservable<TModel> (breaking change)

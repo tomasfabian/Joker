@@ -7,25 +7,26 @@
         Width="800"
         Height="450"
         mc:Ignorable="d">
-  <Grid DataContext="{Binding ProductsViewModel}">
+  <Grid DataContext="{Binding ReactiveProductsViewModel}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
-    <StackPanel Orientation="Horizontal">
-      <TextBlock Text="IsOffline: " />
-      <TextBlock Text="{Binding IsOffline}" />
+    <StackPanel Margin="13" Orientation="Horizontal">
+      <TextBlock Text="IsLoading: " />
+      <TextBlock Text="{Binding IsLoading}" />
     </StackPanel>
 
-    <ItemsControl Grid.Row="1"
-                  Margin="13"
-                  ItemsSource="{Binding Products}">
-      <ItemsControl.ItemTemplate>
+    <ListBox Grid.Row="1"
+             Margin="13"
+             ItemsSource="{Binding Items}"
+             SelectedItem="{Binding SelectedItem}">
+      <ListBox.ItemTemplate>
         <DataTemplate>
           <TextBlock Text="{Binding Name}" />
         </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      </ListBox.ItemTemplate>
+    </ListBox>
 
   </Grid>
 </Window>

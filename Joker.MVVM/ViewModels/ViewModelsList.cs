@@ -12,7 +12,12 @@ namespace Joker.MVVM.ViewModels
   public class ViewModelsList<TViewModel> : ViewModel
     where TViewModel : class, IViewModel
   {
-    private ObservableCollection<TViewModel> viewModels = new ObservableCollection<TViewModel>();
+    public ViewModelsList()
+    {
+      ViewModels = new ObservableCollection<TViewModel>();
+    }
+
+    private ObservableCollection<TViewModel> viewModels;
 
     protected ObservableCollection<TViewModel> ViewModels
     {
@@ -119,7 +124,7 @@ namespace Joker.MVVM.ViewModels
 
       var comparer = sorts.ToComparer();
 
-      SortedObservableCollection<TViewModel> sortedObservableCollection = new SortedObservableCollection<TViewModel>(comparer);
+      SortedObservableCollection<TViewModel> sortedObservableCollection = new SortedObservableCollection<TViewModel>(comparer, ViewModels);
       
       ViewModels = sortedObservableCollection;
     }

@@ -34,7 +34,7 @@ namespace Joker.MVVM.Tests.Helpers
 
     public override string ToString()
     {
-      return $"Id: {Id}, Version: { Timestamp }";
+      return $"Id: {Id}, Version: { Timestamp }, Name: {Name}";
     }
   }
 }
