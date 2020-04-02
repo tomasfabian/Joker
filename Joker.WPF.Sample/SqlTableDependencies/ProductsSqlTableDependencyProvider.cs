@@ -145,8 +145,6 @@ namespace Joker.WPF.Sample.SqlTableDependencies
 
     protected override void OnError(Exception exception)
     {
-      base.OnError(exception);
-
       Console.WriteLine(Environment.NewLine);
       Console.ForegroundColor = ConsoleColor.DarkRed;
 
