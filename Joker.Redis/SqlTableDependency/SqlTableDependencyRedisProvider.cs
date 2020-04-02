@@ -2,10 +2,10 @@
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Joker.Disposables;
 using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions;
-using SqlTableDependency.Extensions.Disposables;
 using SqlTableDependency.Extensions.Notifications;
 using TableDependency.SqlClient.Base.Enums;
 

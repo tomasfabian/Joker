@@ -8,10 +8,10 @@
     <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
     <PackageIconUrl></PackageIconUrl>
-    <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, 'CQRS', MSSQL Service Broker, Event sourcing</PackageTags>
+    <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, CQRS, MSSQL Service Broker, Event sourcing</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <PackageReleaseNotes>This release contains additional database reconnection lifetime scopes</PackageReleaseNotes>
   </PropertyGroup>
 
@@ -23,6 +23,10 @@
     <PackageReference Include="SqlTableDependency" Version="8.5.8" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 
 </Project>

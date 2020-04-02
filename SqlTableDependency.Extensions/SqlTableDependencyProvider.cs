@@ -32,7 +32,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
-using SqlTableDependency.Extensions.Disposables;
+using Joker.Disposables;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Providers.Sql;
@@ -275,7 +275,7 @@ namespace SqlTableDependency.Extensions
       }
       catch (Exception error)
       {
-        OnError(error);
+        TryHandlerErrors(error);
 
         TryReconnect();
       }
@@ -293,9 +293,17 @@ namespace SqlTableDependency.Extensions
 
     #region OnError
 
+    protected virtual void OnError(Exception error)
+    {
+    }
+
+    #endregion
+
+    #region TryHandlerErrors
+
     private readonly int TheConversationHandleIsNotFound = 8426;
 
-    protected virtual void OnError(Exception error)
+    private void TryHandlerErrors(Exception error)
     {
       sqlTableDependency?.Stop();
 
@@ -303,6 +311,8 @@ namespace SqlTableDependency.Extensions
         TryStopLastConnection();
 
       whenStatusChanges.OnNext(TableDependencyStatus.StopDueToError);
+      
+      OnError(error);
     }
 
     #endregion
@@ -348,9 +358,9 @@ namespace SqlTableDependency.Extensions
 
     #region SqlTableDependencyOnError
 
-    protected virtual void SqlTableDependencyOnError(object sender, ErrorEventArgs e)
+    private void SqlTableDependencyOnError(object sender, ErrorEventArgs e)
     {
-      OnError(e.Error);
+      TryHandlerErrors(e.Error);
 
       TryReconnect();
     }
@@ -438,7 +448,7 @@ namespace SqlTableDependency.Extensions
       }
       catch (Exception e)
       {
-        OnError(e);
+        TryHandlerErrors(e);
       }
     }
 
