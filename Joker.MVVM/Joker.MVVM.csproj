@@ -14,14 +14,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Joker.Redis\License.txt" Link="License.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Joker.Redis\License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
