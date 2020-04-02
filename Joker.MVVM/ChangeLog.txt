@@ -12,3 +12,6 @@
 - ListViewModel.CreateSortDescriptions. ViewModels use SortedObservableCollection in case of sorting.
 - ReactiveListViewModel default sorted by model Timestamp desc and Id asc. Sorting by unique Id is mandatory. 
 - ReactiveListViewModel IEnumerable<TModel> Query was change to IObservable<TModel> (breaking change)
+
+1.2.0
+- ReactiveListViewModel filtering (OnCreateModelsFilter)

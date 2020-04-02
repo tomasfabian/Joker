@@ -1,5 +1,4 @@
 ﻿using System;
-using FluentAssertions;
 using Joker.Enums;
 using Joker.MVVM.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,7 +7,7 @@ using UnitTests;
 namespace Joker.MVVM.Tests.ViewModels
 {
   [TestClass]
-  public class ReactiveListViewModelTestsBase : TestBase<ReactiveListTestViewModel>
+  public abstract class ReactiveListViewModelTestsBase : TestBase<ReactiveListTestViewModel>
   {
     #region TestInitialize
     
@@ -27,46 +26,6 @@ namespace Joker.MVVM.Tests.ViewModels
       Timestamp = new DateTime(2020, 3, 27, 16, 0, 0),
       Name = "Original"
     };
-
-    #endregion
-
-    #region Tests
-
-    [TestMethod]
-    public void IsLoading()
-    {
-      //Arrange
-      ClassUnderTest = CreateReactiveListTestViewModel();
-      
-      ClassUnderTest.SubscribeToDataChanges();
-      ClassUnderTest.IsLoading.Should().BeTrue();
-
-      //Act
-      LoadEntitiesFromQuery();
-
-      //Assert
-      ClassUnderTest.IsLoading.Should().BeFalse();
-    }
-    
-    [TestMethod]
-    public void LoadingData_OnCreatedWasBuffered()
-    {
-      //Arrange
-      ClassUnderTest = CreateReactiveListTestViewModel();
-      ClassUnderTest.SubscribeToDataChanges();
-
-      SchedulePublishChangeEvent(ChangeType.Create, TestModelProvider.Model2, 10);
-      AdvanceChangesBuffer(20);
-      
-      ClassUnderTest.Items.Count.Should().Be(0);
-
-      //Act
-      LoadEntitiesFromQuery();
-      AdvanceChangesBuffer();
-
-      //Assert
-      ClassUnderTest.Items.Count.Should().Be(2);
-    }
 
     #endregion
 

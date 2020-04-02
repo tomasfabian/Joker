@@ -61,5 +61,17 @@ namespace Joker.MVVM.Tests.Helpers
 
       return entity;
     }
+
+    private Func<TestModel, bool> modelsFilter;
+
+    public void SetModelsFilter(Func<TestModel, bool> newModelsFilter)
+    {
+      modelsFilter = newModelsFilter;
+    }
+
+    protected override Func<TestModel, bool> OnCreateModelsFilter()
+    {
+      return modelsFilter;
+    }
   }
 }

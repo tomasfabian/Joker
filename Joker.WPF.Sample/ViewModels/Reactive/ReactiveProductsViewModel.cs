@@ -81,5 +81,10 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
       return new [] {sortByName};
     }
+
+    protected override Func<Product, bool> OnCreateModelsFilter()
+    {
+      return product => product.Id != 3;
+    }
   }
 }

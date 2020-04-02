@@ -85,6 +85,8 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IComparable GetId(TModel model);
 
+    private Func<TModel, bool> ModelsFilter { get; set; }
+
     #endregion
 
     #region Methods
@@ -108,6 +110,21 @@ namespace Joker.MVVM.ViewModels
       return new [] { sortByTimeStamp };
     }
 
+    private bool ApplyModelFilter(TModel model)
+    {
+      return ModelsFilter == null || ModelsFilter(model);
+    }
+
+    private void SetModelFilters()
+    {
+      ModelsFilter = OnCreateModelsFilter();
+    }
+
+    protected virtual Func<TModel, bool> OnCreateModelsFilter()
+    {
+      return null;
+    }
+
     private SerialDisposable loadEntitiesSubscription;
 
     private void LoadEntities()
@@ -122,9 +139,11 @@ namespace Joker.MVVM.ViewModels
       ViewModels.Clear();
       
       SetSortDescriptions(CreateSortDescriptions());
+      SetModelFilters();
 
       loadEntitiesSubscription.Disposable =
         Query
+          .Select(c => c.Where(ApplyModelFilter).ToList())
           .ObserveOn(DispatcherScheduler)
           .Finally(() => IsLoading = false)
           .Subscribe(models =>
@@ -162,6 +181,7 @@ namespace Joker.MVVM.ViewModels
         .Merge(loadingBuffer.SelectMany(c => c));
 
       whenDataChangesSubscription.Disposable = changes
+        .Select(c => c.Where(change => ApplyModelFilter(change.Entity)).ToList())
         .Where(c => c.Count > 0)
         .ObserveOn(DispatcherScheduler)
         .Finally(OnDataChangesSubscriptionFinished)
