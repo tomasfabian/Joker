@@ -3,7 +3,7 @@ Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.0.0
+Install-Package Joker.MVVM -Version 1.1.0
 
 # SqlTableDependency.Extensions
 If sharing increases coupling, should we share at all? Is it time for decoupling?
@@ -15,11 +15,11 @@ Please use data streaming and process it with the help of reactive programming a
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
-Install-Package SqlTableDependency.Extensions -Version 2.0.0
+Install-Package SqlTableDependency.Extensions -Version 2.2.0
 
 or
 
-dotnet add package SqlTableDependency.Extensions --version 2.0.0
+dotnet add package SqlTableDependency.Extensions --version 2.2.0
 
 ## See:
 Following package is based on christiandelbianco's SqlTableDependency:
@@ -119,8 +119,6 @@ ALTER DATABASE [DatabaseName]
     
     protected override void OnError(Exception exception)
     {
-      base.OnError(exception);
-
       logSource.Error(exception);
     }
   }
@@ -151,7 +149,7 @@ namespace SqlTableDependency.Extensions.Sample
 # Joker.Redis
 SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
 
-Install-Package Joker.Redis -Version 1.0.0
+Install-Package Joker.Redis -Version 1.1.0
 
 Download and run redis-server (https://redis.io/download)
 
