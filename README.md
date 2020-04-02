@@ -206,3 +206,22 @@ private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl
   return redisSubscriber;
 }
 ```
+
+# How to put it all together
+```C#
+    private static void CreateReactiveProductsViewModel()
+    {
+      var reactiveData = new ReactiveData<Product>();
+      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
+      using var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData);
+
+      string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(new SampleDbContext(connectionString),
+        reactiveData, new WpfSchedulersFactory());
+
+      reactiveProductsViewModel.SubscribeToDataChanges();
+
+      reactiveProductsViewModel.Dispose();
+    }
+```
