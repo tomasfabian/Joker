@@ -12,3 +12,6 @@ added:
 - (I)RedisPublisher SetStringAsync
 - (I)RedisSubscriber GetStringAsync
 - VersionedTableDependencyStatus
+
+changed:
+- DomainEntitiesSubscriber IPublisher<> ctor dependency changed to IPublisherWithStatus<>

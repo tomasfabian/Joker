@@ -56,7 +56,7 @@ namespace Joker.WPF.Sample.ViewModels
 
     private static void CreateReactiveProductsViewModel()
     {
-      var reactiveData = new ReactiveData<Product>();
+      var reactiveData = new ReactiveDataWithStatus<Product>();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
       using var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData);
 

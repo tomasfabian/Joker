@@ -1,4 +1,7 @@
-﻿using Joker.Contracts;
+﻿using System;
+using Joker.Contracts;
+using Joker.Notifications;
+using TableDependencyStatuses = Joker.Notifications.VersionedTableDependencyStatus.TableDependencyStatuses;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.Redis.Tests.Models;
@@ -10,7 +13,7 @@ namespace Joker.Redis.Tests.Notifications
 {
   public class TestableDomainEntitiesSubscriber : DomainEntitiesSubscriber<TestModel>
   {
-    public TestableDomainEntitiesSubscriber(IRedisSubscriber redisSubscriber, IPublisher<TestModel> reactiveData) 
+    public TestableDomainEntitiesSubscriber(IRedisSubscriber redisSubscriber, IPublisherWithStatus<TestModel> reactiveData) 
       : base(redisSubscriber, reactiveData)
     {
     }
@@ -26,6 +29,15 @@ namespace Joker.Redis.Tests.Notifications
       var message = JsonConvert.SerializeObject(notification);
 
       OnMessageReceived(message);
+    }
+
+    public void PushStatusMessage(TableDependencyStatuses tableDependencyStatuses)
+    {
+      var status = new VersionedTableDependencyStatus(tableDependencyStatuses, DateTimeOffset.Now);
+
+      var message = JsonConvert.SerializeObject(status);
+
+      OnStatusMessageReceived(message);
     }
   }
 }

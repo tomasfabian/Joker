@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Joker.Contracts;
 using Joker.Enums;
+using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,6 +12,7 @@ using Ninject;
 using StackExchange.Redis;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
 using UnitTests;
+using TableDependencyStatuses = Joker.Notifications.VersionedTableDependencyStatus.TableDependencyStatuses;
 
 namespace Joker.Redis.Tests.Notifications
 {
@@ -24,12 +26,18 @@ namespace Joker.Redis.Tests.Notifications
     {
       base.TestInitialize();
 
+      MockingKernel.GetMock<IRedisSubscriber>()
+        .Setup(c => c.Subscribe(It.IsAny<Action<ChannelMessage>>(), It.IsAny<RedisChannel>(), It.IsAny<CommandFlags>()))
+        .Returns(Task.CompletedTask);
+
       ClassUnderTest = MockingKernel.Get<TestableDomainEntitiesSubscriber>();
     }
 
     #endregion
 
     #region Tests
+
+    #region EntityChange
 
     [TestMethod]
     public async Task Subscribe_SubscribedToRedisChannel()
@@ -103,10 +111,35 @@ namespace Joker.Redis.Tests.Notifications
 
     private void VerifyPublish(Enums.ChangeType changeType)
     {
-      MockingKernel.GetMock<IPublisher<TestModel>>()
+      MockingKernel.GetMock<IPublisherWithStatus<TestModel>>()
         .Verify(c => c.Publish(It.Is<EntityChange<TestModel>>(ec => ec.ChangeType == changeType)), Times.Once);
-    }    
+    }
+
+    #endregion
+
+    #region TableDependencyStatuses
+
+    [TestMethod]
+    public void OnStatusMessageReceived()
+    {
+      //Arrange
+      var status = TableDependencyStatuses.Started;
+
+      //Act
+      ClassUnderTest.PushStatusMessage(status);
+
+      //Assert
+      VerifyStatusPublish(status);
+    }
     
+    private void VerifyStatusPublish(TableDependencyStatuses tableDependencyStatuses)
+    {
+      MockingKernel.GetMock<IPublisherWithStatus<TestModel>>()
+        .Verify(c => c.PublishStatus(It.Is<VersionedTableDependencyStatus>(ec => ec.TableDependencyStatus == tableDependencyStatuses)), Times.Once);
+    } 
+
+    #endregion
+
     [TestMethod]
     [ExpectedException(typeof(ObjectDisposedException))]
     public async Task Dispose_CannotSubscribeToDisposed()

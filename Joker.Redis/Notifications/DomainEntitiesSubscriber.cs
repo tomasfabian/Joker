@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using Joker.Contracts;
 using Joker.Disposables;
 using Joker.Enums;
+using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions.Notifications;
 using StackExchange.Redis;
+using TableDependency.SqlClient.Base.Enums;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
 
 namespace Joker.Redis.Notifications
@@ -15,15 +17,16 @@ namespace Joker.Redis.Notifications
     where TEntity : IVersion
   {
     private readonly IRedisSubscriber redisSubscriber;
-    private readonly IPublisher<TEntity> reactiveData;
+    private readonly IPublisherWithStatus<TEntity> reactiveData;
 
-    public DomainEntitiesSubscriber(IRedisSubscriber redisSubscriber, IPublisher<TEntity> reactiveData)
+    public DomainEntitiesSubscriber(IRedisSubscriber redisSubscriber, IPublisherWithStatus<TEntity> reactiveData)
     {
       this.redisSubscriber = redisSubscriber ?? throw new ArgumentNullException(nameof(redisSubscriber));
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
     }
 
     protected virtual string ChannelName { get; } = typeof(TEntity).Name + "-Changes";
+    protected virtual string StatusChannelName { get; } = typeof(TEntity).Name + "-Status";
 
     #region Methods
 
@@ -32,7 +35,27 @@ namespace Joker.Redis.Notifications
       if (IsDisposed)
         throw new ObjectDisposedException("Object has already been disposed.");
 
+      await redisSubscriber.Subscribe(OnStatusMessageReceived, StatusChannelName);
       await redisSubscriber.Subscribe(OnMessageReceived, ChannelName);
+    }
+
+    private void OnStatusMessageReceived(ChannelMessage channelMessage)
+    {
+      OnStatusMessageReceived(channelMessage.Message);
+    }
+
+    protected virtual VersionedTableDependencyStatus DeserializeVersionedTableDependencyStatus(string message)
+    {
+      var versionedTableDependencyStatus = JsonConvert.DeserializeObject<VersionedTableDependencyStatus>(message);
+      
+      return versionedTableDependencyStatus;
+    }
+
+    protected void OnStatusMessageReceived(string message)
+    {
+      var status = DeserializeVersionedTableDependencyStatus(message);
+      
+      reactiveData.PublishStatus(status);
     }
 
     private void OnMessageReceived(ChannelMessage channelMessage)

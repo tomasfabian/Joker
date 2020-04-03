@@ -6,7 +6,7 @@ using Joker.Notifications;
 
 namespace Joker.Reactive
 {
-  public class ReactiveDataWithStatus<TModel> : ReactiveData<TModel>, IReactiveDataWithStatus<TModel> 
+  public class ReactiveDataWithStatus<TModel> : ReactiveData<TModel>, IReactiveDataWithStatus<TModel>, IPublisherWithStatus<TModel>
     where TModel : IVersion
   {    
     private readonly ISubject<VersionedTableDependencyStatus> whenStatusChanges = new ReplaySubject<VersionedTableDependencyStatus>(1);
