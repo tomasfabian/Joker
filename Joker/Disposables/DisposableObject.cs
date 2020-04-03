@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Disposables;
 
 namespace Joker.Disposables
 {
@@ -7,6 +8,8 @@ namespace Joker.Disposables
     #region Properties
 
     public bool IsDisposed { get; private set; }
+
+    public CompositeDisposable CompositeDisposable { get; } = new CompositeDisposable();
 
     #endregion
 
@@ -34,6 +37,8 @@ namespace Joker.Disposables
       {
         if (disposing)
         {
+          CompositeDisposable.Dispose();
+
           OnDispose();
         }
 

@@ -13,3 +13,6 @@
 - Sort and SortExtensions
 - SortedObservableCollection
 - added tracking of INotifyPropertyChanged for SortedObservableCollection reordering
+
+1.2.0
+- DisposableExtensions
