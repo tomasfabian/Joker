@@ -22,6 +22,15 @@ namespace Joker.Redis.ConnectionMultiplexers
       channel.OnMessage(onMessage);
     }
 
+    public async Task<RedisValue> GetStringAsync(string key)
+    {
+      await CreateSubject(url);
+      
+      IDatabase redisDatabase = GetDatabase();
+
+      return await redisDatabase.StringGetAsync(key);
+    }
+
     public void Unsubscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler = null, CommandFlags flags = CommandFlags.None)
     {
       Subject?.Unsubscribe(channel, handler, flags);

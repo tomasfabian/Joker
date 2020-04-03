@@ -154,6 +154,15 @@ namespace Joker.Redis.ConnectionMultiplexers
 
     #endregion
 
+    #region GetDatabase
+
+    protected IDatabase GetDatabase()
+    {
+      return connectionMultiplexer?.GetDatabase();
+    }
+
+    #endregion
+
     #region OnDispose
 
     protected override void OnDispose()

@@ -15,4 +15,7 @@
 - added tracking of INotifyPropertyChanged for SortedObservableCollection reordering
 
 1.2.0
+Added:
 - DisposableExtensions
+- ReactiveDataWithStatus
+- VersionedTableDependencyStatus

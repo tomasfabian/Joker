@@ -11,7 +11,8 @@
     <Copyright>@tomasfabian</Copyright>
     <Description>.NET helper classes for modular and reactive applications</Description>
     <PackageTags>modular reactive applications</PackageTags>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />

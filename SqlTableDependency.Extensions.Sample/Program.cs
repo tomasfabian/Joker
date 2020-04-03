@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.Entity.Migrations;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
@@ -28,6 +29,9 @@ namespace SqlTableDependency.Extensions.Sample
       var redisPublisher = new RedisPublisher(redisUrl);
       await redisPublisher.PublishAsync("messages", "hello");
       await redisPublisher.PublishAsync("messages", "hello2");
+      await redisPublisher.SetStringAsync("statusVersion", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+      var statusVersion = await redisSubscriber.GetStringAsync("statusVersion");
+      DateTime statusDateTimeVersion = DateTime.Parse(statusVersion);
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 

@@ -20,6 +20,8 @@ namespace Joker.Redis.Tests.SqlTableDependency
 
     private readonly ISubject<TableDependencyStatus> statusChangedSubject = new Subject<TableDependencyStatus>();
 
+    private readonly ISubject<bool> whenIsConnectedChangesSubject = new Subject<bool>();
+
     [TestInitialize]
     public override void TestInitialize()
     {
@@ -32,6 +34,10 @@ namespace Joker.Redis.Tests.SqlTableDependency
 
       sqlTableDependencyProvider.Setup(c => c.WhenStatusChanges)
         .Returns(statusChangedSubject);
+
+      MockingKernel.GetMock<IRedisPublisher>()
+        .Setup(c => c.WhenIsConnectedChanges)
+        .Returns(whenIsConnectedChangesSubject);
 
       ClassUnderTest = MockingKernel.Get<TestSqlTableDependencyRedisProvider>();
     }
