@@ -42,7 +42,7 @@ using Joker.Factories.Schedulers;
 
 namespace Joker.MVVM.ViewModels
 {
-  public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TViewModel>, IDisposable
+  public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TModel, TViewModel>, IDisposable
     where TModel : class, IVersion
     where TViewModel : class, IViewModel<TModel>
   {
@@ -85,8 +85,6 @@ namespace Joker.MVVM.ViewModels
 
     protected abstract IComparable GetId(TModel model);
 
-    private Func<TModel, bool> ModelsFilter { get; set; }
-
     #endregion
 
     #region Methods
@@ -110,21 +108,6 @@ namespace Joker.MVVM.ViewModels
       return new [] { sortByTimeStamp };
     }
 
-    private bool ApplyModelFilter(TModel model)
-    {
-      return ModelsFilter == null || ModelsFilter(model);
-    }
-
-    private void SetModelFilters()
-    {
-      ModelsFilter = OnCreateModelsFilter();
-    }
-
-    protected virtual Func<TModel, bool> OnCreateModelsFilter()
-    {
-      return null;
-    }
-
     private SerialDisposable loadEntitiesSubscription;
 
     private void LoadEntities()
@@ -136,7 +119,7 @@ namespace Joker.MVVM.ViewModels
       else
         loadEntitiesSubscription.Disposable = Disposable.Empty;
 
-      ViewModels.Clear();
+      ClearViewModels();
       
       SetSortDescriptions(CreateSortDescriptions());
       SetModelFilters();
@@ -150,7 +133,7 @@ namespace Joker.MVVM.ViewModels
           {
             foreach (var model in models)
             {
-              AddViewModel(model);
+              TryAddViewModelFor(model);
             }
           }, OnException);
     }
@@ -250,7 +233,7 @@ namespace Joker.MVVM.ViewModels
 
     public TViewModel Find(TModel model)
     {
-      var viewModel = ViewModels.FirstOrDefault(c => Comparer.Equals(c.Model, model));
+      var viewModel = Items.FirstOrDefault(c => Comparer.Equals(c.Model, model));
 
       return viewModel;
     }
@@ -261,15 +244,8 @@ namespace Joker.MVVM.ViewModels
 
       if (viewModel == null)
       {
-        AddViewModel(model);
+        TryAddViewModelFor(model);
       }
-    }
-
-    private void AddViewModel(TModel model)
-    {
-      TViewModel viewModel = CreateViewModel(model);
-
-      ViewModels.Add(viewModel);
     }
 
     protected virtual bool CanAddMissingEntityOnUpdate(TModel model)
@@ -289,7 +265,7 @@ namespace Joker.MVVM.ViewModels
       if (viewModel == null)
       {
         if(CanAddMissingEntityOnUpdate(model))
-          AddViewModel(model);
+          TryAddViewModelFor(model);
 
         return;
       }
@@ -313,10 +289,8 @@ namespace Joker.MVVM.ViewModels
     {
       var viewModel = Find(model);
 
-      return ViewModels.Remove(viewModel);
+      return RemoveViewModel(viewModel);
     }
-
-    protected abstract TViewModel CreateViewModel(TModel model);
 
     protected virtual void OnDispose()
     {
@@ -325,7 +299,7 @@ namespace Joker.MVVM.ViewModels
       {
       }
 
-      ViewModels.Clear();
+      ClearViewModels();
     }
 
     public void Dispose()

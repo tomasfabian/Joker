@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Joker.Collections;
 using Joker.MVVM.Tests.Helpers;
 using Joker.MVVM.ViewModels;
 
 namespace Joker.MVVM.Tests.ViewModels
 {
-  public class TestModelsViewModel : ViewModelsList<TestViewModel>
+  public class TestModelsViewModel : ViewModelsList<TestModel, TestViewModel>
   {
     public TestModelsViewModel()
     {
@@ -20,9 +21,7 @@ namespace Joker.MVVM.Tests.ViewModels
 
     public void Add(TestModel testModel)
     {
-      var testViewModel = new TestViewModel(testModel);
-
-      ViewModels.Add(testViewModel);
+      TryAddViewModelFor(testModel);
     }
 
     public void SetAscendingNameSortDescription()
@@ -34,6 +33,16 @@ namespace Joker.MVVM.Tests.ViewModels
       };
 
       SetSortDescriptions(sorts);
+    }
+
+    protected override TestViewModel CreateViewModel(TestModel model)
+    {
+      return new TestViewModel(model);
+    }
+
+    protected override Func<TestModel, bool> OnCreateModelsFilter()
+    {
+      return model => model.Name != "Filter";
     }
   }
 }

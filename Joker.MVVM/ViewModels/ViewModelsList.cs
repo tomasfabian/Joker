@@ -9,17 +9,18 @@ using Joker.Extensions.Sorting;
 
 namespace Joker.MVVM.ViewModels
 {
-  public class ViewModelsList<TViewModel> : ViewModel
+  public abstract class ViewModelsList<TModel, TViewModel> : ViewModel
+    where TModel : class
     where TViewModel : class, IViewModel
   {
-    public ViewModelsList()
+    protected ViewModelsList()
     {
-      ViewModels = new ObservableCollection<TViewModel>();
+      Init();
     }
 
     private ObservableCollection<TViewModel> viewModels;
 
-    protected ObservableCollection<TViewModel> ViewModels
+    private ObservableCollection<TViewModel> ViewModels
     {
       get => viewModels;
       set
@@ -67,6 +68,15 @@ namespace Joker.MVVM.ViewModels
 
         NotifyPropertyChanged();
       }
+    }
+
+    private Func<TModel, bool> ModelsFilter { get; set; }
+
+    private void Init()
+    {
+      ViewModels = new ObservableCollection<TViewModel>();
+
+      SetModelFilters();
     }
     
     #region IsLoadingChanged
@@ -127,6 +137,47 @@ namespace Joker.MVVM.ViewModels
       SortedObservableCollection<TViewModel> sortedObservableCollection = new SortedObservableCollection<TViewModel>(comparer, ViewModels);
       
       ViewModels = sortedObservableCollection;
+    }
+    
+    internal bool ApplyModelFilter(TModel model)
+    {
+      return ModelsFilter == null || ModelsFilter(model);
+    }
+
+    internal void SetModelFilters()
+    {
+      ModelsFilter = OnCreateModelsFilter();
+    }
+
+    protected virtual Func<TModel, bool> OnCreateModelsFilter()
+    {
+      return null;
+    } 
+    
+    protected abstract TViewModel CreateViewModel(TModel model);
+
+    protected bool TryAddViewModelFor(TModel model)
+    {
+      if (ApplyModelFilter(model))
+      {
+        TViewModel viewModel = CreateViewModel(model);
+      
+        ViewModels.Add(viewModel);
+
+        return true;
+      }
+
+      return false;
+    }
+
+    protected bool RemoveViewModel(TViewModel viewModel)
+    {
+      return ViewModels.Remove(viewModel);
+    }
+
+    protected void ClearViewModels()
+    {
+      ViewModels.Clear();
     }
   }
 }

@@ -144,5 +144,25 @@ namespace Joker.MVVM.Tests.ViewModels
     }
 
     #endregion
+
+    #region Filtering
+
+    [TestMethod]
+    public void FilteredModelsWasNotAdded()
+    {
+      //Arrange
+      var model3 = TestModelProvider.Model3;
+      model3.Name = "Filter";
+
+      //Act
+      ClassUnderTest.Add(model3);
+
+      //Assert
+      ClassUnderTest.Items.Count.Should().Be(1);
+      ClassUnderTest.Items.FirstOrDefault(c => c.Id == TestModelProvider.Model1.Id).Should().NotBeNull();
+      ClassUnderTest.Items.FirstOrDefault(c => c.Id == model3.Id).Should().BeNull();
+    }
+
+    #endregion
   }
 }
