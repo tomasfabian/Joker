@@ -1,0 +1,13 @@
+<Project>
+  <ItemGroup Condition="'$(TargetFrameworkVersion)' == 'v4.7.2'">
+    <Reference Include="System.ComponentModel.DataAnnotations"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Reference Include="System.ComponentModel.DataAnnotations"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+  </ItemGroup>  
+</Project>

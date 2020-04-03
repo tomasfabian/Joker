@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <NetStandardVersion>netstandard2.0</NetStandardVersion>
+    <NetCoreVersion>netcoreapp3.0</NetCoreVersion>
+    <DotNetFrameworkVersion>net472</DotNetFrameworkVersion>
+  </PropertyGroup>
+</Project>

@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>
@@ -13,9 +14,7 @@
     <Version>1.2.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
-  </ItemGroup>
+  <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />

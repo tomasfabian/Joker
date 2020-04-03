@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
-  </ItemGroup>
+  <Import Project="..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />

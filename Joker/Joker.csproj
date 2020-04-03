@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageLicenseFile>License.txt</PackageLicenseFile>
@@ -13,10 +14,8 @@
     <Version>1.1.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
-  </ItemGroup>
+  <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
+  <Import Project="..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
 
   <ItemGroup>
     <None Include="..\Joker.Redis\License.txt">

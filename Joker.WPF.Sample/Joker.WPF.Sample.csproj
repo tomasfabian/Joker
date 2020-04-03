@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 

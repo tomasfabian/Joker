@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Provides reconnection extensions for SqlTableDependency and reactive data streaming of CUD operations from MS SQL Server.</Description>
     <Company>Tomas Fabian</Company>
     <Authors>Tomas Fabian</Authors>
@@ -15,12 +15,10 @@
     <PackageReleaseNotes>This release contains additional database reconnection lifetime scopes</PackageReleaseNotes>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
-  </ItemGroup>
-
+  <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
+  <Import Project="..\NugetProjects\SqlTableDependency.csprojimport" />
+  <Import Project="..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
+  
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>

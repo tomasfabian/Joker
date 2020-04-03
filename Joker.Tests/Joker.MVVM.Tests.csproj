@@ -1,21 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework> 
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="Microsoft.Reactive.Testing" Version="4.2.0" />
-    <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
-    <PackageReference Include="Ninject.MockingKernel.Moq" Version="3.3.0" />
   </ItemGroup>
+
+  <Import Project="..\NugetProjects\UnitTests\FluentAssertions.csprojimport" />
+  <Import Project="..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
+  <Import Project="..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\Joker.MVVM\Joker.MVVM.csproj" />

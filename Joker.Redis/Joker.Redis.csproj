@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Version>1.1.0</Version>
     <Description>SqlServer PubSub notifications via Redis and SqlTableDependency extension</Description>
     <Copyright>@tomasfabian</Copyright>
@@ -14,10 +15,8 @@
     <Company />
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
-  </ItemGroup>
+  <Import Project="..\NugetProjects\Newtonsoft.Json.csprojimport" />
+  <Import Project="..\NugetProjects\StackExchange.Redis.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\Joker\Joker.csproj" />

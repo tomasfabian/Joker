@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,7 @@
     <EmbeddedResource Remove="Migrations\201911211721407_Products2.resx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.3.0" />
-  </ItemGroup>
+  <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />

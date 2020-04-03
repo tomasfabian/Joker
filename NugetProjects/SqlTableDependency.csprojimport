@@ -1,0 +1,5 @@
+﻿<Project>
+  <ItemGroup>
+    <PackageReference Include="SqlTableDependency" Version="8.5.8"/>
+  </ItemGroup>
+</Project>
