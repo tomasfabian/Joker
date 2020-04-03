@@ -223,3 +223,6 @@ private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl
       reactiveProductsViewModel.Dispose();
     }
 ```
+
+# Work in progress:
+Redis TableDependency status notifier 
