@@ -25,6 +25,17 @@ namespace Joker.MVVM.Tests.Helpers
       }
     }
 
+    private string testProperty;
+
+    public string TestProperty
+    {
+      get => testProperty;
+
+      set => SetProperty(ref testProperty, value, nameof (TestProperty), (oldValue, newValue) => IsDirty = true);
+    }
+
+    public bool IsDirty { get; set; }
+
     protected override void OnUpdateFrom(TestModel updatedModel)
     {
       base.OnUpdateFrom(updatedModel);

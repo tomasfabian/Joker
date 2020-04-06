@@ -9,7 +9,7 @@ using Joker.Extensions.Sorting;
 
 namespace Joker.MVVM.ViewModels
 {
-  public abstract class ViewModelsList<TModel, TViewModel> : ViewModel
+  public abstract class ViewModelsList<TModel, TViewModel> : ViewModel, IViewModelsList<TViewModel>
     where TModel : class
     where TViewModel : class, IViewModel
   {

@@ -22,3 +22,9 @@ Breaking changes:
 - ViewModelsList is abstract
 - ViewModels are private to protect them against incorrect insertions (filtered models)
 - ListViewModel added TModel constraint for filter checks
+
+1.3.0
+Added:
+- ViewModel SetProperty
+- ReactiveListViewModel added interface IReactiveListViewModel
+- ViewModelsList<TModel, TViewModel> added interface IViewModelsList<TViewModel>

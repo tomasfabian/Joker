@@ -42,7 +42,7 @@ using Joker.Factories.Schedulers;
 
 namespace Joker.MVVM.ViewModels
 {
-  public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TModel, TViewModel>, IDisposable
+  public abstract class ReactiveListViewModel<TModel, TViewModel> : ViewModelsList<TModel, TViewModel>, IReactiveListViewModel<TViewModel>
     where TModel : class, IVersion
     where TViewModel : class, IViewModel<TModel>
   {
