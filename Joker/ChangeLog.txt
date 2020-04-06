@@ -19,3 +19,7 @@ Added:
 - DisposableExtensions
 - ReactiveDataWithStatus
 - VersionedTableDependencyStatus
+- IEntityChangePublisher
+
+Breaking changes:
+- IPublisher constraint IVersion was moved to IEntityChangePublisher

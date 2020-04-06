@@ -145,9 +145,24 @@ namespace Joker.MVVM.Tests.ViewModels
       //Assert
       reactiveListViewModelMock.Verify(c => c.SubscribeToDataChanges(), Times.Never);
       ClassUnderTest.IsOffline.Should().BeTrue();
+    }  
+    
+    [TestMethod]
+    public void OldValueIsIgnored()
+    {        
+      //Arrange
+      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.WaitingForNotification);
+
+      //Act
+      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.None, DateTimeOffset.MinValue);
+      RunSchedulers();
+
+      //Assert
+      reactiveListViewModelMock.Verify(c => c.SubscribeToDataChanges(), Times.Once);
+      ClassUnderTest.IsOffline.Should().BeFalse();
     }
 
-    #endregion
+    #endregion  
 
     #region Dispose
 

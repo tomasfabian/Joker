@@ -6,7 +6,7 @@ using Joker.Enums;
 
 namespace Joker.Reactive
 {
-  public class ReactiveData<TModel> : IReactiveData<TModel>, IPublisher<TModel>
+  public class ReactiveData<TModel> : IReactiveData<TModel>, IEntityChangePublisher<TModel>
     where TModel : IVersion
   {
     private readonly ISubject<EntityChange<TModel>> whenDataChanges = new Subject<EntityChange<TModel>>();

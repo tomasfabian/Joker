@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Joker.Contracts;
 using Joker.Disposables;
 using Joker.Enums;
+using Joker.Extensions.Disposables;
+using Joker.Factories.Schedulers;
 using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions.Notifications;
 using StackExchange.Redis;
-using TableDependency.SqlClient.Base.Enums;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
 
 namespace Joker.Redis.Notifications
@@ -17,12 +21,20 @@ namespace Joker.Redis.Notifications
     where TEntity : IVersion
   {
     private readonly IRedisSubscriber redisSubscriber;
-    private readonly IPublisherWithStatus<TEntity> reactiveData;
+    private readonly IEntityChangePublisherWithStatus<TEntity> reactiveData;
+    private readonly ISchedulersFactory schedulersFactory;
 
-    public DomainEntitiesSubscriber(IRedisSubscriber redisSubscriber, IPublisherWithStatus<TEntity> reactiveData)
+    public DomainEntitiesSubscriber(
+      IRedisSubscriber redisSubscriber,
+      IEntityChangePublisherWithStatus<TEntity> reactiveData,
+      ISchedulersFactory schedulersFactory)
     {
       this.redisSubscriber = redisSubscriber ?? throw new ArgumentNullException(nameof(redisSubscriber));
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
+      this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
+
+      statusChangesSubscription = new SerialDisposable();
+      statusChangesSubscription.DisposeWith(CompositeDisposable);
     }
 
     protected virtual string ChannelName { get; } = typeof(TEntity).Name + "-Changes";
@@ -35,13 +47,70 @@ namespace Joker.Redis.Notifications
       if (IsDisposed)
         throw new ObjectDisposedException("Object has already been disposed.");
 
-      await redisSubscriber.Subscribe(OnStatusMessageReceived, StatusChannelName);
+      SubscribeToConnectionChanged();
+
       await redisSubscriber.Subscribe(OnMessageReceived, ChannelName);
     }
 
-    private void OnStatusMessageReceived(ChannelMessage channelMessage)
+    private VersionedTableDependencyStatus lastStatus;
+
+    private void SubscribeToConnectionChanged()
     {
-      OnStatusMessageReceived(channelMessage.Message);
+      redisSubscriber.WhenIsConnectedChanges
+        .Subscribe(isConnected =>
+        {
+          if(isConnected)
+            SubscribeToStatusChanges();
+          else
+          {
+            statusChangesSubscription.Disposable = Disposable.Empty;
+            
+            lastStatus = new VersionedTableDependencyStatus(VersionedTableDependencyStatus.TableDependencyStatuses.None, DateTimeOffset.MinValue);
+
+            reactiveData.Publish(lastStatus);
+          }
+        })
+        .DisposeWith(CompositeDisposable);
+    }
+
+    private readonly SerialDisposable statusChangesSubscription;
+
+    private void SubscribeToStatusChanges()
+    {
+      var statusMessagesSource = CreateStatusChangedSource();
+
+      var pullStatusMessageSource = Observable.Defer(() => redisSubscriber.GetStringAsync(StatusChannelName).ToObservable(schedulersFactory.ThreadPool));
+
+      statusChangesSubscription.Disposable =
+        statusMessagesSource
+          .Merge(pullStatusMessageSource)
+          .Select(DeserializeVersionedTableDependencyStatus)
+          .Subscribe(status =>
+          {
+            if(lastStatus == null || lastStatus.Timestamp < status.Timestamp)
+            {
+              lastStatus = status; 
+            
+              reactiveData.Publish(lastStatus);
+            }
+          });
+    }
+
+    internal virtual IObservable<string> CreateStatusChangedSource()
+    {
+      var statusMessagesSource = Observable.Create<ChannelMessage>(o =>
+      {
+        redisSubscriber.Subscribe(o.OnNext, StatusChannelName);
+
+        return Disposable.Create(() => redisSubscriber.Unsubscribe(StatusChannelName));
+      });
+
+      return statusMessagesSource.Select(OnStatusMessageReceived);
+    }
+
+    private string OnStatusMessageReceived(ChannelMessage channelMessage)
+    {
+      return channelMessage.Message;
     }
 
     protected virtual VersionedTableDependencyStatus DeserializeVersionedTableDependencyStatus(string message)
@@ -55,7 +124,7 @@ namespace Joker.Redis.Notifications
     {
       var status = DeserializeVersionedTableDependencyStatus(message);
       
-      reactiveData.PublishStatus(status);
+      reactiveData.Publish(status);
     }
 
     private void OnMessageReceived(ChannelMessage channelMessage)

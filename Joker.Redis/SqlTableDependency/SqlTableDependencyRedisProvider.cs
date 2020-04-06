@@ -2,8 +2,13 @@
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Joker.Disposables;
+using Joker.Extensions.Disposables;
+using Joker.Notifications;
+using TableDependencyStatuses  = Joker.Notifications.VersionedTableDependencyStatus.TableDependencyStatuses;
 using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.SqlTableDependency.Extensions;
 using Newtonsoft.Json;
 using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Notifications;
@@ -54,6 +59,14 @@ namespace Joker.Redis.SqlTableDependency
 
     public SqlTableDependencyRedisProvider<TEntity> StartPublishing()
     {
+      redisPublisher.WhenIsConnectedChanges
+        .Where(isConnected => isConnected)
+        .Subscribe(isConnected =>
+        {
+          PublishStatus(statusVersion);
+        })
+        .DisposeWith(CompositeDisposable);
+
       entityChangesSubscription =
         sqlTableDependencyProvider.WhenEntityRecordChanges
           .ObserveOn(scheduler)
@@ -83,7 +96,7 @@ namespace Joker.Redis.SqlTableDependency
 
     protected virtual IObserver<TableDependencyStatus> CreateSqlTableDependencyStatusChangedObserver()
     {
-      return Observer.Create<TableDependencyStatus>(OnSqlTableDependencyStatusChanged);
+      return Observer.Create<TableDependencyStatus>(async(s) => await OnSqlTableDependencyStatusChanged(s));
     }
 
     #endregion
@@ -98,22 +111,37 @@ namespace Joker.Redis.SqlTableDependency
 
     #region OnSqlTableDependencyRecordChanged
 
-    protected virtual void OnSqlTableDependencyRecordChanged(RecordChangedNotification<TEntity> recordChangedNotification)
+    protected void OnSqlTableDependencyRecordChanged(RecordChangedNotification<TEntity> recordChangedNotification)
     {
-      string json = Serialize(recordChangedNotification);
+      string jsonNotification = Serialize(recordChangedNotification);
 
-      redisPublisher.PublishAsync(ChangesChannelName, json);
+      redisPublisher.PublishAsync(ChangesChannelName, jsonNotification);
     }
 
     #endregion
 
     #region OnSqlTableDependencyStatusChanged
 
-    protected virtual void OnSqlTableDependencyStatusChanged(TableDependencyStatus status)
-    {
-      string json = Serialize(status);
+    private VersionedTableDependencyStatus statusVersion = new VersionedTableDependencyStatus(TableDependencyStatuses.None, DateTimeOffset.MinValue);
 
-      redisPublisher.PublishAsync(StatusChannelName, json);
+    protected async Task OnSqlTableDependencyStatusChanged(TableDependencyStatus status)
+    {
+      statusVersion = new VersionedTableDependencyStatus(status.Convert(), DateTimeOffset.Now);
+
+      await PublishStatus(statusVersion);
+    }
+
+    #endregion
+
+    #region PublishStatus
+
+    private async Task PublishStatus(VersionedTableDependencyStatus versionedTableDependencyStatus)
+    {
+      string jsonStatusVersion = Serialize(versionedTableDependencyStatus);
+
+      await redisPublisher.SetStringAsync(StatusChannelName, jsonStatusVersion);
+
+      await redisPublisher.PublishAsync(StatusChannelName, jsonStatusVersion);
     }
 
     #endregion

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
+using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
 using Newtonsoft.Json;
 using Sample.Data.Context;
@@ -13,7 +14,6 @@ using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Sample.Logging;
 using SqlTableDependency.Extensions.Sample.Redis;
 using SqlTableDependency.Extensions.Sample.SqlTableDependencies;
-using TableDependency.SqlClient.Base.Enums;
 
 namespace SqlTableDependency.Extensions.Sample
 {
@@ -78,10 +78,8 @@ namespace SqlTableDependency.Extensions.Sample
                                       }, nameof(Product)+"-Changes");      
       
       await redisSubscriber.Subscribe(channelMessage =>
-                                      {
-                                        var tableDependencyStatus = JsonConvert.DeserializeObject<TableDependencyStatus>(channelMessage.Message);
-                                        Console.WriteLine($"OnNext tableDependencyStatus changed({tableDependencyStatus})");
-                                      }, nameof(Product)+"-Status");
+                                      {                                        var tableDependencyStatus = JsonConvert.DeserializeObject<VersionedTableDependencyStatus>(channelMessage.Message);
+                                        Console.WriteLine($"OnNext tableDependencyStatus changed({tableDependencyStatus.TableDependencyStatus})");}, nameof(Product)+"-Status");
 
       redisSubscriber.WhenIsConnectedChanges.Subscribe(c => Console.WriteLine($"REDIS is connected: {c}"));
 

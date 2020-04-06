@@ -1,10 +1,7 @@
-﻿using Joker.Enums;
-
-namespace Joker.Contracts
+﻿namespace Joker.Contracts
 {
-  public interface IPublisher<TEntity>
-    where TEntity : IVersion
+  public interface IPublisher<in TNotification>
   {
-    void Publish(EntityChange<TEntity> entityChange);
+    void Publish(TNotification notification);
   }
 }

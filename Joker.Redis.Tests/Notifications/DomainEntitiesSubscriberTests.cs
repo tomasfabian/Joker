@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Joker.Contracts;
 using Joker.Enums;
+using Joker.Factories.Schedulers;
 using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
 using Ninject;
 using StackExchange.Redis;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
@@ -21,14 +24,30 @@ namespace Joker.Redis.Tests.Notifications
   {
     #region TestInitialize
 
+    private ISubject<bool> whenIsConnectedChangesSubject;
+
+    private TableDependencyStatuses initialStatus = TableDependencyStatuses.Started;
+
     [TestInitialize]
     public override void TestInitialize()
     {
       base.TestInitialize();
 
+      MockingKernel.Bind<ISchedulersFactory>().ToConstant(SchedulersFactory);
+
+      whenIsConnectedChangesSubject = new Subject<bool>();
+
+      MockingKernel.GetMock<IRedisSubscriber>()
+        .Setup(c => c.WhenIsConnectedChanges)
+        .Returns(whenIsConnectedChangesSubject);
+
       MockingKernel.GetMock<IRedisSubscriber>()
         .Setup(c => c.Subscribe(It.IsAny<Action<ChannelMessage>>(), It.IsAny<RedisChannel>(), It.IsAny<CommandFlags>()))
         .Returns(Task.CompletedTask);
+
+      MockingKernel.GetMock<IRedisSubscriber>()
+        .Setup(c => c.GetStringAsync($"{typeof(TestModel).Name}-Status"))
+        .Returns(Task.FromResult(CreateStatusJson(initialStatus)));
 
       ClassUnderTest = MockingKernel.Get<TestableDomainEntitiesSubscriber>();
     }
@@ -37,7 +56,22 @@ namespace Joker.Redis.Tests.Notifications
 
     #region Tests
 
+    private Mock<IRedisSubscriber> RedisSubscriberMock => MockingKernel.GetMock<IRedisSubscriber>();
+
     #region EntityChange
+
+    [TestMethod]
+    public async Task Subscribe_SubscribedToWhenIsConnectedChanges()
+    {
+      //Arrange
+      
+      //Act
+      await ClassUnderTest.Subscribe();
+
+      //Assert
+      RedisSubscriberMock
+        .Verify(c => c.WhenIsConnectedChanges, Times.Once);
+    }
 
     [TestMethod]
     public async Task Subscribe_SubscribedToRedisChannel()
@@ -48,7 +82,7 @@ namespace Joker.Redis.Tests.Notifications
       await ClassUnderTest.Subscribe();
 
       //Assert
-      MockingKernel.GetMock<IRedisSubscriber>()
+      RedisSubscriberMock
         .Verify(c => c.Subscribe(It.IsAny<Action<ChannelMessage>>(), It.Is<RedisChannel>(d => d == $"{typeof(TestModel).Name}-Changes"), It.IsAny<CommandFlags>()), Times.Once);
     }
 
@@ -111,7 +145,7 @@ namespace Joker.Redis.Tests.Notifications
 
     private void VerifyPublish(Enums.ChangeType changeType)
     {
-      MockingKernel.GetMock<IPublisherWithStatus<TestModel>>()
+      MockingKernel.GetMock<IEntityChangePublisherWithStatus<TestModel>>()
         .Verify(c => c.Publish(It.Is<EntityChange<TestModel>>(ec => ec.ChangeType == changeType)), Times.Once);
     }
 
@@ -134,8 +168,8 @@ namespace Joker.Redis.Tests.Notifications
     
     private void VerifyStatusPublish(TableDependencyStatuses tableDependencyStatuses)
     {
-      MockingKernel.GetMock<IPublisherWithStatus<TestModel>>()
-        .Verify(c => c.PublishStatus(It.Is<VersionedTableDependencyStatus>(ec => ec.TableDependencyStatus == tableDependencyStatuses)), Times.Once);
+      MockingKernel.GetMock<IEntityChangePublisherWithStatus<TestModel>>()
+        .Verify(c => c.Publish(It.Is<VersionedTableDependencyStatus>(ec => ec.TableDependencyStatus == tableDependencyStatuses)), Times.Once);
     } 
 
     #endregion
@@ -151,6 +185,95 @@ namespace Joker.Redis.Tests.Notifications
       await ClassUnderTest.Subscribe();
 
       //Assert
+    }
+
+    [TestMethod]
+    public void Dispose_UnSubscribedFromRedis()
+    {
+      //Arrange
+      
+      //Act
+      ClassUnderTest.Dispose();
+
+      //Assert
+      MockingKernel.GetMock<IRedisSubscriber>()
+        .Verify(c => c.Unsubscribe(It.IsAny<RedisChannel>(), null, CommandFlags.None), Times.Once);
+    }
+
+    #endregion
+
+    private string StatusChannelName => $"{typeof(TestModel).Name}-Status";
+
+    [TestMethod]
+    public async Task OnRedisConnected_SubscribedToStatusChanges()
+    {
+      //Arrange
+      await ClassUnderTest.Subscribe();
+      
+      //Act
+      whenIsConnectedChangesSubject.OnNext(true);
+      RunSchedulers();
+
+      //Assert
+      RedisSubscriberMock
+        .Verify(c => c.Subscribe(It.IsAny<Action<ChannelMessage>>(), It.Is<RedisChannel>(d => d == StatusChannelName), It.IsAny<CommandFlags>()), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task OnRedisConnected_LastStatusWasPublished()
+    {
+      //Arrange
+      await ClassUnderTest.Subscribe();
+      
+      //Act
+      whenIsConnectedChangesSubject.OnNext(true);
+      RunSchedulers();
+
+      //Assert
+      MockingKernel.GetMock<IEntityChangePublisherWithStatus<TestModel>>()
+        .Verify(c => c.Publish(It.Is<VersionedTableDependencyStatus>(s => s.TableDependencyStatus == initialStatus)));
+    }
+
+    [TestMethod]
+    public async Task OnRedisDisconnected_ResetStatusWasPublished()
+    {
+      //Arrange
+      await ClassUnderTest.Subscribe();
+      
+      //Act
+      whenIsConnectedChangesSubject.OnNext(false);
+      RunSchedulers();
+
+      //Assert
+      MockingKernel.GetMock<IEntityChangePublisherWithStatus<TestModel>>()
+        .Verify(c => c.Publish(It.Is<VersionedTableDependencyStatus>(s => s.TableDependencyStatus == TableDependencyStatuses.None && s.Timestamp == DateTimeOffset.MinValue)));
+    }
+
+    [TestMethod]
+    public async Task Dispose()
+    {
+      //Arrange
+      await ClassUnderTest.Subscribe();
+      whenIsConnectedChangesSubject.OnNext(true);
+      RunSchedulers();
+      
+      //Act
+      ClassUnderTest.Dispose();
+
+      //Assert
+      MockingKernel.GetMock<IRedisSubscriber>()
+        .Verify(c => c.Unsubscribe(StatusChannelName, null, CommandFlags.None), Times.Once);
+    }
+
+    #region Methods
+    
+    private string CreateStatusJson(TableDependencyStatuses tableDependencyStatuses)
+    {
+      var status = new VersionedTableDependencyStatus(tableDependencyStatuses, DateTimeOffset.Now);
+      
+      var jsonStatus = JsonConvert.SerializeObject(status);
+
+      return jsonStatus;
     }
 
     #endregion
