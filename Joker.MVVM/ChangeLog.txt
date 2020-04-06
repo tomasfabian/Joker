@@ -28,3 +28,4 @@ Added:
 - ViewModel SetProperty
 - ReactiveListViewModel added interface IReactiveListViewModel
 - ViewModelsList<TModel, TViewModel> added interface IViewModelsList<TViewModel>
+- EntityChangesViewModel
