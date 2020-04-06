@@ -22,7 +22,7 @@ namespace Joker.Redis.ConnectionMultiplexers
       channel.OnMessage(onMessage);
     }
 
-    public async Task<RedisValue> GetStringAsync(string key)
+    public async Task<string> GetStringAsync(string key)
     {
       await CreateSubject(url);
       
