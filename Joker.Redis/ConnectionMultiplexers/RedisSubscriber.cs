@@ -25,15 +25,45 @@ namespace Joker.Redis.ConnectionMultiplexers
     public async Task<string> GetStringAsync(string key)
     {
       await CreateSubject(url);
-      
-      IDatabase redisDatabase = GetDatabase();
 
-      return await redisDatabase.StringGetAsync(key);
+      return await TryGetStringAsync(key, GetStringRetryCount);
+    }
+
+    public int GetStringRetryCount { get; set; } = 0;
+
+    private async Task<string> TryGetStringAsync(string key, int retryCount)
+    {
+      try
+      {
+        var redisDatabase = GetDatabase();
+
+        if (redisDatabase == null || !redisDatabase.Multiplexer.IsConnected)
+          return null;
+
+        var value = await redisDatabase.StringGetAsync(key);
+
+        return value;
+      }
+      catch (Exception e)
+      {
+        await Task.Delay(TimeSpan.FromSeconds(25));
+
+        if (retryCount-- > 0)
+          return await TryGetStringAsync(key, retryCount);
+
+        OnError(e);
+
+        return null;
+      }
+    }
+
+    protected virtual void OnError(Exception error)
+    {
     }
 
     public void Unsubscribe(RedisChannel channel, Action<RedisChannel, RedisValue> handler = null, CommandFlags flags = CommandFlags.None)
     {
-      Subject?.Unsubscribe(channel, handler, flags);
+      Subject?.UnsubscribeAsync(channel, handler, flags);
     }
   }
 }

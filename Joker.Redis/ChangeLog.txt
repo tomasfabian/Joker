@@ -11,6 +11,8 @@
 added: 
 - (I)RedisPublisher SetStringAsync
 - (I)RedisSubscriber GetStringAsync
+- RedisSubscriber GetStringRetryCount
+- RedisPublisher SetStringRetryCount
 
 changed:
 - DomainEntitiesSubscriber IPublisher<> ctor dependency changed to IPublisherWithStatus<>

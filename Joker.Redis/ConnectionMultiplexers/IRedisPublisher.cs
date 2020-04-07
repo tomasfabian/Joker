@@ -7,5 +7,6 @@ namespace Joker.Redis.ConnectionMultiplexers
   {
     Task<long> PublishAsync(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None);
     Task<bool> SetStringAsync(string key, string value);
+    int SetStringRetryCount { get; set; }
   }
 }

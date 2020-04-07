@@ -34,6 +34,8 @@ namespace Joker.Redis.SqlTableDependency
       this.sqlTableDependencyProvider = sqlTableDependencyProvider ?? throw new ArgumentNullException(nameof(sqlTableDependencyProvider));
       this.redisPublisher = redisPublisher ?? throw new ArgumentNullException(nameof(redisPublisher));
       this.scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
+
+      redisPublisher.SetStringRetryCount = 3;
     }
 
     #endregion

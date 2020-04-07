@@ -18,7 +18,19 @@ namespace Joker.Redis.ConnectionMultiplexers
     {
       await CreateSubject(url);
 
-      return await Subject.PublishAsync(redisChannel, redisValue, commandFlags);
+      if (!IsConnected)
+        return -1;
+
+      try
+      {
+        return await Subject.PublishAsync(redisChannel, redisValue, commandFlags);
+      }
+      catch (Exception e)
+      {
+        OnError(e);
+
+        return -1;
+      }
     }    
 
     private long Publish(RedisChannel redisChannel, RedisValue redisValue, CommandFlags commandFlags = CommandFlags.None)
@@ -28,18 +40,49 @@ namespace Joker.Redis.ConnectionMultiplexers
       return Subject.Publish(redisChannel, redisValue, commandFlags);
     }
 
+    public int SetStringRetryCount { get; set; }
+
     public async Task<bool> SetStringAsync(string key, string value)
     {
       await CreateSubject(url);
-      
-      IDatabase redisDatabase = GetDatabase();
 
-      var setStringResult = await redisDatabase.StringSetAsync(new[]
+      return await TrySetStringAsync(key, value, SetStringRetryCount);
+    }
+
+    private async Task<bool> TrySetStringAsync(string key, string value, int retryCount = 3)
+    {
+      try
       {
-        new KeyValuePair<RedisKey, RedisValue>(key, value)
-      });
+        var redisDatabase = GetDatabase();
 
-      return setStringResult;
+        if (redisDatabase == null || !redisDatabase.Multiplexer.IsConnected ||
+            !redisDatabase.IsConnected(default(RedisKey)))
+        {
+          return false;
+        }
+
+        var setStringResult = await redisDatabase.StringSetAsync(new[]
+        {
+          new KeyValuePair<RedisKey, RedisValue>(key, value)
+        });
+
+        return setStringResult;
+      }
+      catch (Exception e)
+      {
+        await Task.Delay(TimeSpan.FromSeconds(25));
+
+        if (retryCount-- > 0)
+          return await TrySetStringAsync(key, value, retryCount);
+
+        OnError(e);
+
+        return false;
+      }
+    }
+
+    protected virtual void OnError(Exception error)
+    {
     }
   }
 }

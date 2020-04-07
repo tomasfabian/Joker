@@ -19,6 +19,8 @@ CREATE TABLE [dbo].[Products](
 ) ON [PRIMARY]
 GO
 
+--ALTER TABLE [dbo].[Products] ADD CONSTRAINT DF_Date DEFAULT(GETDATE()) FOR [Timestamp]
+
 create or alter trigger [dbo].[ProductsBU] on [dbo].[Products] for update as
 begin
    declare

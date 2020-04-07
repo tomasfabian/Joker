@@ -154,12 +154,27 @@ namespace Joker.MVVM.Tests.ViewModels
       PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.WaitingForNotification);
 
       //Act
-      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.None, DateTimeOffset.MinValue);
+      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.None, DateTimeOffset.Now.AddHours(-2));
       RunSchedulers();
 
       //Assert
       reactiveListViewModelMock.Verify(c => c.SubscribeToDataChanges(), Times.Once);
       ClassUnderTest.IsOffline.Should().BeFalse();
+    }
+    
+    [TestMethod]
+    public void DateTimeOffset_MinValue_ResetsStateToNone()
+    {        
+      //Arrange
+      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.WaitingForNotification);
+
+      //Act
+      PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.None, DateTimeOffset.MinValue);
+      RunSchedulers();
+
+      //Assert
+      reactiveListViewModelMock.Verify(c => c.SubscribeToDataChanges(), Times.Once);
+      ClassUnderTest.IsOffline.Should().BeTrue();
     }
 
     #endregion  

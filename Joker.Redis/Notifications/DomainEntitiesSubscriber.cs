@@ -33,6 +33,8 @@ namespace Joker.Redis.Notifications
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
+      redisSubscriber.GetStringRetryCount = 3;
+
       statusChangesSubscription = new SerialDisposable();
       statusChangesSubscription.DisposeWith(CompositeDisposable);
     }
@@ -84,10 +86,11 @@ namespace Joker.Redis.Notifications
       statusChangesSubscription.Disposable =
         statusMessagesSource
           .Merge(pullStatusMessageSource)
+          .Where(c => !string.IsNullOrEmpty(c))
           .Select(DeserializeVersionedTableDependencyStatus)
           .Subscribe(status =>
           {
-            if(lastStatus == null || lastStatus.Timestamp < status.Timestamp)
+            if(lastStatus == null || status.Timestamp == DateTimeOffset.MinValue || lastStatus.Timestamp < status.Timestamp)
             {
               lastStatus = status; 
             
@@ -120,7 +123,7 @@ namespace Joker.Redis.Notifications
       return versionedTableDependencyStatus;
     }
 
-    protected void OnStatusMessageReceived(string message)
+    internal void OnStatusMessageReceived(string message)
     {
       var status = DeserializeVersionedTableDependencyStatus(message);
       
@@ -132,7 +135,7 @@ namespace Joker.Redis.Notifications
       OnMessageReceived(channelMessage.Message);
     }
 
-    protected void OnMessageReceived(string message)
+    internal void OnMessageReceived(string message)
     {
       var recordChange = DeserializeRecordChangedNotification(message);
 

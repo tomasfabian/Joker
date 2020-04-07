@@ -2,66 +2,49 @@
 using System.Configuration;
 using System.Reactive.Linq;
 using Joker.Enums;
-using Joker.Factories.Schedulers;
+using Joker.MVVM.ViewModels;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.WPF.Sample.Factories.ViewModels;
+using Joker.WPF.Sample.Redis;
 using Joker.WPF.Sample.ViewModels.Products;
 using Joker.WPF.Sample.ViewModels.Reactive;
 using Prism.Mvvm;
 using Sample.Data.Context;
 using Sample.Domain.Models;
+using SqlTableDependency.Extensions;
 
 namespace Joker.WPF.Sample.ViewModels
 {
   public class ShellViewModel : BindableBase, IDisposable
   {
-    public ProductsViewModel ProductsViewModel { get; }
+    private readonly ISqlTableDependencyProvider<Product> productsChangesProvider;
 
-    public ReactiveProductsViewModel ReactiveProductsViewModel { get; }
+    public EntityChangesViewModel<ProductViewModel> EntityChangesViewModel { get; }
 
-    private static int fakeProductId = 1;
+    private readonly DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
 
-    private readonly IDisposable timerSubscription;
-    private readonly IDisposable isLoadingSubscription;
-
-    public ShellViewModel(ProductsViewModel productsViewModel)
+    public ShellViewModel(ProductsViewModel productsViewModel, ISqlTableDependencyProvider<Product> productsChangesProvider)
     {
-      ProductsViewModel = productsViewModel;
-
-      // ProductsViewModel.Initialize();
-
-      var reactiveData = new ReactiveData<Product>();
+      this.productsChangesProvider = productsChangesProvider ?? throw new ArgumentNullException(nameof(productsChangesProvider));
+      productsChangesProvider.SubscribeToEntityChanges();
       
-      ReactiveProductsViewModel = new ReactiveProductsViewModel(null, reactiveData, new WpfSchedulersFactory());
+      var schedulersFactory = new WpfSchedulersFactory();
+      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
-      ReactiveProductsViewModel.SubscribeToDataChanges();
-
-      reactiveData.Publish(CreateEntityChange());
-
-      isLoadingSubscription = ReactiveProductsViewModel.IsLoadingChanged
-        .Subscribe(c =>
-        {
-          Console.WriteLine($"IsLoading changed {c}");
-        });
-
-      timerSubscription = Observable.Timer(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(1))
-        .Subscribe(c =>
-        {
-          reactiveData.Publish(CreateEntityChange());
-        });
+      var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
+        new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
+      redisPublisher.StartPublishing();
 
       var reactiveDataWithStatus = new ReactiveDataWithStatus<Product>();
-      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
-      using var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, new SchedulersFactory());
-      reactiveDataWithStatus.WhenStatusChanges
-        .Subscribe(c =>
-        {
+      
+      domainEntitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, schedulersFactory);
+      domainEntitiesSubscriber.Subscribe();
 
-        });
-      entitiesSubscriber.Subscribe();
-      //CreateReactiveProductsViewModel();
+      EntityChangesViewModel = new EntityChangesViewModel<ProductViewModel>(
+        new ReactiveListViewModelFactory() {ReactiveDataWithStatus = reactiveDataWithStatus}, reactiveDataWithStatus, schedulersFactory.Dispatcher);
     }
 
     private static void CreateReactiveProductsViewModel()
@@ -81,6 +64,8 @@ namespace Joker.WPF.Sample.ViewModels
       reactiveProductsViewModel.Dispose();
     }
 
+    private static int fakeProductId = 1;
+
     private static EntityChange<Product> CreateEntityChange()
     {
       return new EntityChange<Product>(new Product()
@@ -93,12 +78,10 @@ namespace Joker.WPF.Sample.ViewModels
 
     public void Dispose()
     {
-      using (isLoadingSubscription)
-      using (timerSubscription)
+      using (EntityChangesViewModel)
+      using (domainEntitiesSubscriber)
       {
       }
-
-      ProductsViewModel?.Dispose();
     }
   }
 }

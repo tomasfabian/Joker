@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -38,6 +39,9 @@ namespace Joker.Redis.ConnectionMultiplexers
       get => isConnected;
       private set
       {
+        if(isConnected == value)
+          return;
+
         isConnected = value;
 
         whenIsConnectedChangesSubject.OnNext(isConnected);
@@ -50,7 +54,7 @@ namespace Joker.Redis.ConnectionMultiplexers
 
     private readonly ISubject<bool> whenIsConnectedChangesSubject = new ReplaySubject<bool>(1);
 
-    public IObservable<bool> WhenIsConnectedChanges => whenIsConnectedChangesSubject.DistinctUntilChanged().AsObservable();
+    public IObservable<bool> WhenIsConnectedChanges => whenIsConnectedChangesSubject.StartWith(false).DistinctUntilChanged().AsObservable();
 
     #endregion
 
@@ -79,8 +83,6 @@ namespace Joker.Redis.ConnectionMultiplexers
           Initialize();
       
           Subject = connectionMultiplexer.GetSubscriber();
-          
-          Console.WriteLine("Subject created");
         }
       }
       finally
@@ -107,7 +109,7 @@ namespace Joker.Redis.ConnectionMultiplexers
 
     private void OnConnectionRestored(object sender, ConnectionFailedEventArgs args)
     {
-      IsConnected = true;
+      IsConnected = ((ConnectionMultiplexer)sender).IsConnected;
     }
 
     #endregion
