@@ -11,9 +11,26 @@ GO
 CREATE TABLE [dbo].[Products](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [varchar](50) NULL,
+	[Timestamp] [datetime] not null default GETDATE()
  CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+create or alter trigger [dbo].[ProductsBU] on [dbo].[Products] for update as
+begin
+   declare
+      @numrows  int
+
+      select  @numrows = @@rowcount
+      if @numrows = 0
+         return
+
+    UPDATE Products SET [Timestamp] = GETDATE()
+    FROM Inserted i
+    WHERE i.Id = Products.Id 
+end
+
 GO

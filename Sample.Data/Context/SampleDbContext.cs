@@ -1,4 +1,6 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using Sample.Domain.Models;
 
 namespace Sample.Data.Context
@@ -17,6 +19,17 @@ namespace Sample.Data.Context
       : base(nameOrConnectionString)
     {
       Database.SetInitializer(new CreateSampleDatabaseIfNotExists());
+    }
+    
+    public SampleDbContext(string connectionString, DbCompiledModel model)
+      : base(connectionString, model)
+    {
+    }
+
+    public SampleDbContext(ObjectContext objectContext, bool dbContextOwnsObjectContext)
+      : base(objectContext, dbContextOwnsObjectContext)
+    {
+
     }
 
     #endregion
