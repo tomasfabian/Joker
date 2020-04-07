@@ -3,7 +3,11 @@ Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.1.0
+Install-Package Joker.MVVM -Version 1.2.0
+
+# Preview:
+[Redis TableDependency status notifier](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Redis-TableDependency-status-notifier---preview)
+Sql server data changes refresher via Redis with End to end reconnections
 
 # SqlTableDependency.Extensions
 If sharing increases coupling, should we share at all? Is it time for decoupling?
@@ -223,6 +227,3 @@ private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl
       reactiveProductsViewModel.Dispose();
     }
 ```
-
-# Work in progress:
-Redis TableDependency status notifier 
