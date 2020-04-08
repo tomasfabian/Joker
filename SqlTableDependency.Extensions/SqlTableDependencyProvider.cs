@@ -259,7 +259,7 @@ namespace SqlTableDependency.Extensions
 
       TryStopLastConnection();
 
-      var modelToTableMapper = OnInitializeMapper(new ModelToTableMapper<TEntity>());
+      var modelToTableMapper = InitializeMapper();
 
       try
       {
@@ -267,7 +267,7 @@ namespace SqlTableDependency.Extensions
 
         sqlTableDependency.OnChanged += SqlTableDependencyOnChanged;
         sqlTableDependency.OnError += SqlTableDependencyOnError;
-        sqlTableDependency.OnStatusChanged += SqlTableDependencyOnStatusChanged;
+        sqlTableDependency.OnStatusChanged += OnSqlTableDependencyStatusChanged;
 
         sqlTableDependency.Start();
         
@@ -349,9 +349,19 @@ namespace SqlTableDependency.Extensions
 
     #region SqlTableDependencyOnStatusChanged
 
-    protected virtual void SqlTableDependencyOnStatusChanged(object sender, StatusChangedEventArgs e)
+    private void OnSqlTableDependencyStatusChanged(object sender, StatusChangedEventArgs e)
     {
       whenStatusChanges.OnNext(e.Status);
+
+      SqlTableDependencyOnStatusChanged(sender, e);
+    }
+
+    #endregion
+
+    #region SqlTableDependencyOnStatusChanged
+
+    protected virtual void SqlTableDependencyOnStatusChanged(object sender, StatusChangedEventArgs e)
+    {
     }
 
     #endregion
@@ -363,6 +373,20 @@ namespace SqlTableDependency.Extensions
       TryHandlerErrors(e.Error);
 
       TryReconnect();
+    }
+
+    #endregion
+
+    #region InitializeMapper
+
+    private ModelToTableMapper<TEntity> InitializeMapper()
+    {
+      var modelToTableMapper = OnInitializeMapper(new ModelToTableMapper<TEntity>());
+
+      if (modelToTableMapper.Count() == 0)
+        return null;
+
+      return modelToTableMapper;
     }
 
     #endregion
