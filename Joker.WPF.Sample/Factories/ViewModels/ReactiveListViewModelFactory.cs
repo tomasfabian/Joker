@@ -11,7 +11,12 @@ namespace Joker.WPF.Sample.Factories.ViewModels
 {
   public class ReactiveListViewModelFactory : IReactiveListViewModelFactory<ProductViewModel>
   {
-    public ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; set; }
+    public ReactiveListViewModelFactory(ReactiveDataWithStatus<Product> reactiveDataWithStatus)
+    {
+      ReactiveDataWithStatus = reactiveDataWithStatus;
+    }
+
+    private ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; set; }
     
     public IReactiveListViewModel<ProductViewModel> Create()
     {      

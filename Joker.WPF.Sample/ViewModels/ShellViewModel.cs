@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
 using Joker.Enums;
+using Joker.Factories.Schedulers;
 using Joker.MVVM.ViewModels;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
@@ -20,31 +23,63 @@ namespace Joker.WPF.Sample.ViewModels
 {
   public class ShellViewModel : BindableBase, IDisposable
   {
-    private readonly ISqlTableDependencyProvider<Product> productsChangesProvider;
+    private ISqlTableDependencyProvider<Product> productsChangesProvider;
+    
+    private EntityChangesViewModel<ProductViewModel> entityChangesViewModel;
 
-    public EntityChangesViewModel<ProductViewModel> EntityChangesViewModel { get; }
-
-    private readonly DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
-
-    public ShellViewModel(ProductsViewModel productsViewModel, ISqlTableDependencyProvider<Product> productsChangesProvider)
+    public EntityChangesViewModel<ProductViewModel> EntityChangesViewModel
     {
-      this.productsChangesProvider = productsChangesProvider ?? throw new ArgumentNullException(nameof(productsChangesProvider));
+      get => entityChangesViewModel;
+      set
+      {
+        entityChangesViewModel = value;
+
+        RaisePropertyChanged();
+      }
+    }
+
+    private DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
+
+    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider)
+    {
+      Initialize(productsChangesProvider).ToObservable()
+        .Subscribe();
+    }
+
+    private async Task Initialize(ISqlTableDependencyProvider<Product> productsChangesProvider)
+    {
+      SimulateServer(productsChangesProvider);
+
+      await InitializeClient();
+    }
+
+    private void SimulateServer(ISqlTableDependencyProvider<Product> productsChangesProvider)
+    {
+      this.productsChangesProvider =
+        productsChangesProvider ?? throw new ArgumentNullException(nameof(productsChangesProvider));
       productsChangesProvider.SubscribeToEntityChanges();
-      
-      var schedulersFactory = new WpfSchedulersFactory();
+
+      var schedulersFactory = new SchedulersFactory();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
       var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
         new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
       redisPublisher.StartPublishing();
+    }
+
+    private async Task InitializeClient()
+    {
+      var schedulersFactory = new WpfSchedulersFactory();
+      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
       var reactiveDataWithStatus = new ReactiveDataWithStatus<Product>();
-      
-      domainEntitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, schedulersFactory);
-      domainEntitiesSubscriber.Subscribe();
+
+      domainEntitiesSubscriber =
+        new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, schedulersFactory);
+      await domainEntitiesSubscriber.Subscribe();
 
       EntityChangesViewModel = new EntityChangesViewModel<ProductViewModel>(
-        new ReactiveListViewModelFactory() {ReactiveDataWithStatus = reactiveDataWithStatus}, reactiveDataWithStatus, schedulersFactory.Dispatcher);
+        new ReactiveListViewModelFactory(reactiveDataWithStatus), reactiveDataWithStatus, schedulersFactory.Dispatcher);
     }
 
     private static void CreateReactiveProductsViewModel()
