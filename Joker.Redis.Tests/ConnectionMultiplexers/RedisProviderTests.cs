@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -63,6 +64,66 @@ namespace Joker.Redis.Tests.ConnectionMultiplexers
         .Returns(true)
         .Verifiable();
     }
+
+    #region EventHandlers
+
+    [TestMethod]
+    public async Task ConnectAsync_ConnectionRestored()
+    {
+      //Arrange
+      ConnectionMultiplexerMock.SetupAdd(c => c.ConnectionRestored += It.IsAny<EventHandler<ConnectionFailedEventArgs>>());
+
+      //Act
+      await ClassUnderTest.ConnectAsync();
+
+      //Assert
+      ConnectionMultiplexerMock.VerifyAdd(c => c.ConnectionRestored += It.IsAny<EventHandler<ConnectionFailedEventArgs>>(), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task Dispose_ConnectionRestored()
+    {
+      //Arrange
+      ConnectionMultiplexerMock.SetupRemove(c => c.ConnectionRestored -= It.IsAny<EventHandler<ConnectionFailedEventArgs>>());
+      
+      await ClassUnderTest.ConnectAsync();
+
+      //Act
+      ClassUnderTest.Dispose();
+
+      //Assert
+      ConnectionMultiplexerMock.VerifyRemove(c => c.ConnectionRestored -= It.IsAny<EventHandler<ConnectionFailedEventArgs>>(), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task ConnectAsync_ConnectionFailed()
+    {
+      //Arrange
+      ConnectionMultiplexerMock.SetupAdd(c => c.ConnectionFailed += It.IsAny<EventHandler<ConnectionFailedEventArgs>>());
+
+      //Act
+      await ClassUnderTest.ConnectAsync();
+
+      //Assert
+      ConnectionMultiplexerMock.VerifyAdd(c => c.ConnectionFailed += It.IsAny<EventHandler<ConnectionFailedEventArgs>>(), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task Dispose_ConnectionFailed()
+    {
+      //Arrange
+      ConnectionMultiplexerMock.SetupRemove(c => c.ConnectionFailed -= It.IsAny<EventHandler<ConnectionFailedEventArgs>>());
+      
+      await ClassUnderTest.ConnectAsync();
+
+      //Act
+      ClassUnderTest.Dispose();
+
+      //Assert
+      ConnectionMultiplexerMock.VerifyRemove(c => c.ConnectionFailed -= It.IsAny<EventHandler<ConnectionFailedEventArgs>>(), Times.Once);
+    }
+
+    #endregion
 
     [TestMethod]
     public void ConnectAsync_SecondTime_UsesTheSameSubscriber()
