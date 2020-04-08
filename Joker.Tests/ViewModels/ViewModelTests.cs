@@ -22,6 +22,18 @@ namespace Joker.MVVM.Tests.ViewModels
     #endregion
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void Ctor()
+    {
+      //Arrange
+
+      //Act
+      ClassUnderTest = new TestViewModel(null);
+
+      //Assert
+    }
+
+    [TestMethod]
     public void PropertyChange()
     {
       //Arrange

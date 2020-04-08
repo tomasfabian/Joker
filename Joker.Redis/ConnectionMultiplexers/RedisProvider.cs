@@ -13,7 +13,7 @@ namespace Joker.Redis.ConnectionMultiplexers
   {
     #region Fields
 
-    private ConnectionMultiplexer connectionMultiplexer;
+    private IConnectionMultiplexer connectionMultiplexer;
     private bool isConnected;
 
     #endregion
@@ -61,7 +61,18 @@ namespace Joker.Redis.ConnectionMultiplexers
     #endregion
 
     #region Methods
-    
+
+    #region CreateconnectionMultiplexer
+
+    internal virtual async Task<IConnectionMultiplexer> CreateConnectionMultiplexer(string url)
+    {
+      var configuration = CreateConfigurationOptions(url);
+
+      return await ConnectionMultiplexer.ConnectAsync(configuration);
+    }
+
+    #endregion
+
     #region CreateSubject
 
     private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
@@ -74,9 +85,7 @@ namespace Joker.Redis.ConnectionMultiplexers
       {
         if(Subject == null)
         {      
-          var configuration = CreateConfigurationOptions(url);
-
-          connectionMultiplexer = await ConnectionMultiplexer.ConnectAsync(configuration);
+          connectionMultiplexer = await CreateConnectionMultiplexer(url);
 
           IsConnected = connectionMultiplexer.IsConnected;
 

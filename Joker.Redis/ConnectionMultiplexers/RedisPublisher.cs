@@ -49,7 +49,7 @@ namespace Joker.Redis.ConnectionMultiplexers
       return await TrySetStringAsync(key, value, SetStringRetryCount);
     }
 
-    private async Task<bool> TrySetStringAsync(string key, string value, int retryCount = 3)
+    private async Task<bool> TrySetStringAsync(string key, string value, int retryCount)
     {
       try
       {
@@ -70,7 +70,7 @@ namespace Joker.Redis.ConnectionMultiplexers
       }
       catch (Exception e)
       {
-        await Task.Delay(TimeSpan.FromSeconds(25));
+        await Task.Delay(TimeSpan.FromMilliseconds(25));
 
         if (retryCount-- > 0)
           return await TrySetStringAsync(key, value, retryCount);

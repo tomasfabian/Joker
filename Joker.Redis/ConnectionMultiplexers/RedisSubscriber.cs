@@ -19,7 +19,7 @@ namespace Joker.Redis.ConnectionMultiplexers
 
       var channel = await Subject.SubscribeAsync(redisChannel);
       
-      channel.OnMessage(onMessage);
+      channel?.OnMessage(onMessage);
     }
 
     public async Task<string> GetStringAsync(string key)
@@ -46,7 +46,7 @@ namespace Joker.Redis.ConnectionMultiplexers
       }
       catch (Exception e)
       {
-        await Task.Delay(TimeSpan.FromSeconds(25));
+        await Task.Delay(TimeSpan.FromMilliseconds(25));
 
         if (retryCount-- > 0)
           return await TryGetStringAsync(key, retryCount);
