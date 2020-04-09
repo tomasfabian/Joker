@@ -1,0 +1,27 @@
+name: CI Linux
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Start Redis server
+      run: docker run --name redis-server -p 6379:6379 -d redis
+    - name: Start MS SQL server
+      run: docker run --name sql -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourNewStrong@Passw0rd" -p 1401:1433 -d mcr.microsoft.com/mssql/server:2017-latest
+    - name: Install dependencies
+      run: dotnet restore ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj
+    - name: Build
+      run: dotnet build ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj --configuration Release --no-restore
