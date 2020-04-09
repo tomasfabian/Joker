@@ -21,3 +21,5 @@ jobs:
       run: docker run --name redis-server -p 6379:6379 -d redis
     - name: Start MS SQL server
       run: docker run --name sql -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourNewStrong@Passw0rd" -p 1401:1433 -d mcr.microsoft.com/mssql/server:2017-latest
+    - name: Install dependencies
+      run: dotnet restore ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj
