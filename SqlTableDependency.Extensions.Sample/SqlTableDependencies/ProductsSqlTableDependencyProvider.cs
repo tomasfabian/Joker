@@ -22,6 +22,12 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     }
 
     #endregion
+    
+    #region TableName
+
+    protected override string TableName => base.TableName+"s";
+
+    #endregion
 
     #region GetDescription
 

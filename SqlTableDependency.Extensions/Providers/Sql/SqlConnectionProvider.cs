@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using TableDependency.SqlClient.Enumerations;
 
 namespace SqlTableDependency.Extensions.Providers.Sql
@@ -74,6 +75,66 @@ namespace SqlTableDependency.Extensions.Providers.Sql
           return false;
         }
       }
+    }
+
+    #endregion
+
+    #region ExecuteNonQueryAsync
+
+    public async Task<int> ExecuteNonQueryAsync(string connectionString, string command)
+    {
+      using (var sqlConnection = new SqlConnection(connectionString))
+      {
+        sqlConnection.Open();
+
+        var sqlCommand = new SqlCommand(command, sqlConnection);
+        var result = await sqlCommand.ExecuteNonQueryAsync();
+        sqlConnection.Close();
+
+        return result;
+      }
+    }
+
+    #endregion
+
+    #region EnableServiceBroker
+
+    public async Task<int> EnableServiceBroker(string connectionString)
+    {
+      var database = GetDatabaseName(connectionString);
+
+      string command = $"ALTER DATABASE [{database}] SET ENABLE_BROKER WITH ROLLBACK IMMEDIATE;";
+
+      return await ExecuteNonQueryAsync(connectionString, command);
+    }
+
+    #endregion
+
+    #region DisableServiceBroker
+
+    public async Task<int> DisableServiceBroker(string connectionString)
+    {
+      var database = GetDatabaseName(connectionString);
+
+      string command = $"ALTER DATABASE [{database}] SET DISABLE_BROKER WITH ROLLBACK IMMEDIATE;";
+
+      return await ExecuteNonQueryAsync(connectionString, command);
+    }
+
+    #endregion
+
+    #region GetDatabaseName
+
+    private static string GetDatabaseName(string connectionString)
+    {
+      var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
+      {
+        ConnectionString = connectionString
+      };
+
+      var database = sqlConnectionStringBuilder.InitialCatalog;
+
+      return database;
     }
 
     #endregion
