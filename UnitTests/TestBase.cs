@@ -51,6 +51,10 @@ namespace UnitTests
     public void AdvanceSchedulers(long time)
     {
       TestScheduler.AdvanceBy(time);
+      
+      SchedulersFactory.ThreadPool.AdvanceBy(time);
+      SchedulersFactory.TaskPool.AdvanceBy(time);
+      SchedulersFactory.Dispatcher.AdvanceBy(time);
     }
 
     #endregion    

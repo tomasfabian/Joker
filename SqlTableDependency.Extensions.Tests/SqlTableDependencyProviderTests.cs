@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SqlTableDependency.Extensions.Enums;
@@ -190,6 +191,31 @@ namespace SqlTableDependency.Extensions.Tests
     }
 
     #endregion
+
+    [TestMethod]
+    public void CreateBulkRecordChangesNotifier()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+      
+      sqlDependencyProvider.SubscribeToEntityChanges();
+
+      RecordsChangedNotification<TestModel> recordsChangeNotification = null;
+      var subscription = sqlDependencyProvider.CreateBulkRecordChangesNotifier(TimeSpan.FromMilliseconds(250))
+        .Subscribe(c => { recordsChangeNotification = c; });
+
+      var recordChangedEventArgsNotification = CreateRecordChangedEventArgsNotification(ChangeType.Insert);
+
+      //Act
+      tableDependencyMoq.Raise(m => m.OnChanged += null, tableDependencyMoq.Object, recordChangedEventArgsNotification);
+      TestScheduler.AdvanceBy(TimeSpan.FromMilliseconds(300).Ticks);
+      
+      //Assert
+      recordsChangeNotification.Count.Should().Be(1);
+      recordChangedEventArgsNotification.ChangeType.Should().Be(ChangeType.Insert);
+
+      subscription.Dispose();
+    }
 
     #region Helpers
 

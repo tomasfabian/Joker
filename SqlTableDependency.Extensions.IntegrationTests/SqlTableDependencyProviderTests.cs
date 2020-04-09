@@ -26,17 +26,23 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     [ClassInitialize]
     public static void ClassInitialize(TestContext testContext)
     {
-      tableDependencyProvider = new ProductsSqlTableDependencyProvider(ConnectionString, ThreadPoolScheduler.Instance, LifetimeScope.UniqueScope);
-
-      tableDependencyProvider.SubscribeToEntityChanges();
     }
 
     public const string IntegrationTests = "IntegrationTests";
 
     [TestMethod]
     [TestCategory(IntegrationTests)]
-    public async Task SubscribeToEntityChanges()
-    {      
+    [DataRow(LifetimeScope.ApplicationScope)]
+    [DataRow(LifetimeScope.ConnectionScope)]
+    [DataRow(LifetimeScope.UniqueScope)]
+    public async Task SubscribeToEntityChanges(LifetimeScope lifetimeScope)
+    {            
+      await new SqlConnectionProvider().EnableServiceBroker(ConnectionString);
+
+      tableDependencyProvider = new ProductsSqlTableDependencyProvider(ConnectionString, ThreadPoolScheduler.Instance, lifetimeScope);
+
+      tableDependencyProvider.SubscribeToEntityChanges();
+      
       await OnInserted();
 
       await OnUpdated();
@@ -80,13 +86,21 @@ namespace SqlTableDependency.Extensions.IntegrationTests
       tableDependencyProvider.LastDeletedProduct.Should().NotBeNull();
     }
 
-    [ClassCleanup]
-    public static void ClassCleanup()
+    [TestCleanup]
+    public override void TestCleanup()
     {
+      base.TestCleanup();
+
       using (tableDependencyProvider)
       {
         tableDependencyProvider = null;
       }
+    }
+
+    [ClassCleanup]
+    public static void ClassCleanup()
+    {
+      new SqlConnectionProvider().DisableServiceBroker(ConnectionString).Wait();
     }
 
     private static Product AddOrUpdateProduct(Product product)
