@@ -11,9 +11,6 @@ jobs:
 
     runs-on: ubuntu-latest
     
-    env:
-      Test_Project_Path: SqlTableDependency.Extensions.IntegrationTests/SqlTableDependency.Extensions.IntegrationTests.csproj
-    
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -29,4 +26,4 @@ jobs:
     - name: Build
       run: dotnet build ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj --configuration Release --no-restore
     - name: Test
-      run: dotnet test ~/SqlTableDependency.Extensions.IntegrationTests/SqlTableDependency.Extensions.IntegrationTests.csproj
+      run: dotnet test ./SqlTableDependency.Extensions.IntegrationTests/SqlTableDependency.Extensions.IntegrationTests.csproj
