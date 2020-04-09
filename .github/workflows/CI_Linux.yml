@@ -17,10 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Install dependencies
-      run: dotnet restore
     - name: Start Redis server
       run: docker run --name redis-server -p 6379:6379 -d redis
+    - name: Install dependencies
+      run: dotnet restore ~/SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj
     - name: Build
       run: dotnet build SqlTableDependency.Extensions.csproj --configuration Release --no-restore
     - name: Test
