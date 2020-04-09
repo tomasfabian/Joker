@@ -22,6 +22,6 @@ jobs:
     - name: Start Redis server
       run: docker run --name redis-server -p 6379:6379 -d redis
     - name: Build
-      run: dotnet build SqlTableDependency.Extensions --configuration Release --no-restore
+      run: dotnet build SqlTableDependency.Extensions.csproj --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
