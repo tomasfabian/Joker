@@ -10,7 +10,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -25,5 +25,5 @@ jobs:
       run: dotnet restore ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj
     - name: Build
       run: dotnet build ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    #- name: Test
+    #  run: dotnet test ./SqlTableDependency.Extensions.IntegrationTests/SqlTableDependency.Extensions.IntegrationTests.csproj
