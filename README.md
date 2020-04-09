@@ -181,7 +181,7 @@ SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extensio
 
 Install-Package Joker.Redis -Version 1.1.0
 
-Download and run redis-server (https://redis.io/download)
+Download and run redis-server (https://redis.io/download) or use Docker (see above).
 
 Server side:
 ```C#
