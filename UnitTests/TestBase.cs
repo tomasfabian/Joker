@@ -19,11 +19,6 @@ namespace UnitTests
 
     protected ReactiveTestSchedulersFactory SchedulersFactory;
 
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext testContext)
-    {
-    }
-
     [TestInitialize]
     public virtual void TestInitialize()
     {
@@ -34,7 +29,7 @@ namespace UnitTests
     }
 
     [TestCleanup]
-    public virtual void ClassCleanup()
+    public virtual void TestCleanup()
     {
     }
 

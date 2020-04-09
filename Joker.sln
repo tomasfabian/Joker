@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Redis.Tests", "Joker.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.WPF.Sample", "Joker.WPF.Sample\Joker.WPF.Sample.csproj", "{BC9D0540-6E55-4D83-A07A-BF693A2C556A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.IntegrationTests", "SqlTableDependency.Extensions.IntegrationTests\SqlTableDependency.Extensions.IntegrationTests.csproj", "{30660BB8-E9A7-4BE5-B92D-519546782394}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{BC9D0540-6E55-4D83-A07A-BF693A2C556A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC9D0540-6E55-4D83-A07A-BF693A2C556A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC9D0540-6E55-4D83-A07A-BF693A2C556A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30660BB8-E9A7-4BE5-B92D-519546782394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30660BB8-E9A7-4BE5-B92D-519546782394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30660BB8-E9A7-4BE5-B92D-519546782394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30660BB8-E9A7-4BE5-B92D-519546782394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{F6C30F54-6947-4CA9-B2E3-2B5A81FF42D4} = {F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}
 		{B81C6AE2-4026-41CF-8FE1-91A3C4084598} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 		{BC9D0540-6E55-4D83-A07A-BF693A2C556A} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
+		{30660BB8-E9A7-4BE5-B92D-519546782394} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
