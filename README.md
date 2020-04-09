@@ -27,20 +27,28 @@ dotnet add package SqlTableDependency.Extensions --version 2.2.0
 
 # Docker:
 MS SQL Server 2017:
+
 docker run --name sql -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourNewStrong@Passw0rd>" -p 1401:1433 -d mcr.microsoft.com/mssql/server:2017-latest
 
 Redis latest:
+
 docker run --name redis-server -p 6379:6379 -d redis
 
 Test redis:
+
 docker run -it --name my-redis-cli --link redis-server:redis --rm redis redis-cli -h redis -p 6379
+
 redis:6379> SET myKey Test
+
 OK
+
 redis:6379> GET myKey
+
 "Test"
 
 # Examples Entity Framework migrations:
 Package Manager Console (Default project => Examples\Samples.Data):
+
 Update-Database -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
 
 ## See:
