@@ -25,6 +25,22 @@ or
 
 dotnet add package SqlTableDependency.Extensions --version 2.2.0
 
+## See:
+Following package is based on christiandelbianco's SqlTableDependency:
+https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
+
+SqlTableDependency.Extension.SqlTableDependencyProvider provides periodic reconnections in case of any error, like lost connection etc.
+
+Currently there are 3 LifetimeScopes:
+## ConnectionScope:
+In case that the connection is lost, database objects will be deleted after timeout period or during disposal. During all reconnections the database objects are newly (re)created.
+
+## ApplicationScope:
+In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart.
+
+## UniqueScope:
+In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
+
 # Docker:
 MS SQL Server 2017:
 
@@ -50,22 +66,6 @@ redis:6379> GET myKey
 Package Manager Console (Default project => Examples\Samples.Data):
 
 Update-Database -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
-
-## See:
-Following package is based on christiandelbianco's SqlTableDependency:
-https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
-
-SqlTableDependency.Extension.SqlTableDependencyProvider provides periodic reconnections in case of any error, like lost connection etc.
-
-Currently there are 3 LifetimeScopes:
-## ConnectionScope:
-In case that the connection is lost, database objects will be deleted after timeout period or during disposal. During all reconnections the database objects are newly (re)created.
-
-## ApplicationScope:
-In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart.
-
-## UniqueScope:
-In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
 
 ## Basic usage:
 
