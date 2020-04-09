@@ -25,3 +25,5 @@ jobs:
       run: dotnet restore ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj
     - name: Build
       run: dotnet build ./SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
