@@ -13,7 +13,7 @@ namespace Sample.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202004070702166_Products_Version"; }
+            get { return "202004090707248_Products_Version"; }
         }
         
         string IMigrationMetadata.Source

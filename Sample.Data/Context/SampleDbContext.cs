@@ -12,6 +12,9 @@ namespace Sample.Data.Context
     public SampleDbContext()
     {
       //Add-Migration Products -verbose
+      //Add-Migration Products_Version -StartUpProjectName Joker.WPF.Sample -ProjectName Sample.Data -verbose
+      //Add-Migration Products_Version -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
+      //Update-Database -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
       //Update - Database
     }
 
@@ -33,6 +36,16 @@ namespace Sample.Data.Context
     }
 
     #endregion
+
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      modelBuilder.Entity<Product>()
+        .Property(f => f.Timestamp)
+        .HasColumnType("datetime2")
+        .HasPrecision(0);
+    }
 
     public IDbSet<Product> Products { get; set; }
   }

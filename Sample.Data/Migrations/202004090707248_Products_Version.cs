@@ -7,7 +7,7 @@
     {
         public override void Up()
         {
-            AddColumn("dbo.Products", "Timestamp", c => c.DateTime(nullable: false));
+            AddColumn("dbo.Products", "Timestamp", c => c.DateTime(nullable: false, precision: 0, storeType: "datetime2", defaultValueSql: "GetDate()"));
         }
         
         public override void Down()
