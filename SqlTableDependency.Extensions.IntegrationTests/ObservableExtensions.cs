@@ -7,9 +7,12 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 {
   public static class ObservableExtensions
   {
-    public static Task<T> WaitFirst<T>(this IObservable<T> observable)
+    public static Task<T> WaitFirst<T>(this IObservable<T> observable, TimeSpan? timeout = null)
     {
-      return observable.Timeout(TimeSpan.FromSeconds(2))
+      if (!timeout.HasValue)
+        timeout = TimeSpan.FromSeconds(3);
+
+      return observable.Timeout(timeout.Value)
         .FirstOrDefaultAsync()
         .ToTask();
     }

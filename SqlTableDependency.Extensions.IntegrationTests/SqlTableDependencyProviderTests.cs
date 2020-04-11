@@ -3,13 +3,17 @@ using System.Configuration;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Joker.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Providers.Sql;
+using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Exceptions;
 using UnitTests;
 
@@ -24,11 +28,62 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     private static ProductsSqlTableDependencyProvider tableDependencyProvider;
 
     [ClassInitialize]
-    public static void ClassInitialize(TestContext testContext)
+    public static async Task ClassInitialize(TestContext testContext)
     {
+      ProcessProvider.Docker($"start sql");
+
+      await new SqlConnectionProvider().EnableServiceBroker(ConnectionString);
+
+      new SqlConnectionProvider().IsServiceBrokerEnabled(ConnectionString).Should().BeTrue();
     }
 
     public const string IntegrationTests = "IntegrationTests";
+    
+    [TestMethod]
+    [TestCategory(IntegrationTests)]
+    public async Task KillSessions_UniqueScope_SqlTableDependencyProviderReconnects()
+    {
+      await ReconnectionTest(LifetimeScope.UniqueScope);
+    }
+
+    private static async Task ReconnectionTest(LifetimeScope lifetimeScope)
+    {
+      tableDependencyProvider =
+        new ProductsSqlTableDependencyProvider(ConnectionString, TaskPoolScheduler.Default, lifetimeScope);
+
+      tableDependencyProvider.SubscribeToEntityChanges();
+
+      bool isFirstStart = true;
+      var subscription =
+        tableDependencyProvider.WhenStatusChanges
+          .Subscribe(c =>
+          {
+            if (c.IsOneOfFollowing(TableDependencyStatus.Started, TableDependencyStatus.WaitingForNotification) &&
+                isFirstStart)
+            {
+              isFirstStart = false;
+              //Docker($"stop sql");
+              //Docker($"start sql");
+              SqlConnectionProvider.KillSessions(ConnectionString);
+            }
+          });
+      
+      using (subscription)
+      {
+      }
+
+      await tableDependencyProvider.WhenStatusChanges.Where(c =>
+          c.IsOneOfFollowing(TableDependencyStatus.Started, TableDependencyStatus.WaitingForNotification))
+        .FirstOrDefaultAsync().ToTask();
+      
+      Product product = InsertNewProduct();
+
+      await tableDependencyProvider.LastInsertedProductChanged.WaitFirst(tableDependencyProvider.ReconnectionTimeSpan);
+
+      tableDependencyProvider.LastInsertedProduct.Should().NotBeNull();
+
+      DeleteProduct(product);
+    }
 
     [TestMethod]
     [TestCategory(IntegrationTests)]
@@ -36,13 +91,11 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     [DataRow(LifetimeScope.ConnectionScope)]
     [DataRow(LifetimeScope.UniqueScope)]
     public async Task SubscribeToEntityChanges(LifetimeScope lifetimeScope)
-    {            
-      await new SqlConnectionProvider().EnableServiceBroker(ConnectionString);
-
+    {
       tableDependencyProvider = new ProductsSqlTableDependencyProvider(ConnectionString, ThreadPoolScheduler.Instance, lifetimeScope);
 
       tableDependencyProvider.SubscribeToEntityChanges();
-      
+
       await OnInserted();
 
       await OnUpdated();
@@ -52,22 +105,28 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 
     public async Task OnInserted()
     {
+      var product = InsertNewProduct();
+
+      await tableDependencyProvider.LastInsertedProductChanged.Where(c => c.Id == product.Id).WaitFirst();
+
+      tableDependencyProvider.LastInsertedProduct.Should().NotBeNull();
+    }
+
+    private static Product InsertNewProduct()
+    {
       var product = new Product
       {
         Name = "New Product3",
         Timestamp = DateTime.Now
       };
 
-      AddOrUpdateProduct(product);
-
-      await tableDependencyProvider.LastInsertedProductChanged.WaitFirst();
-
-      tableDependencyProvider.LastInsertedProduct.Should().NotBeNull();
+      return AddOrUpdateProduct(product);
     }
 
     public async Task OnUpdated()
     {
       var product = tableDependencyProvider.LastInsertedProduct;
+      
       product.Name = "Updated";
 
       AddOrUpdateProduct(product);
@@ -101,6 +160,8 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     public static void ClassCleanup()
     {
       new SqlConnectionProvider().DisableServiceBroker(ConnectionString).Wait();
+
+      new SqlConnectionProvider().IsServiceBrokerEnabled(ConnectionString).Should().BeFalse();
     }
 
     private static Product AddOrUpdateProduct(Product product)

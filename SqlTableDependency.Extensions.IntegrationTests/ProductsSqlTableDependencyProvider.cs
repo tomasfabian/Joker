@@ -3,7 +3,6 @@ using System.Configuration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
 
@@ -26,6 +25,8 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     protected override string TableName => base.TableName+"s";
 
     #endregion
+    
+    public override TimeSpan ReconnectionTimeSpan => TimeSpan.FromSeconds(3);
 
     public Product LastInsertedProduct { get; private set; }
 
@@ -68,10 +69,25 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 
       lastDeletedProductSubject.OnNext(entity);
     }
+    
+    public Exception LastException { get; private set; }
+
+    private readonly ISubject<Exception> lastExceptionSubject = new ReplaySubject<Exception>(2);
+    public IObservable<Exception> LastExceptionChanged => lastExceptionSubject.AsObservable();
 
     protected override void OnError(Exception error)
     {
       base.OnError(error);
+
+      LastException = error;
+
+      lastExceptionSubject.OnNext(error);
+    }
+
+    protected override void OnConnected()
+    {
+      base.OnConnected();
+
     }
   }
 }

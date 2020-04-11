@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using TableDependency.SqlClient.Enumerations;
@@ -22,6 +24,31 @@ namespace SqlTableDependency.Extensions.Providers.Sql
         var sqlCommand = new SqlCommand(command, sqlConnection);
         var scalar = sqlCommand.ExecuteScalar();
         result = (Guid?) scalar ?? Guid.Empty;
+        sqlConnection.Close();
+      }
+
+      return result;
+    }
+
+    #endregion
+
+    #region IsServiceBrokerEnabled
+
+    public bool IsServiceBrokerEnabled(string connectionString)
+    {
+      var database = GetDatabaseName(connectionString);
+
+      bool result;
+
+      using (var sqlConnection = new SqlConnection(connectionString))
+      {
+        sqlConnection.Open();
+        string command =        
+          $"SELECT d.is_broker_enabled FROM sys.databases d WHERE name = '{database}';";
+
+        var sqlCommand = new SqlCommand(command, sqlConnection);
+        var scalar = sqlCommand.ExecuteScalar();
+        result = (bool?) scalar ?? false;
         sqlConnection.Close();
       }
 
@@ -135,6 +162,60 @@ namespace SqlTableDependency.Extensions.Providers.Sql
       var database = sqlConnectionStringBuilder.InitialCatalog;
 
       return database;
+    }
+
+    #endregion
+
+    #region KillSessions
+
+    internal static void KillSessions(string connectionString)
+    {
+      string queryString =
+        @"SELECT conn.session_id
+        FROM sys.dm_exec_sessions AS s
+        JOIN sys.dm_exec_connections AS conn
+        ON s.session_id = conn.session_id
+        WHERE login_Name = 'sa' AND program_name = 'Core .Net SqlClient Data Provider';";
+      
+      var sessions = new List<int>();
+
+      using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+      {
+        SqlCommand sqlCommand =
+          new SqlCommand(queryString, sqlConnection);
+        sqlConnection.Open();
+
+        SqlDataReader reader = sqlCommand.ExecuteReader();
+
+        while (reader.Read())
+        {
+          var dataRecord = ((IDataRecord) reader);
+
+          var sessionId = (int) dataRecord[0];
+          sessions.Add(sessionId);
+        }
+
+        reader.Close();
+      }
+
+      using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+      {        sqlConnection.Open();
+     
+        foreach (var sessionId in sessions)
+        {
+          var command = $"KILL {sessionId};";
+
+          var killSessionCommand = new SqlCommand(command, sqlConnection);
+          try
+          {
+            var result = killSessionCommand.ExecuteNonQuery();
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(e);
+          }
+        }
+      }
     }
 
     #endregion

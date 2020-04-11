@@ -254,6 +254,7 @@ namespace SqlTableDependency.Extensions
       if (lifetimeScope != LifetimeScope.ConnectionScope && sqlTableDependency != null)
       {
         sqlTableDependency.Start();
+
         return;
       }
 
@@ -270,8 +271,6 @@ namespace SqlTableDependency.Extensions
         sqlTableDependency.OnStatusChanged += OnSqlTableDependencyStatusChanged;
 
         sqlTableDependency.Start();
-        
-        OnConnected();
       }
       catch (Exception error)
       {
@@ -347,10 +346,13 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
-    #region SqlTableDependencyOnStatusChanged
+    #region OnSqlTableDependencyStatusChanged
 
     private void OnSqlTableDependencyStatusChanged(object sender, StatusChangedEventArgs e)
     {
+      if(e.Status == TableDependencyStatus.Started)
+        OnConnected();
+
       whenStatusChanges.OnNext(e.Status);
 
       SqlTableDependencyOnStatusChanged(sender, e);
