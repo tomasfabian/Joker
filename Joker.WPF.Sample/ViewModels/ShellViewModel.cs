@@ -87,7 +87,7 @@ namespace Joker.WPF.Sample.ViewModels
       var reactiveData = new ReactiveDataWithStatus<Product>();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
       var schedulersFactory = new WpfSchedulersFactory();
-      using var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
+      var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
 
       string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
@@ -97,6 +97,8 @@ namespace Joker.WPF.Sample.ViewModels
       reactiveProductsViewModel.SubscribeToDataChanges();
       
       reactiveProductsViewModel.Dispose();
+      using(entitiesSubscriber)
+      { }
     }
 
     private static int fakeProductId = 1;

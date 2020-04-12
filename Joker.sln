@@ -33,7 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Redis.Tests", "Joker.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.WPF.Sample", "Joker.WPF.Sample\Joker.WPF.Sample.csproj", "{BC9D0540-6E55-4D83-A07A-BF693A2C556A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTableDependency.Extensions.IntegrationTests", "SqlTableDependency.Extensions.IntegrationTests\SqlTableDependency.Extensions.IntegrationTests.csproj", "{30660BB8-E9A7-4BE5-B92D-519546782394}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.IntegrationTests", "SqlTableDependency.Extensions.IntegrationTests\SqlTableDependency.Extensions.IntegrationTests.csproj", "{30660BB8-E9A7-4BE5-B92D-519546782394}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OData", "OData", "{64A618E2-4F51-41AF-A946-FFEEF5396F8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfHostedODataService", "Samples\OData\SelfHostedODataService\SelfHostedODataService.csproj", "{883825DE-7562-49C1-89B1-DE97A60E594D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,10 @@ Global
 		{30660BB8-E9A7-4BE5-B92D-519546782394}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30660BB8-E9A7-4BE5-B92D-519546782394}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30660BB8-E9A7-4BE5-B92D-519546782394}.Release|Any CPU.Build.0 = Release|Any CPU
+		{883825DE-7562-49C1-89B1-DE97A60E594D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{883825DE-7562-49C1-89B1-DE97A60E594D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{883825DE-7562-49C1-89B1-DE97A60E594D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{883825DE-7562-49C1-89B1-DE97A60E594D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +118,8 @@ Global
 		{B81C6AE2-4026-41CF-8FE1-91A3C4084598} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 		{BC9D0540-6E55-4D83-A07A-BF693A2C556A} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{30660BB8-E9A7-4BE5-B92D-519546782394} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
+		{64A618E2-4F51-41AF-A946-FFEEF5396F8B} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
+		{883825DE-7562-49C1-89B1-DE97A60E594D} = {64A618E2-4F51-41AF-A946-FFEEF5396F8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}

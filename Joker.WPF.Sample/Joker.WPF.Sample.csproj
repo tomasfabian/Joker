@@ -3,7 +3,7 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
