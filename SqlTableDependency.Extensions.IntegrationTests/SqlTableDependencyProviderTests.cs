@@ -9,6 +9,11 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Joker.Extensions;
+using Joker.Factories.Schedulers;
+using Joker.Reactive;
+using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.Notifications;
+using Joker.Redis.SqlTableDependency;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sample.Data.Context;
 using Sample.Domain.Models;
@@ -17,6 +22,7 @@ using SqlTableDependency.Extensions.Providers.Sql;
 using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Exceptions;
 using UnitTests;
+using ChangeType = Joker.Enums.ChangeType;
 
 namespace SqlTableDependency.Extensions.IntegrationTests
 {
@@ -221,9 +227,69 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     }
 
     [TestMethod]
+    public async Task TestRedisPubSub()
+    {      
+      tableDependencyProvider =
+        new ProductsSqlTableDependencyProvider(ConnectionString, TaskPoolScheduler.Default, LifetimeScope.UniqueScope);
+
+      tableDependencyProvider.SubscribeToEntityChanges();
+
+      var schedulersFactory = new SchedulersFactory();
+
+      using var redisPublisher = new ProductSqlTableDependencyRedisProvider(tableDependencyProvider,
+        new RedisPublisher(RedisUrl), schedulersFactory.TaskPool);
+      
+      redisPublisher.StartPublishing();
+
+      var reactiveDataWithStatus = new ReactiveDataWithStatus<Product>();
+
+      using var domainEntitiesSubscriber =
+        new DomainEntitiesSubscriber<Product>(new RedisSubscriber(RedisUrl), reactiveDataWithStatus, schedulersFactory);
+
+      await domainEntitiesSubscriber.Subscribe();
+
+      var product = InsertNewProduct();
+
+      var productEntityChange = await reactiveDataWithStatus.WhenDataChanges
+        .Where(c => c.Entity.Id == product.Id)
+        .FirstOrDefaultAsync()
+        .ToTask();
+
+      productEntityChange.ChangeType.Should().BeEquivalentTo(ChangeType.Create);
+
+      product.Name = "Updated";
+      AddOrUpdateProduct(product);
+
+      var productUpdated = await reactiveDataWithStatus.WhenDataChanges
+        .Where(c => c.Entity.Id == product.Id && c.ChangeType == ChangeType.Update)
+        .FirstOrDefaultAsync()
+        .ToTask();
+
+      productUpdated.ChangeType.Should().BeEquivalentTo(ChangeType.Update);
+
+      DeleteProduct(product);
+
+      var productDeleted = await reactiveDataWithStatus.WhenDataChanges
+        .Where(c => c.Entity.Id == product.Id && c.ChangeType == ChangeType.Delete)
+        .FirstOrDefaultAsync()
+        .ToTask();
+
+      productDeleted.ChangeType.Should().BeEquivalentTo(ChangeType.Delete);
+    }
+
+    [TestMethod]
     [ExpectedException(typeof(ServiceBrokerNotEnabledException))]
     [Ignore]
     public void ServiceBrokerNotEnabledException()
+    {
+      //TODO
+    }
+  }
+
+  public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
+  {
+    public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher, IScheduler scheduler) 
+      : base(sqlTableDependencyProvider, redisPublisher, scheduler)
     {
     }
   }
