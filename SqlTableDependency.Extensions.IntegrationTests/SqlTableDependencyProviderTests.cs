@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext testContext)
     {
-      ProcessProvider.Docker($"start sql");
+      ProcessProvider.Docker("start sql");
 
       await new SqlConnectionProvider().EnableServiceBroker(ConnectionString);
 
@@ -44,6 +45,13 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     public async Task KillSessions_UniqueScope_SqlTableDependencyProviderReconnects()
     {
       await ReconnectionTest(LifetimeScope.UniqueScope);
+    }   
+
+    [TestMethod]
+    [TestCategory(IntegrationTests)]
+    public async Task KillSessions_ApplicationScope_SqlTableDependencyProviderReconnects()
+    {
+      await ReconnectionTest(LifetimeScope.ApplicationScope);
     }
 
     private static async Task ReconnectionTest(LifetimeScope lifetimeScope)
@@ -52,6 +60,8 @@ namespace SqlTableDependency.Extensions.IntegrationTests
         new ProductsSqlTableDependencyProvider(ConnectionString, TaskPoolScheduler.Default, lifetimeScope);
 
       tableDependencyProvider.SubscribeToEntityChanges();
+      
+      Product product = null;
 
       bool isFirstStart = true;
       var subscription =
@@ -62,27 +72,36 @@ namespace SqlTableDependency.Extensions.IntegrationTests
                 isFirstStart)
             {
               isFirstStart = false;
-              //Docker($"stop sql");
-              //Docker($"start sql");
+
+              //ProcessProvider.Docker("stop sql");
+
               SqlConnectionProvider.KillSessions(ConnectionString);
+              
+              product = InsertNewProduct();
             }
           });
+
+      await tableDependencyProvider.LastExceptionChanged.Select(c => Unit.Default)
+        .Merge(tableDependencyProvider.LastInsertedProductChanged.Select(c => Unit.Default))
+        .WaitFirst(TimeSpan.FromSeconds(10));
+      
+      // ProcessProvider.Docker("start sql");
+      
+      await tableDependencyProvider.WhenStatusChanges.Where(c =>
+          c.IsOneOfFollowing(TableDependencyStatus.Started, TableDependencyStatus.WaitingForNotification))
+        .FirstOrDefaultAsync().ToTask();
       
       using (subscription)
       {
       }
 
-      await tableDependencyProvider.WhenStatusChanges.Where(c =>
-          c.IsOneOfFollowing(TableDependencyStatus.Started, TableDependencyStatus.WaitingForNotification))
-        .FirstOrDefaultAsync().ToTask();
-      
-      Product product = InsertNewProduct();
+      DeleteProduct(product);
 
-      await tableDependencyProvider.LastInsertedProductChanged.WaitFirst(tableDependencyProvider.ReconnectionTimeSpan);
+      await tableDependencyProvider.LastDeletedProductChanged
+        .Where(c => c.Id == product.Id)
+        .WaitFirst(tableDependencyProvider.ReconnectionTimeSpan);
 
       tableDependencyProvider.LastInsertedProduct.Should().NotBeNull();
-
-      DeleteProduct(product);
     }
 
     [TestMethod]

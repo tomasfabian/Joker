@@ -108,7 +108,7 @@ namespace SqlTableDependency.Extensions.Providers.Sql
 
     #region ExecuteNonQueryAsync
 
-    public async Task<int> ExecuteNonQueryAsync(string connectionString, string command)
+    public static async Task<int> ExecuteNonQueryAsync(string connectionString, string command)
     {
       using (var sqlConnection = new SqlConnection(connectionString))
       {
@@ -144,6 +144,32 @@ namespace SqlTableDependency.Extensions.Providers.Sql
       var database = GetDatabaseName(connectionString);
 
       string command = $"ALTER DATABASE [{database}] SET DISABLE_BROKER WITH ROLLBACK IMMEDIATE;";
+
+      return await ExecuteNonQueryAsync(connectionString, command);
+    }
+    
+    #endregion
+
+    #region SetSingleUserMode
+
+    internal static async Task<int> SetSingleUserMode(string connectionString)
+    {
+      var database = GetDatabaseName(connectionString);
+
+      string command = $@"ALTER DATABASE {database} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+
+      return await ExecuteNonQueryAsync(connectionString, command);
+    }
+
+    #endregion
+
+    #region SetMultiUserMode
+
+    internal static  async Task<int> SetMultiUserMode(string connectionString)
+    {
+      var database = GetDatabaseName(connectionString);
+
+      string command = $@"ALTER DATABASE {database} SET MULTI_USER WITH ROLLBACK IMMEDIATE;";
 
       return await ExecuteNonQueryAsync(connectionString, command);
     }
