@@ -109,9 +109,9 @@ ALTER DATABASE [DatabaseName]
       LogChangeInfo(product);
     }
 
-    protected override void OnUpdated(Product product)
+    protected override void OnUpdated(Product product, Product oldValues)
     {
-      base.OnUpdated(product);
+      base.OnUpdated(entity, oldValues);
 
       logger.Trace("Entity was modified");
 
