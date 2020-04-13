@@ -41,7 +41,9 @@ In case that the connection is lost, database objects will be deleted only after
 ## UniqueScope:
 In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
 
-# Docker for external dependencies:
+[Wiki Samples](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Samples)
+
+## Docker for external dependencies:
 MS SQL Server 2017:
 
 docker run --name sql -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourNewStrong@Passw0rd>" -p 1401:1433 -d mcr.microsoft.com/mssql/server:2017-latest
@@ -51,7 +53,7 @@ Redis latest:
 docker run --name redis-server -p 6379:6379 -d redis
 
 
-# Examples Entity Framework migrations:
+## Examples Entity Framework migrations:
 Package Manager Console (Default project => Examples\Samples.Data):
 
 Update-Database -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
