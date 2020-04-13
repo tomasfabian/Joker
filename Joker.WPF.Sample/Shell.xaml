@@ -7,25 +7,59 @@
         Width="800"
         Height="450"
         mc:Ignorable="d">
-  <Grid DataContext="{Binding EntityChangesViewModel}">
+  <Grid Margin="13" DataContext="{Binding EntityChangesViewModel}">
+    <Grid.Resources>
+      <Style TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+      </Style>
+    </Grid.Resources>
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
-    <StackPanel Margin="13" Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal">
       <TextBlock Text="IsLoading: " />
       <TextBlock Text="{Binding ListViewModel.IsLoading}" />
       <TextBlock Margin="13,0,0,0" Text="IsOffline: " />
       <TextBlock Text="{Binding IsOffline}" />
     </StackPanel>
 
-    <ListBox Grid.Row="1"
-             Margin="13"
+    <StackPanel Grid.Row="1" Orientation="Horizontal">
+      <TextBlock Text="New product name:" />
+      <TextBox Width="200"
+               Height="33"
+               Margin="5"
+               VerticalContentAlignment="Center"
+               Text="{Binding NewProductName, UpdateSourceTrigger=PropertyChanged}" />
+      <Button Width="50"
+              Height="33"
+              Command="{Binding AddNew}"
+              Content="Add"
+              IsDefault="True" />
+    </StackPanel>
+
+    <ListBox Grid.Row="2"
              ItemsSource="{Binding ListViewModel.Items}"
              SelectedItem="{Binding ListViewModel.SelectedItem}">
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <TextBlock Text="{Binding Name}" />
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="150" />
+              <ColumnDefinition Width="10" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Name}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding Name}" />
+
+            <Button Grid.Column="2"
+                    Width="25"
+                    Command="{Binding Delete}"
+                    Content="X" />
+          </Grid>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>

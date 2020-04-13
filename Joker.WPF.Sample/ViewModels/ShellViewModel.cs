@@ -23,6 +23,7 @@ namespace Joker.WPF.Sample.ViewModels
 {
   public class ShellViewModel : BindableBase, IDisposable
   {
+    private readonly ReactiveListViewModelFactory viewModelsFactory;
     private ISqlTableDependencyProvider<Product> productsChangesProvider;
     
     private EntityChangesViewModel<ProductViewModel> entityChangesViewModel;
@@ -40,8 +41,10 @@ namespace Joker.WPF.Sample.ViewModels
 
     private DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
 
-    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider)
+    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider, ReactiveListViewModelFactory viewModelsFactory)
     {
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+
       Initialize(productsChangesProvider).ToObservable()
         .Subscribe();
     }
@@ -78,11 +81,12 @@ namespace Joker.WPF.Sample.ViewModels
         new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, schedulersFactory);
       await domainEntitiesSubscriber.Subscribe();
 
-      EntityChangesViewModel = new EntityChangesViewModel<ProductViewModel>(
-        new ReactiveListViewModelFactory(reactiveDataWithStatus), reactiveDataWithStatus, schedulersFactory.Dispatcher);
+      viewModelsFactory.ReactiveDataWithStatus = reactiveDataWithStatus; //TODO: DI with IoC
+      EntityChangesViewModel = new ProductsEntityChangesViewModel(
+        viewModelsFactory, reactiveDataWithStatus, schedulersFactory);
     }
 
-    private static void CreateReactiveProductsViewModel()
+    private static void CreateReactiveProductsViewModel(ViewModelsFactory viewModelsFactory)
     {
       var reactiveData = new ReactiveDataWithStatus<Product>();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
@@ -92,7 +96,7 @@ namespace Joker.WPF.Sample.ViewModels
       string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
       var reactiveProductsViewModel = new ReactiveProductsViewModel(new SampleDbContext(connectionString),
-        reactiveData, schedulersFactory);
+        reactiveData, viewModelsFactory, schedulersFactory);
 
       reactiveProductsViewModel.SubscribeToDataChanges();
       

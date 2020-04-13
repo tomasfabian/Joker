@@ -4,19 +4,20 @@ using Joker.Reactive;
 using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.ViewModels.Products;
 using Joker.WPF.Sample.ViewModels.Reactive;
+using Ninject;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
 namespace Joker.WPF.Sample.Factories.ViewModels
 {
-  public class ReactiveListViewModelFactory : IReactiveListViewModelFactory<ProductViewModel>
+  public class ReactiveListViewModelFactory : ViewModelsFactory, IReactiveListViewModelFactory<ProductViewModel>
   {
-    public ReactiveListViewModelFactory(ReactiveDataWithStatus<Product> reactiveDataWithStatus)
+    public ReactiveListViewModelFactory(IKernel kernel) 
+      : base(kernel)
     {
-      ReactiveDataWithStatus = reactiveDataWithStatus;
     }
 
-    private ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; set; }
+    public ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; set; }
     
     public IReactiveListViewModel<ProductViewModel> Create()
     {      
@@ -25,7 +26,7 @@ namespace Joker.WPF.Sample.Factories.ViewModels
       
       var schedulersFactory = new WpfSchedulersFactory();
 
-      var reactiveProductsViewModel = new ReactiveProductsViewModel(sampleDbContext, ReactiveDataWithStatus, schedulersFactory);
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(sampleDbContext, ReactiveDataWithStatus, this, schedulersFactory);
 
       return reactiveProductsViewModel;
     }

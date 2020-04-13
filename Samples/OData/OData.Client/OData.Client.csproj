@@ -2,11 +2,12 @@
 
   <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <!-- <TargetFramework>$(NetStandardVersion)</TargetFramework> -->
-    
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <!-- <OutputType>Exe</OutputType> -->
+    <!-- <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks> -->
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
   </PropertyGroup>
+
+  <Import Project="..\..\..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.OData.Client" Version="7.6.3" />  

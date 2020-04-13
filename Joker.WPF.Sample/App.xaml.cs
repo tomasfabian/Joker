@@ -2,6 +2,7 @@
 using System.Windows;
 using CommonServiceLocator;
 using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.WPF.Sample.Factories.ViewModels;
 using Joker.WPF.Sample.Modularity;
 using Joker.WPF.Sample.Providers.Scheduling;
 using Joker.WPF.Sample.SqlTableDependencies;
@@ -41,6 +42,7 @@ namespace Joker.WPF.Sample
       var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
       kernel.Bind<ISchedulerProvider>().To<SchedulerProvider>().InSingletonScope();
+      kernel.Bind<ReactiveListViewModelFactory>().ToSelf().InSingletonScope();
       kernel.Bind<IWpfSchedulersFactory>().To<WpfSchedulersFactory>().InSingletonScope();
       kernel.Bind<ISampleDbContext>().To<SampleDbContext>().InTransientScope().WithConstructorArgument("nameOrConnectionString", connectionString);
       

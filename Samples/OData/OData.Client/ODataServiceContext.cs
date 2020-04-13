@@ -24,15 +24,16 @@ namespace OData.Client
     {
       var request = WebRequest.CreateHttp(metadataUri);
 
-      using var response = request.GetResponse();
-      using var stream = response.GetResponseStream();
-      using var reader = XmlReader.Create(stream);
-      
-      return Microsoft.OData.Edm.Csdl.CsdlReader.Parse(reader);
+      using (var response = request.GetResponse())
+      using (var stream = response.GetResponseStream())
+      using (var reader = XmlReader.Create(stream))
+      {
+        return Microsoft.OData.Edm.Csdl.CsdlReader.Parse(reader);
+      }
     }
 
     private DataServiceQuery<Product> products;
 
-    public DataServiceQuery<Product> Products => products ??= CreateQuery<Product>("Products");
+    public DataServiceQuery<Product> Products => products = products ?? CreateQuery<Product>("Products");
   }
 }
