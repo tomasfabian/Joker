@@ -328,7 +328,7 @@ namespace SqlTableDependency.Extensions
           OnInserted(entity);
           break;
         case ChangeType.Update:
-          OnUpdated(entity);
+          OnUpdated(entity, eventArgs.EntityOldValues);
           break;
         case ChangeType.Delete:
           OnDeleted(entity);
@@ -337,7 +337,8 @@ namespace SqlTableDependency.Extensions
 
       var recordChangedNotification = new RecordChangedNotification<TEntity>()
                                       {
-                                        Entity = eventArgs.Entity,
+                                        Entity = entity,
+                                        EntityOldValues = eventArgs.EntityOldValues,
                                         ChangeType = eventArgs.ChangeType
                                       };
 
@@ -412,7 +413,7 @@ namespace SqlTableDependency.Extensions
 
     #region OnUpdated
 
-    protected virtual void OnUpdated(TEntity entity)
+    protected virtual void OnUpdated(TEntity entity, TEntity entityOldValues)
     {
     }
 

@@ -106,9 +106,9 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #region OnUpdated
 
-    protected override void OnUpdated(TEntity entity)
+    protected override void OnUpdated(TEntity entity, TEntity oldValues)
     {
-      base.OnUpdated(entity);
+      base.OnUpdated(entity, oldValues);
 
       logger.Trace("Entity was modified");
 

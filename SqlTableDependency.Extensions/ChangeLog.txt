@@ -5,3 +5,7 @@
 - SqlTableDependencyOnError was hidden (set to private, breaking change)
 - overriden OnError does not need to call base.OnError
 - added reference to Joker library. DisposableObject was removed from SqlTableDependency.Extensions and is taken from Joker.dll.
+
+2.3.0
+Breaking change:
+- SqlTableDependencyProvider.OnUpdated added argument TEntity entityOldValues for settings.IncludeOldValues = true;

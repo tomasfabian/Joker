@@ -47,9 +47,9 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     private readonly ISubject<Product> lastUpdatedProductSubject = new ReplaySubject<Product>(1);
     public IObservable<Product> LastUpdatedProductChanged => lastUpdatedProductSubject.AsObservable();
 
-    protected override void OnUpdated(Product entity)
+    protected override void OnUpdated(Product entity, Product oldValues)
     {
-      base.OnUpdated(entity);
+      base.OnUpdated(entity, oldValues);
 
       LastUpdatedProduct = entity;
 

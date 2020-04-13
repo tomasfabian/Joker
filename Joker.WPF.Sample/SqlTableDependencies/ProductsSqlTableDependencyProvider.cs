@@ -82,9 +82,9 @@ namespace Joker.WPF.Sample.SqlTableDependencies
 
     #region OnUpdated
 
-    protected override void OnUpdated(Product product)
+    protected override void OnUpdated(Product product, Product oldValues)
     {
-      base.OnUpdated(product);
+      base.OnUpdated(product, oldValues);
 
       LogChangeInfo(product);
     }
