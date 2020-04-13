@@ -41,7 +41,21 @@ namespace Sample.Data.SqlTableDependencyProvider
     }
 
     #endregion
-    
+
+    #region OnCreateSettings
+
+    protected override SqlTableDependencySettings<Product> OnCreateSettings()
+    {
+      var settings = base.OnCreateSettings();
+
+      settings.SchemaName = "dbo";
+      settings.IncludeOldValues = true;
+
+      return settings;
+    }
+
+    #endregion
+
     #endregion
   }
 }

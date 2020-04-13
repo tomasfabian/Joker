@@ -192,11 +192,12 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #region LogChangeInfo
 
-    private void LogChangeInfo(TEntity entity)
+    protected void LogChangeInfo(TEntity entity)
     {
       Console.WriteLine(Environment.NewLine);
 
       Console.WriteLine($"Id: {entity.Id}");
+      Console.WriteLine($"Timestamp: {entity.Timestamp}");
       Console.WriteLine($"Description: {GetDescription(entity)}");
 
       Console.WriteLine("#####");
