@@ -9,6 +9,8 @@ namespace Joker.Reactive
   public class ReactiveDataWithStatus<TModel> : ReactiveData<TModel>, IReactiveDataWithStatus<TModel>, IEntityChangePublisherWithStatus<TModel>
     where TModel : IVersion
   {    
+    public static readonly ReactiveDataWithStatus<TModel> Instance = new ReactiveDataWithStatus<TModel>();
+
     private readonly ISubject<VersionedTableDependencyStatus> whenStatusChanges = new ReplaySubject<VersionedTableDependencyStatus>(1);
 
     public IObservable<VersionedTableDependencyStatus> WhenStatusChanges => whenStatusChanges.AsObservable();

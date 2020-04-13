@@ -12,16 +12,23 @@ namespace Joker.WPF.Sample.Factories.ViewModels
 {
   public class ReactiveListViewModelFactory : ViewModelsFactory, IReactiveListViewModelFactory<ProductViewModel>
   {
-    public ReactiveListViewModelFactory(IKernel kernel) 
+    public ReactiveListViewModelFactory(IKernel kernel, ReactiveDataWithStatus<Product> reactiveDataWithStatus) 
       : base(kernel)
     {
+      ReactiveDataWithStatus = reactiveDataWithStatus;
     }
 
-    public ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; set; }
+    private ReactiveDataWithStatus<Product> ReactiveDataWithStatus { get; }
     
     public IReactiveListViewModel<ProductViewModel> Create()
+    {
+      return Kernel.Get<ReactiveProductsViewModel>();
+    }    
+
+    public IReactiveListViewModel<ProductViewModel> CreateWithPoorMansDependencyInjection()
     {      
       string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+
       var sampleDbContext = new SampleDbContext(connectionString);
       
       var schedulersFactory = new WpfSchedulersFactory();

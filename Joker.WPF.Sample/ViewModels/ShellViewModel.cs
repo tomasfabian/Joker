@@ -41,12 +41,23 @@ namespace Joker.WPF.Sample.ViewModels
 
     private DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
 
-    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider, ReactiveListViewModelFactory viewModelsFactory)
+    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider, ReactiveListViewModelFactory viewModelsFactory, IDomainEntitiesSubscriber domainEntitiesSubscriber)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      
+      //Comment/Uncomment case 1. or case 2
 
-      Initialize(productsChangesProvider).ToObservable()
-        .Subscribe();
+      //1. Use inversion of control
+      EntityChangesViewModel = viewModelsFactory.CreateProductsEntityChangesViewModel();
+      domainEntitiesSubscriber.Subscribe();
+      
+      //****
+
+      //2. User poor mans dependency injection
+      //Manually created object examples
+      //use SimulateServer if you didn't run SelfHostedODataService
+      //Initialize(productsChangesProvider).ToObservable()
+      //  .Subscribe();
     }
 
     private async Task Initialize(ISqlTableDependencyProvider<Product> productsChangesProvider)
@@ -75,14 +86,13 @@ namespace Joker.WPF.Sample.ViewModels
       var schedulersFactory = new WpfSchedulersFactory();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
-      var reactiveDataWithStatus = new ReactiveDataWithStatus<Product>();
+      var reactiveDataWithStatus = ReactiveDataWithStatus<Product>.Instance;
 
       domainEntitiesSubscriber =
         new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveDataWithStatus, schedulersFactory);
       await domainEntitiesSubscriber.Subscribe();
 
-      viewModelsFactory.ReactiveDataWithStatus = reactiveDataWithStatus; //TODO: DI with IoC
-      EntityChangesViewModel = new ProductsEntityChangesViewModel(
+      var entityChangesViewModelExample = new ProductsEntityChangesViewModel(
         viewModelsFactory, reactiveDataWithStatus, schedulersFactory);
     }
 

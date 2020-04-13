@@ -1,12 +1,21 @@
 ﻿using System.Configuration;
+using System.Threading.Tasks;
 using System.Windows;
 using CommonServiceLocator;
+using Joker.Contracts;
+using Joker.Factories.Schedulers;
+using Joker.MVVM.ViewModels;
+using Joker.Reactive;
+using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.Factories.ViewModels;
 using Joker.WPF.Sample.Modularity;
 using Joker.WPF.Sample.Providers.Scheduling;
 using Joker.WPF.Sample.SqlTableDependencies;
 using Joker.WPF.Sample.ViewModels;
+using Joker.WPF.Sample.ViewModels.Products;
+using Joker.WPF.Sample.ViewModels.Reactive;
 using Ninject;
 using Prism.Ioc;
 using Prism.Ninject.Ioc;
@@ -40,16 +49,25 @@ namespace Joker.WPF.Sample
       kernel.Bind<ShellViewModel>().ToSelf().InSingletonScope();
 
       var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
       kernel.Bind<ISchedulerProvider>().To<SchedulerProvider>().InSingletonScope();
-      kernel.Bind<ReactiveListViewModelFactory>().ToSelf().InSingletonScope();
-      kernel.Bind<IWpfSchedulersFactory>().To<WpfSchedulersFactory>().InSingletonScope();
+      kernel.Bind<IReactiveListViewModelFactory<ProductViewModel>, ReactiveListViewModelFactory>().To<ReactiveListViewModelFactory>().InSingletonScope();
+      kernel.Bind<ISchedulersFactory, IWpfSchedulersFactory>().To<WpfSchedulersFactory>().InSingletonScope();
       kernel.Bind<ISampleDbContext>().To<SampleDbContext>().InTransientScope().WithConstructorArgument("nameOrConnectionString", connectionString);
       
       kernel.Bind<ISqlTableDependencyProvider<Product>>().To<ProductsSqlTableDependencyProvider>()
         .InTransientScope()
         .WithConstructorArgument("connectionString", connectionString)
         .WithConstructorArgument("lifetimeScope", LifetimeScope.UniqueScope);
+
+      kernel.Bind<ITableDependencyStatusProvider, IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>, ReactiveDataWithStatus<Product>>()
+        .ToConstant(ReactiveDataWithStatus<Product>.Instance);
+      
+      kernel.Bind<IRedisSubscriber>().To<RedisSubscriber>()
+        .WithConstructorArgument("url", redisUrl);
+
+      kernel.Bind<IDomainEntitiesSubscriber>().To<DomainEntitiesSubscriber<Product>>();
     }
 
     #endregion
@@ -68,7 +86,7 @@ namespace Joker.WPF.Sample
     protected override void InitializeShell(Window shell)
     {
       base.InitializeShell(shell);
-
+       
       if (shell is FrameworkElement shellFrameworkElement)
         shellFrameworkElement.DataContext = kernel.Get<ShellViewModel>();
     }
