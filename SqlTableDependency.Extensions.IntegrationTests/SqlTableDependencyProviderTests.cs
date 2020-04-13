@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Joker.Extensions;
 using Joker.Factories.Schedulers;
-using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -240,7 +239,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
       
       redisPublisher.StartPublishing();
 
-      var reactiveDataWithStatus = new ReactiveDataWithStatus<Product>();
+      var reactiveDataWithStatus = new TestableReactiveData<Product>();
 
       using var domainEntitiesSubscriber =
         new DomainEntitiesSubscriber<Product>(new RedisSubscriber(RedisUrl), reactiveDataWithStatus, schedulersFactory);
