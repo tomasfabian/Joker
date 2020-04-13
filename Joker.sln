@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OData", "OData", "{64A618E2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfHostedODataService", "Samples\OData\SelfHostedODataService\SelfHostedODataService.csproj", "{883825DE-7562-49C1-89B1-DE97A60E594D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client", "Samples\OData\OData.Client\OData.Client.csproj", "{AFD9CC07-D335-47C7-86D0-926955DC3EC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{883825DE-7562-49C1-89B1-DE97A60E594D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{883825DE-7562-49C1-89B1-DE97A60E594D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{883825DE-7562-49C1-89B1-DE97A60E594D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD9CC07-D335-47C7-86D0-926955DC3EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD9CC07-D335-47C7-86D0-926955DC3EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD9CC07-D335-47C7-86D0-926955DC3EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD9CC07-D335-47C7-86D0-926955DC3EC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{30660BB8-E9A7-4BE5-B92D-519546782394} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 		{64A618E2-4F51-41AF-A946-FFEEF5396F8B} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{883825DE-7562-49C1-89B1-DE97A60E594D} = {64A618E2-4F51-41AF-A946-FFEEF5396F8B}
+		{AFD9CC07-D335-47C7-86D0-926955DC3EC1} = {64A618E2-4F51-41AF-A946-FFEEF5396F8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}

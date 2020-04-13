@@ -1,77 +1,34 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OData.Client;
-using ODataIssue1518.Service.Pocos;
+using Sample.Domain.Models;
 
-namespace ODataIssue1518.Client
+namespace OData.Client
 {
   class Program
   {
     static async Task Main(string[] args)
     {
-      var dataServiceContext = CreateContext();
+      var dataServiceContext = new ODataServiceContextFactory().Create(@"https://localhost:44364/");
+      var products = await ((DataServiceQuery<Product>) dataServiceContext.Products.Take(3)).ExecuteAsync();
 
-      var templateInstance = new TemplateInstance
-      {
-        Name = "Template 1"
-      };
+      var product = new Product {Name = "OData"};
 
-      var boxInstance = new BoxInstance();
-
-      await AddLink(dataServiceContext, boxInstance, templateInstance);
+      dataServiceContext.AddObject("Products", product);
       
-      Console.WriteLine("--------");
-      Console.WriteLine("--------");
-      Console.WriteLine("--------");
-      Console.WriteLine("--------");
-      Console.WriteLine("--------");
+      await dataServiceContext.SaveChangesAsync();
 
-      dataServiceContext = CreateContext();
+      product.Name = "OData renamed";
+      dataServiceContext.UpdateObject(product);
 
-      await AddRelatedObject(dataServiceContext, boxInstance, templateInstance);
+      await dataServiceContext.SaveChangesAsync();
+
+      dataServiceContext.DeleteObject(product);
+      
+      await dataServiceContext.SaveChangesAsync();
 
       Console.ReadKey();
-    }
-
-    private static async Task AddLink(ODataServiceContext dataServiceContext, BoxInstance boxInstance,
-      TemplateInstance templateInstance)
-    {
-      // this makes sure both objects are tracked in the context
-      dataServiceContext.AddObject("BoxInstances", boxInstance);
-      dataServiceContext.AddObject("TemplateInstances", templateInstance);
-
-      dataServiceContext.AddLink(templateInstance, "BoxInstances",
-        boxInstance); //this will create the batch request to call the TemplateController.CreateRef method
-
-      try
-      {
-        var response = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.BatchWithSingleChangeset);
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-    }
-
-    private static async Task AddRelatedObject(ODataServiceContext dataServiceContext, BoxInstance boxInstance,
-      TemplateInstance templateInstance)
-    {
-      dataServiceContext.AddObject("TemplateInstances", templateInstance);
-      dataServiceContext.AddRelatedObject(templateInstance, "BoxInstances", boxInstance);
-
-      try
-      {
-        var response = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.BatchWithSingleChangeset);
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
-    }
-
-    static ODataServiceContext CreateContext()
-    {
-      return new ODataServiceContext(new Uri(@"https://localhost:44364/"));
     }
   }
 }

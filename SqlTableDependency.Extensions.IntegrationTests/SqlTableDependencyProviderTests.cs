@@ -13,7 +13,6 @@ using Joker.Factories.Schedulers;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
-using Joker.Redis.SqlTableDependency;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sample.Data.Context;
 using Sample.Domain.Models;
@@ -184,9 +183,9 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     [ClassCleanup]
     public static void ClassCleanup()
     {
-      new SqlConnectionProvider().DisableServiceBroker(ConnectionString).Wait();
+      //new SqlConnectionProvider().DisableServiceBroker(ConnectionString).Wait();
 
-      new SqlConnectionProvider().IsServiceBrokerEnabled(ConnectionString).Should().BeFalse();
+      //new SqlConnectionProvider().IsServiceBrokerEnabled(ConnectionString).Should().BeFalse();
     }
 
     private static Product AddOrUpdateProduct(Product product)
@@ -283,14 +282,6 @@ namespace SqlTableDependency.Extensions.IntegrationTests
     public void ServiceBrokerNotEnabledException()
     {
       //TODO
-    }
-  }
-
-  public class ProductSqlTableDependencyRedisProvider : SqlTableDependencyRedisProvider<Product>
-  {
-    public ProductSqlTableDependencyRedisProvider(ISqlTableDependencyProvider<Product> sqlTableDependencyProvider, IRedisPublisher redisPublisher, IScheduler scheduler) 
-      : base(sqlTableDependencyProvider, redisPublisher, scheduler)
-    {
     }
   }
 }

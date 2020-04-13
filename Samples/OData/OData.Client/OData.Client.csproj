@@ -1,21 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <!-- <TargetFramework>$(NetStandardVersion)</TargetFramework> -->
+    
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\ODataIssue1518\Pocos\BoxInstance.cs" Link="Pocos\BoxInstance.cs" />
-    <Compile Include="..\ODataIssue1518\Pocos\DomainEntity.cs" Link="Pocos\DomainEntity.cs" />
-    <Compile Include="..\ODataIssue1518\Pocos\IEntity.cs" Link="Pocos\IEntity.cs" />
-    <Compile Include="..\ODataIssue1518\Pocos\TemplateInstance.cs" Link="Pocos\TemplateInstance.cs" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.6.3" />  
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OData.Client" Version="7.6.3" />
-    <!-- <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.4.0-Nightly202002252317" />   -->
-    <!-- <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" /> -->
+    <ProjectReference Include="..\..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
 
 </Project>

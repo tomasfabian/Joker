@@ -43,17 +43,58 @@ namespace SelfHostedODataService.Controllers
 
     #endregion
 
-    #region Put
-
-    public IActionResult Put([FromBody]TEntity entity)
+    public async Task<IActionResult> Patch(Delta<TEntity> entity)
     {
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
-      
+
+      var id = entity.GetInstance().Id;
+      var entityToUpdate = GetAll().FirstOrDefault(c => c.Id == id);
+
+      if (entityToUpdate == null)
+        return NotFound();
+
+      entity.Patch(entityToUpdate);
+
+      var result = await OnPut(entityToUpdate);
+
+      return Updated(entityToUpdate);
+    }
+
+    #region Put
+
+    public async Task<IActionResult> Put([FromBody]TEntity entity)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      await OnPut(entity);
+
       return Updated(entity);
     }
+
+    protected abstract Task<int> OnPut(TEntity entity);
+
+    #endregion
+
+    #region Delete
+
+    public async Task<IActionResult> Delete([FromODataUri] int key)
+    {
+      var result = await OnDelete(key);
+
+      return StatusCode((int)HttpStatusCode.NoContent);
+    }
+
+    #endregion
+
+    #region OnDelete
+
+    protected abstract Task<int> OnDelete(int key);
 
     #endregion
   }

@@ -5,6 +5,10 @@
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OData.Client" Version="7.6.3" />  
+  </ItemGroup>
+
   <Import Project="..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
 
   <ItemGroup>

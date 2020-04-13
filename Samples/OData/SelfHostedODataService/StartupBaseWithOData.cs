@@ -1,4 +1,6 @@
 ﻿using System.Configuration;
+using Joker.Factories.Schedulers;
+using Joker.Redis.ConnectionMultiplexers;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -11,7 +13,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Serialization;
 using Sample.Data.Context;
+using Sample.Data.SqlTableDependencyProvider;
 using Sample.Domain.Models;
+using SelfHostedODataService.Redis;
+using SqlTableDependency.Extensions.Enums;
 
 namespace SelfHostedODataService
 {
@@ -155,6 +160,23 @@ namespace SelfHostedODataService
       RegisterMiddleWares(app);
 
       ConfigureOData(app);
+      
+      InitializeSqlTableDependencyRedisProvider();
+    }
+
+    private static void InitializeSqlTableDependencyRedisProvider()
+    {
+      var schedulersFactory = new SchedulersFactory();
+      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+      var productsChangesProvider =
+        new ProductsSqlTableDependencyProvider(connectionString, schedulersFactory.TaskPool, LifetimeScope.UniqueScope);
+      productsChangesProvider.SubscribeToEntityChanges();
+
+      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
+
+      var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
+        new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
+      redisPublisher.StartPublishing();
     }
 
     #endregion

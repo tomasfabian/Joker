@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Net;
+using System.Xml;
 using Microsoft.OData.Client;
+using Microsoft.OData.Edm;
+using Sample.Domain.Models;
 
-namespace ODataIssue1518.Client
+namespace OData.Client
 {
   public class ODataServiceContext : DataServiceContext
   {
@@ -9,9 +13,26 @@ namespace ODataIssue1518.Client
 
     public ODataServiceContext(Uri serviceRoot)
       : base(serviceRoot, ODataProtocolVersion.V4)
-    {
+    {         
+      Format.LoadServiceModel = () => GetServiceModel(GetMetadataUri());
+      Format.UseJson();
     }
 
     #endregion
+
+    public IEdmModel GetServiceModel(Uri metadataUri)
+    {
+      var request = WebRequest.CreateHttp(metadataUri);
+
+      using var response = request.GetResponse();
+      using var stream = response.GetResponseStream();
+      using var reader = XmlReader.Create(stream);
+      
+      return Microsoft.OData.Edm.Csdl.CsdlReader.Parse(reader);
+    }
+
+    private DataServiceQuery<Product> products;
+
+    public DataServiceQuery<Product> Products => products ??= CreateQuery<Product>("Products");
   }
 }
