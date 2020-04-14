@@ -119,6 +119,14 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
+    #region Settings
+
+    private SqlTableDependencySettings<TEntity> settings;
+
+    private SqlTableDependencySettings<TEntity> Settings => settings ?? (settings = OnCreateSettings() ?? new SqlTableDependencySettings<TEntity>());
+
+    #endregion
+
     #region TableName
 
     protected virtual string TableName
@@ -143,10 +151,8 @@ namespace SqlTableDependency.Extensions
 
         if (tableAttribute != null)
           return tableAttribute.Schema;
-
-        var settings = CreateSettings();
-
-        return settings?.SchemaName;
+        
+        return Settings?.SchemaName;
       }
     }
 
@@ -225,17 +231,6 @@ namespace SqlTableDependency.Extensions
 
     #endregion
     
-    #region CreateSettings
-
-    private SqlTableDependencySettings<TEntity> CreateSettings()
-    {
-      var settings = OnCreateSettings();
-
-      return settings ?? new SqlTableDependencySettings<TEntity>();
-    }
-
-    #endregion
-    
     #region OnCreateSettings
 
     /// <summary>
@@ -253,30 +248,30 @@ namespace SqlTableDependency.Extensions
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
-      var settings = CreateSettings();
+      var sqlTableDependencySettings = Settings;
 
       switch (lifetimeScope)
       {
         case LifetimeScope.ConnectionScope:
           return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName,
-            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
-            filter: settings.Filter, notifyOn: settings.NotifyOn,
-            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
-            includeOldValues: settings.IncludeOldValues);
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: sqlTableDependencySettings.UpdateOf,
+            filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,
+            executeUserPermissionCheck: sqlTableDependencySettings.ExecuteUserPermissionCheck,
+            includeOldValues: sqlTableDependencySettings.IncludeOldValues);
 
         case LifetimeScope.ApplicationScope:
           return new SqlTableDependencyWitApplicationScope<TEntity>(connectionString, TableName,
-            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
-            filter: settings.Filter, notifyOn: settings.NotifyOn,
-            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
-            includeOldValues: settings.IncludeOldValues);
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: sqlTableDependencySettings.UpdateOf,
+            filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,
+            executeUserPermissionCheck: sqlTableDependencySettings.ExecuteUserPermissionCheck,
+            includeOldValues: sqlTableDependencySettings.IncludeOldValues);
         case LifetimeScope.UniqueScope:
 
           return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName,
-            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
-            filter: settings.Filter, notifyOn: settings.NotifyOn,
-            executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
-            includeOldValues: settings.IncludeOldValues);
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: sqlTableDependencySettings.UpdateOf,
+            filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,
+            executeUserPermissionCheck: sqlTableDependencySettings.ExecuteUserPermissionCheck,
+            includeOldValues: sqlTableDependencySettings.IncludeOldValues);
 
         default:
           return null;
@@ -293,7 +288,7 @@ namespace SqlTableDependency.Extensions
     {
       if (lifetimeScope != LifetimeScope.ConnectionScope && sqlTableDependency != null)
       {
-        sqlTableDependency.Start();
+        StartSqlTableDependency();
 
         return;
       }
@@ -309,8 +304,8 @@ namespace SqlTableDependency.Extensions
         sqlTableDependency.OnChanged += SqlTableDependencyOnChanged;
         sqlTableDependency.OnError += SqlTableDependencyOnError;
         sqlTableDependency.OnStatusChanged += OnSqlTableDependencyStatusChanged;
-
-        sqlTableDependency.Start();
+        
+        StartSqlTableDependency();
       }
       catch (Exception error)
       {
@@ -318,6 +313,15 @@ namespace SqlTableDependency.Extensions
 
         TryReconnect();
       }
+    }
+
+    #endregion
+
+    #region StartSqlTableDependency
+
+    private void StartSqlTableDependency()
+    {
+      sqlTableDependency.Start(Settings.TimeOut, Settings.WatchDogTimeOut);
     }
 
     #endregion

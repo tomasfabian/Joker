@@ -38,5 +38,15 @@ namespace SqlTableDependency.Extensions
     /// if set to <c>true</c> [include old values].
     /// </value>
     public bool IncludeOldValues { get; set; }
+
+    /// <value>
+    /// The WAITFOR timeout in seconds.
+    /// </value>
+    public int TimeOut { get; set; } = 120;
+
+    /// <value>
+    /// The WATCHDOG timeout in seconds.
+    /// </value>
+    public int WatchDogTimeOut { get; set; } = 180;
   }
 }

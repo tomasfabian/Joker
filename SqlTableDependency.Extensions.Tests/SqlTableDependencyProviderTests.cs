@@ -234,6 +234,21 @@ namespace SqlTableDependency.Extensions.Tests
     }
 
     [TestMethod]
+    public void Start_TimeoutAndWatchDogTimeOutAreTakenFromSettings()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+      var settings = new SqlTableDependencySettings<TestModel> { TimeOut = 121, WatchDogTimeOut = 200 };
+      sqlDependencyProvider.SetSettings(settings);
+
+      //Act
+      sqlDependencyProvider.SubscribeToEntityChanges();
+      
+      //Assert
+      tableDependencyMoq.Verify(c => c.Start(settings.TimeOut, settings.WatchDogTimeOut), Times.Once);
+    }
+
+    [TestMethod]
     public void SchemaName_DefaultIsDbo()
     {
       //Arrange

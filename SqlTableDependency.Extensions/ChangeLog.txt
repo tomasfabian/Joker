@@ -9,3 +9,7 @@
 2.3.0
 Breaking change:
 - SqlTableDependencyProvider.OnUpdated added argument TEntity entityOldValues for settings.IncludeOldValues = true;
+
+2.3.1
+- added support for TableAttribute
+- added support for TimeOut and WatchDogTimeOut to SqlTableDependencySettings<TEntity> 
