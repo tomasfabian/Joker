@@ -11,8 +11,9 @@
     <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, CQRS, MSSQL Service Broker, Event sourcing</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
-    <Version>2.3.0</Version>
+    <Version>2.3.1</Version>
     <PackageReleaseNotes>This release contains additional database reconnection lifetime scopes</PackageReleaseNotes>
+    <AssemblyVersion>2.3.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
@@ -31,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>SqlTableDependency.Extensions.Tests</_Parameter1>
+    </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>SqlTableDependency.Extensions.IntegrationTests</_Parameter1>
     </AssemblyAttribute>

@@ -192,6 +192,77 @@ namespace SqlTableDependency.Extensions.Tests
 
     #endregion
 
+    #region Settings
+
+    [TestMethod]
+    public void TableName_DefaultIsTypeName()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+
+      //Act
+      var tableName = sqlDependencyProvider.TableName;
+      
+      //Assert
+      tableName.Should().Be(typeof(TestModel).Name);
+    }
+
+    [TestMethod]
+    public void TableName_PocoHasTableAttribute_TakenFromAttribute()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateTestModelWithTableAttributeSqlTableDependencyProvider();
+
+      //Act
+      var tableName = sqlDependencyProvider.TableName;
+      
+      //Assert
+      tableName.Should().Be("TableName");
+    }
+
+    [TestMethod]
+    public void SchemaName_DefaultIsNull()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+
+      //Act
+      var tableName = sqlDependencyProvider.SchemaName;
+      
+      //Assert
+      tableName.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void SchemaName_DefaultIsDbo()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+      var settings = new SqlTableDependencySettings<TestModel> { SchemaName = "dbo" };
+      sqlDependencyProvider.SetSettings(settings);
+
+      //Act
+      var tableName = sqlDependencyProvider.SchemaName;
+      
+      //Assert
+      tableName.Should().Be(settings.SchemaName);
+    }
+
+    [TestMethod]
+    public void SchemaName_PocoHasTableAttribute_TakenFromAttribute()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateTestModelWithTableAttributeSqlTableDependencyProvider();
+
+      //Act
+      var tableName = sqlDependencyProvider.SchemaName;
+      
+      //Assert
+      tableName.Should().Be("TestSchema");
+    }
+
+    #endregion
+
     [TestMethod]
     public void CreateBulkRecordChangesNotifier()
     {
@@ -243,6 +314,13 @@ namespace SqlTableDependency.Extensions.Tests
     private TestSqlTableDependencyProvider CreateClassUnderTest(LifetimeScope lifetimeScope = LifetimeScope.ConnectionScope)
     {
       return new TestSqlTableDependencyProvider(connectionString, TestScheduler, tableDependencyMoq.Object, lifetimeScope);
+    }
+
+    private TestModelWithTableAttributeSqlTableDependencyProvider CreateTestModelWithTableAttributeSqlTableDependencyProvider(LifetimeScope lifetimeScope = LifetimeScope.ConnectionScope)
+    {
+      var tableDependency = new Mock<ITableDependency<TestModelWithTableAttribute>>().Object;
+
+      return new TestModelWithTableAttributeSqlTableDependencyProvider(connectionString, TestScheduler, tableDependency, lifetimeScope);
     }
 
     #endregion

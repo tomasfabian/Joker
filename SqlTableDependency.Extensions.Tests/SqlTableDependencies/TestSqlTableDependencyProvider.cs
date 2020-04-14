@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Reactive.Concurrency;
 using Moq;
 using SqlTableDependency.Extensions.Enums;
@@ -9,17 +8,20 @@ using TableDependency.SqlClient.Base.Abstracts;
 
 namespace SqlTableDependency.Extensions.Tests.SqlTableDependencies
 {
-  public class TestSqlTableDependencyProvider : SqlTableDependencyProvider<TestModel>
+  internal class TestSqlTableDependencyProvider : TestSqlTableDependencyProvider<TestModel>
   {
-    private readonly ITableDependency<TestModel> tableDependency;
-
-    public TestSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ITableDependency<TestModel> tableDependency, LifetimeScope lifetimeScope)
-      : this(connectionStringSettings.ConnectionString, scheduler, tableDependency, lifetimeScope)
-    {
-      this.tableDependency = tableDependency ?? throw new ArgumentNullException(nameof(tableDependency));
-    }
-
     public TestSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ITableDependency<TestModel> tableDependency, LifetimeScope lifetimeScope) 
+      : base(connectionString, scheduler, tableDependency, lifetimeScope)
+    {
+    }
+  }
+
+  internal abstract class TestSqlTableDependencyProvider<TTestModel> : SqlTableDependencyProvider<TTestModel> 
+    where TTestModel : class, new()
+  {
+    private readonly ITableDependency<TTestModel> tableDependency;
+
+    protected TestSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ITableDependency<TTestModel> tableDependency, LifetimeScope lifetimeScope) 
       : base(connectionString, scheduler, lifetimeScope)
     {
       this.tableDependency = tableDependency ?? throw new ArgumentNullException(nameof(tableDependency));
@@ -38,9 +40,23 @@ namespace SqlTableDependency.Extensions.Tests.SqlTableDependencies
 
     public bool IsDatabaseAvailableTestOverride { get; set; } = true;
 
-    protected override ITableDependency<TestModel> CreateSqlTableDependency(IModelToTableMapper<TestModel> modelToTableMapper)
+    internal new string TableName => base.TableName;
+
+    protected override ITableDependency<TTestModel> CreateSqlTableDependency(IModelToTableMapper<TTestModel> modelToTableMapper)
     {
       return tableDependency;
+    }
+
+    private SqlTableDependencySettings<TTestModel> sqlTableDependencySettings;
+
+    internal void SetSettings(SqlTableDependencySettings<TTestModel> tableDependencySettings)
+    {
+      sqlTableDependencySettings = tableDependencySettings;
+    }
+
+    protected override SqlTableDependencySettings<TTestModel> OnCreateSettings()
+    {
+      return sqlTableDependencySettings;
     }
   }
 }

@@ -25,12 +25,14 @@
 #endregion
 
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Reflection;
 using System.Threading;
 using Joker.Disposables;
 using SqlTableDependency.Extensions.Enums;
@@ -119,7 +121,34 @@ namespace SqlTableDependency.Extensions
 
     #region TableName
 
-    protected virtual string TableName => typeof(TEntity).Name;
+    protected virtual string TableName
+    {
+      get
+      {
+        var tableAttribute = TypeExtensions.GetTableAttribute<TEntity>();
+
+        return tableAttribute != null ? tableAttribute.Name : typeof(TEntity).Name;
+      }
+    }
+
+    #endregion
+
+    #region SchemaName
+
+    internal string SchemaName
+    {
+      get
+      {
+        var tableAttribute = TypeExtensions.GetTableAttribute<TEntity>();
+
+        if (tableAttribute != null)
+          return tableAttribute.Schema;
+
+        var settings = CreateSettings();
+
+        return settings?.SchemaName;
+      }
+    }
 
     #endregion
 
@@ -195,7 +224,18 @@ namespace SqlTableDependency.Extensions
     }
 
     #endregion
+    
+    #region CreateSettings
 
+    private SqlTableDependencySettings<TEntity> CreateSettings()
+    {
+      var settings = OnCreateSettings();
+
+      return settings ?? new SqlTableDependencySettings<TEntity>();
+    }
+
+    #endregion
+    
     #region OnCreateSettings
 
     /// <summary>
@@ -213,27 +253,27 @@ namespace SqlTableDependency.Extensions
 
     protected virtual ITableDependency<TEntity> CreateSqlTableDependency(IModelToTableMapper<TEntity> modelToTableMapper)
     {
-      var settings = OnCreateSettings();
+      var settings = CreateSettings();
 
       switch (lifetimeScope)
       {
         case LifetimeScope.ConnectionScope:
           return new SqlTableDependencyWithReconnection<TEntity>(connectionString, TableName,
-            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
             filter: settings.Filter, notifyOn: settings.NotifyOn,
             executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
             includeOldValues: settings.IncludeOldValues);
 
         case LifetimeScope.ApplicationScope:
           return new SqlTableDependencyWitApplicationScope<TEntity>(connectionString, TableName,
-            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
             filter: settings.Filter, notifyOn: settings.NotifyOn,
             executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
             includeOldValues: settings.IncludeOldValues);
         case LifetimeScope.UniqueScope:
 
           return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName,
-            schemaName: settings.SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
+            schemaName: SchemaName, mapper: modelToTableMapper, updateOf: settings.UpdateOf,
             filter: settings.Filter, notifyOn: settings.NotifyOn,
             executeUserPermissionCheck: settings.ExecuteUserPermissionCheck,
             includeOldValues: settings.IncludeOldValues);
@@ -386,7 +426,7 @@ namespace SqlTableDependency.Extensions
     {
       var modelToTableMapper = OnInitializeMapper(new ModelToTableMapper<TEntity>());
 
-      if (modelToTableMapper.Count() == 0)
+      if (modelToTableMapper == null || modelToTableMapper.Count() == 0)
         return null;
 
       return modelToTableMapper;
@@ -497,5 +537,22 @@ namespace SqlTableDependency.Extensions
     #endregion
 
     #endregion
+
+    private static class TypeExtensions
+    {
+      private static Attribute GetAttribute<TType, TTableAttribute>()
+      {
+        var attribute = typeof(TType).GetTypeInfo().GetCustomAttribute(typeof(TTableAttribute));
+	  
+        return attribute;
+      }
+
+      internal static TableAttribute GetTableAttribute<TType>()
+      {
+        var tableAttribute = GetAttribute<TType, TableAttribute>();
+	  
+        return (TableAttribute)tableAttribute;
+      }
+    }
   }
 }

@@ -1,30 +1,18 @@
 ﻿using System;
-using System.Configuration;
 using System.Reactive.Concurrency;
+using Joker.Domain;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Enums;
 using SqlTableDependency.Extensions.Sample.Logging;
 
 namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 {
-  internal class ProductsSqlTableDependencyProvider : SqlTableDependencyProviderWithConsoleOutput<Product>
+  internal class ProductsSqlTableDependencyProvider : ProductsSqlTableDependencyProvider<Product>
   {
-    private readonly ILogger logger;
-
-    #region Constructors
-
-    internal ProductsSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, ILogger logger)
-      : base(connectionStringSettings, scheduler, logger, LifetimeScope.ApplicationScope)
+    internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger) 
+      : base(connectionString, scheduler, logger)
     {
     }
-
-    internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger)
-      : base(connectionString, scheduler, logger, LifetimeScope.UniqueScope)
-    {
-      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
-    #endregion
     
     #region TableName
 
@@ -40,8 +28,28 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
     }
 
     #endregion
+  }
 
-    protected override SqlTableDependencySettings<Product> OnCreateSettings()
+  internal abstract class ProductsSqlTableDependencyProvider<TProduct> : SqlTableDependencyProviderWithConsoleOutput<TProduct> 
+    where TProduct : DomainEntity, new()
+  {
+    #region Fields
+
+    private readonly ILogger logger;
+
+    #endregion
+
+    #region Constructors
+
+    internal ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, ILogger logger, LifetimeScope lifetimeScope = LifetimeScope.UniqueScope)
+      : base(connectionString, scheduler, logger, lifetimeScope)
+    {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    #endregion
+
+    protected override SqlTableDependencySettings<TProduct> OnCreateSettings()
     {
       var settings = base.OnCreateSettings();
 
@@ -52,7 +60,7 @@ namespace SqlTableDependency.Extensions.Sample.SqlTableDependencies
 
     #region OnUpdated
 
-    protected override void OnUpdated(Product entity, Product oldValues)
+    protected override void OnUpdated(TProduct entity, TProduct oldValues)
     {
       base.OnUpdated(entity, oldValues);
 

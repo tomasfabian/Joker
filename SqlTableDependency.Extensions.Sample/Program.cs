@@ -54,6 +54,23 @@ namespace SqlTableDependency.Extensions.Sample
       redisPublisher.Dispose();
     }
 
+    private static void TryModelWithTableAttribute(string connectionString)
+    {
+      using var productsWithTableAttributeProvider =
+        new ProductsWithTableAttributeSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance,
+          new ConsoleLogger());
+
+      productsWithTableAttributeProvider.SubscribeToEntityChanges();
+      
+      IDisposable whenEntityRecordChangesSubscription = productsWithTableAttributeProvider.WhenEntityRecordChanges
+        .Subscribe(c => Console.WriteLine($@"{c.ChangeType} - {c.EntityOldValues?.ReNameD} -> {c.Entity.ReNameD}"));
+
+      Console.ReadKey();
+
+      productsWithTableAttributeProvider.Dispose();
+      whenEntityRecordChangesSubscription.Dispose();
+    }
+
     private static void AddOrUpdateProduct(string connectionString)
     {
       using var sampleDbContext = new SampleDbContext(connectionString);
