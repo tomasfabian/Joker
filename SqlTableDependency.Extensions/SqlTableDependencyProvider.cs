@@ -134,8 +134,14 @@ namespace SqlTableDependency.Extensions
       get
       {
         var tableAttribute = TypeExtensions.GetTableAttribute<TEntity>();
+        
+        if (tableAttribute != null)
+          return tableAttribute.Name;
 
-        return tableAttribute != null ? tableAttribute.Name : typeof(TEntity).Name;
+        if (!string.IsNullOrWhiteSpace(Settings.TableName))
+          return Settings.TableName;
+
+        return typeof(TEntity).Name;
       }
     }
 

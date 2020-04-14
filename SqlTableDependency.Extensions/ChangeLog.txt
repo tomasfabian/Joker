@@ -13,3 +13,7 @@ Breaking change:
 2.3.1
 - added support for TableAttribute
 - added support for TimeOut and WatchDogTimeOut to SqlTableDependencySettings<TEntity> 
+
+
+2.3.2
+- added TableName to to SqlTableDependencySettings<TEntity>

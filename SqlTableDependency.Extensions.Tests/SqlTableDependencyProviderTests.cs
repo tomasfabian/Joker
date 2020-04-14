@@ -208,6 +208,22 @@ namespace SqlTableDependency.Extensions.Tests
     }
 
     [TestMethod]
+    public void TableName_SettingTableNameWasSet()
+    {
+      //Arrange
+      var sqlDependencyProvider = CreateClassUnderTest();
+      
+      var settings = new SqlTableDependencySettings<TestModel> { TableName = "TableName"};
+      sqlDependencyProvider.SetSettings(settings);
+
+      //Act
+      var tableName = sqlDependencyProvider.TableName;
+      
+      //Assert
+      tableName.Should().Be(settings.TableName);
+    }
+
+    [TestMethod]
     public void TableName_PocoHasTableAttribute_TakenFromAttribute()
     {
       //Arrange

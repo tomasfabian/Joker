@@ -13,6 +13,11 @@ namespace SqlTableDependency.Extensions
     /// Name of the database schema.
     /// </value>
     public string SchemaName { get; set; }
+
+    /// <value>
+    /// Name of the table in database.
+    /// </value>
+    public string TableName { get; set; }
     
     /// <value>
     /// List of columns that need to monitor for changing on order to receive notifications.
