@@ -29,3 +29,5 @@ Changed:
 - SortedObservableCollection - items are not moved to the same index during sort
 Breaking changes:
 - SortedObservableCollection - PropertyChanged is unhooked before item is removed from Items
+Bug fix:
+- SortedObservableCollection fixed incorrect reordering of items during property changed

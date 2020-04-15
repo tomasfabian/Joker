@@ -144,13 +144,15 @@ namespace Joker.Collections
       
       var index = IndexOfValue(item);
 
-      int i = Array.BinarySearch(keys, 0, Count, item, comparer);
+      int i = Array.BinarySearch(keys.Except(new [] {item}).ToArray(), 0, Count-1, item, comparer);
+      
+      if (index != ~i)
+      {
+        RemoveKeyAt(index);
+        InsertKey(item, ~i);
 
-      if (i == -1)
-        i = 0;
-
-      if (index != i)
-        base.MoveItem(index, i);
+        base.MoveItem(index, ~i);
+      }
     }
 
     private void InsertKey(TValue key, int index)

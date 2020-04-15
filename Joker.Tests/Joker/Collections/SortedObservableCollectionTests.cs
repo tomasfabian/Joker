@@ -162,5 +162,25 @@ namespace Joker.MVVM.Tests.Joker.Collections
       //Assert
       ClassUnderTest.Should().BeEmpty();
     }
+
+    [TestMethod]
+    public void UpdateKeyField_CollectionWasReordered()
+    {
+      //Arrange    
+      AddIdRange(new Range(2, 5));
+      var item = ClassUnderTest[1];
+
+      //Act
+      item.TestId = -item.TestId;
+
+      //Assert
+      ClassUnderTest.IndexOf(item).Should().Be(0);
+
+      //Act
+      item.TestId = int.MaxValue;
+
+      //Assert
+      ClassUnderTest.IndexOf(item).Should().Be(3);
+    }
   }
 }
