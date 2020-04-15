@@ -11,8 +11,8 @@
     <Description>Reactive view models for data changes</Description>
     <PackageTags>MVVM reactive changes push notification</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.3.0</Version>
-    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <Version>1.4.0</Version>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <FileVersion>1.3.0.0</FileVersion>
   </PropertyGroup>
 
