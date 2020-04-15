@@ -103,10 +103,10 @@ namespace Joker.Collections
       var item = this[index];
 
       RemoveKeyAt(index);
-
-      base.RemoveItem(index);
       
       item.PropertyChanged -= OnNotifyPropertyChanged;  
+
+      base.RemoveItem(index);
     }
 
     private void RemoveKeyAt(int index)
@@ -149,7 +149,8 @@ namespace Joker.Collections
       if (i == -1)
         i = 0;
 
-      base.MoveItem(index, i);
+      if (index != i)
+        base.MoveItem(index, i);
     }
 
     private void InsertKey(TValue key, int index)

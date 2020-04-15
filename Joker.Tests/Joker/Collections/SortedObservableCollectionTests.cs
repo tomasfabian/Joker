@@ -12,7 +12,7 @@ using UnitTests;
 namespace Joker.MVVM.Tests.Joker.Collections
 {
   [TestClass]
-  public class SortedObservableCollectionTests : TestBase<SortedObservableCollection<DomainEntityViewModel<TestModel>>>
+  public class SortedObservableCollectionTests : TestBase<SortedObservableCollection<TestViewModel>>
   {
     private readonly IComparer<DomainEntityViewModel<TestModel>> comparer = new GenericComparer<DomainEntityViewModel<TestModel>>((x, y) =>
       Comparer<int>.Default.Compare(x.Model.Id, y.Model.Id));
@@ -22,12 +22,12 @@ namespace Joker.MVVM.Tests.Joker.Collections
     {
       base.TestInitialize();
 
-      ClassUnderTest = new SortedObservableCollection<DomainEntityViewModel<TestModel>>(comparer);
+      ClassUnderTest = new SortedObservableCollection<TestViewModel>(comparer);
     }
 
-    private DomainEntityViewModel<TestModel> CreateItem(int id)
+    private TestViewModel CreateItem(int id)
     {
-      return new DomainEntityViewModel<TestModel>(new TestModel {Id = id});
+      return new TestViewModel(new TestModel {Id = id});
     }
 
     private void AddIdRange(Range range)
@@ -108,7 +108,7 @@ namespace Joker.MVVM.Tests.Joker.Collections
       //Assert
       ClassUnderTest.Count.Should().Be(expectedItemsCount);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(NotSupportedException))]
     public void SetItem()
