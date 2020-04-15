@@ -3,7 +3,7 @@ Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.2.0
+Install-Package Joker.MVVM -Version 1.4.0
 
 # Preview:
 [Redis TableDependency status notifier](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Redis-TableDependency-status-notifier---preview)
