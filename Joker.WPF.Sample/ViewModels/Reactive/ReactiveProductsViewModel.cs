@@ -15,8 +15,13 @@ using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using Joker.Extensions;
+using Joker.Extensions.Disposables;
 using Joker.WPF.Sample.Factories.ViewModels;
 using OData.Client;
+using Prism.Commands;
 
 namespace Joker.WPF.Sample.ViewModels.Reactive
 {
@@ -84,11 +89,47 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
     protected override IEqualityComparer<Product> Comparer { get; }
 
+    private string filter;
+
+    public string Filter
+    {
+      get => filter;
+      set
+      {
+        SetProperty(ref filter, value);
+
+        clearFilter?.RaiseCanExecuteChanged();
+      }
+    }
+
+    #endregion
+
+    #region Commands
+
+    #region ClearFilter
+
+    private DelegateCommand clearFilter;
+
+    public ICommand ClearFilter => clearFilter ?? (clearFilter = new DelegateCommand(OnClearFilter, OnCanClearFilter));
+
+    private bool OnCanClearFilter()
+    {
+      return !Filter.IsNullOrEmpty();
+    }
+
+    private void OnClearFilter()
+    {
+      Filter = null;
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
 
     private IDisposable selectionChangedSubscription;
+    private readonly CompositeDisposable disposable = new CompositeDisposable();
 
     private void Init()
     {
@@ -101,6 +142,15 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
             if(c.NewValue != null)
               c.NewValue.IsActive = true;
           });
+      
+      Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+          h => PropertyChanged += h,
+          h => PropertyChanged -= h)
+        .Where(c => c.EventArgs.PropertyName == nameof(Filter))
+        .Throttle(TimeSpan.FromMilliseconds(200))
+        .ObserveOn(schedulersFactory.Dispatcher)
+        .Subscribe(c => SubscribeToDataChanges())
+        .DisposeWith(disposable);
     }
 
     protected override IComparable GetId(Product model)
@@ -127,7 +177,7 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
     protected override Func<Product, bool> OnCreateModelsFilter()
     {
-      return product => product.Id != 3;
+      return product => Filter.IsNullOrEmpty() || (!product.Name.IsNullOrEmpty() && product.Name.ToLower().Contains(Filter.ToLower()));
     }
 
     protected override Action<Product, ProductViewModel> UpdateViewModel()
@@ -144,6 +194,7 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
     {
       base.OnDispose();
 
+      using (disposable)
       using (selectionChangedSubscription)
       {
       }

@@ -10,8 +10,15 @@
         Height="450"
         mc:Ignorable="d">
   <Window.Resources>
-    <converters:NullVisibilityConverter x:Key="NullVisibilityConverter" />
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Joker.WPF.Sample;component/Styles/ControlsStyles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <converters:NullVisibilityConverter x:Key="NullVisibilityConverter" />
+    </ResourceDictionary>
   </Window.Resources>
+
   <Grid Margin="13" DataContext="{Binding EntityChangesViewModel}">
     <Grid.Resources>
       <Style TargetType="TextBlock">
@@ -32,16 +39,20 @@
 
     <StackPanel Grid.Row="1" Orientation="Horizontal">
       <TextBlock Text="New product name:" />
-      <TextBox Width="200"
-               Height="33"
-               Margin="5"
-               VerticalContentAlignment="Center"
-               Text="{Binding NewProductName, UpdateSourceTrigger=PropertyChanged}" />
+      <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding NewProductName, UpdateSourceTrigger=PropertyChanged}" />
+
       <Button Width="50"
-              Height="33"
               Command="{Binding AddNew}"
               Content="Add"
-              IsDefault="True" />
+              IsDefault="True"
+              Style="{StaticResource ButtonBaseStyle}" />
+
+      <TextBlock Text="Filter by name:" />
+      <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding ListViewModel.Filter, UpdateSourceTrigger=PropertyChanged}" />
+      <Button Command="{Binding ClearFilter}"
+              Content="Reset"
+              DataContext="{Binding ListViewModel}"
+              Style="{StaticResource ButtonBaseStyle}" />
     </StackPanel>
 
     <Grid Grid.Row="2">
