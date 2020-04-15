@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Joker.Extensions
 {
@@ -9,6 +10,15 @@ namespace Joker.Extensions
     public static bool IsOneOfFollowing<TItem>(this TItem item, params TItem[] allowedValues)
     {
       return allowedValues.Any(c => c.Equals(item));
+    }
+
+    #endregion
+
+    #region ToEnumerable
+
+    public static IEnumerable<TItem> ToEnumerable<TItem>(this TItem item)
+    {
+      yield return item;
     }
 
     #endregion

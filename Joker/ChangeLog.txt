@@ -25,6 +25,9 @@ Breaking changes:
 - IPublisher constraint IVersion was moved to IEntityChangePublisher
 
 1.3
+Added:
+- item to ToEnumerable extension method
+- string IsNullOrEmpty extension method
 Changed:
 - SortedObservableCollection - items are not moved to the same index during sort
 Breaking changes:
