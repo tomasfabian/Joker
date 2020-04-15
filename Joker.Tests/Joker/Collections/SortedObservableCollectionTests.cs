@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Joker.Collections;
 using Joker.Comparators;
-using Joker.Domain;
 using Joker.MVVM.Tests.Helpers;
 using Joker.MVVM.ViewModels.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

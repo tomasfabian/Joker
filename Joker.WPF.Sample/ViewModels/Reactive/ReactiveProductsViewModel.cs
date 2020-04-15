@@ -38,6 +38,7 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
       Comparer = new DomainEntityComparer();
+      Init();
     }
 
     #region Properties
@@ -86,7 +87,22 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
     #endregion
 
     #region Methods
-    
+
+    private IDisposable selectionChangedSubscription;
+
+    private void Init()
+    {
+      selectionChangedSubscription =
+        SelectionChanged.Where(c => c != null).Subscribe(c =>
+          {
+            if(c.OldValue != null)
+              c.OldValue.IsActive = false;
+            
+            if(c.NewValue != null)
+              c.NewValue.IsActive = true;
+          });
+    }
+
     protected override IComparable GetId(Product model)
     {
       return model.Id;
@@ -112,6 +128,25 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
     protected override Func<Product, bool> OnCreateModelsFilter()
     {
       return product => product.Id != 3;
+    }
+
+    protected override Action<Product, ProductViewModel> UpdateViewModel()
+    {
+      return (p, vm) => vm.UpdateFrom(p);
+    }
+
+    protected override void OnEntitiesLoaded()
+    {
+      SelectedItem = Items.FirstOrDefault();
+    }
+    
+    protected override void OnDispose()
+    {
+      base.OnDispose();
+
+      using (selectionChangedSubscription)
+      {
+      }
     }
 
     #endregion

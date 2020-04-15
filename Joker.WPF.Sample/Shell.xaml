@@ -1,12 +1,17 @@
 ﻿<Window x:Class="Joker.WPF.Sample.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Joker.WPF.Sample.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Joker.WPF.Sample.Views"
         Title="Shell"
         Width="800"
         Height="450"
         mc:Ignorable="d">
+  <Window.Resources>
+    <converters:NullVisibilityConverter x:Key="NullVisibilityConverter" />
+  </Window.Resources>
   <Grid Margin="13" DataContext="{Binding EntityChangesViewModel}">
     <Grid.Resources>
       <Style TargetType="TextBlock">
@@ -39,30 +44,41 @@
               IsDefault="True" />
     </StackPanel>
 
-    <ListBox Grid.Row="2"
-             ItemsSource="{Binding ListViewModel.Items}"
-             SelectedItem="{Binding ListViewModel.SelectedItem}">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="150" />
-              <ColumnDefinition Width="10" />
-              <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="3*" />
+        <ColumnDefinition Width="13" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{Binding Name}"
-                       TextTrimming="CharacterEllipsis"
-                       ToolTip="{Binding Name}" />
+      <ListBox ItemsSource="{Binding ListViewModel.Items}" SelectedItem="{Binding ListViewModel.SelectedItem}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="2"
-                    Width="25"
-                    Command="{Binding Delete}"
-                    Content="X" />
-          </Grid>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+              <TextBlock Text="{Binding Name}"
+                         TextTrimming="CharacterEllipsis"
+                         ToolTip="{Binding Name}" />
 
+              <Button Grid.Column="2"
+                      Width="25"
+                      Command="{Binding Delete}"
+                      Content="X" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <views:ProductDetail Grid.Column="2"
+                           VerticalAlignment="Top"
+                           DataContext="{Binding ListViewModel.SelectedItem}"
+                           Visibility="{Binding Converter={StaticResource NullVisibilityConverter}}" />
+
+    </Grid>
   </Grid>
 </Window>

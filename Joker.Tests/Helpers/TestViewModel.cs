@@ -10,6 +10,21 @@ namespace Joker.MVVM.Tests.Helpers
     {
     }
 
+    public int TestId
+    {
+      get => Model.Id;
+
+      set
+      {
+        if(value == Model.Id)
+          return;
+
+        Model.Id = value;
+
+        NotifyPropertyChanged();
+      }
+    }
+
     public string Name
     {
       get => Model.Name;

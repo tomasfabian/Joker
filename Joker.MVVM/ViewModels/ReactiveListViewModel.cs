@@ -69,7 +69,7 @@ namespace Joker.MVVM.ViewModels
     #endregion
 
     #region Properties
-
+    
     protected abstract IScheduler DispatcherScheduler { get; }
 
     protected abstract IObservable<IEnumerable<TModel>> Query { get; }
@@ -135,7 +135,19 @@ namespace Joker.MVVM.ViewModels
             {
               TryAddViewModelFor(model);
             }
+
+            EntitiesLoaded();
           }, OnException);
+    }
+
+    private void EntitiesLoaded()
+    {
+      OnEntitiesLoaded();
+    }
+
+    protected virtual void OnEntitiesLoaded()
+    {
+      
     }
 
     protected virtual void OnException(Exception error)

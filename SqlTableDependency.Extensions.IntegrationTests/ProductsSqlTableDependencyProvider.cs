@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -10,11 +9,6 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 {
   public class ProductsSqlTableDependencyProvider : SqlTableDependencyProvider<Product>
   {
-    public ProductsSqlTableDependencyProvider(ConnectionStringSettings connectionStringSettings, IScheduler scheduler, LifetimeScope lifetimeScope) 
-      : base(connectionStringSettings, scheduler, lifetimeScope)
-    {
-    }
-
     public ProductsSqlTableDependencyProvider(string connectionString, IScheduler scheduler, LifetimeScope lifetimeScope) 
       : base(connectionString, scheduler, lifetimeScope)
     {

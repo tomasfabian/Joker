@@ -41,8 +41,71 @@ namespace Joker.WPF.Sample.ViewModels.Products
         NotifyPropertyChanged();
       }
     }
-    
+
+    private string renamed;
+
+    public string Renamed
+    {
+      get => renamed;
+      set
+      {
+        SetProperty(ref renamed, value);
+        update?.RaiseCanExecuteChanged();
+      }
+    }
+
+    private bool isActive;
+
+    public bool IsActive
+    {
+      get => isActive;
+      set
+      {
+        if (isActive == value)
+          return;
+
+        isActive = value;
+
+        Renamed = Name;
+
+        update?.RaiseCanExecuteChanged();
+
+        NotifyPropertyChanged();
+      }
+    }
+
     #region Commands
+
+    #region Update
+
+    private DelegateCommand update;
+
+    public ICommand Update => update ?? (update = new DelegateCommand(OnUpdate, OnCanUpdate));
+
+    private bool OnCanUpdate()
+    {
+      return Name != Renamed;
+    }
+
+    private void OnUpdate()
+    {
+      var dataServiceContext = new ODataServiceContextFactory().CreateODataContext();
+      
+      var product = Model.Clone();
+      
+      dataServiceContext.AttachTo("Products", product);
+
+      product.Name = Renamed;
+
+      dataServiceContext.UpdateObject(product);
+      
+      dataServiceContext.SaveChangesAsync()
+        .ToObservable()
+        .ObserveOn(schedulersFactory.Dispatcher)
+        .Subscribe(_ => {  }, error => MessageBox.Show($"Failed to update {Name} to {Renamed}"));
+    }
+
+    #endregion
 
     #region Delete
 
