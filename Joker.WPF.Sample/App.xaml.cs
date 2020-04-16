@@ -15,7 +15,6 @@ using Joker.WPF.Sample.Providers.Scheduling;
 using Joker.WPF.Sample.SqlTableDependencies;
 using Joker.WPF.Sample.ViewModels;
 using Joker.WPF.Sample.ViewModels.Products;
-using Joker.WPF.Sample.ViewModels.Reactive;
 using Ninject;
 using Prism.Ioc;
 using Prism.Ninject.Ioc;

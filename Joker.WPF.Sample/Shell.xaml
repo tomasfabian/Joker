@@ -4,12 +4,14 @@
         xmlns:busyIndicators="clr-namespace:Joker.WPF.Sample.Controls.BusyIndicators"
         xmlns:converters="clr-namespace:Joker.WPF.Sample.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:designTime="clr-namespace:Joker.WPF.Sample.DesignTime"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Joker.WPF.Sample.Views"
-        Title="Shell"
+        Title="Joker"
         Width="800"
         Height="450"
+        d:DataContext="{d:DesignInstance designTime:ShellDesignViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d">
   <Window.Resources>
     <ResourceDictionary>
