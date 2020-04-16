@@ -3,9 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Joker.WPF.Sample;component/Styles/ControlsStyles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <system:Double x:Key="Nan">NaN</system:Double>
+    </ResourceDictionary>
+  </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
@@ -34,12 +43,16 @@
                Text="Name:" />
     <TextBox Grid.Row="2"
              Grid.Column="2"
+             Width="{StaticResource Nan}"
              Margin="0,5,0,0"
+             Style="{StaticResource TextBoxStyle}"
              Text="{Binding Renamed, UpdateSourceTrigger=PropertyChanged}" />
 
     <Button Grid.Row="3"
             Grid.ColumnSpan="3"
             Margin="0,13,0,13"
+            Padding="5"
+            HorizontalAlignment="Left"
             Command="{Binding Update}"
             Content="Update" />
   </Grid>

@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:fa="http://schemas.fontawesome.io/icons/"
+                    xmlns:busyIndicators="clr-namespace:Joker.WPF.Sample.Controls.BusyIndicators">
+  <Storyboard x:Key="SpinnerStoryboard">
+    <DoubleAnimation RepeatBehavior="Forever"
+                     Storyboard.TargetName="Wait"
+                     Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)"
+                     From="0"
+                     To="360"
+                     Duration="0:0:2" />
+  </Storyboard>
+
+  <ControlTemplate x:Key="DeviceGroupControlTemplate" TargetType="busyIndicators:BusyIndicator">
+    <Grid>
+      <ContentPresenter x:Name="Content"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        IsEnabled="False" />
+
+      <Grid x:Name="Indicator" Visibility="Collapsed">
+        <Border Padding="{TemplateBinding Padding}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+
+          <Grid>
+            <fa:FontAwesome Name="Wait"
+                            FontFamily="Fonts/#FontAwesome"
+                            FontSize="{TemplateBinding IconFontSize}"
+                            Icon="Spinner"
+                            RenderTransformOrigin="0.5, 0.5">
+
+              <fa:FontAwesome.RenderTransform>
+                <RotateTransform Angle="0" />
+              </fa:FontAwesome.RenderTransform>
+            </fa:FontAwesome>
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+
+    <ControlTemplate.Triggers>
+      <DataTrigger Binding="{Binding IsBusy, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="True">
+        <DataTrigger.EnterActions>
+          <BeginStoryboard Name="SpinnerStoryboardInstance" Storyboard="{StaticResource SpinnerStoryboard}" />
+        </DataTrigger.EnterActions>
+        <DataTrigger.ExitActions>
+          <StopStoryboard BeginStoryboardName="SpinnerStoryboardInstance" />
+        </DataTrigger.ExitActions>
+        <Setter TargetName="Indicator" Property="Visibility" Value="Visible" />
+      </DataTrigger>
+
+      <DataTrigger Binding="{Binding IsBusy, RelativeSource={RelativeSource Self}, Mode=OneWay}" Value="False">
+        <Setter TargetName="Content" Property="IsEnabled" Value="True" />
+      </DataTrigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+
+  <Style x:Key="BusyIndicatorControlStyle" TargetType="busyIndicators:BusyIndicator">
+    <Setter Property="Template" Value="{StaticResource DeviceGroupControlTemplate}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="IconFontSize" Value="50" />
+    <Setter Property="Padding" Value="5" />
+  </Style>
+
+  <Style BasedOn="{StaticResource BusyIndicatorControlStyle}" TargetType="busyIndicators:BusyIndicator" />
+</ResourceDictionary>
