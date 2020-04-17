@@ -34,3 +34,7 @@ Breaking changes:
 - SortedObservableCollection - PropertyChanged is unhooked before item is removed from Items
 Bug fix:
 - SortedObservableCollection fixed incorrect reordering of items during property changed
+
+1.4
+Added:
+- SortedObservableCollection.SupportsRangeNotifications internal AddRange/RemoveRange 

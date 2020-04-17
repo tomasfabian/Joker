@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Joker.WPF.Sample.ViewModels.Products;
 using Sample.Domain.Models;
@@ -9,11 +10,10 @@ namespace Joker.WPF.Sample.DesignTime.Reactive
   {
     public ReactiveProductsDesignViewModel()
     {
-      Items = new ObservableCollection<ProductViewModel>
-      {
-        new ProductViewModel(new Product { Name = "Product" })
-      };
+      var products = Enumerable.Range(1, 22).Select(i => new ProductViewModel(new Product {Name = $"Product {i}"}));
 
+      Items = new ObservableCollection<ProductViewModel>(products);
+      
       SelectedItem = Items.First();
     }
     
