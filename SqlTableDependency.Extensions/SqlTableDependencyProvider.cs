@@ -271,8 +271,8 @@ namespace SqlTableDependency.Extensions
             filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,
             executeUserPermissionCheck: sqlTableDependencySettings.ExecuteUserPermissionCheck,
             includeOldValues: sqlTableDependencySettings.IncludeOldValues);
-        case LifetimeScope.UniqueScope:
 
+        case LifetimeScope.UniqueScope:
           return new SqlTableDependencyWithUniqueScope<TEntity>(connectionString, TableName,
             schemaName: SchemaName, mapper: modelToTableMapper, updateOf: sqlTableDependencySettings.UpdateOf,
             filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,

@@ -2,7 +2,6 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.OData;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
@@ -38,7 +37,7 @@ namespace SelfHostedODataService.Controllers
 
     protected override Task<int> OnDelete(int key)
     {
-      var entity =  dbContext.Products.Find(key);
+      var entity = dbContext.Products.Find(key);
 
       dbContext.Products.Remove(entity);
 

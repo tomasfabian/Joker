@@ -43,6 +43,8 @@ namespace SelfHostedODataService.Controllers
 
     #endregion
 
+    #region Patch
+
     public async Task<IActionResult> Patch(Delta<TEntity> entity)
     {
       if (!ModelState.IsValid)
@@ -62,6 +64,8 @@ namespace SelfHostedODataService.Controllers
 
       return Updated(entityToUpdate);
     }
+
+    #endregion
 
     #region Put
 
