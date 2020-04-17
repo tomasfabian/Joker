@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
+using NLog;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions;
 using SqlTableDependency.Extensions.Enums;
 using TableDependency.SqlClient.Base;
-using TableDependency.SqlClient.Base.EventArgs;
+using TableDependency.SqlClient.Base.Abstracts;
 
 namespace Sample.Data.SqlTableDependencyProvider
 {
@@ -42,6 +44,24 @@ namespace Sample.Data.SqlTableDependencyProvider
 
     #endregion
 
+    #region CreateSqlTableDependency
+
+    private NLogTraceListener traceListener;
+
+    protected override ITableDependency<Product> CreateSqlTableDependency(IModelToTableMapper<Product> modelToTableMapper)
+    {
+      var sqlTableDependency = base.CreateSqlTableDependency(modelToTableMapper);
+
+      traceListener?.Dispose();
+
+      sqlTableDependency.TraceListener = traceListener = new NLogTraceListener();
+      sqlTableDependency.TraceLevel = TraceLevel.Verbose;
+
+      return sqlTableDependency;
+    }
+
+    #endregion
+
     #region OnCreateSettings
 
     protected override SqlTableDependencySettings<Product> OnCreateSettings()
@@ -52,6 +72,17 @@ namespace Sample.Data.SqlTableDependencyProvider
       settings.IncludeOldValues = true;
 
       return settings;
+    }
+
+    #endregion
+
+    #region OnDispose
+
+    protected override void OnDispose()
+    {
+      base.OnDispose();
+      
+      traceListener?.Dispose();
     }
 
     #endregion

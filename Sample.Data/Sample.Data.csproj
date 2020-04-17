@@ -17,6 +17,10 @@
   <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
   </ItemGroup>

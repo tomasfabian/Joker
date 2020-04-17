@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Serialization;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using Sample.Data.Context;
 using Sample.Data.SqlTableDependencyProvider;
 using Sample.Domain.Models;
@@ -23,9 +26,9 @@ namespace SelfHostedODataService
   public class StartupBaseWithOData
   {
     #region Methods
-    
+
     #region ConfigureOData
-      
+
     private IEdmModel edmModel;
 
     private void ConfigureOData(IApplicationBuilder app)
@@ -67,7 +70,7 @@ namespace SelfHostedODataService
       ODataModelBuilder oDataModelBuilder = new ODataConventionModelBuilder();
 
       oDataModelBuilder.Namespace = "Example";
-      
+
       oDataModelBuilder.EntitySet<Product>("Products");
 
       return oDataModelBuilder.GetEdmModel();
@@ -79,11 +82,30 @@ namespace SelfHostedODataService
 
     public void ConfigureServices(IServiceCollection services)
     {
-      OnConfigureServices(services); 
-      
+      OnConfigureServices(services);
+
       string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
       services.AddTransient<ISampleDbContext>(_ => new SampleDbContext(connectionString));
+    }
+
+    #endregion
+
+    #region ConfigureNLog
+
+    private void ConfigureNLog()
+    {
+      var config = new LoggingConfiguration();
+
+      // Targets where to log to: File and Console
+      var logfile = new FileTarget("logfile") { FileName = "logs.txt" };
+      var logconsole = new ConsoleTarget("logconsole");
+            
+      // Rules for mapping loggers to targets            
+      config.AddRule(LogLevel.Info, LogLevel.Fatal, logconsole);
+      config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+                     
+      LogManager.Configuration = config;
     }
 
     #endregion
@@ -92,6 +114,8 @@ namespace SelfHostedODataService
 
     protected virtual void OnConfigureServices(IServiceCollection services)
     {
+      ConfigureNLog();
+
       services.AddOptions();
 
       services.AddHttpContextAccessor();
