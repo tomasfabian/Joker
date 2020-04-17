@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using FluentAssertions;
 using Joker.Collections;
 using Joker.Comparators;
@@ -134,6 +137,8 @@ namespace Joker.MVVM.Tests.Joker.Collections
       //Assert
     }
 
+    #region Clear
+
     [TestMethod]
     public void ClearAndAdd_ShouldBeAddedFirst()
     {
@@ -163,6 +168,45 @@ namespace Joker.MVVM.Tests.Joker.Collections
     }
 
     [TestMethod]
+    public void Clear_OldItemsCollectionChangeNotification()
+    {
+      //Arrange
+      ClassUnderTest.SupportsRangeNotifications = true;
+      AddIdRange(new Range(2, 5));
+      var expectedItemsCount = ClassUnderTest.Count;
+
+      IList removedItems = new List<TestViewModel>();
+
+      int bulkRemovedItemsCount = 0;
+
+      void Handler(object sender, NotifyCollectionChangedEventArgs args)
+      {
+        if (args.Action == NotifyCollectionChangedAction.Remove)
+        {
+          foreach (var oldItem in args.OldItems)
+          {
+            removedItems.Add(oldItem);
+          }
+
+          bulkRemovedItemsCount = args.OldItems.Count;
+        }
+      }
+
+      ClassUnderTest.CollectionChanged += Handler;
+
+      //Act
+      ClassUnderTest.Clear();
+
+      ClassUnderTest.CollectionChanged -= Handler;
+
+      //Assert
+      removedItems.Count.Should().Be(expectedItemsCount);
+      bulkRemovedItemsCount.Should().Be(expectedItemsCount);
+    }
+
+    #endregion
+
+    [TestMethod]
     public void UpdateKeyField_CollectionWasReordered()
     {
       //Arrange    
@@ -181,5 +225,126 @@ namespace Joker.MVVM.Tests.Joker.Collections
       //Assert
       ClassUnderTest.IndexOf(item).Should().Be(3);
     }
+
+    #region AddRange
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void AddRange(bool supportsRangeNotifications)
+    {
+      //Arrange
+      ClassUnderTest.SupportsRangeNotifications = supportsRangeNotifications;
+      var itemsToAddRange = Enumerable.Range(1, 3).Select(i => new TestViewModel(new TestModel {Id = i})).ToArray();
+
+      //Act
+      ClassUnderTest.AddRange(itemsToAddRange);
+
+      //Assert
+      ClassUnderTest.Should().Equal(itemsToAddRange);
+
+      ClassUnderTest.Count.Should().Be(3);
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void AddRange_NewItemsCollectionChangeNotification(bool supportsRangeNotifications)
+    {
+      //Arrange
+      ClassUnderTest.SupportsRangeNotifications = supportsRangeNotifications;
+
+      var itemsToAddRange = Enumerable.Range(1, 3).Select(i => new TestViewModel(new TestModel {Id = i})).ToArray();
+      IList addedItems = new List<TestViewModel>();
+
+      int addedItemsCount = 0;
+
+      void Handler(object sender, NotifyCollectionChangedEventArgs args)
+      {
+        if (args.Action == NotifyCollectionChangedAction.Add)
+          foreach (var newItem in args.NewItems)
+            addedItems.Add(newItem);
+
+        addedItemsCount = args.NewItems.Count;
+      }
+
+      ClassUnderTest.CollectionChanged += Handler;
+
+      //Act
+      ClassUnderTest.AddRange(itemsToAddRange);
+
+      ClassUnderTest.CollectionChanged -= Handler;
+
+      //Assert
+      addedItems.Count.Should().Be(itemsToAddRange.Length);
+      addedItemsCount.Should().Be(supportsRangeNotifications ? itemsToAddRange.Length : 1);
+    }
+
+    #endregion
+
+    #region RemoveRange
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void RemoveRange(bool supportsRangeNotifications)
+    {
+      //Arrange
+      ClassUnderTest.SupportsRangeNotifications = supportsRangeNotifications;
+
+      AddIdRange(new Range(2, 5));
+      var item1 = ClassUnderTest[0];
+      var removeItemsRange = ClassUnderTest.Skip(1).ToList();
+
+      //Act
+      ClassUnderTest.RemoveRange(removeItemsRange);
+
+      //Assert
+      ClassUnderTest.Count.Should().Be(1);
+
+      ClassUnderTest.Contains(item1).Should().BeTrue();
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void RemoveRange_OldItemsCollectionChangeNotification(bool supportsRangeNotifications)
+    {
+      //Arrange
+      ClassUnderTest.SupportsRangeNotifications = supportsRangeNotifications;
+
+      AddIdRange(new Range(2, 5));
+      
+      var removeItemsRange = ClassUnderTest.Skip(2).ToArray();
+
+      IList removedItems = new List<TestViewModel>();
+      int removedItemsCount = 0;
+
+      void Handler(object sender, NotifyCollectionChangedEventArgs args)
+      {
+        if (args.Action == NotifyCollectionChangedAction.Remove)
+        {
+          foreach (var oldItem in args.OldItems)
+          {
+            removedItems.Add(oldItem);
+          }
+
+          removedItemsCount = args.OldItems.Count;
+        }
+      }
+
+      ClassUnderTest.CollectionChanged += Handler;
+
+      //Act
+      ClassUnderTest.RemoveRange(removeItemsRange);
+
+      ClassUnderTest.CollectionChanged -= Handler;
+
+      //Assert
+      removedItems.Count.Should().Be(removeItemsRange.Length);
+      removedItemsCount.Should().Be(supportsRangeNotifications ? removeItemsRange.Length : 1);
+    }
+
+    #endregion
   }
 }

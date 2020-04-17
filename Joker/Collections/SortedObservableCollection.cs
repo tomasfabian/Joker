@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -26,6 +27,8 @@ namespace Joker.Collections
         Add(item);
       }
     }
+
+    internal bool SupportsRangeNotifications { get; set; } = false;
 
     private TValue[] keys;
     
@@ -94,6 +97,9 @@ namespace Joker.Collections
       }
 
       Array.Clear(keys, 0, Count);
+
+      if (SupportsRangeNotifications)
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, Items.ToList()));
 
       base.ClearItems();
     }
@@ -173,6 +179,51 @@ namespace Joker.Collections
     protected override void MoveItem(int oldIndex, int newIndex)
     {
       throw new NotSupportedException();
+    }
+
+
+
+    internal void AddRange(IEnumerable<TValue> items)
+    {
+      if (SupportsRangeNotifications)
+      {
+        var values = items as TValue[] ?? items.ToArray();
+        
+        foreach (var item in values)
+        {
+          Items.Add(item);
+        }
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, values.ToList()));
+      }
+      else
+      {
+        foreach (var item in items)
+        {
+          Add(item);
+        }
+      }
+    }
+
+    public void RemoveRange(IEnumerable<TValue> items)
+    {
+      if (SupportsRangeNotifications)
+      {
+        var values = items as TValue[] ?? items.ToArray();
+
+        foreach (var item in values)
+        {
+          Items.Remove(item);
+        }
+
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, values.ToList()));
+      }
+      else
+      {
+        foreach (var item in items)
+        {
+          Remove(item);
+        }
+      }
     }
   }
 }
