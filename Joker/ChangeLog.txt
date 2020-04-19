@@ -38,3 +38,4 @@ Bug fix:
 1.4
 Added:
 - SortedObservableCollection.SupportsRangeNotifications internal AddRange/RemoveRange 
+- Enumerable extensions Do, ForEach, Consume
