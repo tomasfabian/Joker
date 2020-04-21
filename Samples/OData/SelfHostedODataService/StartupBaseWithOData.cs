@@ -1,4 +1,6 @@
 ﻿using System.Configuration;
+using System.Data.SqlClient;
+using Joker.Extensions;
 using Joker.Factories.Schedulers;
 using Joker.Redis.ConnectionMultiplexers;
 using Microsoft.AspNet.OData.Batch;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
@@ -25,6 +28,24 @@ namespace SelfHostedODataService
 {
   public class StartupBaseWithOData
   {
+    #region Fields
+
+    private readonly IConfigurationRoot configuration;
+    
+    #endregion
+    
+    #region Constructors
+
+    public StartupBaseWithOData(IWebHostEnvironment env)
+    {
+      configuration = new ConfigurationBuilder()
+        .SetBasePath(env.ContentRootPath)
+        .AddEnvironmentVariables()
+        .Build();
+    }
+
+    #endregion
+
     #region Methods
 
     #region ConfigureOData
@@ -84,7 +105,7 @@ namespace SelfHostedODataService
     {
       OnConfigureServices(services);
 
-      string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+      string connectionString = GetConnectionString();
 
       services.AddTransient<ISampleDbContext>(_ => new SampleDbContext(connectionString));
     }
@@ -170,6 +191,30 @@ namespace SelfHostedODataService
 
     #endregion
 
+    #region GetConnectionString
+
+    private string GetConnectionString()
+    {
+      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
+      
+      var host = configuration["DBHOST"];
+
+      if (host.IsNullOrEmpty())
+      {
+        return connectionString;
+      }
+      
+      var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
+      {
+        ConnectionString = connectionString,
+        DataSource = host
+      };
+
+      return sqlConnectionStringBuilder.ConnectionString;
+    }
+
+    #endregion
+
     #region Configure
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
@@ -185,13 +230,15 @@ namespace SelfHostedODataService
 
       ConfigureOData(app);
       
-      InitializeSqlTableDependencyRedisProvider();
+      InitializeSqlTableDependencyRedisProvider(GetConnectionString());
     }
 
-    private static void InitializeSqlTableDependencyRedisProvider()
+    #region InitializeSqlTableDependencyRedisProvider
+
+    private static void InitializeSqlTableDependencyRedisProvider(string connectionString)
     {
+
       var schedulersFactory = new SchedulersFactory();
-      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
       var productsChangesProvider =
         new ProductsSqlTableDependencyProvider(connectionString, schedulersFactory.TaskPool, LifetimeScope.UniqueScope);
       productsChangesProvider.SubscribeToEntityChanges();
@@ -202,6 +249,8 @@ namespace SelfHostedODataService
         new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
       redisPublisher.StartPublishing();
     }
+
+    #endregion
 
     #endregion
 
