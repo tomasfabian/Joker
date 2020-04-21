@@ -230,21 +230,21 @@ namespace SelfHostedODataService
 
       ConfigureOData(app);
       
-      InitializeSqlTableDependencyRedisProvider(GetConnectionString());
+      var redisHost = configuration["REDISHOST"];
+      InitializeSqlTableDependencyRedisProvider(GetConnectionString(), redisHost);
     }
 
     #region InitializeSqlTableDependencyRedisProvider
 
-    private static void InitializeSqlTableDependencyRedisProvider(string connectionString)
+    private static void InitializeSqlTableDependencyRedisProvider(string connectionString, string redisUrl)
     {
-
       var schedulersFactory = new SchedulersFactory();
       var productsChangesProvider =
         new ProductsSqlTableDependencyProvider(connectionString, schedulersFactory.TaskPool, LifetimeScope.UniqueScope);
       productsChangesProvider.SubscribeToEntityChanges();
 
-      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
-
+      redisUrl = redisUrl ?? ConfigurationManager.AppSettings["RedisUrl"];
+      
       var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
         new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
       redisPublisher.StartPublishing();
