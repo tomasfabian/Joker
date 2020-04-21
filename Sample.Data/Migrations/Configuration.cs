@@ -1,4 +1,6 @@
-﻿namespace Sample.Data.Migrations
+﻿using Sample.Domain.Models;
+
+namespace Sample.Data.Migrations
 {
   using System;
   using System.Data.Entity;
@@ -9,7 +11,7 @@
   {
     public Configuration()
     {
-      AutomaticMigrationsEnabled = false;
+      AutomaticMigrationsEnabled = true;
     }
 
     protected override void Seed(Sample.Data.Context.SampleDbContext context)

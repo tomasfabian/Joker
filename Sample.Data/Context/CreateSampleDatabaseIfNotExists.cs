@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using Sample.Domain.Models;
 
 namespace Sample.Data.Context
 {
@@ -6,9 +8,11 @@ namespace Sample.Data.Context
   {
     protected override void Seed(SampleDbContext context)
     {
-      context.SaveChanges();
-
       base.Seed(context);
+      
+      context.Products.Add(new Product {Timestamp = DateTime.Now, Name = "Test product"});
+
+      context.SaveChanges();
     }
   }
 }
