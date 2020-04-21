@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+
+LABEL author="Tomas Fabian"
+MAINTAINER fabian.frameworks@gmail.com
+
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+
+WORKDIR app/Samples/OData/SelfHostedODataService
+
+EXPOSE 80/tcp
+ENV ASPNETCORE_URLS http://+:80
+#ENV ASPNETCORE_URLS=http:/*:5000
+#EXPOSE 5000
+
+ENTRYPOINT dotnet restore \
+&& dotnet watch run
+#ENTRYPOINT ["/bin/bash", "-c" "dotnet restore && dotnet watch run"]

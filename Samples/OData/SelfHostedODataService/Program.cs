@@ -18,6 +18,7 @@ namespace SelfHostedODataService
           });
 
           webHostBuilder
+            .UseKestrel()
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseIISIntegration()
             .UseStartup<StartupBaseWithOData>();
