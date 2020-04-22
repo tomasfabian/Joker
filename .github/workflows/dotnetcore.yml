@@ -8,9 +8,9 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Test_Project_Path: Test\SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj
-      Joker_MVVM_Test_Project_Path: Test\Joker.Tests\Joker.MVVM.Tests.csproj
-      Joker_Redis_Test_Project_Path: Test\Joker.Redis.Tests\Joker.Redis.Tests.csproj
+      Test_Project_Path: Tests\SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj
+      Joker_MVVM_Test_Project_Path: Tests\Joker.Tests\Joker.MVVM.Tests.csproj
+      Joker_Redis_Test_Project_Path: Tests\Joker.Redis.Tests\Joker.Redis.Tests.csproj
 
     steps:
     - uses: actions/checkout@v2
