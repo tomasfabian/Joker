@@ -62,9 +62,12 @@ namespace SqlTableDependency.Extensions.Sample
 
     public static void Example(string connectionString)
     {
-      using var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance).SubscribeToEntityChanges();
-      
-      Console.ReadKey();
+      using (var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance))
+      {
+        sqlTableDependency.SubscribeToEntityChanges();
+
+        Console.ReadKey();
+      }
     }
   }
 
