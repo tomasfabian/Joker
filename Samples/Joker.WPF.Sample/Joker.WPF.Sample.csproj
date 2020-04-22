@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
+    <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\..\Samples\OData\OData.Client\OData.Client.csproj" />
+    <ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
+    <ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SqlTableDependencies\" />
+  </ItemGroup>
+
+</Project>
