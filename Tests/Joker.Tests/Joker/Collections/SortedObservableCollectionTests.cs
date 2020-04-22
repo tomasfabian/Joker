@@ -6,6 +6,7 @@ using System.Linq;
 using FluentAssertions;
 using Joker.Collections;
 using Joker.Comparators;
+using Joker.Extensions;
 using Joker.MVVM.Tests.Helpers;
 using Joker.MVVM.ViewModels.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,7 +39,9 @@ namespace Joker.MVVM.Tests.Joker.Collections
 
       for (var id = range.Start.Value; id <= offset + length; id++)
       {
-        ClassUnderTest.Add(CreateItem(id));
+        var testViewModel = CreateItem(id);
+
+        ClassUnderTest.Add(testViewModel);
       }
     }
 
@@ -343,6 +346,31 @@ namespace Joker.MVVM.Tests.Joker.Collections
       //Assert
       removedItems.Count.Should().Be(removeItemsRange.Length);
       removedItemsCount.Should().Be(supportsRangeNotifications ? removeItemsRange.Length : 1);
+    }
+
+    #endregion
+
+    #region NestedPropertyChangesTriggers
+
+    [TestMethod]
+    public void NestedPropertyComparer_AddedNestedPropertyChangedTrigger_CollectionWasReordered()
+    {
+      //Arrange    
+      var innerComparer = new GenericComparer<TestViewModel>((x, y) =>
+        Comparer<string>.Default.Compare(x.Inner.TestMe, y.Inner.TestMe));
+
+      ClassUnderTest = new SortedObservableCollection<TestViewModel>(innerComparer);
+
+      AddIdRange(new Range(2, 5));
+      ClassUnderTest.EnableNestedPropertyChangeEventHandlers = true;
+      ClassUnderTest.AddSortRefreshTrigger(c => c.Inner, c => c.TestMe);
+
+      //Act
+      ClassUnderTest.Reverse().ForEach((vm, i) => vm.Inner.TestMe = $"{i}");
+
+      //Assert
+      ClassUnderTest[0].Inner.TestMe.Should().Be("1");
+      ClassUnderTest[0].Id.Should().Be(5);
     }
 
     #endregion

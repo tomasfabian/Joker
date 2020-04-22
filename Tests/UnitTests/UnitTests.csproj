@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
+  <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
@@ -13,12 +13,12 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
-  <Import Project="..\NugetProjects\UnitTests\FluentAssertions.csprojimport" />
-  <Import Project="..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
-  <Import Project="..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
+  <Import Project="..\..\NugetProjects\UnitTests\FluentAssertions.csprojimport" />
+  <Import Project="..\..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
+  <Import Project="..\..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
 
   <ItemGroup>
-    <ProjectReference Include="..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\Joker\Joker.csproj" />
   </ItemGroup>
 
 </Project>
