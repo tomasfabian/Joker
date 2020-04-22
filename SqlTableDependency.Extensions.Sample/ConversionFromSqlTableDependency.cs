@@ -62,12 +62,9 @@ namespace SqlTableDependency.Extensions.Sample
 
     public static void Example(string connectionString)
     {
-      using (var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance))
-      {
-        sqlTableDependency.SubscribeToEntityChanges();
-
-        Console.ReadKey();
-      }
+      using var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance).SubscribeToEntityChanges();
+      
+      Console.ReadKey();
     }
   }
 
@@ -143,9 +140,9 @@ namespace SqlTableDependency.Extensions.Sample
     }
   }
 
-  public class ConversionFromSqlTableDependency
+  public static class ConversionFromSqlTableDependency
   {
-    public void SqlTableDependencyExample(string connectionString)
+    public static void SqlTableDependencyExample(string connectionString)
     {
       var mapper = new ModelToTableMapper<Product>();
       mapper.AddMapping(c => c.Id, "Id");

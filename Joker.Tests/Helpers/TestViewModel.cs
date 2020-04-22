@@ -1,4 +1,5 @@
 ﻿using System;
+using Joker.MVVM.ViewModels;
 using Joker.MVVM.ViewModels.Domain;
 
 namespace Joker.MVVM.Tests.Helpers
@@ -8,6 +9,8 @@ namespace Joker.MVVM.Tests.Helpers
     public TestViewModel(TestModel model)
       : base(model)
     {
+
+      Inner.TestMe = model.Id.ToString();
     }
 
     public int TestId
@@ -50,6 +53,26 @@ namespace Joker.MVVM.Tests.Helpers
     }
 
     public bool IsDirty { get; set; }
+    
+    private NestedViewModel inner = new NestedViewModel();
+
+    public NestedViewModel Inner
+    {
+      get => inner;
+
+      set => SetProperty(ref inner, value);
+    }
+
+    public class NestedViewModel : ViewModel
+    {
+      private string testMe;
+
+      public string TestMe
+      {
+        get => testMe;
+        set => SetProperty(ref testMe, value);
+      }
+    }
 
     protected override void OnUpdateFrom(TestModel updatedModel)
     {

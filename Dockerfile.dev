@@ -12,6 +12,6 @@ ENV ASPNETCORE_URLS http://+:80
 #ENV ASPNETCORE_URLS=http:/*:5000
 #EXPOSE 5000
 
+#ENTRYPOINT ["/bin/bash", "-c" "dotnet restore && dotnet watch run"]
 ENTRYPOINT dotnet restore \
 && dotnet watch run
-#ENTRYPOINT ["/bin/bash", "-c" "dotnet restore && dotnet watch run"]

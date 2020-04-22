@@ -39,6 +39,7 @@ namespace Joker.Extensions
         action(item);
       }
     }
+
     public static void ForEach<TItem>(this IEnumerable<TItem> source, Action<TItem, long> action)
     {
       if (source == null) throw new ArgumentNullException(nameof(source));
