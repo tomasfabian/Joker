@@ -23,6 +23,13 @@ namespace SelfHostedODataService.Controllers
 
     protected abstract IQueryable<TEntity> GetAll();
 
+    public OkObjectResult Get([FromODataUri] int key)
+    {
+      var entity = GetAll().FirstOrDefault(c => c.Id == key);
+
+      return Ok(entity);
+    }
+
     #endregion
 
     #region Post
