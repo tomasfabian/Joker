@@ -1,0 +1,44 @@
+version: '2'
+
+networks:
+  sqlnetwork:
+    driver: bridge
+
+volumes:
+  sqldata:
+
+services:
+
+  sqln:
+    image: "mcr.microsoft.com/mssql/server:2017-latest" 
+    ports:
+      - "1402:1433"
+    networks:
+      - sqlnetwork
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "SA_PASSWORD=<YourNewStrong@Passw0rd>"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  redis-server:
+    image: "redis"
+    networks:
+      - sqlnetwork
+    ports:
+      - "6379:6379"
+
+  jokerodata:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks: 
+      - sqlnetwork
+    ports:
+      - "3000:80"
+    environment:
+      - "REDISHOST=redis-server"
+      - "DBHOST=sqln"
+    depends_on: 
+      - sqln
+      - redis-server
