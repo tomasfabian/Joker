@@ -5,11 +5,11 @@ using Joker.Extensions;
 
 namespace SelfHostedODataService.Configuration
 {
-  public class ConfigurationProvider
+  public class ProductsConfigurationProvider : IProductsConfigurationProvider
   {
     #region GetDatabaseConnectionString
 
-    public static string GetDatabaseConnectionString()
+    public string GetDatabaseConnectionString()
     {
       var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
@@ -34,7 +34,7 @@ namespace SelfHostedODataService.Configuration
 
     #region RedisUrl
 
-    public static string RedisUrl
+    public string RedisUrl
     {
       get
       {

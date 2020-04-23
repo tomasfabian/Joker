@@ -1,23 +1,27 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Joker.Factories.Schedulers;
-using Joker.Redis.ConnectionMultiplexers;
+using Joker.Redis.SqlTableDependency;
 using Microsoft.Extensions.Hosting;
-using Sample.Data.SqlTableDependencyProvider;
-using SelfHostedODataService.Configuration;
-using SelfHostedODataService.Redis;
-using SqlTableDependency.Extensions.Enums;
+using Sample.Domain.Models;
+using SqlTableDependency.Extensions;
 
 namespace SelfHostedODataService.HostedServices
 {
   internal class SqlTableDependencyProviderHostedService : IHostedService
   {
     private readonly IHostApplicationLifetime appLifetime;
+    private readonly ISqlTableDependencyProvider<Product> sqlTableDependencyProvider;
+    private readonly ISqlTableDependencyRedisProvider<Product> sqlTableDependencyRedisProvider;
 
     public SqlTableDependencyProviderHostedService(
-      IHostApplicationLifetime appLifetime)
+      IHostApplicationLifetime appLifetime,
+      ISqlTableDependencyProvider<Product> sqlTableDependencyProvider,
+      ISqlTableDependencyRedisProvider<Product> sqlTableDependencyRedisProvider)
     {
-      this.appLifetime = appLifetime;
+      this.appLifetime = appLifetime ?? throw new ArgumentNullException(nameof(appLifetime));
+      this.sqlTableDependencyProvider = sqlTableDependencyProvider ?? throw new ArgumentNullException(nameof(sqlTableDependencyProvider));
+      this.sqlTableDependencyRedisProvider = sqlTableDependencyRedisProvider ?? throw new ArgumentNullException(nameof(sqlTableDependencyRedisProvider));
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -39,33 +43,16 @@ namespace SelfHostedODataService.HostedServices
       InitializeSqlTableDependencyRedisProvider();
     }
 
-    #region InitializeSqlTableDependencyRedisProvider
-
-    private ProductSqlTableDependencyRedisProvider redisPublisher;
-
     private void InitializeSqlTableDependencyRedisProvider()
     {
-      string connectionString = ConfigurationProvider.GetDatabaseConnectionString();
-
-      var schedulersFactory = new SchedulersFactory();
-      var productsChangesProvider =
-        new ProductsSqlTableDependencyProvider(connectionString, schedulersFactory.TaskPool, LifetimeScope.UniqueScope);
-      productsChangesProvider.SubscribeToEntityChanges();
-
-
-      string redisUrl = ConfigurationProvider.RedisUrl;
+      sqlTableDependencyProvider.SubscribeToEntityChanges();
       
-      redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
-        new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
-      
-      redisPublisher.StartPublishing();
+      sqlTableDependencyRedisProvider.StartPublishing();
     }
-
-    #endregion
 
     private void OnStopping()
     {
-      redisPublisher?.Dispose();
+      sqlTableDependencyRedisProvider?.Dispose();
     }
 
     private void OnStopped()

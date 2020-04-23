@@ -1,10 +1,13 @@
 ﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Joker.Disposables;
+using Joker.Factories.Schedulers;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,20 +17,20 @@ using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
-using Sample.Data.Context;
 using Sample.Domain.Models;
-using ConfigurationProvider = SelfHostedODataService.Configuration.ConfigurationProvider;
+using SelfHostedODataService.AutofacModules;
+using SelfHostedODataService.Configuration;
 
 namespace SelfHostedODataService
 {
-  public class StartupBaseWithOData
+  public class StartupBaseWithOData : DisposableObject
   {
     #region Fields
 
     private readonly IConfigurationRoot configuration;
-    
+
     #endregion
-    
+
     #region Constructors
 
     public StartupBaseWithOData(IWebHostEnvironment env)
@@ -40,7 +43,38 @@ namespace SelfHostedODataService
 
     #endregion
 
-    #region Methods
+    #region Methods    
+
+    #region ConfigureContainer
+
+    protected ContainerBuilder ContainerBuilder;
+
+    public void ConfigureContainer(ContainerBuilder builder)
+    {
+      ContainerBuilder = builder;
+
+      RegisterTypes(builder);
+    }
+
+    #endregion
+
+    #region RegisterTypes
+
+    protected virtual void RegisterTypes(ContainerBuilder builder)
+    {
+      ContainerBuilder.RegisterModule(new ProductsAutofacModule());
+
+      ContainerBuilder.RegisterType<ProductsConfigurationProvider>()
+        .As<IProductsConfigurationProvider>()
+        .SingleInstance();
+
+      ContainerBuilder.RegisterInstance<IConfiguration>(configuration);
+
+      ContainerBuilder.RegisterType<SchedulersFactory>().As<ISchedulersFactory>()
+        .SingleInstance();
+    }
+
+    #endregion
 
     #region ConfigureOData
 
@@ -98,10 +132,6 @@ namespace SelfHostedODataService
     public void ConfigureServices(IServiceCollection services)
     {
       OnConfigureServices(services);
-
-      string connectionString = ConfigurationProvider.GetDatabaseConnectionString();
-
-      services.AddTransient<ISampleDbContext>(_ => new SampleDbContext(connectionString));
     }
 
     #endregion
@@ -115,11 +145,11 @@ namespace SelfHostedODataService
       // Targets where to log to: File and Console
       var logfile = new FileTarget("logfile") { FileName = "logs.txt" };
       var logconsole = new ConsoleTarget("logconsole");
-            
+
       // Rules for mapping loggers to targets            
       config.AddRule(LogLevel.Info, LogLevel.Fatal, logconsole);
       config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
-                     
+
       LogManager.Configuration = config;
     }
 
@@ -138,11 +168,6 @@ namespace SelfHostedODataService
       services.Configure<IISServerOptions>(options =>
       {
         options.AllowSynchronousIO = true; //OData doesnt support async IO in version 7.2.2        
-      });
-
-      services.Configure<FormOptions>(x =>
-      {
-        x.MultipartBodyLengthLimit = 4294967296;
       });
 
       ConfigureMvc(services);
@@ -187,8 +212,12 @@ namespace SelfHostedODataService
 
     #region Configure
 
+    public ILifetimeScope AutofacContainer { get; private set; }
+
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
     {
+      AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
@@ -199,6 +228,44 @@ namespace SelfHostedODataService
       RegisterMiddleWares(app);
 
       ConfigureOData(app);
+
+      OnConfigureApp(app, env, applicationLifetime);
+    }
+
+    #endregion
+
+    #region OnConfigureApp
+
+    protected virtual void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
+    {
+      app.UseMvc(routeBuilder =>
+      {
+        routeBuilder.MapRoute("WebApiRoute", "api/{controller}/{action}/{id?}");
+
+        routeBuilder.SetTimeZoneInfo(TimeZoneInfo.Utc);
+      });
+
+      applicationLifetime.ApplicationStopping.Register(OnShutdown);
+    }
+
+    #endregion
+
+    #region OnShutdown
+
+    private void OnShutdown()
+    {
+      Dispose();
+    }
+
+    #endregion
+
+    #region OnDispose
+
+    protected override void OnDispose()
+    {
+      base.OnDispose();
+
+      AutofacContainer.Dispose();
     }
 
     #endregion
