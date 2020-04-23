@@ -1,8 +1,4 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
-using Joker.Extensions;
-using Joker.Factories.Schedulers;
-using Joker.Redis.ConnectionMultiplexers;
+﻿using System;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -19,10 +15,8 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 using Sample.Data.Context;
-using Sample.Data.SqlTableDependencyProvider;
 using Sample.Domain.Models;
-using SelfHostedODataService.Redis;
-using SqlTableDependency.Extensions.Enums;
+using ConfigurationProvider = SelfHostedODataService.Configuration.ConfigurationProvider;
 
 namespace SelfHostedODataService
 {
@@ -105,7 +99,7 @@ namespace SelfHostedODataService
     {
       OnConfigureServices(services);
 
-      string connectionString = GetConnectionString();
+      string connectionString = ConfigurationProvider.GetDatabaseConnectionString();
 
       services.AddTransient<ISampleDbContext>(_ => new SampleDbContext(connectionString));
     }
@@ -191,30 +185,6 @@ namespace SelfHostedODataService
 
     #endregion
 
-    #region GetConnectionString
-
-    private string GetConnectionString()
-    {
-      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
-      
-      var host = configuration["DBHOST"];
-
-      if (host.IsNullOrEmpty())
-      {
-        return connectionString;
-      }
-      
-      var sqlConnectionStringBuilder = new SqlConnectionStringBuilder
-      {
-        ConnectionString = connectionString,
-        DataSource = host
-      };
-
-      return sqlConnectionStringBuilder.ConnectionString;
-    }
-
-    #endregion
-
     #region Configure
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
@@ -229,28 +199,7 @@ namespace SelfHostedODataService
       RegisterMiddleWares(app);
 
       ConfigureOData(app);
-      
-      var redisHost = configuration["REDISHOST"];
-      InitializeSqlTableDependencyRedisProvider(GetConnectionString(), redisHost);
     }
-
-    #region InitializeSqlTableDependencyRedisProvider
-
-    private static void InitializeSqlTableDependencyRedisProvider(string connectionString, string redisUrl)
-    {
-      var schedulersFactory = new SchedulersFactory();
-      var productsChangesProvider =
-        new ProductsSqlTableDependencyProvider(connectionString, schedulersFactory.TaskPool, LifetimeScope.UniqueScope);
-      productsChangesProvider.SubscribeToEntityChanges();
-
-      redisUrl = redisUrl ?? ConfigurationManager.AppSettings["RedisUrl"];
-      
-      var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
-        new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
-      redisPublisher.StartPublishing();
-    }
-
-    #endregion
 
     #endregion
 
