@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -7,7 +8,7 @@ namespace SelfHostedODataService
 {
   public class Program
   {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
       var hostBuilder = Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(webHostBuilder =>
@@ -24,9 +25,7 @@ namespace SelfHostedODataService
             .UseStartup<StartupBaseWithOData>();
         });
 
-      hostBuilder.Build().RunAsync();
-
-      Console.ReadKey();
+      await hostBuilder.Build().RunAsync();
     }
   }
 }
