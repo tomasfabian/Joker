@@ -184,11 +184,13 @@ namespace Joker.Redis.ConnectionMultiplexers
 
       whenIsConnectedChangesSubject.OnCompleted();
 
-      connectionMultiplexer.ConnectionRestored -= OnConnectionRestored;
-      connectionMultiplexer.ConnectionFailed -= OnConnectionFailed;
-
       using (connectionMultiplexer)
       {
+        if (connectionMultiplexer != null)
+        {
+          connectionMultiplexer.ConnectionRestored -= OnConnectionRestored;
+          connectionMultiplexer.ConnectionFailed -= OnConnectionFailed;
+        }
       }
     }
 

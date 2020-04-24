@@ -35,7 +35,7 @@ namespace SelfHostedODataService
             });
         });
 
-      await hostBuilder.Build().RunAsync(CancellationTokenSource.Token);
+      await hostBuilder.Build().RunAsync();
     }
   }
 }
