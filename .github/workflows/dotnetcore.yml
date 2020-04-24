@@ -19,7 +19,7 @@ jobs:
       with:
         dotnet-version: 3.0.100
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build Joker.sln --configuration Release
     
     # Test
     - name: Execute Unit Tests
