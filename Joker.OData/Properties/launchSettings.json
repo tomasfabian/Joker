@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:6923/",
-      "sslPort": 44364
+      "applicationUrl": "http://localhost:42692/",
+      "sslPort": 0
     }
   },
   "profiles": {
@@ -15,20 +15,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SelfHostedODataService": {
+    "Joker.OData": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5001;http://localhost:3000"
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "publishAllPorts": true,
-      "useSSL": true
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }

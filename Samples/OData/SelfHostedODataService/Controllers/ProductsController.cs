@@ -2,6 +2,8 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Joker.OData.Controllers;
+using Microsoft.AspNet.OData.Query;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
@@ -16,7 +18,7 @@ namespace SelfHostedODataService.Controllers
       this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    protected override IQueryable<Product> GetAll()
+    protected override IQueryable<Product> GetAll(ODataQueryOptions<Product> queryOptions)
     {
       return dbContext.Products;
     }

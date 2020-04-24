@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -11,8 +10,6 @@ namespace SelfHostedODataService
 {
   public class Program
   {
-    private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-
     public static async Task Main(string[] args)
     {
       var hostBuilder = Host.CreateDefaultBuilder(args)

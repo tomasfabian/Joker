@@ -1,19 +1,35 @@
-﻿using System;
+﻿#region License
+// TableDependency, SqlTableDependency
+// Copyright (c) 2019-2020 Tomas Fabian. All rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+#endregion
+
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Joker.Disposables;
 using Joker.Factories.Schedulers;
-using Microsoft.AspNet.OData.Batch;
+using Joker.OData;
 using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OData.Edm;
-using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -23,118 +39,21 @@ using SelfHostedODataService.Configuration;
 
 namespace SelfHostedODataService
 {
-  public class StartupBaseWithOData : DisposableObject
+  public class StartupBaseWithOData : ODataStartup
   {
-    #region Fields
-
-    private readonly IConfigurationRoot configuration;
-
-    #endregion
-
-    #region Constructors
-
-    public StartupBaseWithOData(IWebHostEnvironment env)
+    public StartupBaseWithOData(IWebHostEnvironment env) 
+      : base(env)
     {
-      configuration = new ConfigurationBuilder()
-        .SetBasePath(env.ContentRootPath)
-        .AddEnvironmentVariables()
-        .Build();
     }
 
-    #endregion
-
-    #region Methods    
-
-    #region ConfigureContainer
-
-    protected ContainerBuilder ContainerBuilder;
-
-    public void ConfigureContainer(ContainerBuilder builder)
+    protected override ODataModelBuilder OnCreateEdmModel(ODataModelBuilder oDataModelBuilder)
     {
-      ContainerBuilder = builder;
-
-      RegisterTypes(builder);
-    }
-
-    #endregion
-
-    #region RegisterTypes
-
-    protected virtual void RegisterTypes(ContainerBuilder builder)
-    {
-      ContainerBuilder.RegisterModule(new ProductsAutofacModule());
-
-      ContainerBuilder.RegisterType<ProductsConfigurationProvider>()
-        .As<IProductsConfigurationProvider>()
-        .SingleInstance();
-
-      ContainerBuilder.RegisterType<SchedulersFactory>().As<ISchedulersFactory>()
-        .SingleInstance();
-    }
-
-    #endregion
-
-    #region ConfigureOData
-
-    private IEdmModel edmModel;
-
-    private void ConfigureOData(IApplicationBuilder app)
-    {
-      edmModel = CreateEdmModel();
-
-      app.UseMvc(routeBuilder =>
-      {
-        routeBuilder.EnableDependencyInjection();
-
-        routeBuilder.Select().Expand().Filter().OrderBy().MaxTop(null).Count();
-
-        routeBuilder.EnableContinueOnErrorHeader();
-
-        routeBuilder.MapODataServiceRoute("odata", null, edmModel, CreateODataBatchHandler());
-      });
-    }
-
-    #endregion
-
-    #region CreateODataBatchHandler
-
-    private ODataBatchHandler CreateODataBatchHandler()
-    {
-      ODataBatchHandler odataBatchHandler = new DefaultODataBatchHandler();
-
-      odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 60;
-      odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 10;
-
-      return odataBatchHandler;
-    }
-
-    #endregion
-
-    #region CreateEdmModel
-
-    private IEdmModel CreateEdmModel()
-    {
-      ODataModelBuilder oDataModelBuilder = new ODataConventionModelBuilder();
-
       oDataModelBuilder.Namespace = "Example";
 
       oDataModelBuilder.EntitySet<Product>("Products");
 
-      return oDataModelBuilder.GetEdmModel();
+      return oDataModelBuilder;
     }
-
-    #endregion
-
-    #region ConfigureServices
-
-    public void ConfigureServices(IServiceCollection services)
-    {
-      OnConfigureServices(services);
-    }
-
-    #endregion
-
-    #region ConfigureNLog
 
     private void ConfigureNLog()
     {
@@ -151,123 +70,21 @@ namespace SelfHostedODataService
       LogManager.Configuration = config;
     }
 
-    #endregion
-
-    #region OnConfigureServices
-
-    protected virtual void OnConfigureServices(IServiceCollection services)
+    protected override void OnConfigureServices(IServiceCollection services)
     {
       ConfigureNLog();
-
-      services.AddOptions();
-
-      services.AddHttpContextAccessor();
-
-      services.Configure<IISServerOptions>(options =>
-      {
-        options.AllowSynchronousIO = true; //OData doesnt support async IO in version 7.2.2        
-      });
-
-      ConfigureMvc(services);
-
-      services.AddOData();
     }
-
-    #endregion
-
-    #region ConfigureMvc
-
-    private void ConfigureMvc(IServiceCollection services)
+    
+    protected override void RegisterTypes(ContainerBuilder builder)
     {
-      services.AddMvc(options =>
-        {
-          options.EnableEndpointRouting = false;
-        })
-        .AddControllersAsServices()
-        .AddNewtonsoftJson(ConfigureNewtonsoftJson)
-        .SetCompatibilityVersion(CompatibilityVersion.Latest);
+      ContainerBuilder.RegisterModule(new ProductsAutofacModule());
+
+      ContainerBuilder.RegisterType<ProductsConfigurationProvider>()
+        .As<IProductsConfigurationProvider>()
+        .SingleInstance();
+
+      ContainerBuilder.RegisterType<SchedulersFactory>().As<ISchedulersFactory>()
+        .SingleInstance();
     }
-
-    #endregion
-
-    #region ConfigureNewtonsoftJson
-
-    protected virtual void ConfigureNewtonsoftJson(MvcNewtonsoftJsonOptions options)
-    {
-      options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-    }
-
-    #endregion
-
-    #region RegisterMiddleWares
-
-    protected void RegisterMiddleWares(IApplicationBuilder app)
-    {
-      app.UseODataBatching();
-    }
-
-    #endregion
-
-    #region Configure
-
-    public ILifetimeScope AutofacContainer { get; private set; }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
-    {
-      AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
-      app.UseAuthorization();
-
-      RegisterMiddleWares(app);
-
-      ConfigureOData(app);
-
-      OnConfigureApp(app, env, applicationLifetime);
-    }
-
-    #endregion
-
-    #region OnConfigureApp
-
-    protected virtual void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
-    {
-      app.UseMvc(routeBuilder =>
-      {
-        routeBuilder.MapRoute("WebApiRoute", "api/{controller}/{action}/{id?}");
-
-        routeBuilder.SetTimeZoneInfo(TimeZoneInfo.Utc);
-      });
-
-      applicationLifetime.ApplicationStopping.Register(OnShutdown);
-    }
-
-    #endregion
-
-    #region OnShutdown
-
-    private void OnShutdown()
-    {
-      Dispose();
-    }
-
-    #endregion
-
-    #region OnDispose
-
-    protected override void OnDispose()
-    {
-      base.OnDispose();
-
-      AutofacContainer.Dispose();
-    }
-
-    #endregion
-
-    #endregion
   }
 }

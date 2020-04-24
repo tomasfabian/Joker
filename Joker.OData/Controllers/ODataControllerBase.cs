@@ -1,31 +1,43 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SelfHostedODataService.Controllers
+namespace Joker.OData.Controllers
 {
   public abstract class ODataControllerBase<TEntity> : ODataController
-    where TEntity : class, Joker.Domain.IDomainEntity
+    where TEntity : class, Domain.IDomainEntity
   {   
+    #region Properties
+
+    public FilterQueryValidator FilterQueryValidator { get; set; }
+    
+    public SelectExpandQueryValidator SelectExpandQueryValidator { get; set; }
+
+    #endregion
+
     #region Get
 
     [EnableQuery(MaxExpansionDepth = 3)]
     public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
     {
-      var entities = GetAll();
+      AuthenticateQuery(queryOptions);
+
+      var entities = GetAll(queryOptions);
 
       return Ok(entities);
     }
 
-    protected abstract IQueryable<TEntity> GetAll();
+    protected abstract IQueryable<TEntity> GetAll(ODataQueryOptions<TEntity> queryOptions);
 
-    public OkObjectResult Get([FromODataUri] int key)
+    public OkObjectResult Get([FromODataUri] int key, ODataQueryOptions<TEntity> queryOptions)
     {
-      var entity = GetAll().FirstOrDefault(c => c.Id == key);
+      AuthenticateQuery(queryOptions);
+
+      var entity = GetAll(queryOptions).FirstOrDefault(c => c.Id == key);
 
       return Ok(entity);
     }
@@ -60,7 +72,7 @@ namespace SelfHostedODataService.Controllers
       }
 
       var id = entity.GetInstance().Id;
-      var entityToUpdate = GetAll().FirstOrDefault(c => c.Id == id);
+      var entityToUpdate = GetAll(null).FirstOrDefault(c => c.Id == id);
 
       if (entityToUpdate == null)
         return NotFound();
@@ -106,6 +118,39 @@ namespace SelfHostedODataService.Controllers
     #region OnDelete
 
     protected abstract Task<int> OnDelete(int key);
+
+    #endregion
+
+    private void AuthenticateQuery(ODataQueryOptions<TEntity> queryOptions)
+    {
+      ValidateQueryOptions(queryOptions);
+    }    
+    
+    #region ValidateQueryOptions
+
+    protected void ValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
+    {
+      OnValidateQueryOptions(queryOptions);
+
+      queryOptions.Validate(new ODataValidationSettings { MaxExpansionDepth = 3 });
+    }
+
+    #endregion
+
+    #region OnValidateQueryOptions
+
+    protected virtual void OnValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
+    {
+      if (SelectExpandQueryValidator != null && queryOptions.SelectExpand != null)
+      {
+        queryOptions.SelectExpand.Validator = SelectExpandQueryValidator;
+      }
+
+      if (FilterQueryValidator != null && queryOptions.Filter != null)
+      {
+        queryOptions.Filter.Validator = FilterQueryValidator;
+      }
+    }
 
     #endregion
   }
