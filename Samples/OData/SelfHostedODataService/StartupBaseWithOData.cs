@@ -68,8 +68,6 @@ namespace SelfHostedODataService
         .As<IProductsConfigurationProvider>()
         .SingleInstance();
 
-      ContainerBuilder.RegisterInstance<IConfiguration>(configuration);
-
       ContainerBuilder.RegisterType<SchedulersFactory>().As<ISchedulersFactory>()
         .SingleInstance();
     }

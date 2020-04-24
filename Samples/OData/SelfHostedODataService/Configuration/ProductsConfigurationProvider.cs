@@ -2,19 +2,26 @@
 using System.Configuration;
 using System.Data.SqlClient;
 using Joker.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace SelfHostedODataService.Configuration
 {
   public class ProductsConfigurationProvider : IProductsConfigurationProvider
   {
+    private readonly IConfiguration configuration;
+
+    public ProductsConfigurationProvider(IConfiguration configuration)
+    {
+      this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
+
     #region GetDatabaseConnectionString
 
     public string GetDatabaseConnectionString()
     {
       var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
 
-      var configuration = Environment.GetEnvironmentVariables();
-      var host = configuration["DBHOST"] as string;
+      var host = configuration["DBHOST"];
 
       if (host.IsNullOrEmpty())
       {
@@ -38,9 +45,7 @@ namespace SelfHostedODataService.Configuration
     {
       get
       {
-        var configuration = Environment.GetEnvironmentVariables();
-
-        var redisUrl = configuration["REDISHOST"] as string;
+        var redisUrl = configuration["REDISHOST"];
 
         redisUrl = redisUrl ?? ConfigurationManager.AppSettings["RedisUrl"];
 

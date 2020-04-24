@@ -1,4 +1,4 @@
-version: '2'
+version: '3.4'
 
 networks:
   sqlnetwork:
@@ -28,14 +28,13 @@ services:
     ports:
       - "6379:6379"
 
-  jokerodata:
+  selfhostedodataservice:
+    image: ${DOCKER_REGISTRY-}selfhostedodataservice
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Samples/OData/SelfHostedODataService/Dockerfile
     networks: 
       - sqlnetwork
-    ports:
-      - "3000:80"
     environment:
       - "REDISHOST=redis-server"
       - "DBHOST=sqln"

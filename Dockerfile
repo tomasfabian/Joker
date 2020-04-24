@@ -13,6 +13,11 @@ RUN dotnet publish -c release -o ./app --no-restore ./Samples/OData/SelfHostedOD
 # final stage/image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
+#EXPOSE 5000/tcp 
+EXPOSE 80/tcp
+ENV ASPNETCORE_URLS http://+:80
+#ENV ASPNETCORE_URLS http://127.0.0.1:5000
+
 # VOLUME [""]
 WORKDIR /app
 COPY --from=build /publish/app ./

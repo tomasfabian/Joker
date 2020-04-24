@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfHostedODataService", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client", "Samples\OData\OData.Client\OData.Client.csproj", "{AFD9CC07-D335-47C7-86D0-926955DC3EC1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin", "Xamarin", "{423D1046-E627-4499-A5F9-E1097C41D7C3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Domain", "Samples\Sample.Domain\Sample.Domain.csproj", "{499EB594-2D3A-4BD0-8DF8-70AE6CF04E0F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.WPF.Sample", "Samples\Joker.WPF.Sample\Joker.WPF.Sample.csproj", "{062EBFF7-D6DE-4DE9-9EAD-98FFFB6EA1D8}"
@@ -42,6 +40,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.Tests", "Tests\SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj", "{0F6D30B5-B8A8-418F-98E9-6DDBE830D3B2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.IntegrationTests", "Tests\SqlTableDependency.Extensions.IntegrationTests\SqlTableDependency.Extensions.IntegrationTests.csproj", "{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C6601B25-1578-406B-A7B7-DDF1205E2B2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -233,6 +233,18 @@ Global
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Release|iPhone.Build.0 = Release|Any CPU
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|iPhone.Build.0 = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -245,7 +257,6 @@ Global
 		{64A618E2-4F51-41AF-A946-FFEEF5396F8B} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{883825DE-7562-49C1-89B1-DE97A60E594D} = {64A618E2-4F51-41AF-A946-FFEEF5396F8B}
 		{AFD9CC07-D335-47C7-86D0-926955DC3EC1} = {64A618E2-4F51-41AF-A946-FFEEF5396F8B}
-		{423D1046-E627-4499-A5F9-E1097C41D7C3} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{499EB594-2D3A-4BD0-8DF8-70AE6CF04E0F} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{062EBFF7-D6DE-4DE9-9EAD-98FFFB6EA1D8} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{23B2C00A-30C6-4078-BCE3-E9F0C99FAF9F} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
