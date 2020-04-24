@@ -38,6 +38,8 @@ services:
     environment:
       - "REDISHOST=redis-server"
       - "DBHOST=sqln"
+    ports:
+      - 3000:80
     depends_on: 
       - sqln
       - redis-server
