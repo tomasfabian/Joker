@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,16 +12,20 @@ namespace Joker.OData.Hosting
   public class ODataHost<TStartup>
     where TStartup : ODataStartup
   {
-    public void Run(string[] args, ODataStartupConfig oDataStartupConfig = null)
+    public void Run(string[] args, ODataStartupConfig oDataStartupConfig)
     {
+      if (oDataStartupConfig == null) throw new ArgumentNullException(nameof(oDataStartupConfig));
+
       var hostBuilder = CreateHostBuilder(args, oDataStartupConfig);
 
       hostBuilder.Build()
         .Run();
     }
 
-    public async Task RunAsync(string[] args, ODataStartupConfig oDataStartupConfig = null, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task RunAsync(string[] args, ODataStartupConfig oDataStartupConfig, CancellationToken cancellationToken = default(CancellationToken))
     {
+      if (oDataStartupConfig == null) throw new ArgumentNullException(nameof(oDataStartupConfig));
+
       var hostBuilder = CreateHostBuilder(args, oDataStartupConfig);
 
       await hostBuilder.Build()
@@ -29,11 +34,7 @@ namespace Joker.OData.Hosting
 
     private IHostBuilder CreateHostBuilder(string[] args, ODataStartupConfig oDataStartupConfig)
     {
-      if (oDataStartupConfig == null)
-        oDataStartupConfig = new ODataStartupConfig
-        {
-          ContentRoot = Directory.GetCurrentDirectory()
-        };
+      oDataStartupConfig.ContentRoot = oDataStartupConfig.ContentRoot ?? Directory.GetCurrentDirectory();
 
       var hostBuilder = Host.CreateDefaultBuilder(args)
         .UseServiceProviderFactory(new AutofacServiceProviderFactory())
@@ -45,12 +46,21 @@ namespace Joker.OData.Hosting
           if (oDataStartupConfig.Urls != null && oDataStartupConfig.Urls.Any())
             webHostBuilder.UseUrls(oDataStartupConfig.Urls);
 
-          oDataStartupConfig.ConfigureKestrelServer = oDataStartupConfig.ConfigureKestrelServer ?? (options => { });
+          if (oDataStartupConfig is KestrelODataStartupConfig kestrelConfig)
+          {
+            kestrelConfig.ConfigureKestrelServer = kestrelConfig.ConfigureKestrelServer ?? (options => { });
+
+            webHostBuilder
+              .UseKestrel(kestrelConfig.ConfigureKestrelServer);
+          }
+          else
+          {
+            webHostBuilder
+              .UseIISIntegration();
+          }
           
           webHostBuilder
-            .UseKestrel(options => { })
             .UseContentRoot(oDataStartupConfig.ContentRoot ?? Directory.GetCurrentDirectory())
-            .UseIISIntegration()
             .UseStartup<TStartup>()
             .ConfigureServices(oDataStartupConfig?.ConfigureServices ?? (s => { }));
 
