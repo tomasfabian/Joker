@@ -17,9 +17,12 @@
   <Import Project="..\..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
   <Import Project="..\..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
 
+  <Import Project="..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
+
   <ItemGroup>
-    <ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\Joker.OData\Joker.OData.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 

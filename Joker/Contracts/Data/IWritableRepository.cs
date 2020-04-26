@@ -6,7 +6,7 @@
 
     void Update(TEntity entity);
 
-    void Remove(int key); //TODO: support other key types
+    void Remove(params object[] keys);
 
     void Remove(TEntity entity);
   }

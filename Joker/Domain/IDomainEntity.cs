@@ -2,8 +2,12 @@
 
 namespace Joker.Domain
 {
-  public interface IDomainEntity : IVersion
+  public interface IDomainEntity : IDomainEntity<int>
   {
-    int Id { get; set; }
+  }
+
+  public interface IDomainEntity<TKey> : IVersion
+  {
+    TKey Id { get; set; }
   }
 }

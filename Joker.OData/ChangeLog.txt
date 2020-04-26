@@ -16,8 +16,7 @@ Added:
 1.0.0
 Changed:
 - Repository implementation
+- ODataControllerBase generic compound keys support
 
 Breaking change:
 - ODataControllerBase IRepository<TEnity> injection
-
-- ODataControllerBase string key support

@@ -39,3 +39,6 @@ Bug fix:
 Added:
 - SortedObservableCollection.SupportsRangeNotifications internal AddRange/RemoveRange 
 - Enumerable extensions Do, ForEach, Consume
+
+- Data access layer contracts IRepository<TEntity>, IDataContext
+- DomainEntity<TKey> : IDomainEntity<TKey> - generic key

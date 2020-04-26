@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
+using Joker.OData.Extensions.Expressions;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
 {
   public abstract class ODataControllerBase<TEntity> : ODataController
-    where TEntity : class, Domain.IDomainEntity
+    where TEntity : class
   {
     #region Fields
 
@@ -34,6 +38,8 @@ namespace Joker.OData.Controllers
     
     public SelectExpandQueryValidator SelectExpandQueryValidator { get; set; }
 
+    public int MaxExpansionDepth { get; set; }
+
     #endregion
 
     #region Get
@@ -53,12 +59,12 @@ namespace Joker.OData.Controllers
       return repository.GetAll();
     }
 
-    protected IQueryable<TEntity> GetAll(ODataQueryOptions<TEntity> queryOptions)
+    protected IQueryable<TEntity> GetAll()
     {
       return repository.GetAll();
     }
 
-    public ObjectResult Get([FromODataUri] int key, ODataQueryOptions<TEntity> queryOptions)
+    public ObjectResult Get([FromODataUri] object key, ODataQueryOptions<TEntity> queryOptions)
     {
       AuthenticateQuery(queryOptions);
 
@@ -70,9 +76,20 @@ namespace Joker.OData.Controllers
       return Ok(entity);
     }
 
-    protected virtual TEntity OnGet(int key, ODataQueryOptions<TEntity> queryOptions)
+    protected virtual TEntity OnGet(object key, ODataQueryOptions<TEntity> queryOptions)
     {
-      return GetAll(queryOptions).FirstOrDefault(c => c.Id == key);
+      var keysPredicate = CreateKeysPredicate(key);
+
+      return GetAll().FirstOrDefault(keysPredicate);
+    }
+
+    #endregion
+
+    #region CreateKeysPredicate
+
+    protected virtual Expression<Func<TEntity, bool>> CreateKeysPredicate(params object[] keys)
+    {
+      return ExpressionExtensions.CreatePredicate<TEntity>(keys);
     }
 
     #endregion
@@ -82,9 +99,7 @@ namespace Joker.OData.Controllers
     public async Task<IActionResult> Post([FromBody]TEntity entity)
     {
       if (!ModelState.IsValid)
-      {
         return BadRequest(ModelState);
-      }
 
       await OnPost(entity);
 
@@ -100,17 +115,33 @@ namespace Joker.OData.Controllers
 
     #endregion
 
+    #region GetKeysFromPath
+
+    protected object[] GetKeysFromPath()
+    {
+      var odataPath = Request.ODataFeature().Path;
+
+      var keySegment = odataPath.Segments.OfType<KeySegment>().LastOrDefault();
+      if (keySegment == null)
+        throw new InvalidOperationException("The link does not contain a key.");
+
+      var value = keySegment.Keys.Select(c => c.Value).ToArray();
+      
+      return value;
+    }
+
+    #endregion
+
     #region Patch
 
     public async Task<IActionResult> Patch(Delta<TEntity> entity)
     {
       if (!ModelState.IsValid)
-      {
         return BadRequest(ModelState);
-      }
 
-      var id = entity.GetInstance().Id;
-      var entityToUpdate = repository.GetAll().FirstOrDefault(c => c.Id == id);
+      var keys = GetKeysFromPath();
+
+      var entityToUpdate = repository.GetAll().FirstOrDefault(CreateKeysPredicate(keys));
 
       if (entityToUpdate == null)
         return NotFound();
@@ -129,9 +160,7 @@ namespace Joker.OData.Controllers
     public async Task<IActionResult> Put([FromBody]TEntity entity)
     {
       if (!ModelState.IsValid)
-      {
         return BadRequest(ModelState);
-      }
 
       await OnPut(entity);
 
@@ -180,7 +209,7 @@ namespace Joker.OData.Controllers
     {
       OnValidateQueryOptions(queryOptions);
 
-      queryOptions.Validate(new ODataValidationSettings { MaxExpansionDepth = 3 });
+      queryOptions.Validate(new ODataValidationSettings { MaxExpansionDepth = MaxExpansionDepth });
     }
 
     #endregion

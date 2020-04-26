@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,9 +35,9 @@ namespace Joker.OData.Repositories
       DbSet.AddOrUpdate(entity);
     }
 
-    public void Remove(int key)
+    public void Remove(params object[] keys)
     {
-      var entity = DbSet.Find(key);
+      var entity = DbSet.Find(keys);
       
       DbSet.Remove(entity);
     }
