@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
@@ -6,16 +6,17 @@
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
     <OutputType>Library</OutputType>
     <Copyright>@tomasfabian</Copyright>
-    <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
     <Description>OData endpoint setup</Description>
     <PackageTags>OData web API service</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>0.9.0</Version>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
-    <FileVersion>0.9.0.0</FileVersion>
+    <Version>0.8.1</Version>
+    <AssemblyVersion>0.8.1.0</AssemblyVersion>
+    <FileVersion>0.8.0.0</FileVersion>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageReleaseNotes>Added ODataStartupConfig and ODataHost</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,5 +30,16 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

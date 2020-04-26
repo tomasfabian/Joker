@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Joker.OData.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using SelfHostedODataService.HostedServices;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace SelfHostedODataService
 {
@@ -12,27 +10,31 @@ namespace SelfHostedODataService
   {
     public static async Task Main(string[] args)
     {
-      var hostBuilder = Host.CreateDefaultBuilder(args)
-        .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-        .ConfigureWebHostDefaults(webHostBuilder =>
+      var startupSettings = new ODataStartupConfig
+      {
+        ConfigureServices = services =>
         {
-          webHostBuilder.ConfigureKestrel(options =>
-          {
-            options.AllowSynchronousIO = true;
-          });
+          services.AddHostedService<SqlTableDependencyProviderHostedService>();
+        }
+      };
 
-          webHostBuilder
-            .UseKestrel()
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseIISIntegration()
-            .UseStartup<StartupBaseWithOData>()
-            .ConfigureServices(services =>
-            {
-              services.AddHostedService<SqlTableDependencyProviderHostedService>();
-            });
-        });
+      await new ODataHost<StartupBaseWithOData>().RunAsync(args, startupSettings);
+    }
 
-      await hostBuilder.Build().RunAsync();
+    private static ODataStartupConfig ODataStartupConfigExample()
+    {
+      var configuration = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
+        .Build();
+
+      var startupSettings = new ODataStartupConfig
+      {
+        ConfigureServices = services => { services.AddHostedService<SqlTableDependencyProviderHostedService>(); },
+        Urls = new[] { @"https://localhost:32778/" },
+        Configuration = configuration
+      };
+
+      return startupSettings;
     }
   }
 }
