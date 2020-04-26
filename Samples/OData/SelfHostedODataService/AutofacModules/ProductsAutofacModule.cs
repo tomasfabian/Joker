@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Concurrency;
 using Autofac;
 using Autofac.Core;
+using Joker.Contracts.Data;
 using Joker.Extensions;
 using Joker.Factories.Schedulers;
 using Joker.Redis.ConnectionMultiplexers;
@@ -10,6 +11,7 @@ using Sample.Data.SqlTableDependencyProvider;
 using Sample.Domain.Models;
 using SelfHostedODataService.Configuration;
 using SelfHostedODataService.Redis;
+using SelfHostedODataService.Repositories;
 using SqlTableDependency.Extensions;
 
 namespace SelfHostedODataService.AutofacModules
@@ -45,6 +47,10 @@ namespace SelfHostedODataService.AutofacModules
 
       builder.RegisterType<ProductSqlTableDependencyRedisProvider>()
         .As<ISqlTableDependencyRedisProvider<Product>>();
+
+      builder.RegisterType<ProductsRepository>()
+        .As<IRepository<Product>>()
+        .InstancePerLifetimeScope();
     }
   }
 }

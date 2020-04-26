@@ -10,7 +10,7 @@ namespace SelfHostedODataService
   {
     public static async Task Main(string[] args)
     {
-      var startupSettings = new ODataStartupConfig
+      var startupSettings = new KestrelODataStartupConfig()
       {
         ConfigureServices = services =>
         {
@@ -27,7 +27,7 @@ namespace SelfHostedODataService
         .AddEnvironmentVariables()
         .Build();
 
-      var startupSettings = new ODataStartupConfig
+      var startupSettings = new IISHostedODataStartupConfig()
       {
         ConfigureServices = services => { services.AddHostedService<SqlTableDependencyProviderHostedService>(); },
         Urls = new[] { @"https://localhost:32778/" },

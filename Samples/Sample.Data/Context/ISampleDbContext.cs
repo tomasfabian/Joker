@@ -1,13 +1,11 @@
 ﻿using System.Data.Entity;
-using System.Threading.Tasks;
+using Joker.Contracts.Data;
 using Sample.Domain.Models;
 
 namespace Sample.Data.Context
 {
-  public interface ISampleDbContext
+  public interface ISampleDbContext : IContext
   {
     IDbSet<Product> Products { get; set; }
-
-    Task<int> SaveChangesAsync();
   }
 }

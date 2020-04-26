@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Joker.Contracts.Data;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Query.Validators;
@@ -10,7 +12,22 @@ namespace Joker.OData.Controllers
 {
   public abstract class ODataControllerBase<TEntity> : ODataController
     where TEntity : class, Domain.IDomainEntity
-  {   
+  {
+    #region Fields
+
+    private readonly IRepository<TEntity> repository;
+
+    #endregion
+
+    #region Constructors
+
+    protected ODataControllerBase(IRepository<TEntity> repository)
+    {
+      this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+    
+    #endregion
+    
     #region Properties
 
     public FilterQueryValidator FilterQueryValidator { get; set; }
@@ -26,20 +43,36 @@ namespace Joker.OData.Controllers
     {
       AuthenticateQuery(queryOptions);
 
-      var entities = GetAll(queryOptions);
+      var entities = OnGetAll(queryOptions);
 
       return Ok(entities);
     }
 
-    protected abstract IQueryable<TEntity> GetAll(ODataQueryOptions<TEntity> queryOptions);
+    protected virtual IQueryable<TEntity> OnGetAll(ODataQueryOptions<TEntity> queryOptions)
+    {
+      return repository.GetAll();
+    }
 
-    public OkObjectResult Get([FromODataUri] int key, ODataQueryOptions<TEntity> queryOptions)
+    protected IQueryable<TEntity> GetAll(ODataQueryOptions<TEntity> queryOptions)
+    {
+      return repository.GetAll();
+    }
+
+    public ObjectResult Get([FromODataUri] int key, ODataQueryOptions<TEntity> queryOptions)
     {
       AuthenticateQuery(queryOptions);
 
-      var entity = GetAll(queryOptions).FirstOrDefault(c => c.Id == key);
+      var entity = OnGet(key, queryOptions);
+
+      if (entity == null)
+        return NotFound(key);
 
       return Ok(entity);
+    }
+
+    protected virtual TEntity OnGet(int key, ODataQueryOptions<TEntity> queryOptions)
+    {
+      return GetAll(queryOptions).FirstOrDefault(c => c.Id == key);
     }
 
     #endregion
@@ -58,7 +91,12 @@ namespace Joker.OData.Controllers
       return Created(entity);
     }
 
-    protected abstract Task<int> OnPost(TEntity entity);
+    protected virtual Task<int> OnPost(TEntity entity)
+    {
+      repository.Add(entity);
+
+      return repository.SaveChangesAsync();
+    }
 
     #endregion
 
@@ -72,7 +110,7 @@ namespace Joker.OData.Controllers
       }
 
       var id = entity.GetInstance().Id;
-      var entityToUpdate = GetAll(null).FirstOrDefault(c => c.Id == id);
+      var entityToUpdate = repository.GetAll().FirstOrDefault(c => c.Id == id);
 
       if (entityToUpdate == null)
         return NotFound();
@@ -100,7 +138,12 @@ namespace Joker.OData.Controllers
       return Updated(entity);
     }
 
-    protected abstract Task<int> OnPut(TEntity entity);
+    protected virtual Task<int> OnPut(TEntity entity)
+    {
+      repository.Update(entity);
+
+      return repository.SaveChangesAsync();
+    }
 
     #endregion
 
@@ -116,8 +159,13 @@ namespace Joker.OData.Controllers
     #endregion
 
     #region OnDelete
+    
+    protected virtual Task<int> OnDelete(int key)
+    {
+      repository.Remove(key);
 
-    protected abstract Task<int> OnDelete(int key);
+      return repository.SaveChangesAsync();
+    }
 
     #endregion
 
