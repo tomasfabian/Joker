@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
-using Joker.OData.Extensions.Expressions;
 using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
 {
-  public abstract class ODataControllerBase<TEntity> : ODataController
-    where TEntity : class
+  public abstract class ODataControllerBase<TEntity> : ReadOnlyODataController<TEntity>
+      where TEntity : class
   {
     #region Fields
 
@@ -26,70 +20,9 @@ namespace Joker.OData.Controllers
     #region Constructors
 
     protected ODataControllerBase(IRepository<TEntity> repository)
+      : base(repository)
     {
       this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
-    }
-    
-    #endregion
-    
-    #region Properties
-
-    public FilterQueryValidator FilterQueryValidator { get; set; }
-    
-    public SelectExpandQueryValidator SelectExpandQueryValidator { get; set; }
-
-    public int MaxExpansionDepth { get; set; }
-
-    #endregion
-
-    #region Get
-
-    [EnableQuery(MaxExpansionDepth = 3)]
-    public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
-    {
-      AuthenticateQuery(queryOptions);
-
-      var entities = OnGetAll(queryOptions);
-
-      return Ok(entities);
-    }
-
-    protected virtual IQueryable<TEntity> OnGetAll(ODataQueryOptions<TEntity> queryOptions)
-    {
-      return repository.GetAll();
-    }
-
-    protected IQueryable<TEntity> GetAll()
-    {
-      return repository.GetAll();
-    }
-
-    public ObjectResult Get([FromODataUri] object key, ODataQueryOptions<TEntity> queryOptions)
-    {
-      AuthenticateQuery(queryOptions);
-
-      var entity = OnGet(key, queryOptions);
-
-      if (entity == null)
-        return NotFound(key);
-
-      return Ok(entity);
-    }
-
-    protected virtual TEntity OnGet(object key, ODataQueryOptions<TEntity> queryOptions)
-    {
-      var keysPredicate = CreateKeysPredicate(key);
-
-      return GetAll().FirstOrDefault(keysPredicate);
-    }
-
-    #endregion
-
-    #region CreateKeysPredicate
-
-    protected virtual Expression<Func<TEntity, bool>> CreateKeysPredicate(params object[] keys)
-    {
-      return ExpressionExtensions.CreatePredicate<TEntity>(keys);
     }
 
     #endregion
@@ -111,23 +44,6 @@ namespace Joker.OData.Controllers
       repository.Add(entity);
 
       return repository.SaveChangesAsync();
-    }
-
-    #endregion
-
-    #region GetKeysFromPath
-
-    protected object[] GetKeysFromPath()
-    {
-      var odataPath = Request.ODataFeature().Path;
-
-      var keySegment = odataPath.Segments.OfType<KeySegment>().LastOrDefault();
-      if (keySegment == null)
-        throw new InvalidOperationException("The link does not contain a key.");
-
-      var value = keySegment.Keys.Select(c => c.Value).ToArray();
-      
-      return value;
     }
 
     #endregion
@@ -188,45 +104,12 @@ namespace Joker.OData.Controllers
     #endregion
 
     #region OnDelete
-    
+
     protected virtual Task<int> OnDelete(int key)
     {
       repository.Remove(key);
 
       return repository.SaveChangesAsync();
-    }
-
-    #endregion
-
-    private void AuthenticateQuery(ODataQueryOptions<TEntity> queryOptions)
-    {
-      ValidateQueryOptions(queryOptions);
-    }    
-    
-    #region ValidateQueryOptions
-
-    protected void ValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
-    {
-      OnValidateQueryOptions(queryOptions);
-
-      queryOptions.Validate(new ODataValidationSettings { MaxExpansionDepth = MaxExpansionDepth });
-    }
-
-    #endregion
-
-    #region OnValidateQueryOptions
-
-    protected virtual void OnValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
-    {
-      if (SelectExpandQueryValidator != null && queryOptions.SelectExpand != null)
-      {
-        queryOptions.SelectExpand.Validator = SelectExpandQueryValidator;
-      }
-
-      if (FilterQueryValidator != null && queryOptions.Filter != null)
-      {
-        queryOptions.Filter.Validator = FilterQueryValidator;
-      }
     }
 
     #endregion

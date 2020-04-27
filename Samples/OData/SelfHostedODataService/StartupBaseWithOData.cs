@@ -27,6 +27,7 @@
 using Autofac;
 using Joker.Factories.Schedulers;
 using Joker.OData;
+using Joker.OData.Extensions.OData;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +52,7 @@ namespace SelfHostedODataService
       oDataModelBuilder.Namespace = "Example";
 
       oDataModelBuilder.EntitySet<Product>("Products");
+      oDataModelBuilder.AddPluralizedEntitySet<Book>();
 
       return oDataModelBuilder;
     }

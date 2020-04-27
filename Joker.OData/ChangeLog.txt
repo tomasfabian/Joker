@@ -16,7 +16,9 @@ Added:
 1.0.0
 Changed:
 - Repository implementation
+- ReadOnlyODataController
 - ODataControllerBase generic compound keys support
+- AddPluralizedEntitySet extension method
 
 Breaking change:
 - ODataControllerBase IRepository<TEnity> injection
