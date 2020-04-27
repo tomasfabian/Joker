@@ -1,6 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
 using Sample.Domain.Models;
 
 namespace Sample.Data.Context
@@ -8,6 +6,11 @@ namespace Sample.Data.Context
   public class SampleDbContext : DbContext, ISampleDbContext
   {
     #region Constructors
+
+    static SampleDbContext()
+    {
+      Database.SetInitializer(new CreateSampleDatabaseIfNotExists());
+    }
 
     public SampleDbContext()
     {
@@ -21,18 +24,12 @@ namespace Sample.Data.Context
     public SampleDbContext(string nameOrConnectionString)
       : base(nameOrConnectionString)
     {
-      Database.SetInitializer(new CreateSampleDatabaseIfNotExists());
-    }
-    
-    public SampleDbContext(string connectionString, DbCompiledModel model)
-      : base(connectionString, model)
-    {
-    }
-
-    public SampleDbContext(ObjectContext objectContext, bool dbContextOwnsObjectContext)
-      : base(objectContext, dbContextOwnsObjectContext)
-    {
-
+      if (!Database.Exists() || !Database.CompatibleWithModel(false))
+      {      
+        Database.SetInitializer(new Migrations.MigrateDatabaseToLatestVersion<SampleDbContext, Migrations.Configuration>(nameOrConnectionString));
+        
+        Database.Initialize(false);
+      }
     }
 
     #endregion
@@ -45,8 +42,21 @@ namespace Sample.Data.Context
         .Property(f => f.Timestamp)
         .HasColumnType("datetime2")
         .HasPrecision(0);
+
+      modelBuilder.Entity<Author>()
+        .Property(c => c.LastName)
+        .HasMaxLength(128)
+        .IsRequired();
+
+      modelBuilder.Entity<Author>()
+        .HasIndex(b => b.LastName)
+        .IsUnique()
+        .HasName($"UX_{nameof(Author)}_{nameof(Author.LastName)}");
     }
 
     public IDbSet<Product> Products { get; set; }
+
+    public IDbSet<Book> Books { get; set; }
+    public IDbSet<Author> Authors { get; set; }
   }
 }

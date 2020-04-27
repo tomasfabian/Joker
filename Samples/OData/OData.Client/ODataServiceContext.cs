@@ -35,5 +35,13 @@ namespace OData.Client
     private DataServiceQuery<Product> products;
 
     public DataServiceQuery<Product> Products => products = products ?? CreateQuery<Product>("Products");
+
+    private DataServiceQuery<Author> authors;
+
+    public DataServiceQuery<Author> Authors => authors = authors ?? CreateQuery<Author>("Authors");
+
+    private DataServiceQuery<Book> books;
+
+    public DataServiceQuery<Book> Books => books = books ?? CreateQuery<Book>("Books");
   }
 }

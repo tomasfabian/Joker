@@ -1,28 +1,20 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Migrations;
-using System.Linq;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
 
 namespace Joker.OData.Repositories
 {
-  public abstract class Repository<TEntity> : IRepository<TEntity> 
+  public abstract class Repository<TEntity> : ReadOnlyRepository<TEntity>, IRepository<TEntity> 
     where TEntity : class
   {
     private readonly IContext context;
 
     protected Repository(IContext context)
+      : base(context)
     {
       this.context = context ?? throw new ArgumentNullException(nameof(context));
-    }
-
-    protected abstract IDbSet<TEntity> DbSet { get; }
-
-    public IQueryable<TEntity> GetAll()
-    {
-      return DbSet;
     }
 
     public void Add(TEntity entity)

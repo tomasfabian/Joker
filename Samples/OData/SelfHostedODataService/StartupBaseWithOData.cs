@@ -53,6 +53,7 @@ namespace SelfHostedODataService
 
       oDataModelBuilder.EntitySet<Product>("Products");
       oDataModelBuilder.AddPluralizedEntitySet<Book>();
+      oDataModelBuilder.AddPluralizedEntitySet<Author>();
 
       return oDataModelBuilder;
     }

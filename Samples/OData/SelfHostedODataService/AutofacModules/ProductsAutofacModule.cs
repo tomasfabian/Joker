@@ -29,6 +29,9 @@ namespace SelfHostedODataService.AutofacModules
       builder.RegisterType<SampleDbContext>().As<ISampleDbContext>()
         .WithParameter(connectionStringParameter);
 
+      builder.RegisterType<SampleDbContext>().AsSelf()
+        .WithParameter(connectionStringParameter);
+
       builder.Register<IScheduler>(c => c.Resolve<ISchedulersFactory>().TaskPool)
         .SingleInstance();
 
@@ -48,12 +51,21 @@ namespace SelfHostedODataService.AutofacModules
       builder.RegisterType<ProductSqlTableDependencyRedisProvider>()
         .As<ISqlTableDependencyRedisProvider<Product>>();
 
+      RegisterRepositories(builder);
+    }
+
+    private static void RegisterRepositories(ContainerBuilder builder)
+    {
       builder.RegisterType<ProductsRepository>()
         .As<IRepository<Product>>()
         .InstancePerLifetimeScope();
 
-      builder.RegisterType<FakeBooksRepository>()
-        .As<IReadOnlyRepository<Book>>()
+      builder.RegisterType<AuthorsRepository>()
+        .As<IRepository<Author>>()
+        .InstancePerLifetimeScope();
+
+      builder.RegisterType<BooksRepository>()
+        .As<IRepository<Book>, IReadOnlyRepository<Book>>()
         .InstancePerLifetimeScope();
     }
   }

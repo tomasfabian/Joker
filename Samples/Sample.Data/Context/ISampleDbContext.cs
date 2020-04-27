@@ -7,5 +7,8 @@ namespace Sample.Data.Context
   public interface ISampleDbContext : IContext
   {
     IDbSet<Product> Products { get; set; }
+
+    IDbSet<Book> Books { get; set; }
+    IDbSet<Author> Authors { get; set; }
   }
 }
