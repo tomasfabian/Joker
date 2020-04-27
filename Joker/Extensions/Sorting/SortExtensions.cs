@@ -12,10 +12,12 @@ namespace Joker.Extensions.Sorting
       var comparer = new GenericComparer<TSource>((x, y) =>
       {
         int result = 0;
-
+        
         foreach (var sort in sorts)
         {
-          result = Comparer<object>.Default.Compare(sort.SortBy(x), sort.SortBy(y));
+          var sortByFunc = sort.SortBy.Compile();
+
+          result = Comparer<object>.Default.Compare(sortByFunc(x), sortByFunc(y));
           
           result *= sort.ListSortDirection == ListSortDirection.Descending ? -1 : 1;
          

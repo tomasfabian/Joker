@@ -362,16 +362,16 @@ namespace Joker.MVVM.Tests.Joker.Collections
       ClassUnderTest = new SortedObservableCollection<TestViewModel>(innerComparer);
 
       AddIdRange(new Range(2, 5));
-      //TODO:
-      // ClassUnderTest.EnableNestedPropertyChangeEventHandlers = true;
+      // ClassUnderTest.EnableNestedPropertyChangeEventHandlers = true; //TODO
       // ClassUnderTest.AddSortRefreshTrigger(c => c.Inner, c => c.TestMe);
 
       //Act
       ClassUnderTest.Reverse().ForEach((vm, i) => vm.Inner.TestMe = $"{i}");
+      ClassUnderTest.Sort();
 
       //Assert
-      // ClassUnderTest[0].Inner.TestMe.Should().Be("1");
-      // ClassUnderTest[0].Id.Should().Be(5);
+      ClassUnderTest[0].Inner.TestMe.Should().Be("1");
+      ClassUnderTest[0].Id.Should().Be(5);
     }
 
     #endregion

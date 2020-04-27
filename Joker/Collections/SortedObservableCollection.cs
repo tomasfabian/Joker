@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Joker.Collections
 {
+  /// <summary>
+  /// SortedObservableCollection is a sorted ObservableCollection that does not allow entries with duplicate or null keys.
+  /// </summary>
   public class SortedObservableCollection<TValue> : ObservableCollection<TValue>
     where TValue : class, INotifyPropertyChanged
   {
@@ -204,7 +207,7 @@ namespace Joker.Collections
       }
     }
 
-    public void RemoveRange(IEnumerable<TValue> items)
+    internal void RemoveRange(IEnumerable<TValue> items)
     {
       if (SupportsRangeNotifications)
       {
@@ -223,6 +226,21 @@ namespace Joker.Collections
         {
           Remove(item);
         }
+      }
+    }
+
+    internal void Sort()
+    {
+      Array.Sort(keys, 0, keys.Length, comparer);
+
+      for (int i = 0; i < Count; i++)
+      {
+        TValue item = Items[i];
+
+        int newIndex = Array.BinarySearch(keys, 0, Count, item, comparer);
+
+        if (i != newIndex)
+          base.MoveItem(i, newIndex);
       }
     }
   }
