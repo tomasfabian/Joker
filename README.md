@@ -5,6 +5,10 @@ Reactive view models for data changes
 
 Install-Package Joker.MVVM -Version 1.4.0
 
+# Joker OData:
+Plumbing code for OData web services. Please help out the community by sharing your suggestions and code improvements:
+* [Joker.OData wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.OData)
+
 # Preview:
 [Redis TableDependency status notifier](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Redis-TableDependency-status-notifier---preview)
 Sql server data changes refresher via Redis with End to end reconnections
