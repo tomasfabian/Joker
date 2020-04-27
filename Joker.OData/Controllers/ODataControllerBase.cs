@@ -145,9 +145,7 @@ namespace Joker.OData.Controllers
 
       var relatedObjectKeys = GetKeysFromPath(odataPath);
 
-      dynamic dynamicNavigationProperty = Dynamic.InvokeGet(entity, navigationProperty);
-
-      var type = dynamicNavigationProperty.GetType() as Type;
+      var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
 
       var navigationPropertyType = type.GetCollectionGenericType();
 
@@ -158,7 +156,11 @@ namespace Joker.OData.Controllers
       dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);
 
       if (typeof(ICollection).IsAssignableFrom(type))
+      {
+        dynamic dynamicNavigationProperty = Dynamic.InvokeGet(entity, navigationProperty);
+
         dynamicNavigationProperty.Add(relatedEntity);
+      }
       else
         Dynamic.InvokeSet(entity, navigationProperty, relatedEntity);
 
