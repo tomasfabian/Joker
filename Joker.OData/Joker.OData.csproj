@@ -16,7 +16,14 @@
     <AssemblyVersion>0.9.0.0</AssemblyVersion>
     <FileVersion>0.9.0.0</FileVersion>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Added IIS integration (breaking change for ODataHost&lt;&gt;.Run) config is not optional anymore. There are to options IISHostedODataStartupConfig or KestrelODataStartupConfig</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed:
+- Repository implementation
+- ReadOnlyODataController
+- ODataControllerBase generic compound keys support
+- AddPluralizedEntitySet extension method
+- ODataController CreateRef
+Breaking change:
+- ODataControllerBase IRepository&lt;TEnity&gt; injection</PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
