@@ -1,4 +1,5 @@
-﻿using Sample.Domain.Models;
+﻿using Sample.Data.Context;
+using Sample.Domain.Models;
 
 namespace Sample.Data.Migrations
 {
@@ -16,13 +17,19 @@ namespace Sample.Data.Migrations
 
     protected override void Seed(Context.SampleDbContext context)
     {
+      base.Seed(context);
       //  This method will be called after migrating to the latest version.
 
       //  You can use the DbSet<T>.AddOrUpdate() helper extension method
       //  to avoid creating duplicate seed data.
-      context.Products.Add(new Product {Timestamp = DateTime.Now, Name = "Test product"});
+      ApplySeed(context);
+    }
 
-      context.Authors.Add(new Author { Timestamp = DateTime.Now, LastName = "Sheldrake" });
+    public static void ApplySeed(SampleDbContext context)
+    {
+      context.Products.AddOrUpdate(c => c.Name, new Product {Timestamp = DateTime.Now, Name = "Test product"});
+
+      context.Authors.AddOrUpdate(c => c.LastName, new Author {Timestamp = DateTime.Now, LastName = "Sheldrake"});
 
       context.SaveChanges();
     }

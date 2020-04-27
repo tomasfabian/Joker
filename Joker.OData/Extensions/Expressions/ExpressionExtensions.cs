@@ -10,19 +10,30 @@ namespace Joker.OData.Extensions.Expressions
   {
     internal static Expression<Func<TEntity, bool>> CreatePredicate<TEntity>(params object[] keys)
     {
-      var key = typeof(TEntity).GetCustomAttributes().OfType<Microsoft.OData.Client.KeyAttribute>()
+      var keyProperties = KeyProperties<TEntity>();
+
+      var predicate = CreatePredicate<TEntity>(keyProperties, keys);
+
+      return predicate;
+    }
+
+    internal static List<PropertyInfo> KeyProperties<TEntity>()
+    {
+      return TryGetKeyProperties(typeof(TEntity));
+    }
+
+    internal static List<PropertyInfo> TryGetKeyProperties(this Type type)
+    {
+      var key = type.GetCustomAttributes().OfType<Microsoft.OData.Client.KeyAttribute>()
         .FirstOrDefault();
 
       if (key == null)
         throw new KeyNotFoundException();
 
-      var keyProperties = typeof(TEntity).GetProperties()
+      var keyProperties = type.GetProperties()
         .Where(c => key.KeyNames.Contains(c.Name))
         .ToList();
-
-      var predicate = CreatePredicate<TEntity>(keyProperties, keys);
-
-      return predicate;
+      return keyProperties;
     }
 
     internal static Expression<Func<TEntity, bool>> CreatePredicate<TEntity>(IEnumerable<PropertyInfo> keyProperties, params object[] keys)

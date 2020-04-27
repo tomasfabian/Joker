@@ -2,9 +2,23 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
+using Sample.Data.Context;
 
 namespace Sample.Data.Migrations
 {
+  internal class MigrateDatabaseToLatestVersion : MigrateDatabaseToLatestVersion<SampleDbContext, Sample.Data.Migrations.Configuration>
+  {    
+    public MigrateDatabaseToLatestVersion(string connectionString)
+      : base(connectionString)
+    {
+    }
+
+    protected override void Seed(SampleDbContext context)
+    {
+      Configuration.ApplySeed(context);
+    }
+  }
+
   public class MigrateDatabaseToLatestVersion<TContext, TMigrationsConfiguration> : IDatabaseInitializer<TContext>
     where TContext : DbContext
     where TMigrationsConfiguration : DbMigrationsConfiguration<TContext>, new()
@@ -41,6 +55,12 @@ namespace Sample.Data.Migrations
       var migrator = new DbMigrator(config);
 
       migrator.Update();
+
+      Seed(context);
+    }
+
+    protected virtual void Seed(TContext context)
+    {
     }
   }
 }

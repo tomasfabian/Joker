@@ -27,10 +27,8 @@ namespace SelfHostedODataService.AutofacModules
         (pi, ctx) => ctx.Resolve<IProductsConfigurationProvider>().GetDatabaseConnectionString());
 
       builder.RegisterType<SampleDbContext>().As<ISampleDbContext>()
-        .WithParameter(connectionStringParameter);
-
-      builder.RegisterType<SampleDbContext>().AsSelf()
-        .WithParameter(connectionStringParameter);
+        .WithParameter(connectionStringParameter)
+        .InstancePerLifetimeScope();
 
       builder.Register<IScheduler>(c => c.Resolve<ISchedulersFactory>().TaskPool)
         .SingleInstance();

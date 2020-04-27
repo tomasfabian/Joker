@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Dynamitey;
+using Joker.Contracts.Data;
+using Joker.OData.Extensions.OData;
+using Joker.OData.Extensions.Types;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Joker.Contracts.Data;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Joker.OData.Controllers
 {
@@ -110,6 +114,73 @@ namespace Joker.OData.Controllers
       repository.Remove(key);
 
       return repository.SaveChangesAsync();
+    }
+
+    #endregion
+
+    #region CreateRef
+
+    protected virtual dynamic TryGetDbSet(Type entityType)
+    {
+      return null;
+    }
+
+    [AcceptVerbs("POST", "PUT")]
+    public async Task<IActionResult> CreateRef(string navigationProperty, [FromBody] Uri link)
+    {
+      return await OnCreateRef(navigationProperty, link);
+    }
+
+    protected virtual async Task<IActionResult> OnCreateRef(string navigationProperty, Uri link)
+    {
+      var keys = GetKeysFromPath();
+      var keyPredicate = CreateKeysPredicate(keys);
+      var entity = GetAll().Where(keyPredicate).FirstOrDefault();
+
+      if (entity == null)
+        return NotFound($"{nameof(TEntity)}: {keys}");
+
+
+      var odataPath = Request.CreateODataPath(link);
+
+      var relatedObjectKeys = GetKeysFromPath(odataPath);
+
+      dynamic dynamicNavigationProperty = Dynamic.InvokeGet(entity, navigationProperty);
+
+      var type = dynamicNavigationProperty.GetType() as Type;
+
+      var navigationPropertyType = type.GetCollectionGenericType();
+
+      if (navigationPropertyType == null)
+        navigationPropertyType = type;
+
+      dynamic relatedRepository = TryGetDbSet(navigationPropertyType);
+      dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);
+
+      if (typeof(ICollection).IsAssignableFrom(type))
+        dynamicNavigationProperty.Add(relatedEntity);
+      else
+        Dynamic.InvokeSet(entity, navigationProperty, relatedEntity);
+
+      await repository.SaveChangesAsync();
+
+      return StatusCode((int) HttpStatusCode.NoContent);
+    }
+
+    #endregion
+
+    #region DeleteRef
+
+    public IActionResult DeleteRef(string relatedKey, string navigationProperty)
+    {
+      return OnDeleteRef(relatedKey, navigationProperty);
+    }
+
+    protected virtual IActionResult OnDeleteRef(string relatedKey, string navigationProperty)
+    {
+      throw new NotImplementedException();
+
+      return StatusCode((int)HttpStatusCode.NoContent);
     }
 
     #endregion

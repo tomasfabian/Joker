@@ -26,9 +26,9 @@ namespace Sample.Data.Context
     {
       if (!Database.Exists() || !Database.CompatibleWithModel(false))
       {      
-        Database.SetInitializer(new Migrations.MigrateDatabaseToLatestVersion<SampleDbContext, Migrations.Configuration>(nameOrConnectionString));
+        Database.SetInitializer(new Migrations.MigrateDatabaseToLatestVersion(nameOrConnectionString));
         
-        Database.Initialize(false);
+        Database.Initialize(true);
       }
     }
 
@@ -39,6 +39,16 @@ namespace Sample.Data.Context
       base.OnModelCreating(modelBuilder);
 
       modelBuilder.Entity<Product>()
+        .Property(f => f.Timestamp)
+        .HasColumnType("datetime2")
+        .HasPrecision(0);
+      
+      modelBuilder.Entity<Book>()
+        .Property(f => f.Timestamp)
+        .HasColumnType("datetime2")
+        .HasPrecision(0);
+
+      modelBuilder.Entity<Author>()
         .Property(f => f.Timestamp)
         .HasColumnType("datetime2")
         .HasPrecision(0);

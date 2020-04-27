@@ -370,7 +370,7 @@ namespace Joker.MVVM.Tests.Joker.Collections
       ClassUnderTest.Sort();
 
       //Assert
-      ClassUnderTest[0].Inner.TestMe.Should().Be("1");
+      ClassUnderTest[0].Inner.TestMe.Should().Be("0");
       ClassUnderTest[0].Id.Should().Be(5);
     }
 

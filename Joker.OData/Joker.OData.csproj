@@ -23,6 +23,7 @@
   <Import Project="..\NugetProjects\Microsoft.OData.Client.csprojimport" />
 
   <ItemGroup>
+    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.4.0" />  
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />

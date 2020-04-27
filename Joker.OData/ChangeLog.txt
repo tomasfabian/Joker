@@ -19,6 +19,10 @@ Changed:
 - ReadOnlyODataController
 - ODataControllerBase generic compound keys support
 - AddPluralizedEntitySet extension method
+- ODataController CreateRef
 
 Breaking change:
 - ODataControllerBase IRepository<TEnity> injection
+
+1.1.0
+- ODataController DeleteRef

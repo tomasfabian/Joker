@@ -13,7 +13,7 @@
                     {
                         Id = c.Int(nullable: false, identity: true),
                         LastName = c.String(nullable: false, maxLength: 128),
-                        Timestamp = c.DateTime(nullable: false),
+                        Timestamp = c.DateTime(nullable: false, precision: 0, storeType: "datetime2", defaultValueSql: "GetDate()"),
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.LastName, unique: true, name: "UX_Author_LastName");
@@ -24,7 +24,7 @@
                     {
                         Id = c.String(nullable: false, maxLength: 128),
                         Title = c.String(),
-                        Timestamp = c.DateTime(nullable: false),
+                        Timestamp = c.DateTime(nullable: false, precision: 0, storeType: "datetime2", defaultValueSql: "GetDate()"),
                     })
                 .PrimaryKey(t => t.Id);
             

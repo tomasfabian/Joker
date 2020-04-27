@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;

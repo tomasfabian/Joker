@@ -48,7 +48,7 @@ namespace Joker.Extensions
 
       foreach (var item in source)
       {
-        action(item, ++index);
+        action(item, index++);
       }
     }
 

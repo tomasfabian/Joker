@@ -89,6 +89,13 @@ namespace Joker.OData.Controllers
     {
       var odataPath = Request.ODataFeature().Path;
 
+      var value = GetKeysFromPath(odataPath);
+
+      return value;
+    }
+
+    protected object[] GetKeysFromPath(Microsoft.AspNet.OData.Routing.ODataPath odataPath)
+    {
       var keySegment = odataPath.Segments.OfType<KeySegment>().LastOrDefault();
       if (keySegment == null)
         throw new InvalidOperationException("The link does not contain a key.");
