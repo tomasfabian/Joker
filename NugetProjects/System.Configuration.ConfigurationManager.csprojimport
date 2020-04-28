@@ -7,7 +7,7 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) Or '$(TargetFramework)' == '$(NetCoreVersion)'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp'))">
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0"/>
   </ItemGroup>
 </Project>
