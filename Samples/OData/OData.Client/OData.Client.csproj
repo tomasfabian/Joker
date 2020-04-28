@@ -8,14 +8,10 @@
   </PropertyGroup>
 
   <Import Project="..\..\..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.OData.Client" Version="7.6.3" />  
-  </ItemGroup>
+  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
-
 
 </Project>
