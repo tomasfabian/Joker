@@ -23,11 +23,11 @@ Please use data streaming and process it with the help of reactive programming a
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
-Install-Package SqlTableDependency.Extensions -Version 2.2.0
+Install-Package SqlTableDependency.Extensions -Version 2.3.1
 
 or
 
-dotnet add package SqlTableDependency.Extensions --version 2.2.0
+dotnet add package SqlTableDependency.Extensions --version 2.3.1
 
 ## See:
 Following package is based on christiandelbianco's SqlTableDependency:
@@ -174,7 +174,7 @@ namespace SqlTableDependency.Extensions.Sample
 # Joker.Redis
 SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
 
-Install-Package Joker.Redis -Version 1.1.0
+Install-Package Joker.Redis -Version 1.2.0
 
 Download and run redis-server (https://redis.io/download) or use Docker (see above).
 
