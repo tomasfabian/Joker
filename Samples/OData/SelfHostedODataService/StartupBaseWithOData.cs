@@ -26,8 +26,8 @@
 
 using Autofac;
 using Joker.Factories.Schedulers;
-using Joker.OData;
 using Joker.OData.Extensions.OData;
+using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,11 +40,40 @@ using SelfHostedODataService.Configuration;
 
 namespace SelfHostedODataService
 {
+#if NETCOREAPP3_0
+  public class StartupBaseWithOData : ODataStartupLegacy
+#endif
+#if NETCOREAPP3_1
   public class StartupBaseWithOData : ODataStartup
+#endif
   {
-    public StartupBaseWithOData(IWebHostEnvironment env) 
+    public StartupBaseWithOData(IWebHostEnvironment env)
       : base(env)
     {
+      return;
+
+      SetSettings(startupSettings =>
+      {
+        startupSettings
+          .DisableHttpsRedirection(); //by default it is enabled
+
+        startupSettings.UseDeveloperExceptionPage = false; //by default it is enabled
+      });
+
+      SetODataSettings(odataStartupSettings =>
+      {
+        odataStartupSettings
+          //OData route prefix setup https://localhost:5001/odata/$metadata
+          .SetODataRouteName("odata") //default is empty https://localhost:5001/$metadata
+          .DisableODataBatchHandler(); //by default it is enabled
+      });
+
+      SetWebApiSettings(webApiStartupSettings =>
+      {
+        webApiStartupSettings
+          .SetWebApiRoutePrefix("myApi") //default is "api"
+          .SetWebApiTemplate("api/{controller}/{id}"); //default is "{controller}/{action}/{id?}"
+      });
     }
 
     protected override ODataModelBuilder OnCreateEdmModel(ODataModelBuilder oDataModelBuilder)
@@ -77,9 +106,11 @@ namespace SelfHostedODataService
     {
       ConfigureNLog();
     }
-    
+
     protected override void RegisterTypes(ContainerBuilder builder)
     {
+      base.RegisterTypes(builder);
+
       ContainerBuilder.RegisterModule(new ProductsAutofacModule());
 
       ContainerBuilder.RegisterType<ProductsConfigurationProvider>()

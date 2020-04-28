@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Joker.OData.Hosting
 {
-  public abstract class ODataStartupConfig
+  public abstract class ODataWebHostConfig
   {
     public IConfiguration Configuration { get; set; }
 

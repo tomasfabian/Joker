@@ -3,7 +3,7 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetCoreVersion)</TargetFramework> 
+    <TargetFramework>netcoreapp3.1</TargetFramework> 
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>

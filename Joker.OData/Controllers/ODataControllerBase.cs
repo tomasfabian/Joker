@@ -6,6 +6,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace Joker.OData.Controllers
 {
   public abstract class ODataControllerBase<TEntity> : ReadOnlyODataController<TEntity>
-      where TEntity : class
+    where TEntity : class
   {
     #region Fields
 
@@ -118,13 +119,17 @@ namespace Joker.OData.Controllers
 
     #endregion
 
-    #region CreateRef
-
+    #region TryGetDbSet
+    
     protected virtual dynamic TryGetDbSet(Type entityType)
     {
       return null;
     }
 
+    #endregion
+    
+    #region CreateRef
+    
     [AcceptVerbs("POST", "PUT")]
     public async Task<IActionResult> CreateRef(string navigationProperty, [FromBody] Uri link)
     {
@@ -173,14 +178,42 @@ namespace Joker.OData.Controllers
 
     #region DeleteRef
 
-    public IActionResult DeleteRef(string relatedKey, string navigationProperty)
+    public async Task<IActionResult> DeleteRef(string navigationProperty)
     {
-      return OnDeleteRef(relatedKey, navigationProperty);
+      return await OnDeleteRef(navigationProperty);
     }
 
-    protected virtual IActionResult OnDeleteRef(string relatedKey, string navigationProperty)
-    {
-      throw new NotImplementedException();
+    protected virtual async Task<IActionResult> OnDeleteRef(string navigationProperty)
+    {      
+      var keys = GetKeysFromPath();
+      var keyPredicate = CreateKeysPredicate(keys);
+      var entity = GetAll().Include(navigationProperty).Where(keyPredicate).FirstOrDefault();
+
+      if (entity == null)
+        return NotFound($"{nameof(TEntity)}: {keys}");
+      
+      var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
+
+      var navigationPropertyType = type.GetCollectionGenericType();
+
+      if (navigationPropertyType == null)
+        navigationPropertyType = type;
+
+      if (typeof(ICollection).IsAssignableFrom(type))
+      {
+        var relatedObjectKeys = GetAllKeysFromPath().Last().Select(c => c.Value).ToArray();
+
+        dynamic relatedRepository = TryGetDbSet(navigationPropertyType);
+        dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);
+
+        dynamic dynamicNavigationProperty = Dynamic.InvokeGet(entity, navigationProperty);
+
+        dynamicNavigationProperty.Remove(relatedEntity);
+      }
+      else
+        Dynamic.InvokeSet(entity, navigationProperty, null);
+
+      await repository.SaveChangesAsync();
 
       return StatusCode((int)HttpStatusCode.NoContent);
     }

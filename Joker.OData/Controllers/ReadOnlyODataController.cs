@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Joker.Contracts.Data;
@@ -96,13 +97,26 @@ namespace Joker.OData.Controllers
 
     protected object[] GetKeysFromPath(Microsoft.AspNet.OData.Routing.ODataPath odataPath)
     {
-      var keySegment = odataPath.Segments.OfType<KeySegment>().LastOrDefault();
+      var keySegment = odataPath.Segments.OfType<KeySegment>().FirstOrDefault();
       if (keySegment == null)
         throw new InvalidOperationException("The link does not contain a key.");
 
       var value = keySegment.Keys.Select(c => c.Value).ToArray();
 
       return value;
+    }
+
+    protected IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetAllKeysFromPath()
+    {
+      var odataPath = Request.ODataFeature().Path;
+
+      var keySegment = odataPath.Segments.OfType<KeySegment>();
+      if (keySegment == null)
+        throw new InvalidOperationException("The link does not contain a key.");
+
+      var keys = keySegment.Select(c => c.Keys);
+
+      return keys;
     }
 
     #endregion

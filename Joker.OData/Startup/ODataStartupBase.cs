@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Joker.Disposables;
 using Microsoft.AspNet.OData.Batch;
@@ -14,19 +13,23 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Serialization;
 
-namespace Joker.OData
+namespace Joker.OData.Startup
 {
-  public class ODataStartup : DisposableObject
+  public abstract class ODataStartupBase : DisposableObject
   {
     #region Fields
+    
+    internal readonly StartupSettings StartupSettings = new StartupSettings();
+    internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
+    internal readonly WebApiStartupSettings WebApiStartupSettings = new WebApiStartupSettings();
 
     private readonly IConfigurationRoot configuration;
-
+    
     #endregion
 
     #region Constructors
 
-    public ODataStartup(IWebHostEnvironment env)
+    protected ODataStartupBase(IWebHostEnvironment env)
     {
       configuration = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
@@ -36,7 +39,17 @@ namespace Joker.OData
 
     #endregion
 
-    #region Methods    
+    #region Properties
+    
+    private IEdmModel edmModel;
+
+    public IEdmModel EdmModel => edmModel ?? (edmModel = CreateEdmModel());
+
+    internal abstract bool EnableEndpointRouting { get; }
+
+    #endregion
+
+    #region Methods
 
     #region ConfigureContainer
 
@@ -61,32 +74,36 @@ namespace Joker.OData
 
     #region ConfigureOData
 
-    private IEdmModel edmModel;
-
     private void ConfigureOData(IApplicationBuilder app)
     {
-      edmModel = CreateEdmModel();
-
-      app.UseMvc(routeBuilder =>
-      {
-        routeBuilder.EnableDependencyInjection();
-
-        routeBuilder.Select().Expand().Filter().OrderBy().MaxTop(null).Count();
-
-        routeBuilder.EnableContinueOnErrorHeader();
-
-        routeBuilder.MapODataServiceRoute("odata", null, edmModel, CreateODataBatchHandler());
-      });
+      OnConfigureOData(app);
     }
+
+    #region OnConfigureOData
+
+    protected abstract void OnConfigureOData(IApplicationBuilder app);
+
+    #endregion
 
     #endregion
 
     #region CreateODataBatchHandler
 
-    private ODataBatchHandler CreateODataBatchHandler()
+    internal ODataBatchHandler CreateODataBatchHandler()
+    {
+      ODataBatchHandler odataBatchHandler = OnCreateODataBatchHandler();
+
+      return odataBatchHandler;
+    }
+
+    #endregion
+
+    #region OnCreateODataBatchHandler
+
+    protected virtual ODataBatchHandler OnCreateODataBatchHandler()
     {
       ODataBatchHandler odataBatchHandler = new DefaultODataBatchHandler();
-
+      
       odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 60;
       odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 10;
 
@@ -127,7 +144,7 @@ namespace Joker.OData
 
       services.Configure<IISServerOptions>(options =>
       {
-        options.AllowSynchronousIO = true; //OData doesnt support async IO in version 7.2.2        
+        options.AllowSynchronousIO = StartupSettings.IISAllowSynchronousIO; //OData doesnt support async IO in version 7.2.2        
       });
 
       ConfigureMvc(services);
@@ -153,7 +170,7 @@ namespace Joker.OData
     {
       services.AddMvc(options =>
         {
-          options.EnableEndpointRouting = false;
+          options.EnableEndpointRouting = EnableEndpointRouting;
         })
         .AddControllersAsServices()
         .AddNewtonsoftJson(ConfigureNewtonsoftJson)
@@ -175,7 +192,8 @@ namespace Joker.OData
 
     protected void RegisterMiddleWares(IApplicationBuilder app)
     {
-      app.UseODataBatching();
+      if(ODataStartupSettings.EnableODataBatchHandler)
+        app.UseODataBatching();
     }
 
     #endregion
@@ -188,12 +206,11 @@ namespace Joker.OData
     {
       AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
-      if (env.IsDevelopment())
-      {
+      if (env.IsDevelopment() && StartupSettings.UseDeveloperExceptionPage)
         app.UseDeveloperExceptionPage();
-      }
 
-      app.UseAuthorization();
+      if(StartupSettings.UseAuthorization)
+        app.UseAuthorization();
 
       RegisterMiddleWares(app);
 
@@ -208,12 +225,8 @@ namespace Joker.OData
 
     protected virtual void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
     {
-      app.UseMvc(routeBuilder =>
-      {
-        routeBuilder.MapRoute("WebApiRoute", "api/{controller}/{action}/{id?}");
-
-        routeBuilder.SetTimeZoneInfo(TimeZoneInfo.Utc);
-      });
+      if(StartupSettings.UseHttpsRedirection)
+        app.UseHttpsRedirection();
 
       applicationLifetime.ApplicationStopping.Register(OnShutdown);
     }

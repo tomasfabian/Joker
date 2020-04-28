@@ -4,49 +4,50 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using Joker.OData.Startup;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace Joker.OData.Hosting
 {
   public class ODataHost<TStartup>
-    where TStartup : ODataStartup
+    where TStartup : ODataStartupBase
   {
-    public void Run(string[] args, ODataStartupConfig oDataStartupConfig)
+    public void Run(string[] args, ODataWebHostConfig oDataWebHostConfig)
     {
-      if (oDataStartupConfig == null) throw new ArgumentNullException(nameof(oDataStartupConfig));
+      if (oDataWebHostConfig == null) throw new ArgumentNullException(nameof(oDataWebHostConfig));
 
-      var hostBuilder = CreateHostBuilder(args, oDataStartupConfig);
+      var hostBuilder = CreateHostBuilder(args, oDataWebHostConfig);
 
       hostBuilder.Build()
         .Run();
     }
 
-    public async Task RunAsync(string[] args, ODataStartupConfig oDataStartupConfig, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task RunAsync(string[] args, ODataWebHostConfig oDataWebHostConfig, CancellationToken cancellationToken = default(CancellationToken))
     {
-      if (oDataStartupConfig == null) throw new ArgumentNullException(nameof(oDataStartupConfig));
+      if (oDataWebHostConfig == null) throw new ArgumentNullException(nameof(oDataWebHostConfig));
 
-      var hostBuilder = CreateHostBuilder(args, oDataStartupConfig);
+      var hostBuilder = CreateHostBuilder(args, oDataWebHostConfig);
 
       await hostBuilder.Build()
         .RunAsync(cancellationToken);
     }
 
-    private IHostBuilder CreateHostBuilder(string[] args, ODataStartupConfig oDataStartupConfig)
+    private IHostBuilder CreateHostBuilder(string[] args, ODataWebHostConfig oDataWebHostConfig)
     {
-      oDataStartupConfig.ContentRoot = oDataStartupConfig.ContentRoot ?? Directory.GetCurrentDirectory();
+      oDataWebHostConfig.ContentRoot = oDataWebHostConfig.ContentRoot ?? Directory.GetCurrentDirectory();
 
       var hostBuilder = Host.CreateDefaultBuilder(args)
         .UseServiceProviderFactory(new AutofacServiceProviderFactory())
         .ConfigureWebHostDefaults(webHostBuilder =>
         {
-          if (oDataStartupConfig.Configuration != null)
-            webHostBuilder.UseConfiguration(oDataStartupConfig.Configuration);
+          if (oDataWebHostConfig.Configuration != null)
+            webHostBuilder.UseConfiguration(oDataWebHostConfig.Configuration);
 
-          if (oDataStartupConfig.Urls != null && oDataStartupConfig.Urls.Any())
-            webHostBuilder.UseUrls(oDataStartupConfig.Urls);
+          if (oDataWebHostConfig.Urls != null && oDataWebHostConfig.Urls.Any())
+            webHostBuilder.UseUrls(oDataWebHostConfig.Urls);
 
-          if (oDataStartupConfig is KestrelODataStartupConfig kestrelConfig)
+          if (oDataWebHostConfig is KestrelODataWebHostConfig kestrelConfig)
           {
             kestrelConfig.ConfigureKestrelServer = kestrelConfig.ConfigureKestrelServer ?? (options => { });
 
@@ -60,9 +61,9 @@ namespace Joker.OData.Hosting
           }
           
           webHostBuilder
-            .UseContentRoot(oDataStartupConfig.ContentRoot ?? Directory.GetCurrentDirectory())
+            .UseContentRoot(oDataWebHostConfig.ContentRoot ?? Directory.GetCurrentDirectory())
             .UseStartup<TStartup>()
-            .ConfigureServices(oDataStartupConfig?.ConfigureServices ?? (s => { }));
+            .ConfigureServices(oDataWebHostConfig?.ConfigureServices ?? (s => { }));
 
           OnConfigureWebHostBuilder(webHostBuilder);
         });

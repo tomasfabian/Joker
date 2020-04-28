@@ -3,7 +3,7 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
-    <Version>1.2.0-alpha1</Version>
+    <Version>1.2.0</Version>
     <Description>SqlServer PubSub notifications via Redis and SqlTableDependency extension</Description>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>

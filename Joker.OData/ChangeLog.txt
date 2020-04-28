@@ -8,12 +8,10 @@ Added:
 - ODataStartupConfig
 - ODataHost
 
-0.9.0
-Added:
 - IIS integration (breaking change for ODataHost<>.Run) config is not optional anymore. There are to options IISHostedODataStartupConfig or KestrelODataStartupConfig
 - fixed application of kestrel options
 
-1.0.0
+0.9.0
 Changed:
 - Repository implementation
 - ReadOnlyODataController
@@ -24,5 +22,14 @@ Changed:
 Breaking change:
 - ODataControllerBase IRepository<TEnity> injection
 
-1.1.0
+1.0.0
 - ODataController DeleteRef
+- StartupSettings, ODataStartupSettings, WebApiStartupSettings
+- Endpoint routing
+
+Breaking changes:
+- ODataStartupConfig was renamed to ODataWebHostConfig
+- KestrelODataStartupConfig was renamed to KestrelODataWebHostConfig
+- IISHostedODataStartupConfig was renamed to IISODataWebHostConfig
+
+- ODataStartup namespace Joker.OData changed to Joker.OData.Startup
