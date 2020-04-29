@@ -1,6 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Joker.Disposables;
+using Joker.OData.Batch;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -23,7 +25,7 @@ namespace Joker.OData.Startup
     internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
     internal readonly WebApiStartupSettings WebApiStartupSettings = new WebApiStartupSettings();
 
-    private readonly IConfigurationRoot configuration;
+    protected IConfigurationRoot Configuration { get; }
     
     #endregion
 
@@ -31,7 +33,7 @@ namespace Joker.OData.Startup
 
     protected ODataStartupBase(IWebHostEnvironment env)
     {
-      configuration = new ConfigurationBuilder()
+      Configuration = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
         .AddEnvironmentVariables()
         .Build();
@@ -102,7 +104,7 @@ namespace Joker.OData.Startup
 
     protected virtual ODataBatchHandler OnCreateODataBatchHandler()
     {
-      ODataBatchHandler odataBatchHandler = new DefaultODataBatchHandler();
+      ODataBatchHandler odataBatchHandler = new TransactionScopeODataBatchHandler();
       
       odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 60;
       odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 10;
@@ -205,7 +207,7 @@ namespace Joker.OData.Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
     {
       AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-
+ 
       if (env.IsDevelopment() && StartupSettings.UseDeveloperExceptionPage)
         app.UseDeveloperExceptionPage();
 

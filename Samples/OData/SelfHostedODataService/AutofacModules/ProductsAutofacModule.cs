@@ -26,7 +26,8 @@ namespace SelfHostedODataService.AutofacModules
         (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name.IsOneOfFollowing("nameOrConnectionString", "connectionString"),
         (pi, ctx) => ctx.Resolve<IProductsConfigurationProvider>().GetDatabaseConnectionString());
 
-      builder.RegisterType<SampleDbContext>().As<ISampleDbContext>()
+      builder.RegisterType<SampleDbContext>()
+        .As<ISampleDbContext, IDbTransactionFactory, IContext>()
         .WithParameter(connectionStringParameter)
         .InstancePerLifetimeScope();
 
