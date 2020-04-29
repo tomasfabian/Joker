@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP3_0
-using System;
+﻿using System;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -110,4 +109,3 @@ namespace Joker.OData.Startup
     #endregion
   }
 }
-#endif

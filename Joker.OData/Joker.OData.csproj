@@ -3,18 +3,18 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Copyright>@tomasfabian</Copyright>
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
-    <Description>OData endpoint setup for Kestrel and IIS</Description>
-    <PackageTags>OData web API service Kestrel</PackageTags>
+    <Description>OData endpoint setup for Kestrel and IIS with Sql transaction scope for batch operations</Description>
+    <PackageTags>OData batch web API service Kestrel</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageReleaseNotes>- ODataController DeleteRef
 - ODataStartupSettings
@@ -23,13 +23,12 @@
 
   <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
   <Import Project="..\NugetProjects\Microsoft.OData.Client.csprojimport" />
+  <Import Project="..\NugetProjects\Microsoft.AspNetCore.OData.csprojimport" />
 
   <ItemGroup>
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.4.0" />   
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" /> 
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
