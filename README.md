@@ -6,7 +6,7 @@ Reactive view models for data changes
 Install-Package Joker.MVVM -Version 1.4.0
 
 # Joker OData:
-Plumbing code for OData web services. Please help out the community by sharing your suggestions and code improvements:
+Plumbing code for OData web services. Support for batching and end points. Please help out the community by sharing your suggestions and code improvements:
 * [Joker.OData wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.OData)
 
 # Preview:
