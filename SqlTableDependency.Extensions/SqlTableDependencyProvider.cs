@@ -48,7 +48,7 @@ namespace SqlTableDependency.Extensions
   /// <summary>
   /// SqlTableDependencyProvider notifies about database table changes and reconnects in case of error.
   /// </summary>
-  public abstract class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider<TEntity>
+  public class SqlTableDependencyProvider<TEntity> : DisposableObject, ISqlTableDependencyProvider<TEntity>, ISqlTableDependencyProviderInit<TEntity>
       where TEntity : class, new()
   {
     #region Fields
@@ -64,7 +64,7 @@ namespace SqlTableDependency.Extensions
     /// <param name="connectionStringSettings">Database connection string settings.</param>
     /// <param name="scheduler">Scheduler to run reconnection timers on.</param>
     /// <param name="lifetimeScope">Generated database objects lifetime scope.</param>
-    protected SqlTableDependencyProvider(
+    public SqlTableDependencyProvider(
       ConnectionStringSettings connectionStringSettings, 
       IScheduler scheduler, 
       LifetimeScope lifetimeScope)
@@ -75,7 +75,7 @@ namespace SqlTableDependency.Extensions
     /// <param name="connectionString">Database connection string.</param
     /// <param name="scheduler">Scheduler to run reconnection timers on.</param>
     /// <param name="lifetimeScope">Generated database objects lifetime scope.</param>
-    protected SqlTableDependencyProvider(
+    public SqlTableDependencyProvider(
       string connectionString,
       IScheduler scheduler,
       LifetimeScope lifetimeScope)
@@ -197,7 +197,7 @@ namespace SqlTableDependency.Extensions
     /// <summary>
     /// Start record change subscriptions with database reconnection.
     /// </summary>
-    public void SubscribeToEntityChanges()
+    public ISqlTableDependencyProvider<TEntity> SubscribeToEntityChanges()
     {
       if (Interlocked.Increment(ref subscriptionsCounter) != 1)
         throw new NotSupportedException("Multiple subscriptions are not allowed");
@@ -206,6 +206,8 @@ namespace SqlTableDependency.Extensions
         throw new ObjectDisposedException(GetType().Name);
 
       TrySubscribeToTableChanges();
+
+      return this;
     }
 
     #endregion

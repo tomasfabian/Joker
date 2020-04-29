@@ -16,4 +16,5 @@ Breaking change:
 
 
 2.3.2
-- added TableName to to SqlTableDependencySettings<TEntity>
+- added TableName to SqlTableDependencySettings<TEntity>
+- SqlTableDependencyProvider is not abstract anymore
