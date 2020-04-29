@@ -11,11 +11,9 @@
     <Copyright>@tomasfabian</Copyright>
     <Description>.NET helper classes for modular and reactive applications</Description>
     <PackageTags>modular reactive applications</PackageTags>
-    <Version>1.4.0</Version>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <PackageReleaseNotes>- Enumerable extensions Do, ForEach, Consume
-- Data access layer contracts IRepository&lt;TEntity&gt;, IDataContext
-- DomainEntity&lt;TKey&gt; : IDomainEntity&lt;TKey&gt; - generic key</PackageReleaseNotes>
+    <Version>1.5.0</Version>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
