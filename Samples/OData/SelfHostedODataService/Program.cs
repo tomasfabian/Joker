@@ -1,8 +1,10 @@
-﻿using Joker.OData.Hosting;
+﻿using System;
+using Joker.OData.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SelfHostedODataService.HostedServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace SelfHostedODataService
 {
@@ -17,9 +19,26 @@ namespace SelfHostedODataService
           services.AddHostedService<SqlTableDependencyProviderHostedService>();
         }
       };
+      
+      ConfigureLogging();
 
-      await new ODataHost<StartupBaseWithOData>().RunAsync(args, startupSettings);
+      await new ODataHost().RunAsync(args, startupSettings);
     }
+
+    private static void ConfigureLogging()
+    {
+      var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+      Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .WriteTo.Console()
+        .WriteTo.File($@"{baseDir}\logs\{nameof(ODataHost)}_.txt", rollingInterval: RollingInterval.Day)
+        .CreateLogger();
+
+      Log.Information("Hello, world!");
+    }
+
+    #region IISODataWebHostConfig example
 
     private static ODataWebHostConfig ODataStartupConfigExample()
     {
@@ -36,5 +55,7 @@ namespace SelfHostedODataService
 
       return startupSettings;
     }
+
+    #endregion
   }
 }

@@ -34,3 +34,6 @@ Breaking changes:
 
 - ODataStartup namespace Joker.OData changed to Joker.OData.Startup
 - Repository and ReadOnlyRepository were moved to Joker.EntityFramework.Repositories
+
+1.2.0
+- ErrorLoggerMiddleware

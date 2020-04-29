@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Joker.Disposables;
 using Joker.OData.Batch;
+using Joker.OData.Middleware.Logging;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -192,10 +193,17 @@ namespace Joker.OData.Startup
 
     #region RegisterMiddleWares
 
-    protected void RegisterMiddleWares(IApplicationBuilder app)
+    private void RegisterMiddleWares(IApplicationBuilder app)
     {
       if(ODataStartupSettings.EnableODataBatchHandler)
         app.UseODataBatching();
+
+      OnRegisterMiddleWares(app);
+    }
+
+    protected virtual void OnRegisterMiddleWares(IApplicationBuilder app)
+    {
+      app.UseMiddleware<ErrorLoggerMiddleware>();
     }
 
     #endregion

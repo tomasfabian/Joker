@@ -32,6 +32,7 @@ using Joker.OData.Extensions.OData;
 using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -102,6 +103,11 @@ namespace SelfHostedODataService
       var batchHandler = (TransactionScopeODataBatchHandler)base.OnCreateODataBatchHandler();
 
       return batchHandler;
+    }
+
+    protected override void OnRegisterMiddleWares(IApplicationBuilder app)
+    {
+      base.OnRegisterMiddleWares(app);
     }
   }
 }
