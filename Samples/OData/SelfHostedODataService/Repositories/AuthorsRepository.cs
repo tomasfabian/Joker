@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
-using Joker.OData.Repositories;
+using Joker.EntityFramework.Repositories;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 

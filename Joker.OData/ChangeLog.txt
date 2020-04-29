@@ -33,3 +33,4 @@ Breaking changes:
 - IISHostedODataStartupConfig was renamed to IISODataWebHostConfig
 
 - ODataStartup namespace Joker.OData changed to Joker.OData.Startup
+- Repository and ReadOnlyRepository were moved to Joker.EntityFramework.Repositories

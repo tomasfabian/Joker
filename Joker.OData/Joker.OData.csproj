@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
     <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 

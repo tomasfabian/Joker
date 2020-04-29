@@ -42,3 +42,8 @@ Added:
 
 - Data access layer contracts IRepository<TEntity>, IDataContext
 - DomainEntity<TKey> : IDomainEntity<TKey> - generic key
+
+1.5
+Added:
+- IDbTransaction
+- IDbTransactionFactory

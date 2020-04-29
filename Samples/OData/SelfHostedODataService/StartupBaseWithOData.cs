@@ -86,7 +86,7 @@ namespace SelfHostedODataService
 
       return oDataModelBuilder;
     }
-
+    
     private void ConfigureNLog()
     {
       var config = new LoggingConfiguration();
@@ -104,6 +104,8 @@ namespace SelfHostedODataService
 
     protected override void OnConfigureServices(IServiceCollection services)
     {
+      base.OnConfigureServices(services);
+
       ConfigureNLog();
     }
 

@@ -3,7 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using Joker.Contracts.Data;
 
-namespace Joker.OData.Repositories
+namespace Joker.EntityFramework.Repositories
 {
   public abstract class ReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity>
     where TEntity : class

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
   </ItemGroup>

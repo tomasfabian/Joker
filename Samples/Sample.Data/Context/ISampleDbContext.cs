@@ -4,7 +4,7 @@ using Sample.Domain.Models;
 
 namespace Sample.Data.Context
 {
-  public interface ISampleDbContext : IContext
+  public interface ISampleDbContext : IContext, IDbTransactionFactory
   {
     IDbSet<Product> Products { get; set; }
 

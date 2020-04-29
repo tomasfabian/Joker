@@ -1,9 +1,12 @@
-﻿using System.Data.Entity;
+﻿using System.Data;
+using System.Data.Entity;
+using Joker.Contracts.Data;
+using Joker.EntityFramework.Database;
 using Sample.Domain.Models;
 
 namespace Sample.Data.Context
 {
-  public class SampleDbContext : DbContext, ISampleDbContext
+  public class SampleDbContext : DbContextBase, ISampleDbContext
   {
     #region Constructors
 
