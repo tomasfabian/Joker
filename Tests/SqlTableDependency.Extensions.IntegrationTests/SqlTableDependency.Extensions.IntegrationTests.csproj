@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
     <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
     <ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
