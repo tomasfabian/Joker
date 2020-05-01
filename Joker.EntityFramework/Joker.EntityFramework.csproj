@@ -2,7 +2,7 @@
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;$(NetCoreVersion);$(DotNetFrameworkVersion)</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;$(NetCoreVersion)</TargetFrameworks>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>

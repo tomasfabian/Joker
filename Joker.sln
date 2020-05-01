@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.MVVM", "Joker.MVVM\Jo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker", "Joker\Joker.csproj", "{90895AFE-4199-45D7-926D-12C0B8FDD5E3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Joker", "Joker", "{F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Joker.Libs", "Joker.Libs", "{F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Redis", "Joker.Redis\Joker.Redis.csproj", "{F6C30F54-6947-4CA9-B2E3-2B5A81FF42D4}"
 EndProject
@@ -45,7 +45,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.OData", "Joker.OData\Joker.OData.csproj", "{11097D7F-143B-4971-AA5F-E79C5A736AAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Joker.EntityFramework", "Joker.EntityFramework\Joker.EntityFramework.csproj", "{B75986F5-B43E-46CD-BE42-B3D703694FD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.EntityFramework", "Joker.EntityFramework\Joker.EntityFramework.csproj", "{B75986F5-B43E-46CD-BE42-B3D703694FD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

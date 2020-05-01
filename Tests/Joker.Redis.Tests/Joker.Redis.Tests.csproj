@@ -18,8 +18,8 @@
   <Import Project="..\..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
