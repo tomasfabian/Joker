@@ -78,10 +78,5 @@ namespace SelfHostedODataService
 
       return batchHandler;
     }
-
-    protected override void OnRegisterMiddleWares(IApplicationBuilder app)
-    {
-      base.OnRegisterMiddleWares(app);
-    }
   }
 }

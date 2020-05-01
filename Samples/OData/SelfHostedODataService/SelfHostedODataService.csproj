@@ -9,14 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Joker.OData" Version="1.1.0" />
+    <PackageReference Include="Joker.Redis" Version="1.3.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" />
-    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" />
-    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <!-- <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" /> -->
+    <!-- <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" /> -->
+    <!-- <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" /> -->
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>

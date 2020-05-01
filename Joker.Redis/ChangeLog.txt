@@ -16,3 +16,6 @@ added:
 
 changed:
 - DomainEntitiesSubscriber IPublisher<> ctor dependency changed to IPublisherWithStatus<>
+
+1.3.0
+- SqlTableDependency.Extensions 2.3.2 - ISqlTableDependencyProviderEvents interface
