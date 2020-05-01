@@ -3,7 +3,7 @@ Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.4.0
+Install-Package Joker.MVVM -Version 1.4.1
 
 # Joker OData:
 Plumbing code for OData web services. Support for batching and end points. Please help out the community by sharing your suggestions and code improvements:
@@ -23,11 +23,11 @@ Please use data streaming and process it with the help of reactive programming a
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
-Install-Package SqlTableDependency.Extensions -Version 2.3.1
+Install-Package SqlTableDependency.Extensions -Version 2.3.2
 
 or
 
-dotnet add package SqlTableDependency.Extensions --version 2.3.1
+dotnet add package SqlTableDependency.Extensions --version 2.3.2
 
 ## See:
 Following package is based on christiandelbianco's SqlTableDependency:
@@ -174,7 +174,7 @@ namespace SqlTableDependency.Extensions.Sample
 # Joker.Redis
 SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
 
-Install-Package Joker.Redis -Version 1.2.0
+Install-Package Joker.Redis -Version 1.3.0
 
 Download and run redis-server (https://redis.io/download) or use Docker (see above).
 
