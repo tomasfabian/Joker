@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+  <PropertyGroup>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
+  <ItemGroup>
+    <Compile Include="..\..\..\Samples\Sample.Domain\Models\Product.cs" Link="Models\Product.cs" />
+    <Compile Include="..\..\..\Samples\Sample.Domain\Models\ProductWithTableAttribute.cs" Link="Models\ProductWithTableAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>

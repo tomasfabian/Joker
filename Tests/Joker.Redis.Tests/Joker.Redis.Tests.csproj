@@ -20,8 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
     <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
-    <ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\Data\Sample.Domain\Domain.Tests.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 
