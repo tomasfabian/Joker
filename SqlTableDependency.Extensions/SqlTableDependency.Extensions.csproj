@@ -14,7 +14,7 @@
     <Version>2.3.2</Version>
     <PackageReleaseNotes>- added TableName to SqlTableDependencySettings&lt;TEntity&gt;
 - SqlTableDependencyProvider is not abstract anymore</PackageReleaseNotes>
-    <AssemblyVersion>2.3.1.0</AssemblyVersion>
+    <AssemblyVersion>2.3.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
@@ -38,6 +38,9 @@
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>SqlTableDependency.Extensions.IntegrationTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>SqlTableDependency.Extensions.IntegrationTests.Dev</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 </Project>
