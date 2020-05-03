@@ -35,5 +35,9 @@ Breaking changes:
 - ODataStartup namespace Joker.OData changed to Joker.OData.Startup
 - Repository and ReadOnlyRepository were moved to Joker.EntityFramework.Repositories
 
-1.2.0
+1.1.0
 - ErrorLoggerMiddleware
+
+1.2.0
+Breaking change:
+- ODataControllerBase Delete - added support for different key types. OnDelete parameter int key was changed to object[] keys 

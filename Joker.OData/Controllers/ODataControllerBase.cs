@@ -99,9 +99,11 @@ namespace Joker.OData.Controllers
 
     #region Delete
 
-    public async Task<IActionResult> Delete([FromODataUri] int key)
+    public async Task<IActionResult> Delete()
     {
-      var result = await OnDelete(key);
+      var keys = GetKeysFromPath();
+
+      var result = await OnDelete(keys);
 
       return StatusCode((int)HttpStatusCode.NoContent);
     }
@@ -110,9 +112,9 @@ namespace Joker.OData.Controllers
 
     #region OnDelete
 
-    protected virtual Task<int> OnDelete(int key)
+    protected virtual Task<int> OnDelete(params object[] keys)
     {
-      repository.Remove(key);
+      repository.Remove(keys);
 
       return repository.SaveChangesAsync();
     }
