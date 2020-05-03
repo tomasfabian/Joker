@@ -10,5 +10,6 @@ namespace Sample.Data.Context
 
     IDbSet<Book> Books { get; set; }
     IDbSet<Author> Authors { get; set; }
+    IDbSet<Publisher> Publishers { get; set; }
   }
 }

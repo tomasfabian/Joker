@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Joker.Domain;
 using Microsoft.OData.Client;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sample.Domain.Models
 {
-  [Key(nameof(Id))]
+  [Microsoft.OData.Client.Key(nameof(Id))]
   public class Book : DomainEntity<string>
   {
     public Book()
@@ -15,7 +16,13 @@ namespace Sample.Domain.Models
     public string Title { get; set; }    
 
     public List<Author> Authors { get; set; }
-    
+
+    public Publisher Publisher { get; set; }
+
+    public int? PublisherId1 { get; set; }
+
+    public int? PublisherId2 { get; set; }
+
     public Book Clone()
     {
       return MemberwiseClone() as Book;

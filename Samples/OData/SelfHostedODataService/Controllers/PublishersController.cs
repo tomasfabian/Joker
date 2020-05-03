@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using Joker.Contracts.Data;
 using Joker.OData.Controllers;
 using Sample.Data.Context;
@@ -7,11 +6,11 @@ using Sample.Domain.Models;
 
 namespace SelfHostedODataService.Controllers
 {
-  public class BooksController : ODataControllerBase<Book>
+  public class PublishersController : ODataControllerBase<Publisher>
   {
     private readonly ISampleDbContext dbContext;
 
-    public BooksController(IRepository<Book> repository, ISampleDbContext dbContext)
+    public PublishersController(IRepository<Publisher> repository, ISampleDbContext dbContext)
       : base(repository)
     {
       this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -19,8 +18,8 @@ namespace SelfHostedODataService.Controllers
 
     protected override dynamic TryGetDbSet(Type entityType)
     {
-      if (entityType == typeof(Publisher))
-        return dbContext.Publishers;
+      if (entityType == typeof(Book))
+        return dbContext.Books;
       
       return base.TryGetDbSet(entityType);
     }

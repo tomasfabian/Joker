@@ -32,6 +32,8 @@ namespace Sample.Data.Migrations
 
       context.Authors.AddOrUpdate(c => c.LastName, new Author {Timestamp = DateTime.Now, LastName = "Sheldrake"});
 
+      context.Publishers.AddOrUpdate(c => new { c.PublisherId1, c.PublisherId2 }, new Publisher { PublisherId1 = 1, PublisherId2 = 0, Title = "Publisher" });
+
       context.SaveChanges();
     }
   }

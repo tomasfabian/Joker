@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Data.Entity;
 using Joker.Contracts.Data;
 using Joker.EntityFramework.Database;
@@ -22,6 +23,9 @@ namespace Sample.Data.Context
       //Add-Migration Products_Version -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
       //Update-Database -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data -verbose
       //Update - Database
+      
+      //Rollback
+      //Update-Database -TargetMigration:"Books_And_Authors" -ConnectionString "Server=127.0.0.1,1401;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Test;" -ConnectionProviderName "System.Data.SqlClient" -ProjectName Sample.Data.Dev -verbose
     }
 
     public SampleDbContext(string nameOrConnectionString)
@@ -65,11 +69,25 @@ namespace Sample.Data.Context
         .HasIndex(b => b.LastName)
         .IsUnique()
         .HasName($"UX_{nameof(Author)}_{nameof(Author.LastName)}");
+
+      modelBuilder.Entity<Publisher>()
+        .HasKey(c => new {c.PublisherId1, c.PublisherId2});
+
+      modelBuilder
+        .Entity<Publisher>()
+        .Property(e => e.PublisherId1)
+        .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+      modelBuilder.Entity<Book>()
+        .HasOptional(p => p.Publisher)
+        .WithMany(c => c.Books)
+        .HasForeignKey(p => new {p.PublisherId1, p.PublisherId2});
     }
 
     public IDbSet<Product> Products { get; set; }
 
     public IDbSet<Book> Books { get; set; }
     public IDbSet<Author> Authors { get; set; }
+    public IDbSet<Publisher> Publishers { get; set; }
   }
 }

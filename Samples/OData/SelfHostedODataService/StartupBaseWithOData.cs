@@ -32,6 +32,9 @@ namespace SelfHostedODataService
       oDataModelBuilder.EntitySet<Product>("Products");
       oDataModelBuilder.AddPluralizedEntitySet<Book>();
       oDataModelBuilder.AddPluralizedEntitySet<Author>();
+      oDataModelBuilder.AddPluralizedEntitySet<Publisher>();
+      
+      oDataModelBuilder.EntityType<Publisher>().HasKey(c => new {c.PublisherId1, c.PublisherId2});
 
       return oDataModelBuilder;
     }

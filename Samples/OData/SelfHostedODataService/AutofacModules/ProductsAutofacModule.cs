@@ -66,6 +66,10 @@ namespace SelfHostedODataService.AutofacModules
       builder.RegisterType<BooksRepository>()
         .As<IRepository<Book>, IReadOnlyRepository<Book>>()
         .InstancePerLifetimeScope();
+
+      builder.RegisterType<PublishersRepository>()
+        .As<IRepository<Publisher>>()
+        .InstancePerLifetimeScope();
     }
   }
 }

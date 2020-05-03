@@ -2,7 +2,7 @@
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;$(NetCoreVersion)</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;$(NetCoreVersion);net472</TargetFrameworks>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>
@@ -16,6 +16,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <PackageReleaseNotes>- DbContextTransaction transaction wrapper
 - DbContextBase</PackageReleaseNotes>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
