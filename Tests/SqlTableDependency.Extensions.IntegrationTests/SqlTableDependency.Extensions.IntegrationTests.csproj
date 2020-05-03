@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-     <PackageReference Include="Joker.OData" Version="1.1.0" /> 
+     <PackageReference Include="Joker.OData" Version="1.2.0" /> 
      <PackageReference Include="Joker.MVVM" Version="1.4.1" /> 
      <PackageReference Include="Joker.Redis" Version="1.3.0" /> 
   </ItemGroup>
