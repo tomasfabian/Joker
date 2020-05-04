@@ -10,6 +10,7 @@ using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData.UriParser;
+using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
 
 namespace Joker.OData.Controllers
 {
@@ -37,13 +38,13 @@ namespace Joker.OData.Controllers
 
     public SelectExpandQueryValidator SelectExpandQueryValidator { get; set; }
 
-    public int MaxExpansionDepth { get; set; }
-
     #endregion
 
-    #region Get
+    #region Methods
 
-    [EnableQuery(MaxExpansionDepth = 3)]
+    #region Get
+    
+    [EnableQuery]
     public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
     {
       AuthenticateQuery(queryOptions);
@@ -95,7 +96,7 @@ namespace Joker.OData.Controllers
       return value;
     }
 
-    protected object[] GetKeysFromPath(Microsoft.AspNet.OData.Routing.ODataPath odataPath)
+    protected object[] GetKeysFromPath(ODataPath odataPath)
     {
       var keySegment = odataPath.Segments.OfType<KeySegment>().FirstOrDefault();
       if (keySegment == null)
@@ -121,18 +122,20 @@ namespace Joker.OData.Controllers
 
     #endregion
 
+    #region AuthenticateQuery
+
     private void AuthenticateQuery(ODataQueryOptions<TEntity> queryOptions)
     {
       ValidateQueryOptions(queryOptions);
     }
+
+    #endregion
 
     #region ValidateQueryOptions
 
     protected void ValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
     {
       OnValidateQueryOptions(queryOptions);
-
-      queryOptions.Validate(new ODataValidationSettings { MaxExpansionDepth = MaxExpansionDepth });
     }
 
     #endregion
@@ -142,15 +145,28 @@ namespace Joker.OData.Controllers
     protected virtual void OnValidateQueryOptions(ODataQueryOptions<TEntity> queryOptions)
     {
       if (SelectExpandQueryValidator != null && queryOptions.SelectExpand != null)
-      {
         queryOptions.SelectExpand.Validator = SelectExpandQueryValidator;
-      }
 
       if (FilterQueryValidator != null && queryOptions.Filter != null)
-      {
         queryOptions.Filter.Validator = FilterQueryValidator;
-      }
+
+      var oDataValidationSettings = OnCreateODataValidationSettings();
+
+      queryOptions.Validate(oDataValidationSettings);
     }
+
+    #endregion
+
+    #region OnCreateODataValidationSettings
+
+    protected virtual ODataValidationSettings OnCreateODataValidationSettings()
+    {
+      var oDataValidationSettings = new ODataValidationSettings();
+
+      return oDataValidationSettings;
+    }
+
+    #endregion
 
     #endregion
   }

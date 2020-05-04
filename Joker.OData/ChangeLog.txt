@@ -41,3 +41,8 @@ Breaking changes:
 1.2.0
 Breaking change:
 - ODataControllerBase Delete - added support for different key types. OnDelete parameter int key was changed to object[] keys 
+
+1.3.0
+- added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
+Breaking change:
+- ReadOnlyODataController.MaxExpansionDepth property was removed
