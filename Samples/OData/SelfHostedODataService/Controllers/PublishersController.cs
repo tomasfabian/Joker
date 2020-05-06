@@ -25,19 +25,19 @@ namespace SelfHostedODataService.Controllers
       return base.TryGetDbSet(entityType);
     }
 
-    protected override ODataValidationSettings OnCreateODataValidationSettings()
-    {
-      var oDataValidationSettings = base.OnCreateODataValidationSettings();
+    //protected override ODataValidationSettings OnCreateODataValidationSettings()
+    //{
+    //  var oDataValidationSettings = base.OnCreateODataValidationSettings();
 
-      oDataValidationSettings.MaxExpansionDepth = 3; //default is 2
+    //  oDataValidationSettings.MaxExpansionDepth = 3; //default is 2
 
-      oDataValidationSettings.AllowedQueryOptions = //disabled AllowedQueryOptions.Format
-        AllowedQueryOptions.Apply | AllowedQueryOptions.SkipToken | AllowedQueryOptions.Count
-        | AllowedQueryOptions.Skip | AllowedQueryOptions.Top | AllowedQueryOptions.OrderBy
-        | AllowedQueryOptions.Select | AllowedQueryOptions.Expand | AllowedQueryOptions.Filter;
+    //  oDataValidationSettings.AllowedQueryOptions = //disabled AllowedQueryOptions.Format
+    //    AllowedQueryOptions.Apply | AllowedQueryOptions.SkipToken | AllowedQueryOptions.Count
+    //    | AllowedQueryOptions.Skip | AllowedQueryOptions.Top | AllowedQueryOptions.OrderBy
+    //    | AllowedQueryOptions.Select | AllowedQueryOptions.Expand | AllowedQueryOptions.Filter;
 
 
-      return oDataValidationSettings;
-    }
+    //  return oDataValidationSettings;
+    //}
   }
 }
