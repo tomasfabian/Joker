@@ -1,6 +1,7 @@
 ﻿using System;
 using Joker.Contracts.Data;
 using Joker.OData.Controllers;
+using Microsoft.AspNet.OData.Query;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
@@ -22,6 +23,21 @@ namespace SelfHostedODataService.Controllers
         return dbContext.Books;
       
       return base.TryGetDbSet(entityType);
+    }
+
+    protected override ODataValidationSettings OnCreateODataValidationSettings()
+    {
+      var oDataValidationSettings = base.OnCreateODataValidationSettings();
+
+      oDataValidationSettings.MaxExpansionDepth = 3; //default is 2
+
+      oDataValidationSettings.AllowedQueryOptions = //disabled AllowedQueryOptions.Format
+        AllowedQueryOptions.Apply | AllowedQueryOptions.SkipToken | AllowedQueryOptions.Count
+        | AllowedQueryOptions.Skip | AllowedQueryOptions.Top | AllowedQueryOptions.OrderBy
+        | AllowedQueryOptions.Select | AllowedQueryOptions.Expand | AllowedQueryOptions.Filter;
+
+
+      return oDataValidationSettings;
     }
   }
 }
