@@ -232,3 +232,4 @@ SqlTableDependency.Extensions/SqlTableDependency.Extensions.nuspec
 /Joker.Dev.sln
 /Tests/IntegrationTests/IntegrationTests.Dev.csproj
 /Samples/OData/OData.Client/OData.Client.Dev.csproj
+/Samples/Sample.DataCore/Sample.DataCore.Dev.csproj
