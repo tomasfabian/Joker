@@ -47,3 +47,7 @@ Added:
 Added:
 - IDbTransaction
 - IDbTransactionFactory
+
+1.6
+Breaking change:
+IContext.SaveChangesAsync added parameter cancellationToken

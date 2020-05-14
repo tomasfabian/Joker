@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity.Migrations;
+using System.Threading;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
 
@@ -38,9 +39,9 @@ namespace Joker.EntityFramework.Repositories
       DbSet.Remove(entity);
     }
 
-    public Task<int> SaveChangesAsync()
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-      return context.SaveChangesAsync();
+      return context.SaveChangesAsync(cancellationToken);
     }
   }
 }
