@@ -37,6 +37,7 @@ namespace Joker.OData.Startup
       Configuration = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
         .AddEnvironmentVariables()
+        .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true)
         .Build();
     }
 

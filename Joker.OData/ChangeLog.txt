@@ -46,3 +46,6 @@ Breaking change:
 - added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
 Breaking change:
 - ReadOnlyODataController.MaxExpansionDepth property was removed
+
+1.4.0
+- added optional appsettings.json configuration
