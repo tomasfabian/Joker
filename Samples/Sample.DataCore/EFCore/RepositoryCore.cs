@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
 
@@ -37,9 +38,9 @@ namespace Sample.DataCore.EFCore
       DbSet.Remove(entity);
     }
 
-    public Task<int> SaveChangesAsync()
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-      return context.SaveChangesAsync();
+      return context.SaveChangesAsync(cancellationToken);
     }
   }
 }

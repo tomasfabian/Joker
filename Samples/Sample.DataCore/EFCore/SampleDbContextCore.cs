@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Sample.Domain.Models;
 
 namespace Sample.DataCore.EFCore
@@ -7,58 +9,101 @@ namespace Sample.DataCore.EFCore
   {
     #region Constructors
 
-    public SampleDbContextCore(DbContextOptions<SampleDbContextCore> options) 
-      : base(options)
+    public SampleDbContextCore()
     {
-      // Database.EnsureCreated();
     }
 
+    public SampleDbContextCore(DbContextOptions<SampleDbContextCore> options)
+      : base(options)
+    {
+    }
+
+    // Database.EnsureCreated();
+
+    //Install-Package Microsoft.EntityFrameworkCore.Tools
+    //add reference to Microsoft.EntityFrameworkCore.SqlServer
+    //add Microsoft.EntityFrameworkCore.Design reference to startup project
+    //set package manager console default project to Sample.DataCore.Dev
+    //set SelfHostedODataService.EFCore.Dev.csproj as startup project
+    //Add-Migration TestDb -verbose
+    //Update-Database
+
     #endregion
+
+    #region Properties
+
+    public override ChangeTracker ChangeTracker
+    {
+      get
+      {
+        var changeTracker = base.ChangeTracker;
+          
+        changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+        return changeTracker;
+      }
+    }
+
+    public DbSet<Product> Products { get; set; }
+
+    //public DbSet<Book> Books { get; set; }
+    //public DbSet<Author> Authors { get; set; }
+    //public DbSet<Publisher> Publishers { get; set; }
+
+    #endregion
+
+    #region Methods
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
 
       modelBuilder.Entity<Product>()
-        .Property(f => f.Timestamp);
-        // .HasColumnType("datetime2")
-        // .HasPrecision(0);
+        .Property(f => f.Timestamp)
+        .HasDefaultValueSql("getdate()");;
 
-      modelBuilder.Entity<Book>()
-        .Property(f => f.Timestamp);
+      modelBuilder.Entity<Product>().HasData(
+        new Product { Id = -1, Name = "Test"});
 
-      modelBuilder.Entity<Author>()
-        .Property(f => f.Timestamp);
+      //TODO: many-to-many with join table
+      //modelBuilder.Entity<Book>()
+      //  .Property(f => f.Timestamp);
 
-      modelBuilder.Entity<Author>()
-        .Property(c => c.LastName)
-        .HasMaxLength(128)
-        .IsRequired();
+      //modelBuilder.Entity<Author>()
+      //  .Property(f => f.Timestamp);
 
-      modelBuilder.Entity<Author>()
-        .HasIndex(b => b.LastName)
-        .IsUnique();
+      //modelBuilder.Entity<Author>()
+      //  .Property(c => c.LastName)
+      //  .HasMaxLength(128)
+      //  .IsRequired();
 
-      modelBuilder.Entity<Publisher>()
-        .HasKey(c => new { c.PublisherId1, c.PublisherId2 });
+      //modelBuilder.Entity<Author>()
+      //  .HasIndex(b => b.LastName)
+      //  .IsUnique();
 
-      modelBuilder
-        .Entity<Publisher>()
-        .Property(e => e.PublisherId1)
-        .ValueGeneratedOnAdd();
-        // .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+      //modelBuilder.Entity<Publisher>()
+      //  .HasKey(c => new { c.PublisherId1, c.PublisherId2 });
 
-      modelBuilder.Entity<Book>()
-        // .HasOptional(p => p.Publisher)
-        .HasOne(p => p.Publisher)
-        .WithMany(c => c.Books)
-        .HasForeignKey(p => new { p.PublisherId1, p.PublisherId2 });
+      //modelBuilder
+      //  .Entity<Publisher>()
+      //  .Property(e => e.PublisherId1)
+      //  .ValueGeneratedOnAdd();
+      //// .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+      //modelBuilder.Entity<Book>()
+      //  // .HasOptional(p => p.Publisher)
+      //  .HasOne(p => p.Publisher)
+      //  .WithMany(c => c.Books)
+      //  .HasForeignKey(p => new { p.PublisherId1, p.PublisherId2 });
     }
 
-    public DbSet<Product> Products { get; set; }
+    public Joker.Contracts.Data.IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
+    {
+      var dbContextTransaction = Database.BeginTransaction(isolationLevel);
 
-    public DbSet<Book> Books { get; set; }
-    public DbSet<Author> Authors { get; set; }
-    public DbSet<Publisher> Publishers { get; set; }
+      return new DbTransaction(dbContextTransaction);
+    }
+
+    #endregion
   }
 }

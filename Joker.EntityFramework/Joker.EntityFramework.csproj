@@ -11,11 +11,10 @@
     <Description>Entity Framework extensions</Description>
     <PackageTags>Entity Framework extensions</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>- DbContextTransaction transaction wrapper
-- DbContextBase</PackageReleaseNotes>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
