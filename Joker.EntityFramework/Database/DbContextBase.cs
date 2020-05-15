@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using Joker.Contracts.Data;
+using IDbTransaction = Joker.Contracts.Data.IDbTransaction;
 
 namespace Joker.EntityFramework.Database
 {
@@ -92,11 +93,15 @@ namespace Joker.EntityFramework.Database
 
     #endregion
 
-    public Joker.Contracts.Data.IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
+    #region Methods
+
+    public IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
     {
       var dbContextTransaction = Database.BeginTransaction(isolationLevel);
 
       return new DbTransaction(dbContextTransaction);
     }
+
+    #endregion
   }
 }

@@ -3,3 +3,6 @@
 - DbContextBase
 - DesignTimeDbContextFactory
 - Repository and ReadOnlyRepository
+
+1.1.0
+- fix added DbContextBase constructors
