@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Sample.DataCore.EFCore
+namespace Joker.EntityFrameworkCore.DesignTime
 {
   public abstract class DesignTimeDbContextFactory<TContext> : IDesignTimeDbContextFactory<TContext> 
     where TContext : DbContext
@@ -21,7 +21,7 @@ namespace Sample.DataCore.EFCore
  
       var builder = new DbContextOptionsBuilder<TContext>();
  
-      var connectionString = configuration.GetConnectionString("FargoEntities");
+      var connectionString = configuration.GetConnectionString(ConnectionStringName);
  
       builder.UseSqlServer(connectionString);
 
@@ -29,5 +29,7 @@ namespace Sample.DataCore.EFCore
     }
 
     protected abstract TContext Create(DbContextOptions<TContext> options);
+
+    public string ConnectionStringName { get; protected set; } = "DefaultConnection";
   }
 }

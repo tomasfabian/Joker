@@ -1,8 +1,12 @@
-﻿1.0.0
+﻿1.1.0
+- fix added DbContextBase constructors
+- DesignTimeDbContextFactory namespace fix - Joker.EntityFrameworkCore.DesignTime 
+
+Added:
+- DesignTimeDbContextFactory.ConnectionStringName initially set to "DefaultConnection"
+
+1.0.0
 - DbTransaction transaction wrapper
 - DbContextBase
 - DesignTimeDbContextFactory
 - Repository and ReadOnlyRepository
-
-1.1.0
-- fix added DbContextBase constructors
