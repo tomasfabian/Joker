@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Data.Entity;
+using Joker.EntityFramework.Repositories;
+using Sample.Data.Context;
 using Sample.Domain.Models;
 
-namespace SelfHostedODataService.EFCore.Repositories
+namespace Sample.Data.Repositories
 {
-  public class PublishersRepository : RepositoryCore<Publisher>
+  public class PublishersRepository : Repository<Publisher>
   {
     private readonly ISampleDbContext context;
 
@@ -13,6 +16,6 @@ namespace SelfHostedODataService.EFCore.Repositories
       this.context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    protected override DbSet<Publisher> DbSet => context.Publishers;
+    protected override IDbSet<Publisher> DbSet => context.Publishers;
   }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sample.DataCore.EFCore;
 
-namespace Sample.DataCore.Dev.DesignTime
+namespace Sample.DataCore.DesignTime
 {
   public class DesignTimeDbContextFactory : DesignTimeDbContextFactory<SampleDbContextCore>
   {

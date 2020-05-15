@@ -7,11 +7,11 @@ using Joker.Factories.Schedulers;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.SqlTableDependency;
 using Sample.Data.Context;
+using Sample.Data.Repositories;
 using Sample.Data.SqlTableDependencyProvider;
 using Sample.Domain.Models;
 using SelfHostedODataService.Configuration;
 using SelfHostedODataService.Redis;
-using SelfHostedODataService.Repositories;
 using SqlTableDependency.Extensions;
 
 namespace SelfHostedODataService.AutofacModules

@@ -7,11 +7,11 @@ using Joker.Factories.Schedulers;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.SqlTableDependency;
 using Sample.Data.SqlTableDependencyProvider;
+using Sample.DataCore.Repositories;
 using Sample.DataCore.EFCore;
 using Sample.Domain.Models;
 using SelfHostedODataService.EFCore.Configuration;
 using SelfHostedODataService.EFCore.Redis;
-using SelfHostedODataService.EFCore.Repositories;
 using SqlTableDependency.Extensions;
 
 namespace SelfHostedODataService.EFCore.AutofacModules

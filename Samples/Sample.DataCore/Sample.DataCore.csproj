@@ -36,4 +36,10 @@
     <Folder Include="SqlTableDependencyProvider\" />
     <Compile Include="..\Sample.Data\SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" Link="SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Repositories\AuthorsRepository.cs" />
+    <Compile Remove="Repositories\BooksRepository.cs" />
+    <Compile Remove="Repositories\PublishersRepository.cs" />
+  </ItemGroup>
 </Project>

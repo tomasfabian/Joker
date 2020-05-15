@@ -4,18 +4,18 @@ using Joker.EntityFramework.Repositories;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
-namespace SelfHostedODataService.Repositories
+namespace Sample.Data.Repositories
 {
-  public class BooksRepository : Repository<Book>
+  public class ProductsRepository : Repository<Product>
   {
     private readonly ISampleDbContext context;
 
-    public BooksRepository(ISampleDbContext context) 
+    public ProductsRepository(ISampleDbContext context) 
       : base(context)
     {
       this.context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    protected override IDbSet<Book> DbSet => context.Books;
+    protected override IDbSet<Product> DbSet => context.Products;
   }
 }

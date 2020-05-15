@@ -19,10 +19,8 @@ namespace OData.Client
 
       await AddLink_Then_DeleteLink_CompoundKey();
       await SetLink_ThenRemoveLink_ThenUpdate_ThenDelete_CompoundKey();
-
-      return;
-
-      await Batch_UniqueKeyViolation();
+      
+      //await Batch_UniqueKeyViolation();
 
       Console.ReadKey();
     }

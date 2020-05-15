@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Sample.DataCore.EFCore;
 using Sample.Domain.Models;
 
-namespace SelfHostedODataService.EFCore.Repositories
+namespace Sample.DataCore.Repositories
 {
   public class ProductsRepository : Repository<Product>
   {

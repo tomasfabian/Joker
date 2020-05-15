@@ -10,7 +10,7 @@ using Sample.Domain.Models;
 
 namespace Sample.DataCore.EFCore
 {
-  public class SampleDbContextCore : DbContext, ISampleDbContext
+  public class SampleDbContextCore : DbContextBase, ISampleDbContext
   {
     #region Constructors
 
@@ -19,15 +19,15 @@ namespace Sample.DataCore.EFCore
     }
 
     public SampleDbContextCore(DbContextOptions<SampleDbContextCore> options)
-      : base(options)
+      //: base(options) //TODO: uncomment Joker.EFCore 1.1 release
     {
     }
 
     //Install-Package Microsoft.EntityFrameworkCore.Tools
     //add reference to Microsoft.EntityFrameworkCore.SqlServer
     //add Microsoft.EntityFrameworkCore.Design reference to startup project
-    //set package manager console default project to Sample.DataCore.Dev
     //set SelfHostedODataService.EFCore.Dev.csproj as startup project
+    //set package manager console default project to Sample.DataCore.Dev
     //Add-Migration TestDb -verbose
     //Update-Database
 
@@ -40,7 +40,7 @@ namespace Sample.DataCore.EFCore
       get
       {
         var changeTracker = base.ChangeTracker;
-          
+
         changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         return changeTracker;
@@ -63,10 +63,10 @@ namespace Sample.DataCore.EFCore
 
       modelBuilder.Entity<Product>()
         .Property(f => f.Timestamp)
-        .HasDefaultValueSql("getdate()");;
+        .HasDefaultValueSql("getdate()"); ;
 
       modelBuilder.Entity<Product>().HasData(
-        new Product { Id = -1, Name = "Test"});
+        new Product { Id = -1, Name = "Test" });
 
       //TODO: many-to-many with join table
       //modelBuilder.Entity<Book>()
@@ -129,7 +129,7 @@ namespace Sample.DataCore.EFCore
 
       foreach (var entityEntry in entries)
       {
-        ((Product) entityEntry.Entity).Timestamp =
+        ((Product)entityEntry.Entity).Timestamp =
           DateTime.Now; // SQL Server GetDate() may be different in production use rather db trigger
       }
     }

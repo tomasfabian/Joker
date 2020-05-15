@@ -1,9 +1,12 @@
 ﻿using System;
+using Joker.EntityFrameworkCore.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Sample.DataCore.EFCore;
 using Sample.Domain.Models;
 
-namespace SelfHostedODataService.EFCore.Repositories
+namespace Sample.DataCore.Repositories
 {
-  public class AuthorsRepository : RepositoryCore<Author>
+  public class AuthorsRepository : Repository<Author>
   {
     private readonly ISampleDbContext context;
 

@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 using System.Data.Entity;
-using Joker.Contracts.Data;
 using Joker.EntityFramework.Database;
 using Sample.Domain.Models;
 
