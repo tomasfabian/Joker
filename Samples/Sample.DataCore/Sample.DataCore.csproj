@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker" Version="1.5.0" />
     <PackageReference Include="Joker.EntityFrameworkCore" Version="1.0.0" />
+    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,5 +30,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SqlTableDependencyProvider\" />
+    <Compile Include="..\Sample.Data\SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" Link="SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" />
   </ItemGroup>
 </Project>

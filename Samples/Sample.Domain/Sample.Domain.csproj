@@ -9,7 +9,7 @@
   <Import Project="..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker" Version="1.5.0" />
+    <PackageReference Include="Joker" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>

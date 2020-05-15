@@ -9,7 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.OData" Version="1.2.0" />
+    <Compile Remove="Controllers\AuthorsController.cs" />
+    <Compile Remove="Controllers\BooksController.cs" />
+    <Compile Remove="Controllers\PublishersController.cs" />
+    <Compile Remove="Repositories\AuthorsRepository.cs" />
+    <Compile Remove="Repositories\BooksRepository.cs" />
+    <Compile Remove="Repositories\PublishersRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Joker.OData" Version="1.3.0" />
     <PackageReference Include="Joker.Redis" Version="1.3.0" />
     <PackageReference Include="Joker.EntityFrameworkCore" Version="1.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />

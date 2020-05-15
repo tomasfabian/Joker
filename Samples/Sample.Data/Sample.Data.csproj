@@ -17,7 +17,7 @@
   <Import Project="..\..\NugetProjects\EntityFramework.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker.EntityFramework" Version="1.0.0" />
+    <PackageReference Include="Joker.EntityFramework" Version="1.1.0" />
     <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
     <PackageReference Include="NLog" Version="4.7.0" />
   </ItemGroup>
