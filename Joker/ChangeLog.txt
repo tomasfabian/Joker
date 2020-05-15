@@ -1,28 +1,25 @@
-﻿1.0.0
-- IVersion, IDomainEntity, IReactiveData
-- GenericEqualityComparer
-- DisposableObject
-- EntityChange, ChangeType
-- SchedulersFactory
-
-1.1.0
-- DomainEntity
-- DomainEntityComparer
-- added IPublisher interface to ReactiveData
-- GenericComparer
-- Sort and SortExtensions
-- SortedObservableCollection
-- added tracking of INotifyPropertyChanged for SortedObservableCollection reordering
-
-1.2.0
+﻿1.7
 Added:
-- DisposableExtensions
-- ReactiveDataWithStatus
-- VersionedTableDependencyStatus
-- IEntityChangePublisher
+- IDbContextWithTransactions
+- IAsyncDbTransaction
 
-Breaking changes:
-- IPublisher constraint IVersion was moved to IEntityChangePublisher
+1.6
+Breaking change:
+- IContext.SaveChangesAsync added parameter cancellationToken
+- added GetAllIncluding to IReadOnlyRepository<TEntity>
+
+1.5
+Added:
+- IDbTransaction
+- IDbTransactionFactory
+
+1.4
+Added:
+- SortedObservableCollection.SupportsRangeNotifications internal AddRange/RemoveRange 
+- Enumerable extensions Do, ForEach, Consume
+
+- Data access layer contracts IRepository<TEntity>, IDataContext
+- DomainEntity<TKey> : IDomainEntity<TKey> - generic key
 
 1.3
 Added:
@@ -35,24 +32,28 @@ Breaking changes:
 Bug fix:
 - SortedObservableCollection fixed incorrect reordering of items during property changed
 
-1.4
+1.2.0
 Added:
-- SortedObservableCollection.SupportsRangeNotifications internal AddRange/RemoveRange 
-- Enumerable extensions Do, ForEach, Consume
+- DisposableExtensions
+- ReactiveDataWithStatus
+- VersionedTableDependencyStatus
+- IEntityChangePublisher
 
-- Data access layer contracts IRepository<TEntity>, IDataContext
-- DomainEntity<TKey> : IDomainEntity<TKey> - generic key
+Breaking changes:
+- IPublisher constraint IVersion was moved to IEntityChangePublisher
 
-1.5
-Added:
-- IDbTransaction
-- IDbTransactionFactory
+1.1.0
+- DomainEntity
+- DomainEntityComparer
+- added IPublisher interface to ReactiveData
+- GenericComparer
+- Sort and SortExtensions
+- SortedObservableCollection
+- added tracking of INotifyPropertyChanged for SortedObservableCollection reordering
 
-1.6
-Breaking change:
-- IContext.SaveChangesAsync added parameter cancellationToken
-- added GetAllIncluding to IReadOnlyRepository<TEntity>
-
-1.7
-Added:
-- IDbContextWithTransactions
+1.0.0
+- IVersion, IDomainEntity, IReactiveData
+- GenericEqualityComparer
+- DisposableObject
+- EntityChange, ChangeType
+- SchedulersFactory

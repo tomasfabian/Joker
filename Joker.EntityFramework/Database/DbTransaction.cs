@@ -14,11 +14,17 @@ namespace Joker.EntityFramework.Database
       this.dbContextTransaction = dbContextTransaction ?? throw new ArgumentNullException(nameof(dbContextTransaction));
     }
 
+    /// <summary>
+    ///     Commits all changes made to the database in the current transaction.
+    /// </summary>
     public void Commit()
     {
       dbContextTransaction.Commit();
     }
 
+    /// <summary>
+    ///     Discards all changes made to the database in the current transaction.
+    /// </summary>
     public void Rollback()
     {
       dbContextTransaction.Rollback();

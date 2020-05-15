@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using Joker.Contracts.Data;
 using Microsoft.EntityFrameworkCore;
 using IDbTransaction = Joker.Contracts.Data.IDbTransaction;
@@ -38,6 +37,13 @@ namespace Joker.EntityFrameworkCore.Database
 
     #region Methods
 
+    /// <summary>
+    /// Begins a transaction on the underlying store connection using the specified isolation level
+    /// </summary>
+    /// <param name="isolationLevel">The database isolation level with which the underlying store transaction will be created</param>
+    /// <returns>
+    /// a <see cref="T:Joker.Contracts.Data.IDbTransaction" /> object wrapping access to the underlying store's transaction object
+    /// </returns>
     public IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
     {
       var dbContextTransaction = Database.BeginTransaction(isolationLevel);
