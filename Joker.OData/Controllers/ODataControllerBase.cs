@@ -6,7 +6,6 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -189,7 +188,7 @@ namespace Joker.OData.Controllers
     {      
       var keys = GetKeysFromPath();
       var keyPredicate = CreateKeysPredicate(keys);
-      var entity = GetAll().Include(navigationProperty).Where(keyPredicate).FirstOrDefault();
+      var entity = repository.GetAllIncluding(navigationProperty).Where(keyPredicate).FirstOrDefault();
 
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");

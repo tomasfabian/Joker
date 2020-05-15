@@ -19,7 +19,6 @@
     <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
-  <Import Project="..\NugetProjects\EntityFramework.csprojimport" />
   <Import Project="..\NugetProjects\Microsoft.OData.Client.csprojimport" />
   <Import Project="..\NugetProjects\Microsoft.AspNetCore.OData.csprojimport" />
 
@@ -28,10 +27,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
     <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 

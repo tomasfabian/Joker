@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Joker.EntityFrameworkCore.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Sample.Domain.Models;
@@ -17,8 +18,6 @@ namespace Sample.DataCore.EFCore
       : base(options)
     {
     }
-
-    // Database.EnsureCreated();
 
     //Install-Package Microsoft.EntityFrameworkCore.Tools
     //add reference to Microsoft.EntityFrameworkCore.SqlServer

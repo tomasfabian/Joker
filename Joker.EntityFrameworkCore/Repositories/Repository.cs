@@ -3,14 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
 
-namespace Sample.DataCore.EFCore
+namespace Joker.EntityFrameworkCore.Repositories
 {
-  public abstract class RepositoryCore<TEntity> : ReadOnlyRepositoryCore<TEntity>, IRepository<TEntity> 
+  public abstract class Repository<TEntity> : ReadOnlyRepository<TEntity>, IRepository<TEntity> 
     where TEntity : class
   {
     private readonly IContext context;
 
-    protected RepositoryCore(IContext context)
+    protected Repository(IContext context)
       : base(context)
     {
       this.context = context ?? throw new ArgumentNullException(nameof(context));
@@ -23,7 +23,7 @@ namespace Sample.DataCore.EFCore
 
     public void Update(TEntity entity)
     {
-      DbSet.Update(entity);//AddOrUpdate
+      DbSet.Update(entity);
     }
 
     public void Remove(params object[] keys)

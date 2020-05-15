@@ -49,3 +49,4 @@ Breaking change:
 
 1.4.0
 - added optional appsettings.json configuration
+- removed dependency EntityFramework

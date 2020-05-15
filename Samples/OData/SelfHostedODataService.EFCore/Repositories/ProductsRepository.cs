@@ -1,11 +1,12 @@
 ﻿using System;
+using Joker.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Sample.DataCore.EFCore;
 using Sample.Domain.Models;
 
 namespace SelfHostedODataService.EFCore.Repositories
 {
-  public class ProductsRepository : RepositoryCore<Product>
+  public class ProductsRepository : Repository<Product>
   {
     private readonly ISampleDbContext context;
 

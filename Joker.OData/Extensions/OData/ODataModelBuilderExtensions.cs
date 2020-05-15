@@ -1,11 +1,11 @@
-﻿using System.Data.Entity.Infrastructure.Pluralization;
-using Microsoft.AspNet.OData.Builder;
+﻿using Microsoft.AspNet.OData.Builder;
+using Pluralize.NET;
 
 namespace Joker.OData.Extensions.OData
 {
   public static class ODataModelBuilderExtensions
   {
-    private static readonly EnglishPluralizationService EnglishPluralizationService = new EnglishPluralizationService();
+    private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
 
     public static EntitySetConfiguration<TEntity> AddPluralizedEntitySet<TEntity>(this ODataModelBuilder oDataModelBuilder)
       where TEntity : class

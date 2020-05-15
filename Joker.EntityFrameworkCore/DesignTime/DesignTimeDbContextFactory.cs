@@ -6,24 +6,28 @@ using Microsoft.Extensions.Configuration;
 
 namespace Sample.DataCore.EFCore
 {
-  public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<SampleDbContextCore>
+  public abstract class DesignTimeDbContextFactory<TContext> : IDesignTimeDbContextFactory<TContext> 
+    where TContext : DbContext
   {
-    public SampleDbContextCore CreateDbContext(string[] args)
+    public TContext CreateDbContext(string[] args)
     {
       string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
       IConfigurationRoot configuration = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json")
         .AddJsonFile($"appsettings.{environment}.json", optional: true)
         .Build();
  
-      var builder = new DbContextOptionsBuilder<SampleDbContextCore>();
+      var builder = new DbContextOptionsBuilder<TContext>();
  
       var connectionString = configuration.GetConnectionString("FargoEntities");
  
       builder.UseSqlServer(connectionString);
- 
-      return new SampleDbContextCore(builder.Options);
+
+      return Create(builder.Options);
     }
+
+    protected abstract TContext Create(DbContextOptions<TContext> options);
   }
 }

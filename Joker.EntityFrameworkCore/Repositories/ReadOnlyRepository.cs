@@ -3,14 +3,14 @@ using System.Linq;
 using Joker.Contracts.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Sample.DataCore.EFCore
+namespace Joker.EntityFrameworkCore.Repositories
 {
-  public abstract class ReadOnlyRepositoryCore<TEntity> : IReadOnlyRepository<TEntity>
+  public abstract class ReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity>
     where TEntity : class
   {
     private readonly IContext context;
 
-    protected ReadOnlyRepositoryCore(IContext context)
+    protected ReadOnlyRepository(IContext context)
     {
       this.context = context ?? throw new ArgumentNullException(nameof(context));
     }
@@ -20,6 +20,11 @@ namespace Sample.DataCore.EFCore
     public IQueryable<TEntity> GetAll()
     {
       return DbSet;
+    }
+
+    public IQueryable<TEntity> GetAllIncluding(string path)
+    {
+      return DbSet.Include(path);
     }
   }
 }

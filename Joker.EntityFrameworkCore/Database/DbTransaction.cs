@@ -3,7 +3,7 @@ using Joker.Contracts.Data;
 using Joker.Disposables;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Sample.DataCore.EFCore
+namespace Joker.EntityFrameworkCore.Database
 {
   public class DbTransaction : DisposableObject, IDbTransaction
   {

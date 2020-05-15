@@ -21,5 +21,10 @@ namespace Joker.EntityFramework.Repositories
     {
       return DbSet;
     }
+
+    public IQueryable<TEntity> GetAllIncluding(string path)
+    {
+      return DbSet.Include(path);
+    }
   }
 }

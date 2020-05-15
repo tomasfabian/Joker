@@ -50,4 +50,5 @@ Added:
 
 1.6
 Breaking change:
-IContext.SaveChangesAsync added parameter cancellationToken
+- IContext.SaveChangesAsync added parameter cancellationToken
+- added GetAllIncluding to IReadOnlyRepository<TEntity>

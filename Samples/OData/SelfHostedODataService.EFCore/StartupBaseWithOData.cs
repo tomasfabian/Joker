@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Joker.Factories.Schedulers;
 using Joker.OData.Batch;
+using Joker.OData.Extensions.OData;
 using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
@@ -33,7 +34,7 @@ namespace SelfHostedODataService.EFCore
       // oDataModelBuilder.AddPluralizedEntitySet<Book>();
       // oDataModelBuilder.AddPluralizedEntitySet<Author>();
       // oDataModelBuilder.AddPluralizedEntitySet<Publisher>();
-      
+
       // oDataModelBuilder.EntityType<Publisher>().HasKey(c => new {c.PublisherId1, c.PublisherId2});
 
       return oDataModelBuilder;
