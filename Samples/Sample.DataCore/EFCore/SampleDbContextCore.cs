@@ -1,4 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Joker.EntityFrameworkCore.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -101,6 +105,33 @@ namespace Sample.DataCore.EFCore
       var dbContextTransaction = Database.BeginTransaction(isolationLevel);
 
       return new DbTransaction(dbContextTransaction);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+      InterceptSaveChanges();
+
+      return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override int SaveChanges()
+    {
+      InterceptSaveChanges();
+
+      return base.SaveChanges();
+    }
+
+    private void InterceptSaveChanges()
+    {
+      var entries = ChangeTracker
+        .Entries()
+        .Where(e => e.Entity is Product && e.State == EntityState.Modified);
+
+      foreach (var entityEntry in entries)
+      {
+        ((Product) entityEntry.Entity).Timestamp =
+          DateTime.Now; // SQL Server GetDate() may be different in production use rather db trigger
+      }
     }
 
     #endregion
