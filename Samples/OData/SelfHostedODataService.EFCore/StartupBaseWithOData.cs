@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
+using AutoMapper;
 using Joker.Factories.Schedulers;
 using Joker.OData.Batch;
 using Joker.OData.Extensions.OData;
@@ -30,12 +32,7 @@ namespace SelfHostedODataService.EFCore
     {
       oDataModelBuilder.Namespace = "Example";
 
-      oDataModelBuilder.EntitySet<Product>("Products");
-      // oDataModelBuilder.AddPluralizedEntitySet<Book>();
-      // oDataModelBuilder.AddPluralizedEntitySet<Author>();
-      // oDataModelBuilder.AddPluralizedEntitySet<Publisher>();
-
-      // oDataModelBuilder.EntityType<Publisher>().HasKey(c => new {c.PublisherId1, c.PublisherId2});
+      oDataModelBuilder.AddPluralizedEntitySet<Product>();
 
       return oDataModelBuilder;
     }
@@ -62,7 +59,9 @@ namespace SelfHostedODataService.EFCore
       var connectionString = Configuration.GetConnectionString("FargoEntities");
 
       services.AddDbContext<SampleDbContextCore>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging());
-      
+
+      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
       ConfigureNLog();
     }
 

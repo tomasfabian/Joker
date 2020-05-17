@@ -35,6 +35,8 @@ namespace Sample.Data.Context
         
         Database.Initialize(true);
       }
+
+      Configuration.LazyLoadingEnabled = false;
     }
 
     #endregion

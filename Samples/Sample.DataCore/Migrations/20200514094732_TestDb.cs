@@ -13,7 +13,7 @@ namespace Sample.DataCore.Dev.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Timestamp = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValueSql: "GetDate()"),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Joker.Domain;
-using Microsoft.OData.Client;
-using System.ComponentModel.DataAnnotations;
 
 namespace Sample.Domain.Models
 {

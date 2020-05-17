@@ -1,17 +1,18 @@
-﻿using System.Data;
-using Autofac;
+﻿using Autofac;
+using AutoMapper;
 using Joker.Factories.Schedulers;
 using Joker.OData.Batch;
 using Joker.OData.Extensions.OData;
 using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using Sample.Data.Profiles;
+using Sample.Data.Repositories;
 using Sample.Domain.Models;
 using SelfHostedODataService.AutofacModules;
 using SelfHostedODataService.Configuration;
@@ -57,6 +58,8 @@ namespace SelfHostedODataService
     protected override void OnConfigureServices(IServiceCollection services)
     {
       base.OnConfigureServices(services);
+      
+      services.AddAutoMapper(typeof(BookProfile).Assembly);
 
       ConfigureNLog();
     }
@@ -73,6 +76,10 @@ namespace SelfHostedODataService
 
       ContainerBuilder.RegisterType<SchedulersFactory>().As<ISchedulersFactory>()
         .SingleInstance();
+
+      builder.RegisterType<BooksMappedRepository>()
+        .AsSelf()
+        .InstancePerLifetimeScope();
     }
 
     protected override ODataBatchHandler OnCreateODataBatchHandler()

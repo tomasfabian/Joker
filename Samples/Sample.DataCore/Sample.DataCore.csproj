@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Joker.EntityFrameworkCore" Version="1.1.0" />
+    <PackageReference Include="Automapper" Version="9.0.0" />
     <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
   </ItemGroup>
 
@@ -39,7 +40,6 @@
   
   <ItemGroup>
     <Compile Remove="Repositories\AuthorsRepository.cs" />
-    <Compile Remove="Repositories\BooksRepository.cs" />
     <Compile Remove="Repositories\PublishersRepository.cs" />
   </ItemGroup>
 </Project>

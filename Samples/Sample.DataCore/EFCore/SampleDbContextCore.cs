@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using Joker.EntityFrameworkCore.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Sample.Domain.Models;
+using Sample.Domain.ModelsCore;
+using Product = Sample.Domain.Models.Product; 
 
 namespace Sample.DataCore.EFCore
 {
@@ -42,16 +43,18 @@ namespace Sample.DataCore.EFCore
         var changeTracker = base.ChangeTracker;
 
         changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-        
+        changeTracker.LazyLoadingEnabled = false;
+
         return changeTracker;
       }
     }
 
     public DbSet<Product> Products { get; set; }
 
-    //public DbSet<Book> Books { get; set; }
+    public DbSet<Book> Books { get; set; }
+    //TODO: many-to-many with join table
     //public DbSet<Author> Authors { get; set; }
-    //public DbSet<Publisher> Publishers { get; set; }
+    public DbSet<Publisher> Publishers { get; set; }
 
     #endregion
 
@@ -63,15 +66,12 @@ namespace Sample.DataCore.EFCore
 
       modelBuilder.Entity<Product>()
         .Property(f => f.Timestamp)
-        .HasDefaultValueSql("getdate()"); ;
+        .HasDefaultValueSql("GetDate()");
 
       modelBuilder.Entity<Product>().HasData(
         new Product { Id = -1, Name = "Test" });
 
       //TODO: many-to-many with join table
-      //modelBuilder.Entity<Book>()
-      //  .Property(f => f.Timestamp);
-
       //modelBuilder.Entity<Author>()
       //  .Property(f => f.Timestamp);
 
@@ -84,27 +84,22 @@ namespace Sample.DataCore.EFCore
       //  .HasIndex(b => b.LastName)
       //  .IsUnique();
 
-      //modelBuilder.Entity<Publisher>()
-      //  .HasKey(c => new { c.PublisherId1, c.PublisherId2 });
+      modelBuilder.Entity<Publisher>()
+        .Property(f => f.Timestamp)
+        .HasDefaultValueSql("GetDate()");
 
-      //modelBuilder
-      //  .Entity<Publisher>()
-      //  .Property(e => e.PublisherId1)
-      //  .ValueGeneratedOnAdd();
-      //// .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+      modelBuilder.Entity<Publisher>().HasData(new Publisher() {Id = -1, Title = "Publisher 1"});
 
-      //modelBuilder.Entity<Book>()
-      //  // .HasOptional(p => p.Publisher)
-      //  .HasOne(p => p.Publisher)
-      //  .WithMany(c => c.Books)
-      //  .HasForeignKey(p => new { p.PublisherId1, p.PublisherId2 });
-    }
+      modelBuilder.Entity<Book>()
+        .Property(f => f.Timestamp)
+        .HasDefaultValueSql("GetDate()");
 
-    public Joker.Contracts.Data.IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
-    {
-      var dbContextTransaction = Database.BeginTransaction(isolationLevel);
+      modelBuilder.Entity<Book>()
+        .HasOne(p => p.Publisher)
+        .WithMany(c => c.Books)
+        .HasForeignKey(p => p.PublisherId);
 
-      return new DbTransaction(dbContextTransaction);
+      modelBuilder.Entity<Book>().HasData(new Book() {Id = -1, Title = "Book 1", PublisherId = -1});
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
