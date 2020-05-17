@@ -19,7 +19,7 @@ namespace Sample.DataCore.EFCore
     }
 
     public SampleDbContextCore(DbContextOptions<SampleDbContextCore> options)
-      //: base(options) //TODO: uncomment Joker.EFCore 1.1 release
+      : base(options)
     {
     }
 
@@ -42,7 +42,7 @@ namespace Sample.DataCore.EFCore
         var changeTracker = base.ChangeTracker;
 
         changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
+        
         return changeTracker;
       }
     }

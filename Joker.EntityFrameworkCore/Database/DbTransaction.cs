@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Joker.EntityFrameworkCore.Database
 {
-  public class DbTransaction : DisposableObject, IDbTransaction, IAsyncDbTransaction
+  public class DbTransaction : DisposableObject, IDbTransaction//, IAsyncDbTransaction
   {
     private readonly IDbContextTransaction dbContextTransaction;
 
