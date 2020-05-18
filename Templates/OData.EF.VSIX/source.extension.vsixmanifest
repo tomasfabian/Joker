@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="SelfHostedODataService.Joker.EF.VSIX.1e3f4d6d-3782-4655-9069-61d358be6d2d" Version="0.9" Language="en-US" Publisher="Tomas Fabian" />
+        <DisplayName>SelfHostedODataService.Joker.EF.VSIX</DisplayName>
+        <Description xml:space="preserve">Project template for creating ASP.NET Core OData web services. Plumbing code for Autofac integration, hosts and OData controllers, Serilog, batch transactions and more...</Description>
+        <MoreInfo>https://github.com/tomasfabian/Joker</MoreInfo>
+        <License>License.txt</License>
+        <GettingStartedGuide>https://github.com/tomasfabian/Joker/wiki/Joker.OData</GettingStartedGuide>
+        <Tags>ASP.NET Core OData Autofac host ODataController batch EF</Tags>
+        <Preview>true</Preview>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
+    </Installation>
+    <Dependencies>
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\SelfHostedODataService.Joker.EF.zip" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0,17.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+</PackageManifest>
