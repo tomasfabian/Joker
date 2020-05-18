@@ -7,6 +7,7 @@
         <MoreInfo>https://github.com/tomasfabian/Joker</MoreInfo>
         <License>License.txt</License>
         <GettingStartedGuide>https://github.com/tomasfabian/Joker/wiki/Joker.OData</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Templates/OData.EF.VSIX/ChangeLog.txt</ReleaseNotes>
         <Tags>ASP.NET Core OData Autofac host ODataController batch EF</Tags>
         <Preview>true</Preview>
     </Metadata>
