@@ -1,7 +1,25 @@
-﻿1.0.0
-- ViewModel
-- ViewModelsList
-- ReactiveListViewModel
+﻿1.4.1
+dependency update Joker 1.6.0
+
+1.4.0
+- Joker 1.3.0
+Added:
+- ReactiveListViewModel OnEntitiesLoaded
+
+1.3.0
+Added:
+- ViewModel SetProperty
+- ReactiveListViewModel added interface IReactiveListViewModel
+- ViewModelsList<TModel, TViewModel> added interface IViewModelsList<TViewModel>
+- EntityChangesViewModel
+
+1.2.0
+- ReactiveListViewModel filtering (OnCreateModelsFilter)
+
+Breaking changes:
+- ViewModelsList is abstract
+- ViewModels are private to protect them against incorrect insertions (filtered models)
+- ListViewModel added TModel constraint for filter checks
 
 1.1.0
 - DomainEntityViewModel
@@ -15,22 +33,7 @@ Breaking changes:
 - ReactiveListViewModel Items are cleared during disposal
 - ReactiveListViewModel cannot subscribe to disposed viewmodel (ObjectDisposedException)
 
-1.2.0
-- ReactiveListViewModel filtering (OnCreateModelsFilter)
-
-Breaking changes:
-- ViewModelsList is abstract
-- ViewModels are private to protect them against incorrect insertions (filtered models)
-- ListViewModel added TModel constraint for filter checks
-
-1.3.0
-Added:
-- ViewModel SetProperty
-- ReactiveListViewModel added interface IReactiveListViewModel
-- ViewModelsList<TModel, TViewModel> added interface IViewModelsList<TViewModel>
-- EntityChangesViewModel
-
-1.4.0
-- Joker 1.3.0
-Added:
-- ReactiveListViewModel OnEntitiesLoaded
+1.0.0
+- ViewModel
+- ViewModelsList
+- ReactiveListViewModel

@@ -14,7 +14,7 @@
     <Version>1.4.1</Version>
     <AssemblyVersion>1.4.1.0</AssemblyVersion>
     <FileVersion>1.4.1.0</FileVersion>
-    <PackageReleaseNotes>Sort fix</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.MVVM/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />

@@ -12,8 +12,7 @@
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
     <Version>2.3.2</Version>
-    <PackageReleaseNotes>- added TableName to SqlTableDependencySettings&lt;TEntity&gt;
-- SqlTableDependencyProvider is not abstract anymore</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/SqlTableDependency.Extensions/ChangeLog.txt</PackageReleaseNotes>
     <AssemblyVersion>2.3.2.0</AssemblyVersion>
   </PropertyGroup>
 

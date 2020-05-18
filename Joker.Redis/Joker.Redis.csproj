@@ -14,7 +14,7 @@
     <Authors>Tomas Fabian</Authors>
     <Company />
     <AssemblyVersion>1.3.0.0</AssemblyVersion>
-    <PackageReleaseNotes>- SqlTableDependency.Extensions 2.3.2 - ISqlTableDependencyProviderEvents interface</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Redis/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\Newtonsoft.Json.csprojimport" />

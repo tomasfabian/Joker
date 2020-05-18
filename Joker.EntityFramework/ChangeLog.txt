@@ -1,8 +1,8 @@
-﻿1.0.0
+﻿1.1.0
+Breaking change
+- Repository.SaveChangesAsync added parameter cancellationToken
+
+1.0.0
 - DbTransaction transaction wrapper
 - DbContextBase
 - Repository and ReadOnlyRepository
-
-1.1.0
-Breaking change
-- Repository.SaveChangesAsync added parameter cancellationToken

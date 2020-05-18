@@ -1,26 +1,21 @@
-﻿0.8.0
-Added:
-- ODataStartup
-- ODataControllerBase
+﻿1.5.0
+- HttpsRedirection is disabled by default in developement mode
 
-0.8.1
-Added:
-- ODataStartupConfig
-- ODataHost
+1.4.0
+- added optional appsettings.json configuration
+- removed dependency EntityFramework
 
-- IIS integration (breaking change for ODataHost<>.Run) config is not optional anymore. There are to options IISHostedODataStartupConfig or KestrelODataStartupConfig
-- fixed application of kestrel options
-
-0.9.0
-Changed:
-- Repository implementation
-- ReadOnlyODataController
-- ODataControllerBase generic compound keys support
-- AddPluralizedEntitySet extension method
-- ODataController CreateRef
-
+1.3.0
+- added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
 Breaking change:
-- ODataControllerBase IRepository<TEnity> injection
+- ReadOnlyODataController.MaxExpansionDepth property was removed
+
+1.2.0
+Breaking change:
+- ODataControllerBase Delete - added support for different key types. OnDelete parameter int key was changed to object[] keys 
+
+1.1.0
+- ErrorLoggerMiddleware
 
 1.0.0
 - ODataController DeleteRef
@@ -35,18 +30,26 @@ Breaking changes:
 - ODataStartup namespace Joker.OData changed to Joker.OData.Startup
 - Repository and ReadOnlyRepository were moved to Joker.EntityFramework.Repositories
 
-1.1.0
-- ErrorLoggerMiddleware
+0.9.0
+Changed:
+- Repository implementation
+- ReadOnlyODataController
+- ODataControllerBase generic compound keys support
+- AddPluralizedEntitySet extension method
+- ODataController CreateRef
 
-1.2.0
 Breaking change:
-- ODataControllerBase Delete - added support for different key types. OnDelete parameter int key was changed to object[] keys 
+- ODataControllerBase IRepository<TEnity> injection
 
-1.3.0
-- added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
-Breaking change:
-- ReadOnlyODataController.MaxExpansionDepth property was removed
+0.8.1
+Added:
+- ODataStartupConfig
+- ODataHost
 
-1.4.0
-- added optional appsettings.json configuration
-- removed dependency EntityFramework
+- IIS integration (breaking change for ODataHost<>.Run) config is not optional anymore. There are to options IISHostedODataStartupConfig or KestrelODataStartupConfig
+- fixed application of kestrel options
+
+0.8.0
+Added:
+- ODataStartup
+- ODataControllerBase
