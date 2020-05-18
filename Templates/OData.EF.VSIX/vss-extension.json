@@ -1,0 +1,45 @@
+{
+    "manifestVersion": 1,
+    "id": "SelfHostedODataService-Joker-EF",
+    "version": "1.0.0",
+    "name": "AspNetCore OData EF Joker template 1",
+    "publisher": "TomasFabian",
+    "public": true,
+    "description": "Project template for creating ASP.NET Core OData web services. Plumbing code for Autofac integration, hosts and OData controllers, Serilog, batch transactions and more...",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services",
+            "version": "[16.0,17.0)"
+        }
+    ],    
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/tomasfabian/Joker"
+    },
+    "categories": [
+        "Plan and track"
+    ],
+    "tags": [
+        "OData",
+        "web service",
+        "ODataController",
+        "batch"
+    ],
+    "content": {
+        "details": {
+            "path": "Overview.md"
+        },
+        "license": {
+            "path": "License.txt"
+        }
+    },
+    "links": {
+        "getstarted": {
+            "uri": "https://github.com/tomasfabian/Joker/wiki/Joker.OData"
+        }
+    },
+    "branding": {
+        "color": "rgb(34, 34, 34)",
+        "theme": "dark"
+    }
+}
