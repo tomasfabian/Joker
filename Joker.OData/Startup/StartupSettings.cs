@@ -12,6 +12,13 @@
 
     public bool IISAllowSynchronousIO { get; set; } = true;
     
+    public StartupSettings EnableHttpsRedirection()
+    {
+      UseHttpsRedirection = true;
+
+      return this;
+    }
+    
     public StartupSettings DisableHttpsRedirection()
     {
       UseHttpsRedirection = false;

@@ -94,6 +94,8 @@ namespace Joker.OData.Startup
 
     #endregion
 
+    #region OnUseEndpoints
+
     protected virtual void OnUseEndpoints(IEndpointRouteBuilder endpoints)
     {        
       if(StartupSettings.UseUtcTimeZone)
@@ -112,6 +114,8 @@ namespace Joker.OData.Startup
     {
       endpoints.MapControllerRoute(WebApiStartupSettings.WebApiRouteName, WebApiStartupSettings.WebApiRoute);
     }
+
+    #endregion
 
     #endregion
   }

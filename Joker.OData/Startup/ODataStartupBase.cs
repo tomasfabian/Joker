@@ -34,6 +34,9 @@ namespace Joker.OData.Startup
 
     protected ODataStartupBase(IWebHostEnvironment env)
     {
+      if (env.IsDevelopment())
+        StartupSettings.DisableHttpsRedirection();
+
       Configuration = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
         .AddEnvironmentVariables()
