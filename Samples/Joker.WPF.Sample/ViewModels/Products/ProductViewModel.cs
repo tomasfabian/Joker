@@ -14,17 +14,17 @@ namespace Joker.WPF.Sample.ViewModels.Products
 {
   public class ProductViewModel : DomainEntityViewModel<Product>
   {
-    private readonly IWpfSchedulersFactory schedulersFactory;
+    private readonly IPlatformSchedulersFactory schedulersFactory;
 
     [Inject]
-    public ProductViewModel(Product product, IWpfSchedulersFactory schedulersFactory)
+    public ProductViewModel(Product product, IPlatformSchedulersFactory schedulersFactory)
       : base(product)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
     }
 
     public ProductViewModel(Product product)
-      : this(product, new WpfSchedulersFactory())
+      : this(product, new PlatformSchedulersFactory())
     {
     }
 

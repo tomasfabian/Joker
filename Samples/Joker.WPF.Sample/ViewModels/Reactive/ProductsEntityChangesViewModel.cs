@@ -15,12 +15,12 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 {
   public class ProductsEntityChangesViewModel : EntityChangesViewModel<ProductViewModel>
   {
-    private readonly IWpfSchedulersFactory schedulersFactory;
+    private readonly IPlatformSchedulersFactory schedulersFactory;
 
     public ProductsEntityChangesViewModel(
       IReactiveListViewModelFactory<ProductViewModel> reactiveListViewModelFactory,
       ITableDependencyStatusProvider statusProvider,
-      IWpfSchedulersFactory schedulersFactory) 
+      IPlatformSchedulersFactory schedulersFactory) 
       : base(reactiveListViewModelFactory, statusProvider, schedulersFactory.Dispatcher)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));

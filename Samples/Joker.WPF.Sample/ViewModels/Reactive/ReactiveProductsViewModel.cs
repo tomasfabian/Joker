@@ -29,13 +29,13 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
   {
     private readonly ISampleDbContext sampleDbContext;
     private readonly ViewModelsFactory viewModelsFactory;
-    private readonly IWpfSchedulersFactory schedulersFactory;
+    private readonly IPlatformSchedulersFactory schedulersFactory;
 
     public ReactiveProductsViewModel(
       ISampleDbContext sampleDbContext,
       IReactiveData<Product> reactive,
       ViewModelsFactory viewModelsFactory,
-      IWpfSchedulersFactory schedulersFactory)
+      IPlatformSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
       this.sampleDbContext = sampleDbContext;

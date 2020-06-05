@@ -52,7 +52,7 @@ namespace Joker.WPF.Sample
 
       kernel.Bind<ISchedulerProvider>().To<SchedulerProvider>().InSingletonScope();
       kernel.Bind<IReactiveListViewModelFactory<ProductViewModel>, ReactiveListViewModelFactory>().To<ReactiveListViewModelFactory>().InSingletonScope();
-      kernel.Bind<ISchedulersFactory, IWpfSchedulersFactory>().To<WpfSchedulersFactory>().InSingletonScope();
+      kernel.Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
       kernel.Bind<ISampleDbContext>().To<SampleDbContext>().InTransientScope().WithConstructorArgument("nameOrConnectionString", connectionString);
       
       kernel.Bind<ISqlTableDependencyProvider<Product>>().To<ProductsSqlTableDependencyProvider>()

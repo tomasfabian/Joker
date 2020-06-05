@@ -3,7 +3,7 @@ using Joker.Factories.Schedulers;
 
 namespace Joker.WPF.Sample.Factories.Schedulers
 {
-  public interface IWpfSchedulersFactory : ISchedulersFactory
+  public interface IPlatformSchedulersFactory : ISchedulersFactory
   {
     IScheduler Dispatcher { get; }
   }

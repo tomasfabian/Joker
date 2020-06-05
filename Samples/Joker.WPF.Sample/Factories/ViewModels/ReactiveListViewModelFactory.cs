@@ -31,7 +31,7 @@ namespace Joker.WPF.Sample.Factories.ViewModels
 
       var sampleDbContext = new SampleDbContext(connectionString);
       
-      var schedulersFactory = new WpfSchedulersFactory();
+      var schedulersFactory = new PlatformSchedulersFactory();
 
       var reactiveProductsViewModel = new ReactiveProductsViewModel(sampleDbContext, ReactiveDataWithStatus, this, schedulersFactory);
 

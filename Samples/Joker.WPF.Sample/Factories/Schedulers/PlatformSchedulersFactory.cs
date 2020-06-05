@@ -3,7 +3,7 @@ using Joker.Factories.Schedulers;
 
 namespace Joker.WPF.Sample.Factories.Schedulers
 {
-  public class WpfSchedulersFactory : SchedulersFactory, IWpfSchedulersFactory
+  public class PlatformSchedulersFactory : SchedulersFactory, IPlatformSchedulersFactory
   {
     #region Dispatcher
 

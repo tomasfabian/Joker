@@ -83,7 +83,7 @@ namespace Joker.WPF.Sample.ViewModels
 
     private async Task InitializeClient()
     {
-      var schedulersFactory = new WpfSchedulersFactory();
+      var schedulersFactory = new PlatformSchedulersFactory();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
 
       var reactiveDataWithStatus = ReactiveDataWithStatus<Product>.Instance;
@@ -100,7 +100,7 @@ namespace Joker.WPF.Sample.ViewModels
     {
       var reactiveData = new ReactiveDataWithStatus<Product>();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
-      var schedulersFactory = new WpfSchedulersFactory();
+      var schedulersFactory = new PlatformSchedulersFactory();
       var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
 
       string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
