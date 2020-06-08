@@ -14,9 +14,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
+    <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
+    
+    <PackageReference Include="System.Reactive" Version="4.4.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.6" />
     <PackageReference Include="Microsoft.WinUI" Version="3.0.0-preview1.200515.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -25,6 +31,19 @@
     <None Remove="MainWindow.xaml" />
     <None Remove="Styles\ControlsStyles.xaml" />
     <None Remove="Views\ProductDetail.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Products\ProductViewModel.cs" Link="ViewModels\Products\ProductViewModel.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\..\Joker.Redis\Joker.Redis.csproj" />
+    <ProjectReference Include="..\..\..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\..\OData\OData.Client\OData.Client.Dev.csproj" />
+    <ProjectReference Include="..\..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +65,11 @@
     <Page Update="Views\ProductDetail.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Products\" />
+    <Folder Include="ViewModels\Reactive\" />
   </ItemGroup>
 
 </Project>
