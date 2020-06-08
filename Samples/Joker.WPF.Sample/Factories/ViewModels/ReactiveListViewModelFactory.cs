@@ -26,14 +26,10 @@ namespace Joker.WPF.Sample.Factories.ViewModels
     }    
 
     public IReactiveListViewModel<ProductViewModel> CreateWithPoorMansDependencyInjection()
-    {      
-      string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
-
-      var sampleDbContext = new SampleDbContext(connectionString);
-      
+    {
       var schedulersFactory = new PlatformSchedulersFactory();
 
-      var reactiveProductsViewModel = new ReactiveProductsViewModel(sampleDbContext, ReactiveDataWithStatus, this, schedulersFactory);
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(ReactiveDataWithStatus, this, schedulersFactory);
 
       return reactiveProductsViewModel;
     }

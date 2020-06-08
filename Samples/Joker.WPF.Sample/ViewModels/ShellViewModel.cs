@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Joker.Enums;
 using Joker.Factories.Schedulers;
@@ -15,7 +13,6 @@ using Joker.WPF.Sample.Redis;
 using Joker.WPF.Sample.ViewModels.Products;
 using Joker.WPF.Sample.ViewModels.Reactive;
 using Prism.Mvvm;
-using Sample.Data.Context;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions;
 
@@ -103,10 +100,7 @@ namespace Joker.WPF.Sample.ViewModels
       var schedulersFactory = new PlatformSchedulersFactory();
       var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
 
-      string connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
-
-      var reactiveProductsViewModel = new ReactiveProductsViewModel(new SampleDbContext(connectionString),
-        reactiveData, viewModelsFactory, schedulersFactory);
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(reactiveData, viewModelsFactory, schedulersFactory);
 
       reactiveProductsViewModel.SubscribeToDataChanges();
       

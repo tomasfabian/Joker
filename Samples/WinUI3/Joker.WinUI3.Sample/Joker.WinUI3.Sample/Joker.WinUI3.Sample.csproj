@@ -35,8 +35,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\Schedulers\IPlatformSchedulersFactory.cs" Link="Factories\Schedulers\IPlatformSchedulersFactory.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ViewModelsFactory.cs" Link="Factories\ViewModels\ViewModelsFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Products\ProductViewModel.cs" Link="ViewModels\Products\ProductViewModel.cs" />
-    <!--<Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />-->
+    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ProductsEntityChangesViewModel.cs" Link="ViewModels\Reactive\ProductsEntityChangesViewModel.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

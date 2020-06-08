@@ -5,7 +5,6 @@ using Joker.Enums;
 using Joker.MVVM.ViewModels;
 using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.ViewModels.Products;
-using Sample.Data.Context;
 using Sample.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Joker.Extensions;
 using Joker.Extensions.Disposables;
@@ -27,18 +25,15 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 {
   public class ReactiveProductsViewModel : ReactiveListViewModel<Product, ProductViewModel>
   {
-    private readonly ISampleDbContext sampleDbContext;
     private readonly ViewModelsFactory viewModelsFactory;
     private readonly IPlatformSchedulersFactory schedulersFactory;
 
     public ReactiveProductsViewModel(
-      ISampleDbContext sampleDbContext,
       IReactiveData<Product> reactive,
       ViewModelsFactory viewModelsFactory,
       IPlatformSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
-      this.sampleDbContext = sampleDbContext;
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
@@ -67,9 +62,6 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
         if(context != null)
           return context.Products.ExecuteAsync().ToObservable();
-
-        if (sampleDbContext != null)
-          return Observable.Start(() => sampleDbContext.Products.ToList(), schedulersFactory.ThreadPool);
 
         //Sample
         return Observable.Create<IEnumerable<Product>>(o =>
