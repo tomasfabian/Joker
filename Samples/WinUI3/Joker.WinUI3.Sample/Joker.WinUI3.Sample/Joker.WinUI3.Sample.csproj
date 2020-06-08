@@ -34,8 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\Joker.WPF.Sample\Factories\Schedulers\IPlatformSchedulersFactory.cs" Link="Factories\Schedulers\IPlatformSchedulersFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Products\ProductViewModel.cs" Link="ViewModels\Products\ProductViewModel.cs" />
-    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />
+    <!--<Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Factories\ViewModels\" />
     <Folder Include="ViewModels\Products\" />
     <Folder Include="ViewModels\Reactive\" />
   </ItemGroup>
