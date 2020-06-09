@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Joker.WPF.Sample\Converters\NullVisibilityConverter.cs" Link="Converters\NullVisibilityConverter.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\Schedulers\IPlatformSchedulersFactory.cs" Link="Factories\Schedulers\IPlatformSchedulersFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ReactiveListViewModelFactory.cs" Link="Factories\ViewModels\ReactiveListViewModelFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ViewModelsFactory.cs" Link="Factories\ViewModels\ViewModelsFactory.cs" />
