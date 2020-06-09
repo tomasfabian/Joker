@@ -16,6 +16,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using Ninject;
+using Joker.WPF.Sample.Modularity;
 
 namespace Joker.WinUI3.Sample
 {
@@ -24,6 +26,9 @@ namespace Joker.WinUI3.Sample
   /// </summary>
   public partial class App : Application
   {
+    private Window m_window;
+    public static readonly IKernel Kernel = new StandardKernel();
+
     /// <summary>
     /// Initializes the singleton application object.  This is the first line of authored code
     /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -31,6 +36,7 @@ namespace Joker.WinUI3.Sample
     public App()
     {
       this.InitializeComponent();
+
       this.Suspending += OnSuspending;
     }
 
@@ -41,8 +47,16 @@ namespace Joker.WinUI3.Sample
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+      Kernel.Load<AppNinjectModule>();
+
       m_window = new MainWindow();
       m_window.Activate();
+      m_window.Closed += OnWindowClosed;
+    }
+
+    private void OnWindowClosed(object sender, WindowEventArgs args)
+    {
+      Kernel.Dispose();
     }
 
     /// <summary>
@@ -56,7 +70,5 @@ namespace Joker.WinUI3.Sample
     {
       // Save application state and stop any background activity
     }
-
-    private Window m_window;
   }
 }

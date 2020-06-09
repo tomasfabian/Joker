@@ -5,7 +5,6 @@ using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.ViewModels.Products;
 using Joker.WPF.Sample.ViewModels.Reactive;
 using Ninject;
-using Sample.Data.Context;
 using Sample.Domain.Models;
 
 namespace Joker.WPF.Sample.Factories.ViewModels

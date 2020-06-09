@@ -34,8 +34,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\Joker.WPF.Sample\Converters\NullVisibilityConverter.cs" Link="Converters\NullVisibilityConverter.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\Schedulers\IPlatformSchedulersFactory.cs" Link="Factories\Schedulers\IPlatformSchedulersFactory.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ReactiveListViewModelFactory.cs" Link="Factories\ViewModels\ReactiveListViewModelFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ViewModelsFactory.cs" Link="Factories\ViewModels\ViewModelsFactory.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\Modularity\AppNinjectModule.cs" Link="Modularity\AppNinjectModule.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\Redis\ProductSqlTableDependencyRedisProvider.cs" Link="Redis\ProductSqlTableDependencyRedisProvider.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Products\ProductViewModel.cs" Link="ViewModels\Products\ProductViewModel.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ProductsEntityChangesViewModel.cs" Link="ViewModels\Reactive\ProductsEntityChangesViewModel.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />
@@ -72,6 +76,9 @@
 
   <ItemGroup>
     <Folder Include="Factories\ViewModels\" />
+    <Folder Include="Converters\" />
+    <Folder Include="Modularity\" />
+    <Folder Include="Redis\" />
     <Folder Include="ViewModels\Products\" />
     <Folder Include="ViewModels\Reactive\" />
   </ItemGroup>
