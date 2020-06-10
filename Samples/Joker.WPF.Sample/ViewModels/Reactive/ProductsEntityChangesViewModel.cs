@@ -24,8 +24,10 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
       : base(reactiveListViewModelFactory, statusProvider, schedulersFactory.Dispatcher)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
+
+      PropertyChanged += ProductsEntityChangesViewModel_PropertyChanged;
     }
-    
+
     #region Properties
 
     #region NewProductName
@@ -41,6 +43,16 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
 
         addNew?.RaiseCanExecuteChanged();
       }
+    }
+
+    #endregion
+
+    #region ProductsListViewModel
+
+    public ReactiveProductsViewModel ProductsListViewModel
+    {
+      get => (ReactiveProductsViewModel)ListViewModel;
+      set => ListViewModel = value;
     }
 
     #endregion
@@ -75,6 +87,19 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
     }
 
     #endregion
+
+    private void ProductsEntityChangesViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(ListViewModel))
+        NotifyPropertyChanged(nameof(ProductsListViewModel));
+    }
+
+    protected override void OnDispose()
+    {
+      base.OnDispose();
+            
+      PropertyChanged -= ProductsEntityChangesViewModel_PropertyChanged;
+    }
 
     #endregion
   }

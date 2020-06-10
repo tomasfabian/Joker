@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="Joker.WinUI3.Sample.Views.ProductsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Joker.WinUI3.Sample.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:styles="using:Joker.WinUI3.Sample.Styles"
+             xmlns:viewModels="using:Joker.WPF.Sample.ViewModels.Products"
+             xmlns:views="using:Joker.WinUI3.Sample.Views"
+             mc:Ignorable="d">
+
+  <Grid x:Name="root" Margin="13">
+    <Grid.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <styles:ControlsStyles />
+        </ResourceDictionary.MergedDictionaries>
+
+        <Style TargetType="TextBlock">
+          <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+      </ResourceDictionary>
+
+    </Grid.Resources>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="50" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <StackPanel Orientation="Horizontal">
+      <TextBlock FontSize="34" Text="TODO" />
+      <TextBlock Text="IsLoading: " />
+      <TextBlock Text="{x:Bind ViewModel.ProductsListViewModel.IsLoading, Mode=OneWay}" />
+      <TextBlock Margin="13,0,0,0" Text="IsOffline: " />
+      <TextBlock Text="{x:Bind ViewModel.IsOffline}" />
+
+      <!--<busyIndicators:BusyIndicator HorizontalAlignment="Left"
+                                      IconFontSize="12"
+                                      IsBusy="{Binding IsOffline}" />-->
+    </StackPanel>
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal">
+      <TextBlock Text="New product name:" />
+      <TextBox x:Name="MyTextBox"
+               Style="{StaticResource TextBoxStyle}"
+               Text="{x:Bind ViewModel.NewProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+      <!--  IsDefault="True"  -->
+      <Button Width="50"
+              Command="{x:Bind ViewModel.AddNew}"
+              Content="Add"
+              Style="{StaticResource ButtonBaseStyle}" />
+
+      <TextBlock Text="Filter by name:" />
+      <TextBox Style="{StaticResource TextBoxStyle}" Text="{x:Bind ViewModel.ProductsListViewModel.Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </StackPanel>
+
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="3*" />
+        <ColumnDefinition Width="13" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <ListBox Height="300"
+               ItemsSource="{x:Bind ViewModel.ListViewModel.Items, Mode=OneWay}"
+               SelectedItem="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=TwoWay}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="viewModels:ProductViewModel">
+            <Grid Height="70" Background="Red">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock VerticalAlignment="Center"
+                         Text="{Binding Name, Mode=OneWay}"
+                         TextTrimming="CharacterEllipsis"
+                         ToolTipService.ToolTip="{Binding Name, Mode=OneWay}" />
+
+              <Button Grid.Column="2"
+                      Width="25"
+                      Padding="5"
+                      Command="{Binding Delete, Mode=OneWay}">
+                Delete
+              </Button>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <views:ProductDetail Grid.Column="2"
+                           VerticalAlignment="Top"
+                           DataContext="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=OneWay, FallbackValue=Collapsed, Converter={StaticResource NullVisibilityConverter}}" />
+
+    </Grid>
+
+    <ProgressRing Grid.Row="2"
+                  HorizontalAlignment="Center"
+                  IsActive="{x:Bind ViewModel.ListViewModel.IsLoading}" />
+
+  </Grid>
+</UserControl>

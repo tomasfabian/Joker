@@ -71,6 +71,9 @@
     <Page Update="Views\ProductDetail.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\ProductsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
-﻿using Joker.WPF.Sample.ViewModels.Reactive;
+﻿using Joker.Redis.Notifications;
+using Joker.WinUI3.Sample.Views;
+using Joker.WPF.Sample.ViewModels.Reactive;
 using Microsoft.UI.Xaml;
 using Ninject;
 
@@ -15,7 +17,12 @@ namespace Joker.WinUI3.Sample
     {
       InitializeComponent();
 
-      root.DataContext = App.Kernel.Get<ProductsEntityChangesViewModel>();
+      var productsEntityChangesViewModel = App.Kernel.Get<ProductsEntityChangesViewModel>();
+
+      IDomainEntitiesSubscriber domainEntitiesSubscriber = App.Kernel.Get<IDomainEntitiesSubscriber>();
+      domainEntitiesSubscriber.Subscribe();
+
+      ProductsView.ViewModel = productsEntityChangesViewModel;
     }
   }
 }
