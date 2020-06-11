@@ -21,7 +21,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.MVVM", "..\..\Joker.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Dev", "..\OData\OData.Client\OData.Client.Dev.csproj", "{526EDC9D-08F0-4653-949E-9D4C03E52006}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Joker.WinUI3.UWP.Sample", "Joker.WinUI3.UWP.Sample\Joker.WinUI3.UWP.Sample.csproj", "{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Joker.WinUI3.Shared", "Joker.WinUI3.Shared\Joker.WinUI3.Shared.shproj", "{91A40717-E13F-491F-8AC2-41C9C06CAA3E}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{53e7eeb3-e1fa-4428-9c7a-ec2a76d7d3cd}*SharedItemsImports = 5
+		Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{91a40717-e13f-491f-8ac2-41c9c06caa3e}*SharedItemsImports = 13
+		Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{c7235bb3-fee8-4dc2-9f44-9a35a324556f}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -117,6 +126,20 @@ Global
 		{526EDC9D-08F0-4653-949E-9D4C03E52006}.Release|x64.Build.0 = Release|Any CPU
 		{526EDC9D-08F0-4653-949E-9D4C03E52006}.Release|x86.ActiveCfg = Release|Any CPU
 		{526EDC9D-08F0-4653-949E-9D4C03E52006}.Release|x86.Build.0 = Release|Any CPU
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x64.ActiveCfg = Debug|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x64.Build.0 = Debug|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x64.Deploy.0 = Debug|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x86.ActiveCfg = Debug|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x86.Build.0 = Debug|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Debug|x86.Deploy.0 = Debug|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|Any CPU.ActiveCfg = Release|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x64.ActiveCfg = Release|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x64.Build.0 = Release|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x64.Deploy.0 = Release|x64
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x86.ActiveCfg = Release|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x86.Build.0 = Release|x86
+		{C7235BB3-FEE8-4DC2-9F44-9A35A324556F}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

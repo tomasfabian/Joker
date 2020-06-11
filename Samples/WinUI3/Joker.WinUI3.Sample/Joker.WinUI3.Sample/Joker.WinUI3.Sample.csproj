@@ -78,11 +78,12 @@
 
   <ItemGroup>
     <Folder Include="Factories\ViewModels\" />
-    <Folder Include="Converters\" />
     <Folder Include="Modularity\" />
     <Folder Include="Redis\" />
     <Folder Include="ViewModels\Products\" />
     <Folder Include="ViewModels\Reactive\" />
   </ItemGroup>
+
+  <Import Project="..\..\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems" Label="Shared" />
 
 </Project>
