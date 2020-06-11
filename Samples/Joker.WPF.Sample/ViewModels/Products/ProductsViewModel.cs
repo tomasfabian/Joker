@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Joker.WPF.Sample.Factories.ViewModels;
 using Joker.WPF.Sample.Providers.Scheduling;
 using Prism.Mvvm;
 using Sample.Data.Context;
@@ -19,12 +20,14 @@ namespace Joker.WPF.Sample.ViewModels.Products
     private readonly ISampleDbContext sampleDbContext;
     private readonly ISqlTableDependencyProvider<Product> productsChangesProvider;
     private readonly ISchedulerProvider schedulerProvider;
+    private readonly ViewModelsFactory viewModelsFactory;
 
-    public ProductsViewModel(ISampleDbContext sampleDbContext, ISqlTableDependencyProvider<Product> productsChangesProvider, ISchedulerProvider schedulerProvider)
+    public ProductsViewModel(ISampleDbContext sampleDbContext, ISqlTableDependencyProvider<Product> productsChangesProvider, ISchedulerProvider schedulerProvider, ViewModelsFactory viewModelsFactory)
     {
       this.sampleDbContext = sampleDbContext ?? throw new ArgumentNullException(nameof(sampleDbContext));
       this.productsChangesProvider = productsChangesProvider ?? throw new ArgumentNullException(nameof(productsChangesProvider));
       this.schedulerProvider = schedulerProvider ?? throw new ArgumentNullException(nameof(schedulerProvider));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
     public ObservableCollection<ProductViewModel> Products { get; } = new ObservableCollection<ProductViewModel>();
@@ -100,7 +103,7 @@ namespace Joker.WPF.Sample.ViewModels.Products
         Observable.Start(() => sampleDbContext.Products.ToList())
           .ObserveOn(schedulerProvider.Dispatcher)
           .Subscribe(loadedProducts => {
-                       Products.AddRange(loadedProducts.Select(c => new ProductViewModel(c)));
+                       Products.AddRange(loadedProducts.Select(c => viewModelsFactory.CreateProductViewModel(c)));
                      });
     }
 
@@ -115,7 +118,7 @@ namespace Joker.WPF.Sample.ViewModels.Products
           case ChangeType.Insert:
             if(Products.Any(c => c.Id == entity.Id))
               return;
-            Products.Add(new ProductViewModel(recordChangedNotification.Entity));
+            Products.Add(viewModelsFactory.CreateProductViewModel(recordChangedNotification.Entity));
             break;
 
           case ChangeType.Update:

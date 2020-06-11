@@ -4,7 +4,7 @@ using System.Reactive.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Joker.MVVM.ViewModels.Domain;
-using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.Platforms.Factories.Schedulers;
 using Ninject;
 using OData.Client;
 using Prism.Commands;
@@ -21,11 +21,6 @@ namespace Joker.WPF.Sample.ViewModels.Products
       : base(product)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
-    }
-
-    public ProductViewModel(Product product)
-      : this(product, new PlatformSchedulersFactory())
-    {
     }
 
     public string Name
