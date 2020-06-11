@@ -106,8 +106,37 @@
     <PackageReference Include="Microsoft.WinUI">
       <Version>3.0.0-preview1.200515.3</Version>
     </PackageReference>
+    <PackageReference Include="Ninject">
+      <Version>3.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Core">
+      <Version>7.2.0.1422</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj">
+      <Project>{5444ed98-8b50-4e4d-942d-2a5033c25c50}</Project>
+      <Name>Joker.MVVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj">
+      <Project>{af87f8ec-5dee-4491-aef5-462c2a14eae8}</Project>
+      <Name>Joker.Redis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj">
+      <Project>{474364f9-a65d-49ad-a549-e2a45480169c}</Project>
+      <Name>Joker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj">
+      <Project>{526edc9d-08f0-4653-949e-9d4c03e52006}</Project>
+      <Name>OData.Client.Dev</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj">
+      <Project>{42d40028-b227-4108-95c6-c7105212ed60}</Project>
+      <Name>Sample.Domain.Dev</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '$(MinimumVisualStudioVersion)' ">
     <VisualStudioVersion>$(MinimumVisualStudioVersion)</VisualStudioVersion>
   </PropertyGroup>

@@ -2,6 +2,7 @@
 using Joker.Contracts;
 using Joker.Factories.Schedulers;
 using Joker.MVVM.ViewModels;
+using Joker.Platforms.Factories.Schedulers;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;

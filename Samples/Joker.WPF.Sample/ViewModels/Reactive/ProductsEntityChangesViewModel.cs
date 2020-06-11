@@ -1,6 +1,5 @@
 ﻿using Joker.Contracts;
 using Joker.MVVM.ViewModels;
-using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.ViewModels.Products;
 using OData.Client;
 using Prism.Commands;
@@ -10,6 +9,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Joker.Platforms.Factories.Schedulers;
 
 namespace Joker.WPF.Sample.ViewModels.Reactive
 {

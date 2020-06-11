@@ -1,5 +1,6 @@
 ﻿using System.Reactive.Concurrency;
 using Joker.Factories.Schedulers;
+using Joker.Platforms.Factories.Schedulers;
 
 namespace Joker.WPF.Sample.Factories.Schedulers
 {
