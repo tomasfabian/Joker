@@ -1,16 +1,10 @@
-﻿using System.Configuration;
-using System.Windows;
+﻿using System.Windows;
 using CommonServiceLocator;
 using Joker.WPF.Sample.Modularity;
-using Joker.WPF.Sample.Providers.Scheduling;
-using Joker.WPF.Sample.SqlTableDependencies;
 using Joker.WPF.Sample.ViewModels;
 using Ninject;
 using Prism.Ioc;
 using Prism.Ninject.Ioc;
-using Sample.Domain.Models;
-using SqlTableDependency.Extensions;
-using SqlTableDependency.Extensions.Enums;
 
 namespace Joker.WPF.Sample
 {
@@ -35,15 +29,6 @@ namespace Joker.WPF.Sample
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
       kernel.Bind<ShellViewModel>().ToSelf().InSingletonScope();
-
-      var connectionString = ConfigurationManager.ConnectionStrings["FargoEntities"].ConnectionString;
-
-      kernel.Bind<ISchedulerProvider>().To<SchedulerProvider>().InSingletonScope();
-      
-      kernel.Bind<ISqlTableDependencyProvider<Product>>().To<ProductsSqlTableDependencyProvider>()
-        .InTransientScope()
-        .WithConstructorArgument("connectionString", connectionString)
-        .WithConstructorArgument("lifetimeScope", LifetimeScope.UniqueScope);
 
       kernel.Load<AppNinjectModule>();
     }

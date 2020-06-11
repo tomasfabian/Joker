@@ -2,26 +2,22 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using Joker.Enums;
-using Joker.Factories.Schedulers;
 using Joker.MVVM.ViewModels;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
-using Joker.WPF.Sample.Factories.ViewModels;
-using Joker.WPF.Sample.Redis;
-using Joker.WPF.Sample.ViewModels.Products;
-using Joker.WPF.Sample.ViewModels.Reactive;
+using Joker.PubSubUI.Shared.Factories.ViewModels;
+using Joker.PubSubUI.Shared.ViewModels.Products;
+using Joker.WPF.Sample.Navigation;
 using Prism.Mvvm;
 using Sample.Domain.Models;
-using SqlTableDependency.Extensions;
 
 namespace Joker.WPF.Sample.ViewModels
 {
   public class ShellViewModel : BindableBase, IDisposable
   {
     private readonly ReactiveListViewModelFactory viewModelsFactory;
-    private ISqlTableDependencyProvider<Product> productsChangesProvider;
     
     private EntityChangesViewModel<ProductViewModel> entityChangesViewModel;
 
@@ -38,7 +34,7 @@ namespace Joker.WPF.Sample.ViewModels
 
     private DomainEntitiesSubscriber<Product> domainEntitiesSubscriber;
 
-    public ShellViewModel(ISqlTableDependencyProvider<Product> productsChangesProvider, ReactiveListViewModelFactory viewModelsFactory, IDomainEntitiesSubscriber domainEntitiesSubscriber)
+    public ShellViewModel(ReactiveListViewModelFactory viewModelsFactory, IDomainEntitiesSubscriber domainEntitiesSubscriber)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       
@@ -52,30 +48,13 @@ namespace Joker.WPF.Sample.ViewModels
 
       //2. User poor mans dependency injection
       //Manually created objects examples
-      //use SimulateServer if you didn't run SelfHostedODataService
-      //Initialize(productsChangesProvider).ToObservable()
+      //Initialize().ToObservable()
       //  .Subscribe();
     }
 
-    private async Task Initialize(ISqlTableDependencyProvider<Product> productsChangesProvider)
+    private async Task Initialize()
     {
-      SimulateServer(productsChangesProvider);
-
       await InitializeClient();
-    }
-
-    private void SimulateServer(ISqlTableDependencyProvider<Product> productsChangesProvider)
-    {
-      this.productsChangesProvider =
-        productsChangesProvider ?? throw new ArgumentNullException(nameof(productsChangesProvider));
-      productsChangesProvider.SubscribeToEntityChanges();
-
-      var schedulersFactory = new SchedulersFactory();
-      var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];
-
-      var redisPublisher = new ProductSqlTableDependencyRedisProvider(productsChangesProvider,
-        new RedisPublisher(redisUrl), schedulersFactory.TaskPool);
-      redisPublisher.StartPublishing();
     }
 
     private async Task InitializeClient()
@@ -90,7 +69,7 @@ namespace Joker.WPF.Sample.ViewModels
       await domainEntitiesSubscriber.Subscribe();
 
       var entityChangesViewModelExample = new ProductsEntityChangesViewModel(
-        viewModelsFactory, reactiveDataWithStatus, schedulersFactory);
+        viewModelsFactory, reactiveDataWithStatus, schedulersFactory, new DialogManager());
     }
 
     private static void CreateReactiveProductsViewModel(ViewModelsFactory viewModelsFactory)

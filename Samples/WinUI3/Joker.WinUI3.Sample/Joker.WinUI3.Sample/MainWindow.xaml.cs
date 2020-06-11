@@ -1,6 +1,6 @@
-﻿using Joker.Redis.Notifications;
+﻿using Joker.PubSubUI.Shared.ViewModels.Products;
+using Joker.Redis.Notifications;
 using Joker.WinUI3.Sample.Views;
-using Joker.WPF.Sample.ViewModels.Reactive;
 using Microsoft.UI.Xaml;
 using Ninject;
 
