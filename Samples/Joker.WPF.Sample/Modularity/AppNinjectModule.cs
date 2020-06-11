@@ -3,11 +3,13 @@ using Joker.Contracts;
 using Joker.Factories.Schedulers;
 using Joker.MVVM.ViewModels;
 using Joker.Platforms.Factories.Schedulers;
+using Joker.PubSubUI.Shared.Navigation;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.Factories.ViewModels;
+using Joker.WPF.Sample.Navigation;
 using Joker.WPF.Sample.ViewModels.Products;
 using Ninject.Modules;
 using Sample.Domain.Models;
@@ -18,6 +20,8 @@ namespace Joker.WPF.Sample.Modularity
   {
     public override void Load()
     {
+      Bind<IDialogManager>().To<DialogManager>().InSingletonScope();
+
       Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
       Bind<IReactiveListViewModelFactory<ProductViewModel>, ReactiveListViewModelFactory>().To<ReactiveListViewModelFactory>().InSingletonScope();
 
@@ -29,7 +33,7 @@ namespace Joker.WPF.Sample.Modularity
       Bind<IRedisSubscriber>().To<RedisSubscriber>()
         .WithConstructorArgument("url", redisUrl);
 
-      Bind<IDomainEntitiesSubscriber>().To<DomainEntitiesSubscriber<Product>>();
+      Bind<IDomainEntitiesSubscriber>().To<DomainEntitiesSubscriber<Product>>();new DialogManager().ShowMessage("Et");
     }
   }
 }

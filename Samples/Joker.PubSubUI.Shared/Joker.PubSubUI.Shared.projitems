@@ -9,9 +9,8 @@
     <Import_RootNamespace>Joker.PubSubUI.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\IDialogManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schedulers\IPlatformSchedulersFactory.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Products\" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Products\ProductViewModel.cs" />
   </ItemGroup>
 </Project>

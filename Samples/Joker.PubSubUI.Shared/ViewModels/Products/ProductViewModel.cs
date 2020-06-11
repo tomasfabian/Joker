@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Joker.MVVM.ViewModels.Domain;
 using Joker.Platforms.Factories.Schedulers;
-using Ninject;
+using Joker.PubSubUI.Shared.Navigation;
 using OData.Client;
 using Prism.Commands;
 using Sample.Domain.Models;
@@ -15,12 +14,13 @@ namespace Joker.WPF.Sample.ViewModels.Products
   public class ProductViewModel : DomainEntityViewModel<Product>
   {
     private readonly IPlatformSchedulersFactory schedulersFactory;
+    private readonly IDialogManager dialogManager;
 
-    [Inject]
-    public ProductViewModel(Product product, IPlatformSchedulersFactory schedulersFactory)
+    public ProductViewModel(Product product, IPlatformSchedulersFactory schedulersFactory, IDialogManager dialogManager)
       : base(product)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
+      this.dialogManager = dialogManager ?? throw new ArgumentNullException(nameof(dialogManager));
     }
 
     public string Name
@@ -97,7 +97,7 @@ namespace Joker.WPF.Sample.ViewModels.Products
       dataServiceContext.SaveChangesAsync()
         .ToObservable()
         .ObserveOn(schedulersFactory.Dispatcher)
-        .Subscribe(_ => {  }, error => MessageBox.Show($"Failed to update {Name} to {Renamed}"));
+        .Subscribe(_ => {  }, error => dialogManager.ShowMessage($"Failed to update {Name} to {Renamed}"));
     }
 
     #endregion
@@ -115,6 +115,7 @@ namespace Joker.WPF.Sample.ViewModels.Products
 
     private void OnDelete()
     {
+      dialogManager.ShowMessage($"Failed to delete {Name}");
       var dataServiceContext = new ODataServiceContextFactory().CreateODataContext();
 
       dataServiceContext.AttachTo("Products", Model);
@@ -123,7 +124,7 @@ namespace Joker.WPF.Sample.ViewModels.Products
       dataServiceContext.SaveChangesAsync()
         .ToObservable()
         .ObserveOn(schedulersFactory.Dispatcher)
-        .Subscribe(_ => {  }, error => MessageBox.Show($"Failed to delete {Name}"));
+        .Subscribe(_ => {  }, error => dialogManager.ShowMessage($"Failed to delete {Name}"));
     }
 
     #endregion

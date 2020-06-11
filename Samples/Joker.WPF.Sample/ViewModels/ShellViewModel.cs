@@ -51,7 +51,7 @@ namespace Joker.WPF.Sample.ViewModels
       //****
 
       //2. User poor mans dependency injection
-      //Manually created object examples
+      //Manually created objects examples
       //use SimulateServer if you didn't run SelfHostedODataService
       //Initialize(productsChangesProvider).ToObservable()
       //  .Subscribe();

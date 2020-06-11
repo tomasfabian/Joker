@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Joker.WPF.Sample.Factories.Schedulers;
+using Joker.WPF.Sample.Navigation;
 using Joker.WPF.Sample.ViewModels.Products;
 using Sample.Domain.Models;
 
@@ -11,7 +12,7 @@ namespace Joker.WPF.Sample.DesignTime.Reactive
   {
     public ReactiveProductsDesignViewModel()
     {
-      var products = Enumerable.Range(1, 22).Select(i => new ProductViewModel(new Product {Name = $"Product {i}"}, new PlatformSchedulersFactory()));
+      var products = Enumerable.Range(1, 22).Select(i => new ProductViewModel(new Product {Name = $"Product {i}"}, new PlatformSchedulersFactory(), new DialogManager()));
 
       Items = new ObservableCollection<ProductViewModel>(products);
       

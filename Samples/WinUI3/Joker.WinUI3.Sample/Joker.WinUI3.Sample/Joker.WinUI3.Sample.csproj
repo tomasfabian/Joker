@@ -37,7 +37,7 @@
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ReactiveListViewModelFactory.cs" Link="Factories\ViewModels\ReactiveListViewModelFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Factories\ViewModels\ViewModelsFactory.cs" Link="Factories\ViewModels\ViewModelsFactory.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Modularity\AppNinjectModule.cs" Link="Modularity\AppNinjectModule.cs" />
-    <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Products\ProductViewModel.cs" Link="ViewModels\Products\ProductViewModel.cs" />
+    <Compile Include="..\..\..\Joker.WPF.Sample\Navigation\DialogManager.cs" Link="Navigation\DialogManager.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ProductsEntityChangesViewModel.cs" Link="ViewModels\Reactive\ProductsEntityChangesViewModel.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\ViewModels\Reactive\ReactiveProductsViewModel.cs" Link="ViewModels\Reactive\ReactiveProductsViewModel.cs" />
   </ItemGroup>
@@ -77,7 +77,7 @@
   <ItemGroup>
     <Folder Include="Factories\ViewModels\" />
     <Folder Include="Modularity\" />
-    <Folder Include="ViewModels\Products\" />
+    <Folder Include="Navigation\" />
     <Folder Include="ViewModels\Reactive\" />
   </ItemGroup>
 
