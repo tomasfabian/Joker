@@ -1,5 +1,5 @@
 ﻿using Joker.MVVM.ViewModels;
-using Joker.WPF.Sample.DesignTime.Reactive;
+using Joker.PubSubUI.Shared.DesignTime.Products;
 
 namespace Joker.WPF.Sample.DesignTime
 {
