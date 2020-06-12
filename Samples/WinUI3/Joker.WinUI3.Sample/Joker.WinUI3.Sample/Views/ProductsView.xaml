@@ -5,7 +5,7 @@
              xmlns:local="using:Joker.WinUI3.Sample.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:styles="using:Joker.WinUI3.Sample.Styles"
-             xmlns:viewModels="using:Joker.WPF.Sample.ViewModels.Products"
+             xmlns:viewModels="using:Joker.PubSubUI.Shared.ViewModels.Products"
              xmlns:views="using:Joker.WinUI3.Sample.Views"
              mc:Ignorable="d">
 
@@ -29,15 +29,12 @@
     </Grid.RowDefinitions>
 
     <StackPanel Orientation="Horizontal">
-      <TextBlock FontSize="34" Text="TODO" />
       <TextBlock Text="IsLoading: " />
       <TextBlock Text="{x:Bind ViewModel.ProductsListViewModel.IsLoading, Mode=OneWay}" />
       <TextBlock Margin="13,0,0,0" Text="IsOffline: " />
-      <TextBlock Text="{x:Bind ViewModel.IsOffline}" />
+      <TextBlock Text="{x:Bind ViewModel.IsOffline, Mode=OneWay}" />
 
-      <!--<busyIndicators:BusyIndicator HorizontalAlignment="Left"
-                                      IconFontSize="12"
-                                      IsBusy="{Binding IsOffline}" />-->
+      <ProgressRing HorizontalAlignment="Left" IsActive="{x:Bind ViewModel.IsOffline, Mode=OneWay}" />
     </StackPanel>
 
     <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -63,12 +60,11 @@
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
 
-      <ListBox Height="300"
-               ItemsSource="{x:Bind ViewModel.ListViewModel.Items, Mode=OneWay}"
-               SelectedItem="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=TwoWay}">
+      <!--  DisplayMemberPath="Name"  -->
+      <ListBox ItemsSource="{x:Bind ViewModel.ProductsListViewModel.Items, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=TwoWay}">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="viewModels:ProductViewModel">
-            <Grid Height="70" Background="Red">
+            <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="10" />
@@ -81,7 +77,6 @@
                          ToolTipService.ToolTip="{Binding Name, Mode=OneWay}" />
 
               <Button Grid.Column="2"
-                      Width="25"
                       Padding="5"
                       Command="{Binding Delete, Mode=OneWay}">
                 Delete
@@ -100,7 +95,7 @@
 
     <ProgressRing Grid.Row="2"
                   HorizontalAlignment="Center"
-                  IsActive="{x:Bind ViewModel.ListViewModel.IsLoading}" />
+                  IsActive="{x:Bind ViewModel.ListViewModel.IsLoading, Mode=OneWay}" />
 
   </Grid>
 </UserControl>
