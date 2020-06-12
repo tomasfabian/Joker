@@ -21,6 +21,7 @@ namespace Joker.WPF.Sample.Modularity
     public override void Load()
     {
       Bind<IDialogManager>().To<DialogManager>().InSingletonScope();
+      Bind<IViewModelsFactory>().To<ViewModelsFactory>().InSingletonScope();
 
       Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
       Bind<IReactiveListViewModelFactory<ProductViewModel>, ReactiveListViewModelFactory>().To<ReactiveListViewModelFactory>().InSingletonScope();

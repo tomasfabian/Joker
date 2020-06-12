@@ -24,12 +24,12 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ReactiveProductsViewModel : ReactiveListViewModel<Product, ProductViewModel>
   {
-    private readonly ViewModelsFactory viewModelsFactory;
+    private readonly IViewModelsFactory viewModelsFactory;
     private readonly IPlatformSchedulersFactory schedulersFactory;
 
     public ReactiveProductsViewModel(
       IReactiveData<Product> reactive,
-      ViewModelsFactory viewModelsFactory,
+      IViewModelsFactory viewModelsFactory,
       IPlatformSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {

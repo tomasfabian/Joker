@@ -6,7 +6,7 @@ using Sample.Domain.Models;
 
 namespace Joker.PubSubUI.Shared.Factories.ViewModels
 {
-  public class ViewModelsFactory
+  public class ViewModelsFactory : IViewModelsFactory
   {
     protected readonly IKernel Kernel;
 
