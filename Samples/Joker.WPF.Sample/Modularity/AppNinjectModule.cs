@@ -8,9 +8,9 @@ using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
-using Joker.WPF.Sample.Factories.ViewModels;
+using Joker.PubSubUI.Shared.Factories.ViewModels;
 using Joker.WPF.Sample.Navigation;
-using Joker.WPF.Sample.ViewModels.Products;
+using Joker.PubSubUI.Shared.ViewModels.Products;
 using Ninject.Modules;
 using Sample.Domain.Models;
 
@@ -33,7 +33,7 @@ namespace Joker.WPF.Sample.Modularity
       Bind<IRedisSubscriber>().To<RedisSubscriber>()
         .WithConstructorArgument("url", redisUrl);
 
-      Bind<IDomainEntitiesSubscriber>().To<DomainEntitiesSubscriber<Product>>();new DialogManager().ShowMessage("Et");
+      Bind<IDomainEntitiesSubscriber>().To<DomainEntitiesSubscriber<Product>>();
     }
   }
 }

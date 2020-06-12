@@ -1,11 +1,10 @@
 ﻿using System;
-using Joker.WPF.Sample.ViewModels.Products;
-using Joker.WPF.Sample.ViewModels.Reactive;
+using Joker.PubSubUI.Shared.ViewModels.Products;
 using Ninject;
 using Ninject.Parameters;
 using Sample.Domain.Models;
 
-namespace Joker.WPF.Sample.Factories.ViewModels
+namespace Joker.PubSubUI.Shared.Factories.ViewModels
 {
   public class ViewModelsFactory
   {

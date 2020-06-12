@@ -1,11 +1,4 @@
-﻿using Joker.Collections;
-using Joker.Comparators;
-using Joker.Contracts;
-using Joker.Enums;
-using Joker.MVVM.ViewModels;
-using Joker.WPF.Sample.ViewModels.Products;
-using Sample.Domain.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,14 +7,20 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Windows.Input;
+using Joker.Collections;
+using Joker.Comparators;
+using Joker.Contracts;
+using Joker.Enums;
 using Joker.Extensions;
 using Joker.Extensions.Disposables;
+using Joker.MVVM.ViewModels;
 using Joker.Platforms.Factories.Schedulers;
-using Joker.WPF.Sample.Factories.ViewModels;
+using Joker.PubSubUI.Shared.Factories.ViewModels;
 using OData.Client;
 using Prism.Commands;
+using Sample.Domain.Models;
 
-namespace Joker.WPF.Sample.ViewModels.Reactive
+namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ReactiveProductsViewModel : ReactiveListViewModel<Product, ProductViewModel>
   {

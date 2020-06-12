@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Joker.WPF.Sample.ViewModels.Reactive;
+using Joker.PubSubUI.Shared.ViewModels.Products;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 

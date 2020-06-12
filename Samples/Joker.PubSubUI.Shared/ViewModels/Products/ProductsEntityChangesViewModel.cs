@@ -1,29 +1,31 @@
 ﻿using Joker.Contracts;
 using Joker.MVVM.ViewModels;
-using Joker.WPF.Sample.ViewModels.Products;
 using OData.Client;
 using Prism.Commands;
 using Sample.Domain.Models;
 using System;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Joker.Platforms.Factories.Schedulers;
+using Joker.PubSubUI.Shared.Navigation;
 
-namespace Joker.WPF.Sample.ViewModels.Reactive
+namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ProductsEntityChangesViewModel : EntityChangesViewModel<ProductViewModel>
   {
     private readonly IPlatformSchedulersFactory schedulersFactory;
+    private readonly IDialogManager dialogManager;
 
     public ProductsEntityChangesViewModel(
       IReactiveListViewModelFactory<ProductViewModel> reactiveListViewModelFactory,
       ITableDependencyStatusProvider statusProvider,
-      IPlatformSchedulersFactory schedulersFactory) 
+      IPlatformSchedulersFactory schedulersFactory,
+      IDialogManager dialogManager) 
       : base(reactiveListViewModelFactory, statusProvider, schedulersFactory.Dispatcher)
     {
-      this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
+      this.schedulersFactory = schedulersFactory;
+      this.dialogManager = dialogManager ?? throw new ArgumentNullException(nameof(dialogManager));
 
       PropertyChanged += ProductsEntityChangesViewModel_PropertyChanged;
     }
@@ -83,7 +85,7 @@ namespace Joker.WPF.Sample.ViewModels.Reactive
       dataServiceContext.SaveChangesAsync()
         .ToObservable()
         .ObserveOn(schedulersFactory.Dispatcher)
-        .Subscribe(_ => { NewProductName = null; }, error => MessageBox.Show($"Failed to add {product.Name}"));
+        .Subscribe(_ => { NewProductName = null; }, error => dialogManager.ShowMessage($"Failed to add {product.Name}"));
     }
 
     #endregion

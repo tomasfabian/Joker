@@ -5,22 +5,29 @@ using System.Windows.Input;
 using Joker.MVVM.ViewModels.Domain;
 using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
+using Ninject;
 using OData.Client;
 using Prism.Commands;
 using Sample.Domain.Models;
 
-namespace Joker.WPF.Sample.ViewModels.Products
+namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ProductViewModel : DomainEntityViewModel<Product>
   {
     private readonly IPlatformSchedulersFactory schedulersFactory;
     private readonly IDialogManager dialogManager;
 
+    [Inject]
     public ProductViewModel(Product product, IPlatformSchedulersFactory schedulersFactory, IDialogManager dialogManager)
       : base(product)
     {
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
       this.dialogManager = dialogManager ?? throw new ArgumentNullException(nameof(dialogManager));
+    }
+
+    public ProductViewModel(Product product)
+      : base(product)
+    {
     }
 
     public string Name
@@ -115,7 +122,6 @@ namespace Joker.WPF.Sample.ViewModels.Products
 
     private void OnDelete()
     {
-      dialogManager.ShowMessage($"Failed to delete {Name}");
       var dataServiceContext = new ODataServiceContextFactory().CreateODataContext();
 
       dataServiceContext.AttachTo("Products", Model);
