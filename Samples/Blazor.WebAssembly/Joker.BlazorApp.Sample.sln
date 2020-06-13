@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Joker.BlazorApp.Sample", "Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj", "{1A20B92E-2241-45BB-BD44-567A508B3FEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A20B92E-2241-45BB-BD44-567A508B3FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A20B92E-2241-45BB-BD44-567A508B3FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A20B92E-2241-45BB-BD44-567A508B3FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A20B92E-2241-45BB-BD44-567A508B3FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C1C1BC26-A404-4801-8FF9-396948627AFA}
+	EndGlobalSection
+EndGlobal
