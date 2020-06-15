@@ -23,6 +23,10 @@
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modularity\" />
+  </ItemGroup>
+
   <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
 
 </Project>
