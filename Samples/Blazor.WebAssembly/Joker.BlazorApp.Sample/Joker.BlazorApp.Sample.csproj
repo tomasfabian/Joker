@@ -12,4 +12,14 @@
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
+
 </Project>
