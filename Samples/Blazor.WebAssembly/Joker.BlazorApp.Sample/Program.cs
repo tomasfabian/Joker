@@ -56,11 +56,11 @@ namespace Joker.BlazorApp.Sample
         containerBuilder.RegisterType<ReactiveProductsViewModel>().AsSelf();
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
-        var baseAddress = builder.Configuration.GetValue<string>("BaseUrl");
+        var redisUrl = builder.Configuration.GetValue<string>("RedisUrl");
 
         containerBuilder.RegisterType<RedisSubscriber>()
           .As<IRedisSubscriber>()
-          .WithParameter("url", baseAddress)
+          .WithParameter("url", redisUrl)
           .InstancePerLifetimeScope();
 
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
