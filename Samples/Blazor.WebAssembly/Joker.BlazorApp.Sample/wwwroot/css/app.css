@@ -180,4 +180,8 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+
+    .form-inline > * {
+        margin: 5px;
+    }
 }
