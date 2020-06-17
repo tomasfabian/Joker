@@ -61,7 +61,8 @@
       </Grid.ColumnDefinitions>
 
       <!--  DisplayMemberPath="Name"  -->
-      <ListBox ItemsSource="{x:Bind ViewModel.ProductsListViewModel.Items, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=TwoWay}">
+
+      <ListBox ItemsSource="{x:Bind local:BindingUtils.Fix(ViewModel.ProductsListViewModel.Items), Mode=OneWay}" SelectedItem="{x:Bind ViewModel.ListViewModel.SelectedItem, Mode=TwoWay}">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="viewModels:ProductViewModel">
             <Grid>
@@ -72,13 +73,13 @@
               </Grid.ColumnDefinitions>
 
               <TextBlock VerticalAlignment="Center"
-                         Text="{Binding Name, Mode=OneWay}"
+                         Text="{x:Bind Name, Mode=OneWay}"
                          TextTrimming="CharacterEllipsis"
                          ToolTipService.ToolTip="{Binding Name, Mode=OneWay}" />
 
               <Button Grid.Column="2"
                       Padding="5"
-                      Command="{Binding Delete, Mode=OneWay}">
+                      Command="{x:Bind Delete, Mode=OneWay}">
                 Delete
               </Button>
             </Grid>

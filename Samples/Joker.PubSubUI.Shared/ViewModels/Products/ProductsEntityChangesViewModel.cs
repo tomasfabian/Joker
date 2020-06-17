@@ -90,6 +90,10 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     #endregion
 
+    #endregion
+
+    #region Methods
+
     private void ProductsEntityChangesViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(ListViewModel))
