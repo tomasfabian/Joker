@@ -231,6 +231,8 @@ private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl
 ```
 
 # How to put it all together
+[Try out samples](https://github.com/tomasfabian/Joker/wiki/Samples)
+
 ```C#
     private static void CreateReactiveProductsViewModel()
     {
