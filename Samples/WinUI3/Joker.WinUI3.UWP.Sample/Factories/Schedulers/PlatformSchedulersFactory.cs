@@ -1,13 +1,8 @@
-﻿using Joker.Factories.Schedulers;
+﻿using System.Reactive.Concurrency;
+using Joker.Factories.Schedulers;
 using Joker.Platforms.Factories.Schedulers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Concurrency;
 
-//namespace Joker.WinUI3.Sample.Factories.Schedulers
-namespace Joker.WinUI3.Sample.Factories.Schedulers
+namespace Joker.WinUI3.UWP.Sample.Factories.Schedulers
 {
   public class PlatformSchedulersFactory : SchedulersFactory, IPlatformSchedulersFactory
   {
@@ -22,7 +17,7 @@ namespace Joker.WinUI3.Sample.Factories.Schedulers
         lock (dispatcherGate)
         {
           if (dispatcher == null)
-            dispatcher = DispatcherScheduler.Current;
+            dispatcher = new CoreDispatcherScheduler(Microsoft.UI.Xaml.Window.Current.Dispatcher);
 
           return dispatcher;
         }
