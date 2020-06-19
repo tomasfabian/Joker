@@ -234,3 +234,4 @@ SqlTableDependency.Extensions/SqlTableDependency.Extensions.nuspec
 /Samples/OData/OData.Client/OData.Client.Dev.csproj
 /Samples/Sample.DataCore/Sample.DataCore.Dev.csproj
 /Samples/OData/SelfHostedODataService.EFCore/SelfHostedODataService.EFCore.Dev.csproj
+/Samples/Uno
