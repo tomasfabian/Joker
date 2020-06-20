@@ -79,7 +79,7 @@
 
               <Button Grid.Column="2"
                       Padding="5"
-                      Command="{x:Bind Delete, Mode=OneWay}">
+                      Command="{Binding Delete}">
                 Delete
               </Button>
             </Grid>

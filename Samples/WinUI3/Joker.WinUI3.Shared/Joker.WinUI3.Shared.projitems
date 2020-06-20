@@ -9,6 +9,32 @@
     <Import_RootNamespace>Joker.WinUI3.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NullVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modularity\AppNinjectModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Styles\ControlsStyles.xaml.cs">
+      <DependentUpon>ControlsStyles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\BindingUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ProductDetail.xaml.cs">
+      <DependentUpon>ProductDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ProductsView.xaml.cs">
+      <DependentUpon>ProductsView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Styles\ControlsStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ProductDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ProductsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

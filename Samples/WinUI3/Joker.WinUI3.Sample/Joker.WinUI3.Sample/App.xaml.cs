@@ -7,6 +7,10 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Joker.Factories.Schedulers;
+using Joker.Platforms.Factories.Schedulers;
+using Joker.PubSubUI.Shared.Navigation;
+using Joker.WinUI3.Sample.Factories.Schedulers;
 using Microsoft.UI.Threading;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,6 +22,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using Ninject;
 using Joker.WPF.Sample.Modularity;
+using Joker.WPF.Sample.Navigation;
 
 namespace Joker.WinUI3.Sample
 {
@@ -48,6 +53,8 @@ namespace Joker.WinUI3.Sample
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
       Kernel.Load<AppNinjectModule>();
+      Kernel.Bind<IDialogManager>().To<DialogManager>().InSingletonScope();
+      Kernel.Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
 
       m_window = new MainWindow();
       m_window.Activate();
