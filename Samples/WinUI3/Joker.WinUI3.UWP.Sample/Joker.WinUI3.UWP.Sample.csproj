@@ -130,11 +130,11 @@
       <Name>Joker</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj">
-      <Project>{526edc9d-08f0-4653-949e-9d4c03e52006}</Project>
+      <Project>{ad7c4f44-6f96-4b3b-9327-741b54a9bcfe}</Project>
       <Name>OData.Client.Dev</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj">
-      <Project>{42d40028-b227-4108-95c6-c7105212ed60}</Project>
+      <Project>{c2d54b20-0b54-407c-8792-9040974deefc}</Project>
       <Name>Sample.Domain.Dev</Name>
     </ProjectReference>
   </ItemGroup>

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+  <PropertyGroup>
+    <!-- <OutputType>Exe</OutputType> -->
+    <!-- <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks> -->
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
+  </ItemGroup>
+
+</Project>

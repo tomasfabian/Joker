@@ -226,12 +226,10 @@ SqlTableDependency.Extensions/SqlTableDependency.Extensions.nuspec
 /Samples/Joker.WPF.Sample/Joker.WPF.Sample.Dev.csproj
 /Samples/OData/SelfHostedODataService/SelfHostedODataService.Dev.csproj
 /Samples/Sample.Data/Sample.Data.Dev.csproj
-/Samples/Sample.Domain/Sample.Domain.Dev.csproj
 /Samples/SqlTableDependency.Extensions.Sample/SqlTableDependency.Extensions.Sample.Dev.csproj
 /Tests/SqlTableDependency.Extensions.IntegrationTests/SqlTableDependency.Extensions.IntegrationTests.Dev.csproj
 /Joker.Dev.sln
 /Tests/IntegrationTests/IntegrationTests.Dev.csproj
-/Samples/OData/OData.Client/OData.Client.Dev.csproj
 /Samples/Sample.DataCore/Sample.DataCore.Dev.csproj
 /Samples/OData/SelfHostedODataService.EFCore/SelfHostedODataService.EFCore.Dev.csproj
 /Samples/Uno
