@@ -29,12 +29,9 @@
   <ItemGroup>
     <None Remove="App.xaml" />
     <None Remove="MainWindow.xaml" />
-    <None Remove="Styles\ControlsStyles.xaml" />
-    <None Remove="Views\ProductDetail.xaml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Joker.WPF.Sample\Modularity\AppNinjectModule.cs" Link="Modularity\AppNinjectModule.cs" />
     <Compile Include="..\..\..\Joker.WPF.Sample\Navigation\DialogManager.cs" Link="Navigation\DialogManager.cs" />
   </ItemGroup>
 
@@ -51,21 +48,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Styles\ControlsStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\ProductDetail.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\ProductsView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
