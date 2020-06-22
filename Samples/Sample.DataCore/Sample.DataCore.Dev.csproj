@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Automapper" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFrameworkCore\Joker.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\Sample.Domain\Sample.Domain.Dev.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SqlTableDependencyProvider\" />
+    <Compile Include="..\Sample.Data\SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" Link="SqlTableDependencyProvider\ProductsSqlTableDependencyProvider.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Repositories\AuthorsRepository.cs" />
+    <Compile Remove="Repositories\PublishersRepository.cs" />
+  </ItemGroup>
+</Project>

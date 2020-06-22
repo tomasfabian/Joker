@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\201911211721407_Products2.cs" />
+    <Compile Remove="Migrations\201911211721407_Products2.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Migrations\201911211721407_Products2.resx" />
+  </ItemGroup>
+
+  <Import Project="..\..\NugetProjects\EntityFramework.csprojimport" />
+
+  <ItemGroup>
+    <PackageReference Include="Automapper" Version="9.0.0" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\Sample.Domain\Sample.Domain.Dev.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Migrations\201911211653411_Products.resx">
+      <DependentUpon>201911211653411_Products.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
