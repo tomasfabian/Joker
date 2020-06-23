@@ -4,6 +4,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <RootNamespace>SqlTableDependency.Extensions.Sample</RootNamespace>
   </PropertyGroup>
 
   <Import Project="..\..\NugetProjects\StackExchange.Redis.csprojimport" />

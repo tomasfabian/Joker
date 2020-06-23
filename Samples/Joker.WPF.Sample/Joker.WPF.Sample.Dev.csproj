@@ -8,6 +8,7 @@
     <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <AssemblyName>Joker.WPF.Sample</AssemblyName>
+    <RootNamespace>Joker.WPF.Sample</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@
     <!-- <OutputType>Exe</OutputType> -->
     <!-- <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks> -->
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
+    <RootNamespace>OData.Client</RootNamespace>
   </PropertyGroup>
 
   <Import Project="..\..\..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />

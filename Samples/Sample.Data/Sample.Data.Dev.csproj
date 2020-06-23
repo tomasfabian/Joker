@@ -3,6 +3,7 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
+    <RootNamespace>Sample.Data</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

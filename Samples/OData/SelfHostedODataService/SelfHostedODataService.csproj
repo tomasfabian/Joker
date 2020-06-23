@@ -18,9 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" /> -->
-    <!-- <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" /> -->
-    <!-- <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" /> -->
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
