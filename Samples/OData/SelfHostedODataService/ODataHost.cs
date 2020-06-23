@@ -4,7 +4,7 @@ using Serilog;
 
 namespace SelfHostedODataService
 {
-  public class ODataHost : ODataHost<StartupBaseWithOData>
+  public class ODataHost : ODataHost<StartupForBlazorAndOData>
   {
     protected override void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
     {
