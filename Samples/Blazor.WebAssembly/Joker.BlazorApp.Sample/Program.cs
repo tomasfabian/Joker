@@ -6,20 +6,19 @@ using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Factories.ViewModels;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Joker.Reactive;
-using Joker.Redis.ConnectionMultiplexers;
-using Joker.Redis.Notifications;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Domain.Models;
 using System;
 using System.Net.Http;
-using System.Reactive.Concurrency;
 using System.Threading.Tasks;
-using Autofac.Core;
 using Joker.BlazorApp.Sample.Factories.Schedulers;
+using Joker.BlazorApp.Sample.Subscribers;
 using Joker.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
+using Microsoft.OData.Edm;
+using Microsoft.OData.Extensions.Client;
+using OData.Client;
 using ReactiveListViewModelFactory = Joker.BlazorApp.Sample.Factories.ViewModels.ReactiveListViewModelFactory;
 using ViewModelsFactory = Joker.BlazorApp.Sample.Factories.ViewModels.ViewModelsFactory;
 
@@ -31,9 +30,18 @@ namespace Joker.BlazorApp.Sample
     {
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
      
+      var httpClient = new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
+      
+      var serviceModel = await ODataServiceContext.GetServiceModelAsync(httpClient);
+
       builder.ConfigureContainer(new AutofacServiceProviderFactory(), containerBuilder =>
-      {      
-        containerBuilder.RegisterType<Service>()
+      {
+        containerBuilder.RegisterType<Factories.OData.ODataServiceContextFactory>()
+          .As<IODataServiceContextFactory>()
+          .SingleInstance();
+
+        containerBuilder.Register(c => serviceModel)
+          .As<IEdmModel>()
           .SingleInstance();
 
         containerBuilder.RegisterType<ReactiveListViewModelFactory>()
@@ -49,28 +57,23 @@ namespace Joker.BlazorApp.Sample
           .SingleInstance();
 
         containerBuilder.RegisterType<ReactiveDataWithStatus<Product>>()
-          .As<ITableDependencyStatusProvider, IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>>()
+          .As<IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>>()
           .SingleInstance();        
         
         containerBuilder.RegisterType<ProductsEntityChangesViewModel>().AsSelf();
         containerBuilder.RegisterType<ReactiveProductsViewModel>().AsSelf();
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
-        var redisUrl = builder.Configuration.GetValue<string>("RedisUrl");
-
-        containerBuilder.RegisterType<RedisSubscriber>()
-          .As<IRedisSubscriber>()
-          .WithParameter("url", redisUrl)
-          .InstancePerLifetimeScope();
-
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
           .As<IDomainEntitiesSubscriber>();
       }); 
 
       builder.RootComponents.Add<App>("app");
-      
-      builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-      
+
+      builder.Services.AddTransient(sp => httpClient);
+
+      builder.Services.AddODataClient().AddHttpClient(httpClient);
+
       await builder.Build().RunAsync();
     }
   }
