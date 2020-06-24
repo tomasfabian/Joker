@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.OData.Client;
 using Microsoft.OData.Edm;
+using Microsoft.OData.Edm.Csdl;
 using Sample.Domain.Models;
 
 namespace OData.Client
@@ -13,12 +16,31 @@ namespace OData.Client
 
     public ODataServiceContext(Uri serviceRoot)
       : base(serviceRoot, ODataProtocolVersion.V4)
-    {         
-      Format.LoadServiceModel = () => GetServiceModel(GetMetadataUri());
-      Format.UseJson();
+    {
+      if (EdmModel == null)
+      {
+        Format.LoadServiceModel = () => GetServiceModel(GetMetadataUri());
+        Format.UseJson();
+      }
+      else
+      {
+        Format.UseJson(EdmModel);
+      }
     }
 
     #endregion
+    
+    public static IEdmModel EdmModel { get; set; }
+
+    //WASM support
+    public static async Task<IEdmModel> GetServiceModelAsync(HttpClient httpClient)
+    {
+      using (var stream = await httpClient.GetStreamAsync("$metadata"))
+      using (var reader = XmlReader.Create(stream))
+      {
+        return EdmModel = CsdlReader.Parse(reader);
+      }
+    }
 
     public IEdmModel GetServiceModel(Uri metadataUri)
     {
