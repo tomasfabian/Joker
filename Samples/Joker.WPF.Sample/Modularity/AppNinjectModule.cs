@@ -12,6 +12,7 @@ using Joker.PubSubUI.Shared.Factories.ViewModels;
 using Joker.WPF.Sample.Navigation;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Ninject.Modules;
+using OData.Client;
 using Sample.Domain.Models;
 
 namespace Joker.WPF.Sample.Modularity
@@ -22,6 +23,7 @@ namespace Joker.WPF.Sample.Modularity
     {
       Bind<IDialogManager>().To<DialogManager>().InSingletonScope();
       Bind<IViewModelsFactory>().To<ViewModelsFactory>().InSingletonScope();
+      Bind<IODataServiceContextFactory>().To<ODataServiceContextFactory>().InSingletonScope();
 
       Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
       Bind<IReactiveListViewModelFactory<ProductViewModel>, ReactiveListViewModelFactory>().To<ReactiveListViewModelFactory>().InSingletonScope();

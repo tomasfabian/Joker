@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace OData.Client
 {
-  public class ODataServiceContextFactory
+  public class ODataServiceContextFactory : IODataServiceContextFactory
   {
     public ODataServiceContext Create(string url)
     {

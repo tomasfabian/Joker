@@ -24,21 +24,32 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ReactiveProductsViewModel : ReactiveListViewModel<Product, ProductViewModel>
   {
+    #region Fields
+
+    private readonly IODataServiceContextFactory dataServiceContextFactory;
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IPlatformSchedulersFactory schedulersFactory;
 
+    #endregion
+
+    #region Constructors
+
     public ReactiveProductsViewModel(
       IReactiveData<Product> reactive,
+      IODataServiceContextFactory dataServiceContextFactory,
       IViewModelsFactory viewModelsFactory,
       IPlatformSchedulersFactory schedulersFactory)
       : base(reactive, schedulersFactory)
     {
+      this.dataServiceContextFactory = dataServiceContextFactory ?? throw new ArgumentNullException(nameof(dataServiceContextFactory));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
 
       Comparer = new DomainEntityComparer();
       Init();
     }
+
+    #endregion
 
     #region Properties
 
@@ -52,7 +63,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
         try
         {
-          context = new ODataServiceContextFactory().CreateODataContext();
+          context = dataServiceContextFactory.CreateODataContext();
         }
         catch (Exception e)
         {

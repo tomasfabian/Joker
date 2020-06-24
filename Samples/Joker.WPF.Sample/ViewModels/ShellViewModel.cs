@@ -10,6 +10,7 @@ using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Factories.ViewModels;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Joker.WPF.Sample.Navigation;
+using OData.Client;
 using Prism.Mvvm;
 using Sample.Domain.Models;
 
@@ -79,7 +80,7 @@ namespace Joker.WPF.Sample.ViewModels
       var schedulersFactory = new PlatformSchedulersFactory();
       var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
 
-      var reactiveProductsViewModel = new ReactiveProductsViewModel(reactiveData, viewModelsFactory, schedulersFactory);
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(reactiveData, new ODataServiceContextFactory(),  viewModelsFactory, schedulersFactory);
 
       reactiveProductsViewModel.SubscribeToDataChanges();
       
