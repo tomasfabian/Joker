@@ -14,13 +14,19 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 {
   public class ProductViewModel : DomainEntityViewModel<Product>
   {
+    private readonly IODataServiceContextFactory dataServiceContextFactory;
     private readonly IPlatformSchedulersFactory schedulersFactory;
     private readonly IDialogManager dialogManager;
 
     [Inject]
-    public ProductViewModel(Product product, IPlatformSchedulersFactory schedulersFactory, IDialogManager dialogManager)
+    public ProductViewModel(
+      Product product,
+      IODataServiceContextFactory dataServiceContextFactory,
+      IPlatformSchedulersFactory schedulersFactory,
+      IDialogManager dialogManager)
       : base(product)
     {
+      this.dataServiceContextFactory = dataServiceContextFactory ?? throw new ArgumentNullException(nameof(dataServiceContextFactory));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
       this.dialogManager = dialogManager ?? throw new ArgumentNullException(nameof(dialogManager));
     }
@@ -91,7 +97,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     private void OnUpdate()
     {
-      var dataServiceContext = new ODataServiceContextFactory().CreateODataContext();
+      var dataServiceContext = dataServiceContextFactory.CreateODataContext();
       
       var product = Model.Clone();
       
@@ -122,7 +128,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     private void OnDelete()
     {
-      var dataServiceContext = new ODataServiceContextFactory().CreateODataContext();
+      var dataServiceContext = dataServiceContextFactory.CreateODataContext();
 
       dataServiceContext.AttachTo("Products", Model);
       dataServiceContext.DeleteObject(Model);
