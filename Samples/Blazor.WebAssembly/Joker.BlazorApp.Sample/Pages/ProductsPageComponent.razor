@@ -1,0 +1,76 @@
+﻿@page "/productspagecomponent"
+@inherits ProductsPageComponentBase
+
+<h1>All products</h1>
+<section>
+    @if (ViewModel.ProductsListViewModel?.Items == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="col-12 row">
+            <b>IsLoading: </b>
+            @*@ViewModel.ProductsListViewModel?.IsLoading*@
+        </div>
+
+        <div class="col-12 row">
+
+            <div class="col-8 row">
+
+                @if (ViewModel.ProductsListViewModel != null)
+                {
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th style="width:auto;text-align:left">Name</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var product in ViewModel.ProductsListViewModel?.Items)
+                        {
+                            <tr @key="product.Id">
+                                <td>
+                                    @product.Name
+                                </td>
+
+                                <a class="btn btn-danger" @onclick="(e=> product.Delete.Execute(null))">
+                                    <span class="oi oi-trash" title="delete" aria-hidden="true" style="color: #fff"></span>
+                                </a>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            @if (ViewModel.ProductsListViewModel?.SelectedItem != null)
+            {
+                <div class="col-4">
+
+                    <h2>Product detail</h2>
+
+                    <EditForm Model="@ViewModel.ProductsListViewModel.SelectedItem" OnValidSubmit="@UpdateProduct">
+
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <ValidationSummary></ValidationSummary>
+                        <div class="form-group row">
+                            <label for="productName" class="col-sm-4 col-form-label">Name</label>
+                            <div class="col-sm-8">
+                                <InputText class="form-control col-sm-8" id="productName" @bind-Value="@ViewModel.ProductsListViewModel.SelectedItem.Renamed" placeholder="Enter product name" />
+                                <ValidationMessage class="offset-sm-3" For="@(() => ViewModel.ProductsListViewModel.SelectedItem.Renamed)"></ValidationMessage>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary edit-btn">
+                            <span class="oi oi-pencil" title="update" aria-hidden="true" style="color: #fff"></span> Update
+                        </button>
+                    </EditForm>
+                </div>
+            }
+        </div>
+
+    }
+</section>
