@@ -56,16 +56,17 @@ namespace Joker.BlazorApp.Sample
           .As<IDialogManager>()
           .SingleInstance();
 
-        containerBuilder.RegisterType<ReactiveDataWithStatus<Product>>()
+        containerBuilder.Register(c => ReactiveDataWithStatus<Product>.Instance)
           .As<IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>>()
           .SingleInstance();        
         
         containerBuilder.RegisterType<ProductsEntityChangesViewModel>().AsSelf();
         containerBuilder.RegisterType<ReactiveProductsViewModel>().AsSelf();
+        containerBuilder.RegisterType<ProductViewModel>().AsSelf();
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
-          .As<IDomainEntitiesSubscriber>();
+          .As<IDomainEntitiesSubscriber, ITableDependencyStatusProvider>();
       }); 
 
       builder.RootComponents.Add<App>("app");

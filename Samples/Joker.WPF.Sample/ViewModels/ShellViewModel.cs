@@ -70,7 +70,7 @@ namespace Joker.WPF.Sample.ViewModels
       await domainEntitiesSubscriber.Subscribe();
 
       var entityChangesViewModelExample = new ProductsEntityChangesViewModel(
-        viewModelsFactory, reactiveDataWithStatus, schedulersFactory, new DialogManager());
+        viewModelsFactory, reactiveDataWithStatus, schedulersFactory, new ODataServiceContextFactory(), new DialogManager());
     }
 
     private static void CreateReactiveProductsViewModel(ViewModelsFactory viewModelsFactory)
@@ -80,7 +80,7 @@ namespace Joker.WPF.Sample.ViewModels
       var schedulersFactory = new PlatformSchedulersFactory();
       var entitiesSubscriber = new DomainEntitiesSubscriber<Product>(new RedisSubscriber(redisUrl), reactiveData, schedulersFactory);
 
-      var reactiveProductsViewModel = new ReactiveProductsViewModel(reactiveData, new ODataServiceContextFactory(),  viewModelsFactory, schedulersFactory);
+      var reactiveProductsViewModel = new ReactiveProductsViewModel(reactiveData, new ODataServiceContextFactory(), viewModelsFactory, schedulersFactory);
 
       reactiveProductsViewModel.SubscribeToDataChanges();
       
