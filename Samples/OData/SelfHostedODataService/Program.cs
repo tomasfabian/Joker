@@ -16,6 +16,7 @@ namespace SelfHostedODataService
       {
         ConfigureServices = services =>
         {
+          services.AddHostedService<ProductChangesHostedService>();
           services.AddHostedService<SqlTableDependencyProviderHostedService>();
         }
       };
