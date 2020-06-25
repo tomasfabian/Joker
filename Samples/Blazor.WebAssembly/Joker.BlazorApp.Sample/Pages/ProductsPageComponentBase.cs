@@ -31,31 +31,12 @@ namespace Joker.BlazorApp.Sample.Pages
     public IODataServiceContextFactory DataServiceClientFactory { get; set; }
 
     #endregion
-
-    #region SignalR
-
-    private HubConnection hubConnection;
-
-    public bool IsConnected =>
-      hubConnection?.State == HubConnectionState.Connected;
-
-    #endregion
     
     private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     protected override async Task OnInitializedAsync()
     {
-      Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-          h => ViewModel.PropertyChanged  += h,
-          h => ViewModel.PropertyChanged  -= h)
-        .Where(c => c.EventArgs.PropertyName == nameof(ProductsEntityChangesViewModel.IsOffline))
-        .Subscribe(c =>
-        {
-          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -= ProductsPageComponentBase_CollectionChanged;
-          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged += ProductsPageComponentBase_CollectionChanged;
-          StateHasChanged();
-        })
-        .DisposeWith(compositeDisposable);
+      SubscribeToPropertyChanges();
       
       //ViewModel.ProductsListViewModel.SelectionChanged
       //  .Subscribe(c => StateHasChanged())
@@ -66,6 +47,30 @@ namespace Joker.BlazorApp.Sample.Pages
       await base.OnInitializedAsync();
     }
 
+    private void SubscribeToPropertyChanges()
+    {
+      Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+          h => ViewModel.PropertyChanged += h,
+          h => ViewModel.PropertyChanged -= h)
+        .Where(c => c.EventArgs.PropertyName == nameof(ProductsEntityChangesViewModel.IsOffline))
+        .Subscribe(c =>
+        {
+          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -=
+            ProductsPageComponentBase_CollectionChanged;
+          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged +=
+            ProductsPageComponentBase_CollectionChanged;
+          ViewModel.ProductsListViewModel.PropertyChanged -= ProductsListViewModel_PropertyChanged;
+          ViewModel.ProductsListViewModel.PropertyChanged += ProductsListViewModel_PropertyChanged;
+          StateHasChanged();
+        })
+        .DisposeWith(compositeDisposable);
+    }
+
+    private void ProductsListViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      StateHasChanged();
+    }
+
     private void ProductsPageComponentBase_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
       StateHasChanged();
@@ -74,14 +79,19 @@ namespace Joker.BlazorApp.Sample.Pages
     public void UpdateProduct()
     {
       var selectedProduct = ViewModel.ProductsListViewModel?.SelectedItem;
+
       if (selectedProduct != null && selectedProduct.Update.CanExecute(null))
         selectedProduct.Update.Execute(null);
-
-      //selectedProduct.Update.Execute(null);
     }
 
     public void Dispose()
     {
+      if (ViewModel.ProductsListViewModel != null)
+      {
+        (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -= ProductsPageComponentBase_CollectionChanged;
+        ViewModel.ProductsListViewModel.PropertyChanged -= ProductsListViewModel_PropertyChanged;
+      }
+
       compositeDisposable.Dispose();
 
       _ = hubConnection.DisposeAsync();

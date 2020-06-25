@@ -11,8 +11,29 @@
     {
         <div class="col-12 row">
             <b>IsLoading: </b>
-            @*@ViewModel.ProductsListViewModel?.IsLoading*@
+            @ViewModel.ProductsListViewModel?.IsLoading
         </div>
+        
+        @if (ViewModel != null)
+        {
+            <div class="col-12 row">
+                <EditForm class="form-inline" Model="@ViewModel" OnValidSubmit="@(e => ViewModel.AddNew.Execute(null))">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <div class="form-group">
+                        <label for="newProductName" class="col-form-label">Name </label>
+                        <div>
+                            <InputText class="form-control" id="newProductName" @bind-Value="@ViewModel.NewProductName" placeholder="Enter new product name" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => ViewModel.NewProductName)"></ValidationMessage>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="oi oi-plus" title="add" aria-hidden="true" style="color: #fff"> Add</span>
+                    </button>
+                </EditForm>
+            </div>
+        }
 
         <div class="col-12 row">
 

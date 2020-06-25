@@ -42,6 +42,9 @@ namespace Joker.BlazorApp.Sample.Subscribers
       statusChangesSubscription.DisposeWith(CompositeDisposable);
     }
 
+    public bool IsConnected =>
+      hubConnection?.State == HubConnectionState.Connected;
+
     protected virtual string ChannelName { get; } = "ReceiveDataChange";
 
     protected virtual string StatusChannelName { get; } = typeof(TEntity).Name + "-Status";
