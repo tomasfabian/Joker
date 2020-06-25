@@ -1,0 +1,23 @@
+﻿@inherits ModalDialogBase
+<h3>ModalDialog</h3>
+
+@if (ShowPopup)
+{
+    <div class="modal" tabindex="-1" style="display: block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Error</h3>
+
+                    <button type="button" class="close"
+                            @onclick="ClosePopup">
+                        <span aria-hidden="true">🗙</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Message
+                </div>
+            </div>
+        </div>
+    </div>
+}
