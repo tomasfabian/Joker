@@ -2,23 +2,67 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Joker.BlazorApp.Sample.Navigation;
+using Joker.Disposables;
+using Joker.Extensions.Disposables;
 using Microsoft.AspNetCore.Components;
 
 namespace Joker.BlazorApp.Sample.Pages
 {
   public class ModalDialogBase : ComponentBase
   {
-    public ModalDialogBase()
+    [Inject]
+    public IBlazorDialogManager BlazorDialogManager { get; set; }
+    
+    private DisposableObject disposable;
+
+    protected override Task OnInitializedAsync()
     {
-      ShowPopup = true;
+      disposable = DisposableObject.Create(Dispose);
+
+      BlazorDialogManager.ErrorMessages.Subscribe(errorMessage =>
+      {
+        Message = errorMessage;
+        ShowPopup = true;
+      }).DisposeWith(disposable.CompositeDisposable);
+
+      return base.OnInitializedAsync();
     }
 
-    public bool ShowPopup { get; set; }
+    private bool showPopup;
+
+    [Parameter]
+    public bool ShowPopup
+    {
+      get => showPopup;
+      set
+      {
+        if(showPopup == value)
+          return;
+
+        showPopup = value;
+
+        StateHasChanged();
+      }
+    }
+
+    [Parameter]
     public string Message { get; set; }
 
-    public void ClosePopup()
+    [Parameter]
+    public EventCallback<bool> ShowPopupChanged { get; set; }
+
+    protected Task ClosePopup()
     {
       ShowPopup = false;
+
+      return ShowPopupChanged.InvokeAsync(ShowPopup);
+    }    
+
+    public void Dispose()
+    {
+      using (disposable)
+      { }
     }
   }
 }

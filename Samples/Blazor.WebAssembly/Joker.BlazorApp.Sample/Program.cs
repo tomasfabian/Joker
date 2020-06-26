@@ -13,6 +13,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Joker.BlazorApp.Sample.Factories.Schedulers;
+using Joker.BlazorApp.Sample.Navigation;
 using Joker.BlazorApp.Sample.Subscribers;
 using Joker.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
@@ -76,13 +77,6 @@ namespace Joker.BlazorApp.Sample
       builder.Services.AddODataClient().AddHttpClient(httpClient);
 
       await builder.Build().RunAsync();
-    }
-  }
-
-  public class DialogManager : IDialogManager
-  {
-    public void ShowMessage(string message)
-    {
     }
   }
 }
