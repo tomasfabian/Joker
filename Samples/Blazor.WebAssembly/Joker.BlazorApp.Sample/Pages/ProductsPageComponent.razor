@@ -5,13 +5,19 @@
 <section>
     @if (ViewModel.ProductsListViewModel?.Items == null)
     {
-        <p><em>Loading...</em></p>
+        <p><em>Initializing...</em></p>
     }
     else
     {
         <div class="col-12 row">
-            <b>IsLoading: </b>
-            @ViewModel.ProductsListViewModel?.IsLoading
+            <div class="col-2 row">
+                <b>IsLoading: </b>
+                @ViewModel.ProductsListViewModel?.IsLoading
+            </div>
+            <div class="col-3 row">
+                <b>IsOffline: </b>
+                @ViewModel.IsOffline
+            </div>
         </div>
         
         @if (ViewModel != null)
@@ -52,7 +58,7 @@
                         <tbody>
                         @foreach (var product in ViewModel.ProductsListViewModel?.Items)
                         {
-                            <tr @key="product.Id">
+                            <tr @key="product.Id" @onclick="@(() => ViewModel.ProductsListViewModel.SelectedItem = product)">
                                 <td>
                                     @product.Name
                                 </td>
@@ -93,5 +99,6 @@
             }
         </div>
 
+        <ModalDialog></ModalDialog>
     }
 </section>

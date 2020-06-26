@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Windows.Input;
 using Joker.Collections;
@@ -191,7 +192,32 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
     {
       SelectedItem = Items.FirstOrDefault();
     }
-    
+
+    private readonly ISubject<Product> productUpdatedSubject = new Subject<Product>();
+
+    public IObservable<Product> ProductWasUpdated => productUpdatedSubject.AsObservable();
+
+    protected override void OnEntityUpdatedNotification(Product model, Action<Product, ProductViewModel> update)
+    {
+      base.OnEntityUpdatedNotification(model, update);
+
+      productUpdatedSubject.OnNext(model);
+    }
+
+#if NETSTANDARD
+    protected override bool OnEntityDeletedNotification(Product model)
+    {
+      var productViewModel = Items.FirstOrDefault(c => c.Id == model.Id);
+
+      var result = base.OnEntityDeletedNotification(model);
+
+      if (SelectedItem == productViewModel)
+        SelectedItem = null;
+
+      return result;
+    }
+#endif
+
     protected override void OnDispose()
     {
       base.OnDispose();
