@@ -2,14 +2,13 @@
 using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.SignalR.Client;
-using OData.Client;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Joker.Extensions;
 using Joker.Extensions.Disposables;
 
 namespace Joker.BlazorApp.Sample.Pages
@@ -27,9 +26,6 @@ namespace Joker.BlazorApp.Sample.Pages
     [Inject]
     public IDomainEntitiesSubscriber DomainEntitiesSubscriber { get; set; }
 
-    [Inject]
-    public IODataServiceContextFactory DataServiceClientFactory { get; set; }
-
     #endregion
     
     private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -38,10 +34,6 @@ namespace Joker.BlazorApp.Sample.Pages
     {
       SubscribeToPropertyChanges();
       
-      //ViewModel.ProductsListViewModel.SelectionChanged
-      //  .Subscribe(c => StateHasChanged())
-      //  .DisposeWith(compositeDisposable);
-
       await DomainEntitiesSubscriber.Subscribe();
 
       await base.OnInitializedAsync();
@@ -52,28 +44,43 @@ namespace Joker.BlazorApp.Sample.Pages
       Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
           h => ViewModel.PropertyChanged += h,
           h => ViewModel.PropertyChanged -= h)
-        .Where(c => c.EventArgs.PropertyName == nameof(ProductsEntityChangesViewModel.IsOffline))
+        .Where(c => c.EventArgs.PropertyName.IsOneOfFollowing(nameof(ProductsEntityChangesViewModel.ListViewModel), nameof(ProductsEntityChangesViewModel.IsOffline)))
+        .Where(c => ViewModel.ProductsListViewModel != null)
         .Subscribe(c =>
         {
-          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -=
-            ProductsPageComponentBase_CollectionChanged;
-          (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged +=
-            ProductsPageComponentBase_CollectionChanged;
-          ViewModel.ProductsListViewModel.PropertyChanged -= ProductsListViewModel_PropertyChanged;
-          ViewModel.ProductsListViewModel.PropertyChanged += ProductsListViewModel_PropertyChanged;
+          SubscribeToInnerPropertyChanges();
+
           StateHasChanged();
         })
         .DisposeWith(compositeDisposable);
     }
 
-    private void ProductsListViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-      StateHasChanged();
-    }
+    private readonly SerialDisposable productWasUpdatedSubscription = new SerialDisposable();
 
-    private void ProductsPageComponentBase_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void SubscribeToInnerPropertyChanges()
     {
-      StateHasChanged();
+      var refreshesCompositeDisposable = new CompositeDisposable();
+
+      Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+          h => (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged += h,
+          h => (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -= h)
+        .Subscribe(_ => StateHasChanged()).DisposeWith(refreshesCompositeDisposable);
+
+      Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+          h => ViewModel.PropertyChanged += h,
+          h => ViewModel.PropertyChanged -= h)
+        .Subscribe(_ => StateHasChanged()).DisposeWith(refreshesCompositeDisposable);
+
+      ViewModel.ProductsListViewModel.SelectionChanged
+        .Subscribe(c => { StateHasChanged(); })
+        .DisposeWith(refreshesCompositeDisposable);
+
+      ViewModel.ProductsListViewModel.ProductWasUpdated
+        .Throttle(TimeSpan.FromMilliseconds(200), PlatformSchedulersFactory.CurrentThread)
+        .Subscribe(_ => StateHasChanged())
+        .DisposeWith(refreshesCompositeDisposable);
+
+      productWasUpdatedSubscription.Disposable = refreshesCompositeDisposable;
     }
 
     public void UpdateProduct()
@@ -86,15 +93,8 @@ namespace Joker.BlazorApp.Sample.Pages
 
     public void Dispose()
     {
-      if (ViewModel.ProductsListViewModel != null)
-      {
-        (ViewModel.ProductsListViewModel.Items as INotifyCollectionChanged).CollectionChanged -= ProductsPageComponentBase_CollectionChanged;
-        ViewModel.ProductsListViewModel.PropertyChanged -= ProductsListViewModel_PropertyChanged;
-      }
-
+      productWasUpdatedSubscription.Dispose();
       compositeDisposable.Dispose();
-
-      _ = hubConnection.DisposeAsync();
     }
   }
 }
