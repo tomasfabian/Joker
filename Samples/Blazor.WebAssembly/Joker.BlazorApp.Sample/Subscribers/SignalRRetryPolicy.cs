@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Joker.BlazorApp.Sample.Subscribers
 {
-  public class RandomRetryPolicy : IRetryPolicy
+  public class SignalRRetryPolicy : IRetryPolicy
   {
     public TimeSpan? NextRetryDelay(RetryContext retryContext)
     {

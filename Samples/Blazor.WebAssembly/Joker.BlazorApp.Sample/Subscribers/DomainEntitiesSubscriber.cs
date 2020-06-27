@@ -11,6 +11,7 @@ using Joker.Notifications;
 using Joker.Reactive;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Notifications;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
@@ -21,13 +22,19 @@ namespace Joker.BlazorApp.Sample.Subscribers
   {
     Task Subscribe();
   }
-  
-  public class DomainEntitiesSubscriber<TEntity> : DisposableObject, IDomainEntitiesSubscriber, ITableDependencyStatusProvider 
+
+  public class DomainEntitiesSubscriber<TEntity> : DisposableObject, IDomainEntitiesSubscriber//, ITableDependencyStatusProvider 
     where TEntity : IVersion
   {
+    #region Fields
+
     private readonly NavigationManager navigationManager;
     private readonly IEntityChangePublisherWithStatus<TEntity> reactiveData;
     private readonly ISchedulersFactory schedulersFactory;
+
+    #endregion
+
+    #region Constructors
 
     public DomainEntitiesSubscriber(
       NavigationManager navigationManager,
@@ -42,8 +49,10 @@ namespace Joker.BlazorApp.Sample.Subscribers
       statusChangesSubscription.DisposeWith(CompositeDisposable);
     }
 
-    public bool IsConnected =>
-      hubConnection?.State == HubConnectionState.Connected;
+    #endregion
+
+    //public bool IsConnected =>
+    //  hubConnection?.State == HubConnectionState.Connected;
 
     protected virtual string ChannelName { get; } = "ReceiveDataChange";
 
@@ -59,27 +68,13 @@ namespace Joker.BlazorApp.Sample.Subscribers
         throw new ObjectDisposedException("Object has already been disposed.");
 
       hubConnection = new HubConnectionBuilder()
-        .WithAutomaticReconnect()
+        .WithAutomaticReconnect(new SignalRRetryPolicy())
         .WithUrl(navigationManager.ToAbsoluteUri("/dataChangesHub"))
+        .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
         .Build();
 
-      hubConnection.Closed += exception =>
-      {
-        Console.WriteLine($"Closed: {exception}");
-        return Task.CompletedTask;
-      };
-      hubConnection.Reconnected += s =>
-      {
-        Console.WriteLine($"Reconnected: {s}");
+      SubscribeToHubEvents();
 
-        return Task.CompletedTask;
-      };
-      hubConnection.Reconnecting += exception =>
-      {
-        Console.WriteLine($"Reconnecting: {exception}");
-        
-        return Task.CompletedTask;
-      };
       hubConnection.On<RecordChangedNotification<TEntity>>(ChannelName, recordChangedNotification =>
       {
         Console.WriteLine($"Received notification: {recordChangedNotification}");
@@ -87,10 +82,49 @@ namespace Joker.BlazorApp.Sample.Subscribers
         OnMessageReceived(recordChangedNotification);
       });
       
-      //TODO: remove when status provider will be ready
-      ReactiveDataWithStatus<Product>.Instance.Publish(new VersionedTableDependencyStatus(VersionedTableDependencyStatus.TableDependencyStatuses.Started, DateTimeOffset.Now));
-      
-      await hubConnection.StartAsync();
+      await hubConnection.StartAsync().ContinueWith(c =>
+      {
+        Console.WriteLine("Started: " + c.Status);
+        //TODO: remove when status provider will be ready
+        if(c.Status == TaskStatus.RanToCompletion)
+          PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.Started);
+      });
+    }
+
+    private void SubscribeToHubEvents()
+    {
+      hubConnection.Closed += exception =>
+      {
+        Console.WriteLine("Closed: " + exception);
+        //TODO: remove when status provider will be ready
+        PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.StopDueToError);
+
+        return Task.CompletedTask;
+      };
+
+      hubConnection.Reconnected += s =>
+      {
+        Console.WriteLine("Reconnected: " + s);
+        //TODO: remove when status provider will be ready
+        PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.Started);
+
+        return Task.CompletedTask;
+      };
+
+      hubConnection.Reconnecting += exception =>
+      {
+        Console.WriteLine("Reconnecting: " + exception);
+        //TODO: remove when status provider will be ready
+        PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses.StopDueToError);
+
+        return Task.CompletedTask;
+      };
+    }
+
+    private void PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses status)
+    {
+      reactiveData.Publish(new VersionedTableDependencyStatus(
+        status, DateTimeOffset.Now));
     }
 
     private VersionedTableDependencyStatus lastStatus;
@@ -141,7 +175,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
     #endregion
 
-    public IObservable<VersionedTableDependencyStatus> WhenStatusChanges { get; } =
-      ReactiveDataWithStatus<Product>.Instance.WhenStatusChanges;
+    //public IObservable<VersionedTableDependencyStatus> WhenStatusChanges { get; } =
+    //  ReactiveDataWithStatus<Product>.Instance.WhenStatusChanges;
   }
 }
