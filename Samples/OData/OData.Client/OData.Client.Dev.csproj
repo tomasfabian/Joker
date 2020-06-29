@@ -11,6 +11,9 @@
   <Import Project="..\..\..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
   </ItemGroup>
 

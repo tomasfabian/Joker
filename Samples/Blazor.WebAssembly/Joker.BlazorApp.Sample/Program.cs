@@ -17,6 +17,7 @@ using Joker.BlazorApp.Sample.Navigation;
 using Joker.BlazorApp.Sample.Subscribers;
 using Joker.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
+using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Extensions.Client;
 using OData.Client;
@@ -30,11 +31,26 @@ namespace Joker.BlazorApp.Sample
     public static async Task Main(string[] args)
     {
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+      builder.Logging.SetMinimumLevel(LogLevel.Error);
      
       var httpClient = new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
       
       var serviceModel = await ODataServiceContext.GetServiceModelAsync(httpClient);
 
+      ConfigureContainer(builder, serviceModel); 
+
+      builder.RootComponents.Add<App>("app");
+
+      builder.Services.AddTransient(sp => httpClient);
+
+      builder.Services.AddODataClient().AddHttpClient(httpClient);
+
+      await builder.Build().RunAsync();
+    }
+
+    private static void ConfigureContainer(WebAssemblyHostBuilder builder, IEdmModel serviceModel)
+    {
       builder.ConfigureContainer(new AutofacServiceProviderFactory(), containerBuilder =>
       {
         containerBuilder.RegisterType<Factories.OData.ODataServiceContextFactory>()
@@ -54,29 +70,21 @@ namespace Joker.BlazorApp.Sample
           .SingleInstance();
 
         containerBuilder.RegisterType<DialogManager>()
-          .As<IDialogManager>()
+          .As<IBlazorDialogManager, IDialogManager>()
           .SingleInstance();
 
         containerBuilder.Register(c => ReactiveDataWithStatus<Product>.Instance)
-          .As<IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>>()
-          .SingleInstance();        
-        
+          .As<IReactiveData<Product>, IEntityChangePublisherWithStatus<Product>, ITableDependencyStatusProvider>()
+          .SingleInstance();
+
         containerBuilder.RegisterType<ProductsEntityChangesViewModel>().AsSelf();
         containerBuilder.RegisterType<ReactiveProductsViewModel>().AsSelf();
         containerBuilder.RegisterType<ProductViewModel>().AsSelf();
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
-          .As<IDomainEntitiesSubscriber, ITableDependencyStatusProvider>();
-      }); 
-
-      builder.RootComponents.Add<App>("app");
-
-      builder.Services.AddTransient(sp => httpClient);
-
-      builder.Services.AddODataClient().AddHttpClient(httpClient);
-
-      await builder.Build().RunAsync();
+          .As<IDomainEntitiesSubscriber>();
+      });
     }
   }
 }

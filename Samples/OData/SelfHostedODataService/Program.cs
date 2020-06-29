@@ -31,7 +31,8 @@ namespace SelfHostedODataService
       var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
       Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug()
+        // .MinimumLevel.Debug()
+        .MinimumLevel.Warning()
         .WriteTo.Console()
         .WriteTo.File($@"{baseDir}\logs\{nameof(ODataHost)}_.txt", rollingInterval: RollingInterval.Day)
         .CreateLogger();
