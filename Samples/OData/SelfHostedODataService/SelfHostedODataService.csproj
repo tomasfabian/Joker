@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" /> -->
     <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj" />
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />

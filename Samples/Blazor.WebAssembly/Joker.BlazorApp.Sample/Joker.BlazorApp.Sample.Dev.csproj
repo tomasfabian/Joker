@@ -15,14 +15,14 @@
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.5" />
-
-    <PackageReference Include="Joker.MVVM" Version="1.4.1" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
-    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
   </ItemGroup>
 
   <ItemGroup>
