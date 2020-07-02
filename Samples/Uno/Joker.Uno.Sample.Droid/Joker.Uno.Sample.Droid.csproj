@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>6c9c0ea3-13b0-4a05-88b2-86e9b7cb46f6</ProjectGuid>
+    <ProjectGuid>{6C9C0EA3-13B0-4A05-88B2-86E9B7CB46F6}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -60,11 +60,15 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.RemoteControl.csprojimport" />
-  
   <ItemGroup>
+    <PackageReference Include="Ninject">
+      <Version>3.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Core">
+      <Version>7.2.0.1422</Version>
+    </PackageReference>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.32" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
@@ -91,7 +95,30 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj">
+      <Project>{ed4e22c3-58f9-4e2e-805d-4957bc8cec21}</Project>
+      <Name>Joker.MVVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj">
+      <Project>{42ba6ed1-29a2-424e-9272-04d5c3b85db7}</Project>
+      <Name>Joker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj">
+      <Project>{3ce2d98d-3c39-4ab0-bb27-104981bbb036}</Project>
+      <Name>SqlTableDependency.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj">
+      <Project>{89efde3b-d23d-4fb2-8a1b-c6c1b0cda375}</Project>
+      <Name>OData.Client.Dev</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj">
+      <Project>{e4c0badb-ae6e-4ae0-b88d-6953935c8073}</Project>
+      <Name>Sample.Domain.Dev</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems" Label="Shared" Condition="Exists('..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems')" />
+  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
   <Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'==''" />

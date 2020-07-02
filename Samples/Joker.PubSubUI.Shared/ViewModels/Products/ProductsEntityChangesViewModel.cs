@@ -74,7 +74,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     #region AddNew
 
-#if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD
+#if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD && !HAS_UNO 
     private Joker.WinUI3.Shared.Commands.RelayCommand addNew;
 
     public Microsoft.UI.Xaml.Input.ICommand AddNew => addNew ?? (addNew = new Joker.WinUI3.Shared.Commands.RelayCommand(OnAddNew, OnCanAddNew));
