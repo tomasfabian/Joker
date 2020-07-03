@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Joker.Extensions;
 using Joker.Extensions.Disposables;
+using Joker.Notifications;
 
 namespace Joker.BlazorApp.Sample.Pages
 {
