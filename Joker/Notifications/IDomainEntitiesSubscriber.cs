@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Joker.Redis.Notifications
+namespace Joker.Notifications
 {
   public interface IDomainEntitiesSubscriber
   {

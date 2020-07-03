@@ -63,9 +63,9 @@ namespace Joker.Redis.SqlTableDependency
     {
       redisPublisher.WhenIsConnectedChanges
         .Where(isConnected => isConnected)
-        .Subscribe(isConnected =>
+        .Subscribe(async isConnected =>
         {
-          PublishStatus(statusVersion);
+          await PublishStatus(statusVersion);
         })
         .DisposeWith(CompositeDisposable);
 

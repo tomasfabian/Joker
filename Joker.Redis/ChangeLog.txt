@@ -1,4 +1,8 @@
-﻿1.3.0
+﻿2.0.0
+- IDomainEntitiesSubscriber was moved to Joker lib
+- SqlTableDependencyRedisProvider async/await PublishStatus in WhenIsConnectedChanges subscription
+
+1.3.0
 - SqlTableDependency.Extensions 2.3.2 - ISqlTableDependencyProviderEvents interface
 
 1.2.0
