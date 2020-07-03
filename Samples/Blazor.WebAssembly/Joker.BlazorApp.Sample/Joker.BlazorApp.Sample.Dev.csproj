@@ -1,21 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <RootNamespace>Joker.BlazorApp.Sample</RootNamespace>
   </PropertyGroup>
 
+  <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.OData.Extensions.Client" Version="1.0.1" />
-    <PackageReference Include="Ninject" Version="3.3.4" />
-    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +27,7 @@
     <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
+    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +36,6 @@
     </Content>
   </ItemGroup>
 
-  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
+  <!--<Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />-->
 
 </Project>
