@@ -8,27 +8,20 @@ using Joker.Enums;
 using Joker.Extensions.Disposables;
 using Joker.Factories.Schedulers;
 using Joker.Notifications;
-using Joker.Reactive;
-using Microsoft.AspNetCore.Components;
+//using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
-using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Notifications;
 using ChangeType = TableDependency.SqlClient.Base.Enums.ChangeType;
 
 namespace Joker.BlazorApp.Sample.Subscribers
 {
-  public interface IDomainEntitiesSubscriber
-  {
-    Task Subscribe();
-  }
-
   public class DomainEntitiesSubscriber<TEntity> : DisposableObject, IDomainEntitiesSubscriber//, ITableDependencyStatusProvider 
     where TEntity : IVersion
   {
     #region Fields
 
-    private readonly NavigationManager navigationManager;
+    //private readonly NavigationManager navigationManager;
     private readonly IEntityChangePublisherWithStatus<TEntity> reactiveData;
     private readonly ISchedulersFactory schedulersFactory;
 
@@ -37,11 +30,11 @@ namespace Joker.BlazorApp.Sample.Subscribers
     #region Constructors
 
     public DomainEntitiesSubscriber(
-      NavigationManager navigationManager,
+      //NavigationManager navigationManager,
       IEntityChangePublisherWithStatus<TEntity> reactiveData,
       ISchedulersFactory schedulersFactory)
     {
-      this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
+      //this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
       
@@ -69,7 +62,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
       hubConnection = new HubConnectionBuilder()
         .WithAutomaticReconnect(new SignalRRetryPolicy())
-        .WithUrl(navigationManager.ToAbsoluteUri("/dataChangesHub"))
+        //.WithUrl(navigationManager.ToAbsoluteUri("/dataChangesHub"))
         .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
         .Build();
 
