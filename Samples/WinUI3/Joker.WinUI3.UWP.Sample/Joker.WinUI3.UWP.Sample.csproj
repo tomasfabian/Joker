@@ -74,7 +74,6 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Navigation\DialogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +135,10 @@
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj">
       <Project>{c2d54b20-0b54-407c-8792-9040974deefc}</Project>
       <Name>Sample.Domain.Dev</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj">
+      <Project>{c95ebcf4-0df4-4f19-9d76-91a270cdb89d}</Project>
+      <Name>Joker.Ninject.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

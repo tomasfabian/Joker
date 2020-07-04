@@ -32,15 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Joker.WPF.Sample\Navigation\DialogManager.cs" Link="Navigation\DialogManager.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
     <ProjectReference Include="..\..\..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\..\..\..\Joker\Joker.csproj" />
     <ProjectReference Include="..\..\..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +50,5 @@
   </ItemGroup>
 
   <Import Project="..\..\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems" Label="Shared" />
-  <Import Project="..\..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
 
 </Project>

@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-  <Import Project="..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
-
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
@@ -23,6 +22,6 @@
     <ProjectReference Include="..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\Sample.Data\Sample.Data.Dev.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.Dev.csproj" />
+    <ProjectReference Include="..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj" />
   </ItemGroup>
-
 </Project>
