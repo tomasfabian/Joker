@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
   </PropertyGroup>
@@ -9,11 +10,6 @@
   <Import Project="..\..\NugetProjects\Microsoft.OData.Client.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker" Version="1.6.0" />
+    <PackageReference Include="Joker" Version="1.7.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <!-- <ProjectReference Include="..\..\Joker\Joker.csproj" /> -->
-  </ItemGroup>
-
 </Project>
