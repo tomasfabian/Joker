@@ -1,4 +1,5 @@
-﻿using Joker.PubSubUI.Shared.ViewModels.Products;
+﻿using Joker.Notifications;
+using Joker.PubSubUI.Shared.ViewModels.Products;
 using Joker.Redis.Notifications;
 using Joker.WinUI3.Sample.Views;
 using Microsoft.UI.Xaml;

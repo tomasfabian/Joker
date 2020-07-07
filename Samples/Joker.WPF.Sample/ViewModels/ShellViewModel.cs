@@ -3,13 +3,14 @@ using System.Configuration;
 using System.Threading.Tasks;
 using Joker.Enums;
 using Joker.MVVM.ViewModels;
+using Joker.Notifications;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
 using Joker.WPF.Sample.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Factories.ViewModels;
+using Joker.PubSubUI.Shared.Navigation;
 using Joker.PubSubUI.Shared.ViewModels.Products;
-using Joker.WPF.Sample.Navigation;
 using OData.Client;
 using Prism.Mvvm;
 using Sample.Domain.Models;
@@ -73,7 +74,7 @@ namespace Joker.WPF.Sample.ViewModels
         viewModelsFactory, reactiveDataWithStatus, schedulersFactory, new ODataServiceContextFactory(), new DialogManager());
     }
 
-    private static void CreateReactiveProductsViewModel(ViewModelsFactory viewModelsFactory)
+    private static void CreateReactiveProductsViewModel(IViewModelsFactory viewModelsFactory)
     {
       var reactiveData = new ReactiveDataWithStatus<Product>();
       var redisUrl = ConfigurationManager.AppSettings["RedisUrl"];

@@ -22,7 +22,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using Ninject;
 using Joker.WPF.Sample.Modularity;
-using Joker.WPF.Sample.Navigation;
 
 namespace Joker.WinUI3.Sample
 {

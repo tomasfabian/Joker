@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Joker.Notifications;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Joker.Redis.Notifications;
 using Microsoft.UI.Xaml;

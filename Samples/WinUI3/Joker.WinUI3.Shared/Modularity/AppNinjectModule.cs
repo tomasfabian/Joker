@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using Joker.Contracts;
 using Joker.MVVM.ViewModels;
+using Joker.Notifications;
 using Joker.Reactive;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;

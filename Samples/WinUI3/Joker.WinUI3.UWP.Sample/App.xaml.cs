@@ -11,7 +11,6 @@ using Joker.Factories.Schedulers;
 using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
 using Joker.WinUI3.UWP.Sample.Factories.Schedulers;
-using Joker.WinUI3.UWP.Sample.Navigation;
 using Joker.WPF.Sample.Modularity;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
