@@ -22,6 +22,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
     #region Fields
 
     //private readonly NavigationManager navigationManager;
+    private readonly string url;
     private readonly IEntityChangePublisherWithStatus<TEntity> reactiveData;
     private readonly ISchedulersFactory schedulersFactory;
 
@@ -31,10 +32,12 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
     public DomainEntitiesSubscriber(
       //NavigationManager navigationManager,
+      string url,
       IEntityChangePublisherWithStatus<TEntity> reactiveData,
       ISchedulersFactory schedulersFactory)
     {
       //this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
+      this.url = url ?? throw new ArgumentNullException(nameof(url));
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
       
@@ -63,6 +66,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
       hubConnection = new HubConnectionBuilder()
         .WithAutomaticReconnect(new SignalRRetryPolicy())
         //.WithUrl(navigationManager.ToAbsoluteUri("/dataChangesHub"))
+        .WithUrl(url + "dataChangesHub")
         .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
         .Build();
 
