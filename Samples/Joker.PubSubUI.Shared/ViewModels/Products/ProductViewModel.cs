@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Joker.MVVM.ViewModels.Domain;
 using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
-using Ninject;
 using OData.Client;
 using Prism.Commands;
 using Sample.Domain.Models;
@@ -18,7 +17,6 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
     private readonly IPlatformSchedulersFactory schedulersFactory;
     private readonly IDialogManager dialogManager;
 
-    [Inject]
     public ProductViewModel(
       Product product,
       IODataServiceContextFactory dataServiceContextFactory,
