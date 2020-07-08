@@ -16,7 +16,9 @@ using Joker.BlazorApp.Sample.Factories.Schedulers;
 using Joker.BlazorApp.Sample.Navigation;
 using Joker.BlazorApp.Sample.Subscribers;
 using Joker.Factories.Schedulers;
+using Joker.Notifications;
 using Joker.PubSubUI.Shared.Navigation;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Extensions.Client;
@@ -69,7 +71,7 @@ namespace Joker.BlazorApp.Sample
           .As<IPlatformSchedulersFactory, ISchedulersFactory>()
           .SingleInstance();
 
-        containerBuilder.RegisterType<DialogManager>()
+        containerBuilder.RegisterType<Joker.BlazorApp.Sample.Navigation.DialogManager>()
           .As<IBlazorDialogManager, IDialogManager>()
           .SingleInstance();
 
@@ -83,6 +85,7 @@ namespace Joker.BlazorApp.Sample
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
+          .WithParameter(new NamedParameter("url", builder.HostEnvironment.BaseAddress))
           .As<IDomainEntitiesSubscriber>();
       });
     }
