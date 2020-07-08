@@ -37,6 +37,10 @@
 
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.RemoteControl.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\System.Reactive.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
 
   <ItemGroup>
     <!-- Note that for WebAssembly version 1.1.1 of the console logger required -->

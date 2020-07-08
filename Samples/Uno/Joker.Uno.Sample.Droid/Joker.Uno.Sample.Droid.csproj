@@ -62,13 +62,11 @@
   </ItemGroup>
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Uno\Uno.UI.RemoteControl.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\System.Reactive.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
   <ItemGroup>
-    <PackageReference Include="Ninject">
-      <Version>3.3.4</Version>
-    </PackageReference>
-    <PackageReference Include="Prism.Core">
-      <Version>7.2.0.1422</Version>
-    </PackageReference>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.32" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
@@ -118,7 +116,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems" Label="Shared" Condition="Exists('..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems')" />
-  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
   <Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'==''" />
