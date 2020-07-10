@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
+
+</Project>
