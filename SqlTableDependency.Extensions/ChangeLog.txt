@@ -1,4 +1,7 @@
-﻿2.3.2
+﻿2.3.3
+- Joker 1.7
+
+2.3.2
 - added TableName to SqlTableDependencySettings<TEntity>
 - SqlTableDependencyProvider is not abstract anymore
 

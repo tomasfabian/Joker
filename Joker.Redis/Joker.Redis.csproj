@@ -3,7 +3,7 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Description>SqlServer PubSub notifications via Redis and SqlTableDependency extension</Description>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
@@ -13,7 +13,7 @@
     <PackageTags>sqlserver pubsub notifications redis sqltabledependency</PackageTags>
     <Authors>Tomas Fabian</Authors>
     <Company />
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.1.0</AssemblyVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Redis/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
 

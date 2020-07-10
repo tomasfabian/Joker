@@ -1,9 +1,7 @@
-﻿1.5.0
-- HttpsRedirection is disabled by default in developement mode
-
-1.4.0
+﻿1.4.0
 - added optional appsettings.json configuration
 - removed dependency EntityFramework
+- HttpsRedirection is disabled by default in developement mode
 
 1.3.0
 - added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
