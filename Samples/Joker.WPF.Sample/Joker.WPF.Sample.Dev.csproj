@@ -22,6 +22,6 @@
     <ProjectReference Include="..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\Sample.Data\Sample.Data.Dev.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.Dev.csproj" />
-    <ProjectReference Include="..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj" />
+    <ProjectReference Include="..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.Dev.csproj" />
   </ItemGroup>
 </Project>

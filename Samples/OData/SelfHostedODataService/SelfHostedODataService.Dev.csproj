@@ -25,6 +25,5 @@
     <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
-    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
   </ItemGroup>
 </Project>

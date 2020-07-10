@@ -27,7 +27,7 @@
     <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
-    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
+    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.Dev.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,7 +35,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <!--<Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />-->
 
 </Project>
