@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Joker.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="Automapper" Version="9.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
+    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
     <PackageReference Include="NLog" Version="4.7.0" />

@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Joker.OData" Version="1.3.0" />
-    <PackageReference Include="Joker.Redis" Version="2.0.0" />
+    <PackageReference Include="Joker.Redis" Version="2.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
@@ -23,6 +23,5 @@
     <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj" />
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
-    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
   </ItemGroup>
 </Project>

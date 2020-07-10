@@ -20,12 +20,12 @@
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
 
     <PackageReference Include="Joker.MVVM" Version="1.4.1" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +33,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
 
 </Project>
