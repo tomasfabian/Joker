@@ -12,7 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DesignTime\Products\ProductsEntityChangesDesignViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DesignTime\Products\ReactiveProductsDesignViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factories\ViewModels\IViewModelsFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modularity\JokerPubSubModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\DialogManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\IDialogManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Products\ProductsEntityChangesViewModel.cs" />
