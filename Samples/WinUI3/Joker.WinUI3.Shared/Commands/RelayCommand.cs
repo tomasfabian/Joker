@@ -1,4 +1,4 @@
-﻿#if !NETCOREAPP
+﻿#if WINDOWS_UWP
 using System;
 using Microsoft.UI.Xaml.Input;
 

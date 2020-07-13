@@ -74,7 +74,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     #region AddNew
 
-#if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD && !HAS_UNO 
+#if WINDOWS_UWP
     private Joker.WinUI3.Shared.Commands.RelayCommand addNew;
 
     public Microsoft.UI.Xaml.Input.ICommand AddNew => addNew ?? (addNew = new Joker.WinUI3.Shared.Commands.RelayCommand(OnAddNew, OnCanAddNew));
@@ -84,12 +84,12 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
     public System.Windows.Input.ICommand AddNew => addNew ?? (addNew = new Prism.Commands.DelegateCommand(OnAddNew, OnCanAddNew));
 #endif
 
-    private bool OnCanAddNew()
+    protected bool OnCanAddNew()
     {
       return !string.IsNullOrEmpty(NewProductName);
     }
 
-    private void OnAddNew()
+    protected void OnAddNew()
     {
       var dataServiceContext = dataServiceContextFactory.CreateODataContext();
 
