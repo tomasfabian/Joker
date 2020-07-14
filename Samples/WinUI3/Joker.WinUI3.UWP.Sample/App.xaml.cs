@@ -11,6 +11,7 @@ using Joker.Factories.Schedulers;
 using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.Navigation;
 using Joker.PubSubUI.Shared.ViewModels.Products;
+using Joker.WinUI3.Shared.ViewModels.Products;
 using Joker.WinUI3.UWP.Sample.Factories.Schedulers;
 using Joker.WPF.Sample.Modularity;
 using Microsoft.UI.Xaml;
@@ -42,8 +43,7 @@ namespace Joker.WinUI3.UWP.Sample
       Kernel.Bind<IDialogManager>().To<DialogManager>().InSingletonScope();
       Kernel.Bind<ISchedulersFactory, IPlatformSchedulersFactory>().To<PlatformSchedulersFactory>().InSingletonScope();
 
-      Kernel.Rebind<ProductsEntityChangesViewModel>()
-        .To<ViewModels.ProductsEntityChangesViewModel>();
+      Kernel.Bind<ProductsEntityChangesWinUIViewModel>().ToSelf();
 
       this.Suspending += OnSuspending;
     }

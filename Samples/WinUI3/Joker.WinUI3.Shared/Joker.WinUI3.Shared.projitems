@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Styles\ControlsStyles.xaml.cs">
       <DependentUpon>ControlsStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsEntityChangesWinUIViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\BindingUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\ProductDetail.xaml.cs">
       <DependentUpon>ProductDetail.xaml</DependentUpon>

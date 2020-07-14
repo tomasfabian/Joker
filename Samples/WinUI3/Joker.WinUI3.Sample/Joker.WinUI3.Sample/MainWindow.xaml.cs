@@ -2,6 +2,7 @@
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Joker.Redis.Notifications;
 using Joker.WinUI3.Sample.Views;
+using Joker.WinUI3.Shared.ViewModels.Products;
 using Microsoft.UI.Xaml;
 using Ninject;
 
@@ -18,7 +19,7 @@ namespace Joker.WinUI3.Sample
     {
       InitializeComponent();
 
-      var productsEntityChangesViewModel = App.Kernel.Get<ProductsEntityChangesViewModel>();
+      var productsEntityChangesViewModel = App.Kernel.Get<ProductsEntityChangesWinUIViewModel>();
 
       IDomainEntitiesSubscriber domainEntitiesSubscriber = App.Kernel.Get<IDomainEntitiesSubscriber>();
       domainEntitiesSubscriber.Subscribe();

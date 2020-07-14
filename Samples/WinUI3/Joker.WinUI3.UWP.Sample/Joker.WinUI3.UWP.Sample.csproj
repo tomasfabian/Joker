@@ -66,6 +66,9 @@
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>JOKER_UWP</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -128,6 +131,10 @@
       <Project>{474364f9-a65d-49ad-a549-e2a45480169c}</Project>
       <Name>Joker</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj">
+      <Project>{39387fcc-3e62-4f7d-b55c-6bc73cf76a69}</Project>
+      <Name>SqlTableDependency.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj">
       <Project>{ad7c4f44-6f96-4b3b-9327-741b54a9bcfe}</Project>
       <Name>OData.Client.Dev</Name>
@@ -136,14 +143,13 @@
       <Project>{c2d54b20-0b54-407c-8792-9040974deefc}</Project>
       <Name>Sample.Domain.Dev</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj">
-      <Project>{c95ebcf4-0df4-4f19-9d76-91a270cdb89d}</Project>
-      <Name>Joker.Ninject.UI</Name>
+    <ProjectReference Include="..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.Dev.csproj">
+      <Project>{d00e3338-fd42-4992-b8a0-f54c13318361}</Project>
+      <Name>Joker.Ninject.UI.Dev</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems" Label="Shared" />
-  <Import Project="..\..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '$(MinimumVisualStudioVersion)' ">
     <VisualStudioVersion>$(MinimumVisualStudioVersion)</VisualStudioVersion>
   </PropertyGroup>

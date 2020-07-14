@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP
+﻿#if JOKER_UWP
 using System;
 using Microsoft.UI.Xaml.Input;
 
@@ -12,7 +12,7 @@ namespace Joker.WinUI3.Shared.Commands
         /// <summary>
         /// Raised when RaiseCanExecuteChanged is called.
         /// </summary>
-        public event EventHandler<object> CanExecuteChanged;
+        public event System.EventHandler<object> CanExecuteChanged;
 
         /// <summary>
         /// Creates a new command that can always execute.

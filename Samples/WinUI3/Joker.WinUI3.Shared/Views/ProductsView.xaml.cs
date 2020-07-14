@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Joker.PubSubUI.Shared.ViewModels.Products;
+using Joker.WinUI3.Shared.ViewModels.Products;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -25,11 +26,11 @@ namespace Joker.WinUI3.Sample.Views
       InitializeComponent();
     }
 
-    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel), typeof(ProductsEntityChangesViewModel), typeof(ProductsView), new PropertyMetadata(null));
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel), typeof(ProductsEntityChangesWinUIViewModel), typeof(ProductsView), new PropertyMetadata(null));
 
-    public ProductsEntityChangesViewModel ViewModel
+    public ProductsEntityChangesWinUIViewModel ViewModel
     {
-      get { return GetValue(ViewModelProperty) as ProductsEntityChangesViewModel; }
+      get { return GetValue(ViewModelProperty) as ProductsEntityChangesWinUIViewModel; }
       set { SetValue(ViewModelProperty, value); }
     }
   }

@@ -27,7 +27,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
       ITableDependencyStatusProvider statusProvider,
       IPlatformSchedulersFactory schedulersFactory,
       IODataServiceContextFactory dataServiceContextFactory,
-      IDialogManager dialogManager) 
+      IDialogManager dialogManager)
       : base(reactiveListViewModelFactory, statusProvider, schedulersFactory.Dispatcher)
     {
       this.schedulersFactory = schedulersFactory;
@@ -52,8 +52,13 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
       {
         SetProperty(ref newProductName, value);
 
-        addNew?.RaiseCanExecuteChanged();
+        OnNewProductNameChanged(value);
       }
+    }
+
+    protected virtual void OnNewProductNameChanged(string newValue)
+    {
+      addNew?.RaiseCanExecuteChanged();
     }
 
     #endregion
@@ -74,15 +79,9 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
 
     #region AddNew
 
-#if WINDOWS_UWP
-    private Joker.WinUI3.Shared.Commands.RelayCommand addNew;
-
-    public Microsoft.UI.Xaml.Input.ICommand AddNew => addNew ?? (addNew = new Joker.WinUI3.Shared.Commands.RelayCommand(OnAddNew, OnCanAddNew));
-#else
     private Prism.Commands.DelegateCommand addNew;
 
     public System.Windows.Input.ICommand AddNew => addNew ?? (addNew = new Prism.Commands.DelegateCommand(OnAddNew, OnCanAddNew));
-#endif
 
     protected bool OnCanAddNew()
     {
@@ -96,7 +95,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
       var product = new Product { Name = NewProductName };
 
       dataServiceContext.AddObject("Products", product);
-      
+
       dataServiceContext.SaveChangesAsync()
         .ToObservable()
         .ObserveOn(schedulersFactory.Dispatcher)
@@ -118,7 +117,7 @@ namespace Joker.PubSubUI.Shared.ViewModels.Products
     protected override void OnDispose()
     {
       base.OnDispose();
-            
+
       PropertyChanged -= ProductsEntityChangesViewModel_PropertyChanged;
     }
 
