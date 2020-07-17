@@ -114,9 +114,9 @@
       <Project>{e4c0badb-ae6e-4ae0-b88d-6953935c8073}</Project>
       <Name>Sample.Domain.Dev</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj">
-      <Project>{85eb3d4a-b3bf-406a-8ecc-eb6f09c3ea07}</Project>
-      <Name>Joker.Autofac.UI</Name>
+    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.Dev.csproj">
+      <Project>{041dd18c-7a49-4124-ba83-3bf2ed430b8e}</Project>
+      <Name>Joker.Autofac.UI.Dev</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems" Label="Shared" Condition="Exists('..\Joker.Uno.Sample.Shared\Joker.Uno.Sample.Shared.projitems')" />
