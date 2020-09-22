@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.OData" Version="1.3.0" />
+    <PackageReference Include="Joker.OData" Version="1.4.0" />
     <PackageReference Include="Joker.Redis" Version="2.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
