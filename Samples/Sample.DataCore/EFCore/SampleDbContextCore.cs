@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Threading;
@@ -6,8 +7,7 @@ using System.Threading.Tasks;
 using Joker.EntityFrameworkCore.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Sample.Domain.ModelsCore;
-using Product = Sample.Domain.Models.Product; 
+using Sample.Domain.Models;
 
 namespace Sample.DataCore.EFCore
 {
@@ -52,8 +52,7 @@ namespace Sample.DataCore.EFCore
     public DbSet<Product> Products { get; set; }
 
     public DbSet<Book> Books { get; set; }
-    //TODO: many-to-many with join table
-    //public DbSet<Author> Authors { get; set; }
+    public DbSet<Author> Authors { get; set; }
     public DbSet<Publisher> Publishers { get; set; }
 
     #endregion
@@ -71,35 +70,37 @@ namespace Sample.DataCore.EFCore
       modelBuilder.Entity<Product>().HasData(
         new Product { Id = -1, Name = "Test" });
 
-      //TODO: many-to-many with join table
-      //modelBuilder.Entity<Author>()
-      //  .Property(f => f.Timestamp);
+      modelBuilder.Entity<Author>()
+        .Property(f => f.Timestamp);
 
-      //modelBuilder.Entity<Author>()
-      //  .Property(c => c.LastName)
-      //  .HasMaxLength(128)
-      //  .IsRequired();
+      modelBuilder.Entity<Author>()
+        .Property(c => c.LastName)
+        .HasMaxLength(128)
+        .IsRequired();
 
-      //modelBuilder.Entity<Author>()
-      //  .HasIndex(b => b.LastName)
-      //  .IsUnique();
-
-      modelBuilder.Entity<Publisher>()
-        .Property(f => f.Timestamp)
-        .HasDefaultValueSql("GetDate()");
-
-      modelBuilder.Entity<Publisher>().HasData(new Publisher() {Id = -1, Title = "Publisher 1"});
+      modelBuilder.Entity<Author>()
+        .HasIndex(b => b.LastName)
+        .IsUnique();
 
       modelBuilder.Entity<Book>()
         .Property(f => f.Timestamp)
         .HasDefaultValueSql("GetDate()");
+
+      modelBuilder.Entity<Publisher>()
+        .HasKey(c => new {c.PublisherId1, c.PublisherId2});
+
+      var publisherEntity = modelBuilder
+        .Entity<Publisher>();
+      
+      publisherEntity.Property(e => e.PublisherId1)
+        .ValueGeneratedOnAdd();
 
       modelBuilder.Entity<Book>()
         .HasOne(p => p.Publisher)
         .WithMany(c => c.Books)
-        .HasForeignKey(p => p.PublisherId);
+        .HasForeignKey(p => new {p.PublisherId1, p.PublisherId2});
 
-      modelBuilder.Entity<Book>().HasData(new Book() {Id = -1, Title = "Book 1", PublisherId = -1});
+      modelBuilder.Entity<Publisher>().HasData(new Publisher { PublisherId1 = -1, PublisherId2 = -1, Title = "Publisher 1" });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

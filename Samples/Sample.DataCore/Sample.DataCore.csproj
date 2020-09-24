@@ -1,26 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="Automapper" Version="9.0.0" />
+    <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0-alpha" />
     <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
     <PackageReference Include="NLog" Version="4.7.0" />
   </ItemGroup>
 
+  <Import Project="..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
+  
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

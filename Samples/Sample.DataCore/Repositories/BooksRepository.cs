@@ -2,7 +2,7 @@
 using Joker.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Sample.DataCore.EFCore;
-using Sample.Domain.ModelsCore;
+using Sample.Domain.Models;
 
 namespace Sample.DataCore.Repositories
 {

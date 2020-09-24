@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
+
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;$(NetCoreVersion);net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;$(NetCoreVersion)</TargetFrameworks>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>
@@ -11,9 +12,9 @@
     <Description>Entity Framework Core extensions, repository, DbContext, Migrations</Description>
     <PackageTags>Entity Framework Core extensions</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <Version>2.0.0-alpha</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.EntityFrameworkCore/ChangeLog.txt</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
