@@ -15,12 +15,12 @@
   </ItemGroup>
 
   <Import Project="..\..\NugetProjects\EntityFramework.csprojimport" />
+  <Import Project="..\..\NugetProjects\NLog.csprojimport" />
 
   <ItemGroup>
     <PackageReference Include="Joker.EntityFramework" Version="1.1.0" />
-    <PackageReference Include="Automapper" Version="9.0.0" />
+    <PackageReference Include="Automapper" Version="10.0.0" />
     <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
-    <PackageReference Include="NLog" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
