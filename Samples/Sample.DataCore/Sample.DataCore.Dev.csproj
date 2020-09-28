@@ -11,11 +11,11 @@
     <PackageReference Include="Automapper" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
-    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
   </ItemGroup>
   
   <Import Project="..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
   <Import Project="..\..\NugetProjects\NLog.csprojimport" />
+  <Import Project="..\..\NugetProjects\Pluralize.NET.csprojimport" />
   
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">

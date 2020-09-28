@@ -10,16 +10,11 @@
 
   <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Extensions.Client.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.OData.Extensions.Client" Version="1.0.2" />
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
-  </ItemGroup>
+  <Import Project="..\..\..\NugetProjects\System.Net.Http.Json.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
