@@ -60,8 +60,6 @@ namespace SelfHostedODataService
         app.UseWebAssemblyDebugging();
       }
 
-      MapGenerateTokenRoute(app);
-
       app.UseResponseCompression();
 
       app.UseBlazorFrameworkFiles();
@@ -73,6 +71,8 @@ namespace SelfHostedODataService
       base.OnUseEndpoints(endpoints);
 
       endpoints.MapHub<DataChangesHub>("/dataChangesHub");
+      
+      endpoints.MapGet("generateToken", c => c.Response.WriteAsync(GenerateJwtToken(c)));
 
       endpoints.MapRazorPages();
       endpoints.MapControllers();
@@ -121,22 +121,9 @@ namespace SelfHostedODataService
     {
       var claims = new[] { new Claim(ClaimTypes.NameIdentifier, httpContext.Request.Query["user"]) };
       var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-      var token = new JwtSecurityToken("SignalR.IPTVServer", "IPTV.STB", claims, expires: DateTime.UtcNow.AddMinutes(30), signingCredentials: credentials);
+      var token = new JwtSecurityToken("SignalR.Blazor", "Blazor", claims, expires: DateTime.UtcNow.AddMinutes(30), signingCredentials: credentials);
 
       return jwtTokenHandler.WriteToken(token);
-    }
-
-    #endregion
-
-    #region MapGenerateTokenRoute
-
-    private void MapGenerateTokenRoute(IApplicationBuilder app)
-    {
-      var routeBuilder = new RouteBuilder(app);
-      
-      routeBuilder.MapGet("generateToken", c => c.Response.WriteAsync(GenerateJwtToken(c)));
-     
-      app.UseRouter(routeBuilder.Build());
     }
 
     #endregion
