@@ -18,6 +18,7 @@
 
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
   <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.Server.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj" />

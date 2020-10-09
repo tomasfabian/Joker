@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Joker.Enums;
 using Joker.Extensions.Disposables;
 using Joker.Factories.Schedulers;
 using Joker.Notifications;
+using Microsoft.AspNetCore.Http.Connections;
 //using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
@@ -31,12 +33,10 @@ namespace Joker.BlazorApp.Sample.Subscribers
     #region Constructors
 
     public DomainEntitiesSubscriber(
-      //NavigationManager navigationManager,
       string url,
       IEntityChangePublisherWithStatus<TEntity> reactiveData,
       ISchedulersFactory schedulersFactory)
     {
-      //this.navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
       this.url = url ?? throw new ArgumentNullException(nameof(url));
       this.reactiveData = reactiveData ?? throw new ArgumentNullException(nameof(reactiveData));
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
@@ -65,8 +65,12 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
       hubConnection = new HubConnectionBuilder()
         .WithAutomaticReconnect(new SignalRRetryPolicy())
-        //.WithUrl(navigationManager.ToAbsoluteUri("/dataChangesHub"))
-        .WithUrl(url + "dataChangesHub")
+        .WithUrl(url + "dataChangesHub",              
+          options =>
+          {
+            options.Transports = HttpTransportType.WebSockets;
+            options.AccessTokenProvider = GetTokenAsync;
+          })
         .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
         .Build();
 
@@ -116,6 +120,17 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
         return Task.CompletedTask;
       };
+    }
+
+    private readonly string userId = Guid.NewGuid().ToString();
+
+    private async Task<string> GetTokenAsync()
+    {
+      var httpResponse = await new HttpClient().GetAsync(url + $"/generateToken?user={userId}");
+
+      httpResponse.EnsureSuccessStatusCode();
+
+      return await httpResponse.Content.ReadAsStringAsync();
     }
 
     private void PublishStatusChanged(VersionedTableDependencyStatus.TableDependencyStatuses status)

@@ -17,6 +17,7 @@
 
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
   <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.Server.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" />
