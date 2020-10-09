@@ -13,11 +13,11 @@ namespace SelfHostedODataService.HostedServices
 {
   internal class ProductChangesHostedService : IHostedService
   {
-    private readonly IHubContext<DataChangesHub> hubContext;
+    private readonly IHubContext<DataChangesHub, IDataChangesHub> hubContext;
     private readonly IConnectionMultiplexer redis;
 
     public ProductChangesHostedService(
-      IHubContext<DataChangesHub> hubContext,
+      IHubContext<DataChangesHub, IDataChangesHub> hubContext,
       IConnectionMultiplexer redis)
     {
       this.hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
@@ -30,7 +30,7 @@ namespace SelfHostedODataService.HostedServices
       {
         var recordChange = JsonConvert.DeserializeObject<RecordChangedNotification<Product>>(value);
 
-        await hubContext.Clients.All.SendAsync("ReceiveDataChange", recordChange, cancellationToken);
+        await hubContext.Clients.All.ReceiveDataChange(recordChange, cancellationToken);
       });
     }
 
