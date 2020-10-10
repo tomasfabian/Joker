@@ -68,7 +68,6 @@ namespace Joker.BlazorApp.Sample.Subscribers
         .WithUrl(url + "dataChangesHub",              
           options =>
           {
-            options.Transports = HttpTransportType.WebSockets;
             options.AccessTokenProvider = GetTokenAsync;
           })
         .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
@@ -126,7 +125,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
 
     private async Task<string> GetTokenAsync()
     {
-      var httpResponse = await new HttpClient().GetAsync(url + $"/generateToken?user={userId}");
+      var httpResponse = await new HttpClient().GetAsync(url + $"generateToken?user={userId}");
 
       httpResponse.EnsureSuccessStatusCode();
 
