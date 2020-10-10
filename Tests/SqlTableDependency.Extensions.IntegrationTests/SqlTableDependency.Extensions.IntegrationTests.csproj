@@ -13,7 +13,7 @@
   <Import Project="..\..\NugetProjects\UnitTests\coverlet.collector.csprojimport" />
 
   <ItemGroup>
-     <PackageReference Include="Joker.OData" Version="1.4.0" /> 
+     <PackageReference Include="Joker.OData" Version="1.4.1" /> 
      <PackageReference Include="Joker.MVVM" Version="1.4.1" /> 
      <PackageReference Include="Joker.Redis" Version="2.0.1" />
   </ItemGroup>
