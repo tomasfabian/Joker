@@ -1,4 +1,7 @@
-﻿1.4.0
+﻿1.4.1
+- fixed UseAuthorization, called between UseRouting and UseEndpoints for endpoint routing
+
+1.4.0
 - added optional appsettings.json configuration
 - removed dependency EntityFramework
 - HttpsRedirection is disabled by default in developement mode

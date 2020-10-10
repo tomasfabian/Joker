@@ -63,6 +63,9 @@ namespace Joker.OData.Startup
     {
       app.UseRouting();
 
+      if(StartupSettings.UseAuthorization)
+        app.UseAuthorization();
+
       app.UseEndpoints(endpoints =>
       {
         endpoints.EnableDependencyInjection();
