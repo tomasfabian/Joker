@@ -1,4 +1,7 @@
-﻿1.4.1
+﻿1.4.2
+- added UseAuthentication (StartupSettings.UseAuthentication)
+
+1.4.1
 - fixed UseAuthorization, called between UseRouting and UseEndpoints for endpoint routing
 
 1.4.0

@@ -10,6 +10,8 @@
 
     public bool UseAuthorization { get; set; } = true;
 
+    public bool UseAuthentication { get; set; } = true;
+
     public bool IISAllowSynchronousIO { get; set; } = true;
     
     public StartupSettings EnableHttpsRedirection()

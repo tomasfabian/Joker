@@ -62,6 +62,9 @@ namespace Joker.OData.Startup
     protected override void OnConfigureOData(IApplicationBuilder app)
     {
       app.UseRouting();
+      
+      if(StartupSettings.UseAuthentication)
+        app.UseAuthentication();
 
       if(StartupSettings.UseAuthorization)
         app.UseAuthorization();
