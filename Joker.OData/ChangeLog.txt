@@ -1,5 +1,6 @@
 ﻿1.4.2
 - added UseAuthentication (StartupSettings.UseAuthentication)
+- added OnAddExtensions - ODataStartupBase calls UseAuthentication and UseAuthorization. ODataStartup calls UseRouting
 
 1.4.1
 - fixed UseAuthorization, called between UseRouting and UseEndpoints for endpoint routing

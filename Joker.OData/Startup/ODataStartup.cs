@@ -57,18 +57,21 @@ namespace Joker.OData.Startup
     
     #endregion
 
+    #region OnAddExtensions
+
+    protected override void OnAddExtensions(IApplicationBuilder app)
+    {
+      app.UseRouting();
+
+      base.OnAddExtensions(app);
+    }
+
+    #endregion
+
     #region OnConfigureOData
 
     protected override void OnConfigureOData(IApplicationBuilder app)
     {
-      app.UseRouting();
-      
-      if(StartupSettings.UseAuthentication)
-        app.UseAuthentication();
-
-      if(StartupSettings.UseAuthorization)
-        app.UseAuthorization();
-
       app.UseEndpoints(endpoints =>
       {
         endpoints.EnableDependencyInjection();

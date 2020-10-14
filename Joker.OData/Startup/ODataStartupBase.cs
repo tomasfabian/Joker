@@ -223,14 +223,26 @@ namespace Joker.OData.Startup
       if (env.IsDevelopment() && StartupSettings.UseDeveloperExceptionPage)
         app.UseDeveloperExceptionPage();
 
-      if(StartupSettings.UseAuthorization)
-        app.UseAuthorization();
-
       RegisterMiddleWares(app);
+
+      OnAddExtensions(app);
 
       ConfigureOData(app);
 
       OnConfigureApp(app, env, applicationLifetime);
+    }
+
+    #endregion
+
+    #region OnAddExtensions
+
+    protected virtual void OnAddExtensions(IApplicationBuilder app)
+    {
+      if(StartupSettings.UseAuthentication)
+        app.UseAuthentication();
+
+      if(StartupSettings.UseAuthorization)
+        app.UseAuthorization();
     }
 
     #endregion
