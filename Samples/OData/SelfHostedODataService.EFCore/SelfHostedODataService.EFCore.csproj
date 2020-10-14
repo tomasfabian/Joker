@@ -21,12 +21,12 @@
     <PackageReference Include="Joker.Redis" Version="2.0.1" />
     <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0-alpha" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">

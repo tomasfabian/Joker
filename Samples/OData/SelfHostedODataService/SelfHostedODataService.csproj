@@ -12,13 +12,13 @@
     <PackageReference Include="Joker.OData" Version="1.4.2" />
     <PackageReference Include="Joker.Redis" Version="2.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
   <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.Server.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj" />
