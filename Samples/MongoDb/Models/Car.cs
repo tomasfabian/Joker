@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Colosseo.MagicPlatform.Models
+namespace Joker.AspNetCore.MongoDb.Models
 {
   public class Car : DomainEntity
   {
