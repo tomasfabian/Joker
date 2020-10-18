@@ -2,8 +2,6 @@
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Hosting;
 
 namespace Joker.OData.Startup
 {
@@ -57,17 +55,6 @@ namespace Joker.OData.Startup
     
     #endregion
 
-    #region OnAddExtensions
-
-    protected override void OnAddExtensions(IApplicationBuilder app)
-    {
-      app.UseRouting();
-
-      base.OnAddExtensions(app);
-    }
-
-    #endregion
-
     #region OnConfigureOData
 
     protected override void OnConfigureOData(IApplicationBuilder app)
@@ -88,40 +75,6 @@ namespace Joker.OData.Startup
         else
           endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, EdmModel);
       });
-    }
-
-    #endregion
-
-    #region OnConfigureApp
-
-    protected override void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
-    {
-      base.OnConfigureApp(app, env, applicationLifetime);
-
-      app.UseEndpoints(OnUseEndpoints);  
-    }
-
-    #endregion
-
-    #region OnUseEndpoints
-
-    protected virtual void OnUseEndpoints(IEndpointRouteBuilder endpoints)
-    {        
-      if(StartupSettings.UseUtcTimeZone)
-        endpoints.SetTimeZoneInfo(TimeZoneInfo.Utc);
-
-      MapControllerRoutes(endpoints);
-
-      endpoints.MapControllers();
-    }
-
-    #endregion
-
-    #region MapControllerRoutes
-
-    protected virtual void MapControllerRoutes(IEndpointRouteBuilder endpoints)
-    {
-      endpoints.MapControllerRoute(WebApiStartupSettings.WebApiRouteName, WebApiStartupSettings.WebApiRoute);
     }
 
     #endregion

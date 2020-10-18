@@ -1,47 +1,29 @@
 ﻿using System;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Joker.Disposables;
 using Joker.OData.Batch;
-using Joker.OData.Middleware.Logging;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
-using Newtonsoft.Json.Serialization;
 
 namespace Joker.OData.Startup
 {
-  public abstract class ODataStartupBase : DisposableObject
+  public abstract class ODataStartupBase : StartupBase
   {
     #region Fields
     
-    internal readonly StartupSettings StartupSettings = new StartupSettings();
     internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
-    internal readonly WebApiStartupSettings WebApiStartupSettings = new WebApiStartupSettings();
-
-    protected IConfigurationRoot Configuration { get; }
     
     #endregion
 
     #region Constructors
 
     protected ODataStartupBase(IWebHostEnvironment env)
+      : base(env)
     {
-      if (env.IsDevelopment())
-        StartupSettings.DisableHttpsRedirection();
-
-      Configuration = new ConfigurationBuilder()
-        .SetBasePath(env.ContentRootPath)
-        .AddEnvironmentVariables()
-        .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true)
-        .Build();
     }
 
     #endregion
@@ -52,32 +34,9 @@ namespace Joker.OData.Startup
 
     public IEdmModel EdmModel => edmModel ?? (edmModel = CreateEdmModel());
 
-    internal abstract bool EnableEndpointRouting { get; }
-
     #endregion
 
     #region Methods
-
-    #region ConfigureContainer
-
-    protected ContainerBuilder ContainerBuilder;
-
-    public void ConfigureContainer(ContainerBuilder builder)
-    {
-      ContainerBuilder = builder;
-
-      RegisterTypes(builder);
-    }
-
-    #endregion
-
-    #region RegisterTypes
-
-    protected virtual void RegisterTypes(ContainerBuilder builder)
-    {
-    }
-
-    #endregion
 
     #region ConfigureOData
 
@@ -141,140 +100,24 @@ namespace Joker.OData.Startup
 
     #endregion
 
-    #region ConfigureServices
-
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddOptions();
-
-      services.AddHttpContextAccessor();
-
-      services.Configure<IISServerOptions>(options =>
-      {
-        options.AllowSynchronousIO = StartupSettings.IISAllowSynchronousIO; //OData doesnt support async IO in version 7.2.2        
-      });
-
-      ConfigureMvc(services);
-
-      services.AddOData();
-
-      OnConfigureServices(services);
-    }
-
-    #endregion
-
     #region OnConfigureServices
 
-    protected virtual void OnConfigureServices(IServiceCollection services)
+    protected override void OnConfigureServices(IServiceCollection services)
     {
-    }
+      base.OnConfigureServices(services);
 
-    #endregion
-
-    #region ConfigureMvc
-
-    private void ConfigureMvc(IServiceCollection services)
-    {
-      services.AddMvc(options =>
-        {
-          options.EnableEndpointRouting = EnableEndpointRouting;
-        })
-        .AddControllersAsServices()
-        .AddNewtonsoftJson(ConfigureNewtonsoftJson)
-        .SetCompatibilityVersion(CompatibilityVersion.Latest);
-    }
-
-    #endregion
-
-    #region ConfigureNewtonsoftJson
-
-    protected virtual void ConfigureNewtonsoftJson(MvcNewtonsoftJsonOptions options)
-    {
-      options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-    }
-
-    #endregion
-
-    #region RegisterMiddleWares
-
-    private void RegisterMiddleWares(IApplicationBuilder app)
-    {
-      if(ODataStartupSettings.EnableODataBatchHandler)
-        app.UseODataBatching();
-
-      OnRegisterMiddleWares(app);
-    }
-
-    protected virtual void OnRegisterMiddleWares(IApplicationBuilder app)
-    {
-      app.UseMiddleware<ErrorLoggerMiddleware>();
-    }
-
-    #endregion
-
-    #region Configure
-
-    public ILifetimeScope AutofacContainer { get; private set; }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
-    {
-      AutofacContainer = app.ApplicationServices.GetAutofacRoot();
- 
-      if (env.IsDevelopment() && StartupSettings.UseDeveloperExceptionPage)
-        app.UseDeveloperExceptionPage();
-
-      RegisterMiddleWares(app);
-
-      OnAddExtensions(app);
-
-      ConfigureOData(app);
-
-      OnConfigureApp(app, env, applicationLifetime);
-    }
-
-    #endregion
-
-    #region OnAddExtensions
-
-    protected virtual void OnAddExtensions(IApplicationBuilder app)
-    {
-      if(StartupSettings.UseAuthentication)
-        app.UseAuthentication();
-
-      if(StartupSettings.UseAuthorization)
-        app.UseAuthorization();
+      services.AddOData();
     }
 
     #endregion
 
     #region OnConfigureApp
 
-    protected virtual void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
+    protected override void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
     {
-      if(StartupSettings.UseHttpsRedirection)
-        app.UseHttpsRedirection();
+      ConfigureOData(app);
 
-      applicationLifetime.ApplicationStopping.Register(OnShutdown);
-    }
-
-    #endregion
-
-    #region OnShutdown
-
-    private void OnShutdown()
-    {
-      Dispose();
-    }
-
-    #endregion
-
-    #region OnDispose
-
-    protected override void OnDispose()
-    {
-      base.OnDispose();
-
-      AutofacContainer.Dispose();
+      base.OnConfigureApp(app, env, applicationLifetime);
     }
 
     #endregion
