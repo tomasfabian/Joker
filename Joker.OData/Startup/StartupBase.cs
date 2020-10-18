@@ -15,15 +15,6 @@ using Newtonsoft.Json.Serialization;
 
 namespace Joker.OData.Startup
 {
-  public abstract class Startup : StartupBase
-  {
-    protected Startup(IWebHostEnvironment env) 
-      : base(env)
-    {
-    }
-
-    internal override bool EnableEndpointRouting { get; } = true;
-  }
   public abstract class StartupBase : DisposableObject
   {
     #region Fields
