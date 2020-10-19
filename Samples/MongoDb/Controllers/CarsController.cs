@@ -12,9 +12,9 @@ namespace Joker.AspNetCore.MongoDb.Controllers
   [ApiController]
   public class CarsController : Controller
   {
-    private readonly ICarService carService;
+    private readonly ICarMongoRepository carService;
 
-    public CarsController(ICarService carService)
+    public CarsController(ICarMongoRepository carService)
     {
       this.carService = carService ?? throw new ArgumentNullException(nameof(carService));
 
