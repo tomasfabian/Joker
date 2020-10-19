@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System;
+using System.Data.SqlClient;
+using Autofac;
 using AutoMapper;
 using Joker.Factories.Schedulers;
 using Joker.OData.Batch;
@@ -6,8 +8,13 @@ using Joker.OData.Extensions.OData;
 using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -88,5 +95,51 @@ namespace SelfHostedODataService
 
       return batchHandler;
     }
+
+    #region HealthCheck
+
+    //https://localhost:5001/healthCheck
+    protected override string HealthCheckPath { get; } = "/healthCheck"; // override default /health
+
+    protected override IEndpointConventionBuilder OnMapHealthChecks(IEndpointRouteBuilder endpoints)
+    {
+      // return base.OnMapHealthChecks(endpoints).RequireAuthorization(); // extend default
+      var healthCheckOptions = new HealthCheckOptions
+      {
+        AllowCachingResponses = false,
+        ResultStatusCodes =
+        {
+          [HealthStatus.Healthy] = StatusCodes.Status200OK,
+          [HealthStatus.Degraded] = StatusCodes.Status200OK,
+          [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+        }
+      };
+
+      return endpoints.MapHealthChecks(HealthCheckPath, healthCheckOptions);
+    }
+
+    protected override void ConfigureHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+      healthChecksBuilder.AddAsyncCheck("SqlServer", async () =>
+      {
+        var connectionString = new ProductsConfigurationProvider(Configuration).GetDatabaseConnectionString();
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+          try
+          {
+            await connection.OpenAsync();
+            
+            return HealthCheckResult.Healthy();
+          }
+          catch (SqlException)
+          {
+            return HealthCheckResult.Unhealthy();
+          }
+        }
+      });
+    }
+
+    #endregion
   }
 }

@@ -12,7 +12,7 @@ namespace Joker.OData.Hosting
   public class ApiHost<TStartup>
     where TStartup : Startup.StartupBase
   {
-    public void Run(string[] args, ODataWebHostConfig oDataWebHostConfig)
+    public void Run(string[] args, WebHostConfig oDataWebHostConfig)
     {
       if (oDataWebHostConfig == null) throw new ArgumentNullException(nameof(oDataWebHostConfig));
 
@@ -22,7 +22,7 @@ namespace Joker.OData.Hosting
         .Run();
     }
 
-    public async Task RunAsync(string[] args, ODataWebHostConfig oDataWebHostConfig, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task RunAsync(string[] args, WebHostConfig oDataWebHostConfig, CancellationToken cancellationToken = default(CancellationToken))
     {
       if (oDataWebHostConfig == null) throw new ArgumentNullException(nameof(oDataWebHostConfig));
 
@@ -32,7 +32,7 @@ namespace Joker.OData.Hosting
         .RunAsync(cancellationToken);
     }
 
-    private IHostBuilder CreateHostBuilder(string[] args, ODataWebHostConfig oDataWebHostConfig)
+    private IHostBuilder CreateHostBuilder(string[] args, WebHostConfig oDataWebHostConfig)
     {
       oDataWebHostConfig.ContentRoot = oDataWebHostConfig.ContentRoot ?? Directory.GetCurrentDirectory();
 

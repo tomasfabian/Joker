@@ -12,6 +12,8 @@
 
     public bool UseAuthentication { get; set; } = true;
 
+    public bool UseHealthChecks { get; set; } = true;
+
     public bool IISAllowSynchronousIO { get; set; } = true;
     
     public StartupSettings EnableHttpsRedirection()

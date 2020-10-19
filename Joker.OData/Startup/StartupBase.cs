@@ -48,6 +48,8 @@ namespace Joker.OData.Startup
 
     public ILifetimeScope AutofacContainer { get; private set; }
 
+    protected virtual string HealthCheckPath { get; } = "/health";
+
     #endregion
 
     #region Methods
@@ -88,6 +90,9 @@ namespace Joker.OData.Startup
 
       ConfigureMvc(services);
 
+      if (StartupSettings.UseHealthChecks)
+        ConfigureHealthChecks(services.AddHealthChecks());
+
       OnConfigureServices(services);
     }
 
@@ -125,6 +130,14 @@ namespace Joker.OData.Startup
 
     #endregion
 
+    #region ConfigureHealthChecks
+
+    protected virtual void ConfigureHealthChecks(IHealthChecksBuilder healthChecksBuilder)
+    {
+    }
+
+    #endregion
+    
     #region RegisterMiddleWares
 
     private void RegisterMiddleWares(IApplicationBuilder app)
@@ -186,6 +199,18 @@ namespace Joker.OData.Startup
       MapControllerRoutes(endpoints);
 
       endpoints.MapControllers();
+
+      if (StartupSettings.UseHealthChecks)
+        OnMapHealthChecks(endpoints);
+    }
+
+    #endregion
+
+    #region OnMapHealthChecks
+
+    protected virtual IEndpointConventionBuilder OnMapHealthChecks(IEndpointRouteBuilder endpoints)
+    {
+      return endpoints.MapHealthChecks(HealthCheckPath);
     }
 
     #endregion
@@ -213,6 +238,14 @@ namespace Joker.OData.Startup
 
       if(EnableEndpointRouting)
         app.UseEndpoints(OnUseEndpoints);
+
+      if (StartupSettings.UseHealthChecks && !EnableEndpointRouting)
+        OnUseHealthChecks(app);
+    }
+
+    protected virtual void OnUseHealthChecks(IApplicationBuilder app)
+    {
+      app.UseHealthChecks(HealthCheckPath);
     }
 
     #endregion
