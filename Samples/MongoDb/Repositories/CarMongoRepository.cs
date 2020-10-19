@@ -5,9 +5,9 @@ using MongoDB.Driver.Core.Events;
 
 namespace Joker.AspNetCore.MongoDb.Services
 {
-  public class CarService : MongoService<Car>, ICarService
+  public class CarMongoRepository : MongoRepository<Car>, ICarMongoRepository
   {
-    public CarService(IDatabaseSettings settings)
+    public CarMongoRepository(IDatabaseSettings settings)
       : base(settings)
     {
     }

@@ -5,7 +5,7 @@ using MongoDB.Bson;
 
 namespace Joker.AspNetCore.MongoDb.Services
 {
-  public interface IMongoService<TDocument> where TDocument : DomainEntity
+  public interface IMongoRepository<TDocument> where TDocument : DomainEntity
   {
     void Initialize();
     Task<List<TDocument>> GetAsync();

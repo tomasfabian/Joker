@@ -9,14 +9,14 @@ using MongoDB.Driver.Core.Events;
 
 namespace Joker.AspNetCore.MongoDb.Services
 {
-  public abstract class MongoService<TDocument> : IMongoService<TDocument> where TDocument : DomainEntity
+  public abstract class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : DomainEntity
   {
     private readonly IDatabaseSettings databaseSettings;
     private IMongoCollection<TDocument> collection;
     private IMongoDatabase database;
     private MongoClientSettings mongoClientSettings;
 
-    protected MongoService(IDatabaseSettings databaseSettings)
+    protected MongoRepository(IDatabaseSettings databaseSettings)
     {
       this.databaseSettings = databaseSettings ?? throw new ArgumentNullException(nameof(databaseSettings));
     }
