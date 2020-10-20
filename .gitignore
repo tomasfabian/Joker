@@ -223,5 +223,5 @@ LICENSE
 README.md
 SqlTableDependency.Extensions/SqlTableDependency.Extensions.nuspec
 *.pubxml
-/Joker.Dev.sln
+/Joker.Dev5Preview.sln
 /Samples/Uno
