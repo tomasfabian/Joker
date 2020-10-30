@@ -12,9 +12,9 @@
     <Description>OData endpoint setup for Kestrel and IIS with Sql transaction scope for batch operations. ODataController with CRUD, CreateRef and DeleteRef.</Description>
     <PackageTags>OData batch web API service Kestrel</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.6.0</Version>
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
-    <FileVersion>1.6.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.OData/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
