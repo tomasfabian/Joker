@@ -29,17 +29,20 @@ namespace Sample.Data.Context
     public SampleDbContext(string nameOrConnectionString)
       : base(nameOrConnectionString)
     {
-      if (!Database.Exists() || !Database.CompatibleWithModel(false))
-      {      
-        Database.SetInitializer(new Migrations.MigrateDatabaseToLatestVersion(nameOrConnectionString));
-        
-        Database.Initialize(true);
-      }
-
       Configuration.LazyLoadingEnabled = false;
     }
 
     #endregion
+
+    public void MigrateDatabase(string connectionString)
+    {
+      if (!Database.Exists() || !Database.CompatibleWithModel(false))
+      {      
+        Database.SetInitializer(new Migrations.MigrateDatabaseToLatestVersion(connectionString));
+        
+        Database.Initialize(true);
+      }
+    }
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
