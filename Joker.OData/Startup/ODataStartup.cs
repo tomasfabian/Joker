@@ -2,6 +2,8 @@
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OData.Edm;
 
 namespace Joker.OData.Startup
 {
@@ -55,6 +57,26 @@ namespace Joker.OData.Startup
     
     #endregion
 
+    #region OnConfigureServices
+
+    protected override void OnConfigureServices(IServiceCollection services)
+    {
+      base.OnConfigureServices(services);
+
+      OnRegisterEdmModel(services);
+    }
+
+    #endregion
+
+    #region OnRegisterEdmModel
+
+    protected virtual void OnRegisterEdmModel(IServiceCollection services)
+    {
+      services.AddSingleton(EdmModel);
+    }
+
+    #endregion
+
     #region OnConfigureOData
 
     protected override void OnConfigureOData(IApplicationBuilder app)
@@ -65,15 +87,17 @@ namespace Joker.OData.Startup
 
         endpoints.Select().Expand().Filter().OrderBy().MaxTop(null).Count();
 
+        var edmModel = app.ApplicationServices.GetService<IEdmModel>() ?? EdmModel;
+
         if (ODataStartupSettings.EnableODataBatchHandler)
         {
           endpoints.EnableContinueOnErrorHeader();
 
-          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, EdmModel,
+          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel,
             CreateODataBatchHandler());
         }
         else
-          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, EdmModel);
+          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel);
       });
     }
 
