@@ -48,7 +48,7 @@ namespace Joker.MVVM.Tests.Joker.Disposables
     {
       //Arrange
       var disposable = new DisposableObject();
-      disposable.DisposeWith(ClassUnderTest.CompositeDisposable);
+      disposable.DisposeWith(ClassUnderTest);
 
       //Act
       ClassUnderTest.Dispose();

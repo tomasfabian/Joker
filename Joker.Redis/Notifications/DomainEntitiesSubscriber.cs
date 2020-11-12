@@ -36,7 +36,7 @@ namespace Joker.Redis.Notifications
       redisSubscriber.GetStringRetryCount = 3;
 
       statusChangesSubscription = new SerialDisposable();
-      statusChangesSubscription.DisposeWith(CompositeDisposable);
+      statusChangesSubscription.DisposeWith(this);
     }
 
     protected virtual string ChannelName { get; } = typeof(TEntity).Name + "-Changes";
@@ -72,7 +72,7 @@ namespace Joker.Redis.Notifications
             reactiveData.Publish(lastStatus);
           }
         })
-        .DisposeWith(CompositeDisposable);
+        .DisposeWith(this);
     }
 
     private readonly SerialDisposable statusChangesSubscription;

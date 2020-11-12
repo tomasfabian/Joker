@@ -42,7 +42,7 @@ namespace Joker.BlazorApp.Sample.Subscribers
       this.schedulersFactory = schedulersFactory ?? throw new ArgumentNullException(nameof(schedulersFactory));
       
       statusChangesSubscription = new SerialDisposable();
-      statusChangesSubscription.DisposeWith(CompositeDisposable);
+      statusChangesSubscription.DisposeWith(this);
     }
 
     #endregion
