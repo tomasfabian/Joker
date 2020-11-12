@@ -1,4 +1,8 @@
-﻿1.7
+﻿2.0.0
+- System.Reactive 5.0
+- DisposableObject added thread safe Dispose. Breaking change: DisposableObject.CompositeDisposable is not public anymore, use AddDisposable, RemoveDisposable instead of it.
+
+1.7
 Added:
 - IDbContextWithTransactions
 - IAsyncDbTransaction
