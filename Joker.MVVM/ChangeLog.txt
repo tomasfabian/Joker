@@ -1,5 +1,8 @@
-﻿1.4.1
-dependency update Joker 1.6.0
+﻿2.0.0
+- Joker dependency updated to 2.0.0
+
+1.4.1
+- Joker dependency updated to 1.6.0
 
 1.4.0
 - Joker 1.3.0
