@@ -4,8 +4,27 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Authors>Tomas Fabian</Authors>
+    <Company />
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
+    <Copyright>@tomasfabian</Copyright>
+    <Description>Confluent Kafka extensions</Description>
+    <PackageTags>kafka broker</PackageTags>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\Confluent.Kafka.csprojimport" />
+
+  <ItemGroup>
+    <Content Include="..\Joker\License.txt" Link="License.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Joker\Joker.csproj" />
+  </ItemGroup>
 
 </Project>
