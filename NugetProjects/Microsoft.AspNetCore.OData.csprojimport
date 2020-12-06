@@ -1,5 +1,5 @@
 ﻿<Project>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.0-preview" /> 
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.0-preview2" /> 
   </ItemGroup>
 </Project>
