@@ -1,4 +1,7 @@
-﻿2.1.0
+﻿3.0.0-preview
+- OData 8-preview migration
+
+2.1.0
 - ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
 
 2.0.0
