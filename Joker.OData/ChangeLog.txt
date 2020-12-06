@@ -1,16 +1,18 @@
-﻿3.0.0-preview
-- Microsoft.AspNetCore.OData 8.0.0-preview
+﻿2.1.0
+- ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
 
 2.0.0
 - Autofac.Extensions.DependencyInjection 5.0.1 updated to 7.0.2. See https://github.com/autofac/Autofac/releases/tag/v6.0.0 and bellow
 - ApiHost added OnHostBuilt
 
-1.5.0
+1.6.0
 - extracted StartupBase from ODataStartupBase for AspNetCore applications
 - added UseAuthentication (StartupSettings.UseAuthentication)
-- added OnAddExtensions - ODataStartupBase calls UseAuthentication and UseAuthorization. ODataStartup calls UseRouting
+- added OnAddExtensions - StartupBase calls UseAuthentication, UseAuthorization and UseRouting based on settings
 - ApiStartup base class for non OData AspNetCore apis
 - ApiHost - host for non OData AspNetCore apis (MVC, WebApi)
+- added IISWebHostConfig and KestrelHostConfig for non OData AspNetCore apis (MVC, WebApi)
+- added Microsoft.Extensions.Diagnostics.HealthChecks. StartupSettings.UseHealthChecks
 
 1.4.1
 - fixed UseAuthorization, called between UseRouting and UseEndpoints for endpoint routing

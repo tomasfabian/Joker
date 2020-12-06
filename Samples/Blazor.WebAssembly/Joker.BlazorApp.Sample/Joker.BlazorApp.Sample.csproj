@@ -16,7 +16,7 @@
   <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker.MVVM" Version="1.4.1" />
+    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
     <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
   </ItemGroup>
 

@@ -67,7 +67,7 @@ namespace Joker.Redis.SqlTableDependency
         {
           await PublishStatus(statusVersion);
         })
-        .DisposeWith(CompositeDisposable);
+        .DisposeWith(this);
 
       entityChangesSubscription =
         sqlTableDependencyProvider.WhenEntityRecordChanges

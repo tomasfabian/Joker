@@ -24,7 +24,7 @@ namespace Joker.BlazorApp.Sample.Pages
       {
         Message = errorMessage;
         ShowPopup = true;
-      }).DisposeWith(disposable.CompositeDisposable);
+      }).DisposeWith(disposable);
 
       return base.OnInitializedAsync();
     }

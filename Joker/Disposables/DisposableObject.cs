@@ -3,13 +3,15 @@ using System.Reactive.Disposables;
 
 namespace Joker.Disposables
 {
-  public class DisposableObject : IDisposable
+  public class DisposableObject : ICompositeDisposable
   {
+    private readonly object gate = new object();
+
     #region Properties
 
-    public bool IsDisposed { get; private set; }
+    public bool IsDisposed => compositeDisposable.IsDisposed;
 
-    public CompositeDisposable CompositeDisposable { get; } = new CompositeDisposable();
+    private CompositeDisposable compositeDisposable { get; } = new CompositeDisposable();
 
     #endregion
 
@@ -18,6 +20,51 @@ namespace Joker.Disposables
     public static DisposableObject Create(Action action)
     {
       return new Disposable(action);
+    }
+
+    #endregion
+    
+    #region AddDisposable
+
+    public void AddDisposable(IDisposable item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
+      lock (gate)
+      {
+        if (!compositeDisposable.IsDisposed)
+        {
+          compositeDisposable.Add(item);
+          return;
+        }
+      }
+
+      item.Dispose();
+    }
+
+    #endregion
+
+    #region RemoveDisposable
+
+    public bool RemoveDisposable(IDisposable item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException(nameof(item));
+      }
+
+      lock (gate)
+      {
+        if (compositeDisposable.IsDisposed)
+        {
+          return false;
+        }
+
+        return compositeDisposable.Remove(item);
+      }
     }
 
     #endregion
@@ -33,16 +80,17 @@ namespace Joker.Disposables
 
     protected virtual void Dispose(bool disposing)
     {
-      if (!IsDisposed)
+      lock (gate)
       {
-        if (disposing)
+        if (!IsDisposed)
         {
-          CompositeDisposable.Dispose();
+          if (disposing)
+          {
+            compositeDisposable.Dispose();
 
-          OnDispose();
+            OnDispose();
+          }
         }
-
-        IsDisposed = true;
       }
     }
 

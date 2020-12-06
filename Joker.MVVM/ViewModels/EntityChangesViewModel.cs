@@ -80,7 +80,7 @@ namespace Joker.MVVM.ViewModels
         .ObserveOn(dispatcherScheduler)
         .Where(c => lastStatus == null || c.Timestamp == DateTimeOffset.MinValue || lastStatus.Timestamp <= c.Timestamp)
         .Subscribe(OnStatusChanged)
-        .DisposeWith(disposable.CompositeDisposable);
+        .DisposeWith(disposable);
     }
 
     private VersionedTableDependencyStatus lastStatus;

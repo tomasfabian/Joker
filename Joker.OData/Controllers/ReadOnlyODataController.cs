@@ -43,7 +43,17 @@ namespace Joker.OData.Controllers
     #region Methods
 
     #region Get
-    
+
+    [EnableQuery]
+    private SingleResult<TEntity> Get()
+    {
+      var keyPredicate = CreateKeysPredicate(GetKeysFromPath());
+
+      IQueryable<TEntity> result = repository.GetAll().Where(keyPredicate);
+
+      return SingleResult.Create(result);
+    }
+
     [EnableQuery]
     public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
     {

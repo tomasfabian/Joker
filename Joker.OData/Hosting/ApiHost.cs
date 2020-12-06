@@ -19,6 +19,7 @@ namespace Joker.OData.Hosting
       var hostBuilder = CreateHostBuilder(args, oDataWebHostConfig);
 
       hostBuilder.Build()
+        .OnBuilt(OnHostBuilt)
         .Run();
     }
 
@@ -29,6 +30,7 @@ namespace Joker.OData.Hosting
       var hostBuilder = CreateHostBuilder(args, oDataWebHostConfig);
 
       await hostBuilder.Build()
+        .OnBuilt(OnHostBuilt)
         .RunAsync(cancellationToken);
     }
 
@@ -72,6 +74,20 @@ namespace Joker.OData.Hosting
 
     protected virtual void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
     {
+    }
+
+    protected virtual void OnHostBuilt(IHost host)
+    {
+    }
+  }
+
+  internal static class HostExtensions
+  {
+    internal static IHost OnBuilt(this IHost host, Action<IHost> action)
+    {
+      action(host);
+
+      return host;
     }
   }
 }
