@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.OData.Builder;
+﻿using Microsoft.OData.ModelBuilder;
 using Pluralize.NET;
 
 namespace Joker.OData.Extensions.OData

@@ -1,7 +1,8 @@
 ﻿using System;
 using Joker.Contracts.Data;
 using Joker.OData.Controllers;
-using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Query.Validator;
 using Sample.Data.Context;
 using Sample.Domain.Models;
 
