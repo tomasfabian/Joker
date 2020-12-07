@@ -1,13 +1,14 @@
 ﻿using System;
 using Joker.OData.Batch;
-using Microsoft.AspNet.OData.Batch;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
+using Joker.OData.Routing.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace Joker.OData.Startup
 {
@@ -106,7 +107,9 @@ namespace Joker.OData.Startup
     {
       base.OnConfigureServices(services);
 
-      services.AddOData();
+      var oDataBuilder = services.AddOData();
+
+      oDataBuilder.AddConvention<KeylessEntityRoutingConvention>();
     }
 
     #endregion
