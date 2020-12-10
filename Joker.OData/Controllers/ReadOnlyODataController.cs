@@ -4,13 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using Joker.Contracts.Data;
 using Joker.OData.Extensions.Expressions;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Extensions;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Query.Validator;
+using Microsoft.AspNetCore.OData.Results;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.OData.UriParser;
-using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
 
 namespace Joker.OData.Controllers
 {
@@ -44,33 +44,24 @@ namespace Joker.OData.Controllers
 
     #region Get
 
+    //https://localhost:5003/Authors(2)?$expand=Books
     [EnableQuery]
-    private SingleResult<TEntity> Get()
+    public SingleResult<TEntity> Get(object key, ODataQueryOptions<TEntity> queryOptions)
     {
       var keyPredicate = CreateKeysPredicate(GetKeysFromPath());
 
-      IQueryable<TEntity> result = repository.GetAll().Where(keyPredicate);
+      IQueryable<TEntity> result = OnGetAll(queryOptions).Where(keyPredicate);
 
       return SingleResult.Create(result);
     }
 
     [EnableQuery]
-    public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
+    public IActionResult Get(ODataQueryOptions<TEntity> queryOptions)
     {
       AuthenticateQuery(queryOptions);
 
       var entities = OnGetAll(queryOptions);
-
-      var odataPath = Request.ODataFeature().Path;
-
-      if (odataPath.PathTemplate == @"~/entityset/key")
-      {
-        var keyPredicate = CreateKeysPredicate(GetKeysFromPath());
-
-        if (keyPredicate != null)
-          entities = entities.Where(keyPredicate);
-      }
-
+      
       return Ok(entities);
     }
 
@@ -95,6 +86,13 @@ namespace Joker.OData.Controllers
 
     #endregion
 
+    private bool HasKeyInODataPath()
+    {
+      var odataPath = Request.ODataFeature().Path;
+
+      return odataPath.OfType<KeySegment>().Any();
+    }
+
     #region GetKeysFromPath
 
     protected object[] GetKeysFromPath()
@@ -108,7 +106,7 @@ namespace Joker.OData.Controllers
 
     protected object[] GetKeysFromPath(ODataPath odataPath)
     {
-      var keySegment = odataPath.Segments.OfType<KeySegment>().FirstOrDefault();
+      var keySegment = odataPath.OfType<KeySegment>().FirstOrDefault();
       if (keySegment == null)
         throw new InvalidOperationException("The link does not contain a key.");
 
@@ -121,7 +119,7 @@ namespace Joker.OData.Controllers
     {
       var odataPath = Request.ODataFeature().Path;
 
-      var keySegment = odataPath.Segments.OfType<KeySegment>();
+      var keySegment = odataPath.OfType<KeySegment>();
       if (keySegment == null)
         throw new InvalidOperationException("The link does not contain a key.");
 
