@@ -6,7 +6,7 @@
 
     public string ODataRouteName { get; private set; } = "odata";
 
-    public string ODataRoutePrefix { get; private set; }
+    public string ODataRoutePrefix { get; private set; } = string.Empty;
 
     public ODataStartupSettings DisableODataBatchHandler()
     {
