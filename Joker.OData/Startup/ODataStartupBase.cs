@@ -1,10 +1,12 @@
 ﻿using System;
+using Autofac;
 using Joker.OData.Batch;
 using Joker.OData.Routing.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.AspNetCore.OData.Routing.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
@@ -38,21 +40,6 @@ namespace Joker.OData.Startup
     #endregion
 
     #region Methods
-
-    #region ConfigureOData
-
-    private void ConfigureOData(IApplicationBuilder app)
-    {
-      OnConfigureOData(app);
-    }
-
-    #region OnConfigureOData
-
-    protected abstract void OnConfigureOData(IApplicationBuilder app);
-
-    #endregion
-
-    #endregion
 
     #region CreateODataBatchHandler
 
@@ -105,23 +92,51 @@ namespace Joker.OData.Startup
 
     protected override void OnConfigureServices(IServiceCollection services)
     {
+      OnRegisterEdmModel(services);
+
+      IEdmModel model = null;
+      services
+        .AddOptions<ODataOptions>()
+        .Configure<IEdmModel>((odataOptions, edmModel) =>
+        {
+          model = edmModel ?? EdmModel;
+        });
+
       base.OnConfigureServices(services);
 
-      var oDataBuilder = services.AddOData();
+      var oDataBuilder = services.AddOData(options =>
+      {
+        if(StartupSettings.UseUtcTimeZone)
+          options.SetTimeZoneInfo(TimeZoneInfo.Utc);
 
+        options.EnableContinueOnErrorHeader = ODataStartupSettings.EnableODataBatchHandler;
+
+        options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
+
+        if (ODataStartupSettings.EnableODataBatchHandler)
+        {
+          options.AddModel(ODataStartupSettings.ODataRoutePrefix, model,
+            CreateODataBatchHandler());
+        }
+        else
+        {
+          options.AddModel(ODataStartupSettings.ODataRoutePrefix, model,
+            CreateODataBatchHandler());
+        }
+      });
+
+      oDataBuilder.AddConvention<RefRoutingConvention>();
       oDataBuilder.AddConvention<KeylessEntityRoutingConvention>();
     }
 
     #endregion
 
-    #region OnConfigureApp
+    #region OnRegisterEdmModel
 
-    protected override void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
-    {
-      ConfigureOData(app);
-
-      base.OnConfigureApp(app, env, applicationLifetime);
-    }
+    //protected virtual void OnRegisterEdmModel(IServiceCollection services)
+    //{
+    //  services.AddSingleton(EdmModel);
+    //}
 
     #endregion
 

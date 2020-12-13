@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Joker.Disposables;
 using Joker.OData.Middleware.Logging;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -192,9 +192,6 @@ namespace Joker.OData.Startup
     {
       if (!EnableEndpointRouting)
         return;
-
-      if(StartupSettings.UseUtcTimeZone)
-        endpoints.SetTimeZoneInfo(TimeZoneInfo.Utc);
 
       MapControllerRoutes(endpoints);
 
