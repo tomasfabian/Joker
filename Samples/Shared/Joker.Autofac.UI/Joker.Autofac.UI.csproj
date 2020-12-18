@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
+    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.4" />
   </ItemGroup>
 
   <ItemGroup>
