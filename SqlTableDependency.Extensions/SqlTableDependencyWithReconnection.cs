@@ -414,36 +414,11 @@ END";
 
     #endregion
 
-    #region Stop
-
-    public override void Stop()
-    {
-      if (LifetimeScope == LifetimeScope.ConnectionScope)
-      {
-        base.Stop();
-
-        return;
-      }
-
-      if (_task != null)
-      {
-        _cancellationTokenSource.Cancel(true);
-        _task?.Wait();
-      }
-
-      _task = null;
-      _disposed = true;
-
-      WriteTraceMessage(TraceLevel.Info, "Stopped waiting for notification.");
-    }
-
-    #endregion
-
     #region Dispose
 
     protected override void Dispose(bool disposing)
     {
-      if (LifetimeScope != LifetimeScope.UniqueScope)
+      if (disposing && LifetimeScope != LifetimeScope.UniqueScope)
         DropDatabaseObjects();
 
       base.Dispose(disposing);
