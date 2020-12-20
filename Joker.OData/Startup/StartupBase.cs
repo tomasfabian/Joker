@@ -44,6 +44,8 @@ namespace Joker.OData.Startup
 
     #region Properties
 
+    internal virtual bool UseCors { get; }
+    
     internal abstract bool EnableEndpointRouting { get; }
 
     public ILifetimeScope AutofacContainer { get; private set; }
@@ -172,10 +174,15 @@ namespace Joker.OData.Startup
 
     #region OnAddExtensions
 
+    protected string MyAllowSpecificOrigins { get; set; } = "AllowSpecificOrigin";
+     
     protected virtual void OnAddExtensions(IApplicationBuilder app)
     {
       if(EnableEndpointRouting)
         app.UseRouting();
+      
+      if(UseCors)
+        app.UseCors(MyAllowSpecificOrigins);
       
       if(StartupSettings.UseAuthentication)
         app.UseAuthentication();
