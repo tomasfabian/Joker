@@ -9,6 +9,7 @@ using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,11 @@ namespace SelfHostedODataService
   {
     public StartupBaseWithOData(IWebHostEnvironment env)
       : base(env)
-    {
+    {      
+      SetSettings(startupSettings =>
+      {
+        startupSettings.UseCors = true;
+      });
     }
 
     protected override ODataModelBuilder OnCreateEdmModel(ODataModelBuilder oDataModelBuilder)
@@ -61,7 +66,12 @@ namespace SelfHostedODataService
 
       LogManager.Configuration = config;
     }
-
+    
+    protected override void OnConfigureCorsPolicy(CorsOptions options)
+    {
+      AddDefaultCorsPolicy(options);
+    }
+      
     protected override void OnConfigureServices(IServiceCollection services)
     {
       base.OnConfigureServices(services);
