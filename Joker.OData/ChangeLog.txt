@@ -1,6 +1,7 @@
 ﻿2.1.0
 - ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
-- Startup.Base UseCors
+- StartupBase UseCors
+- StartupBase AddDefaultCorsPolicy
 
 2.0.0
 - Autofac.Extensions.DependencyInjection 5.0.1 updated to 7.0.2. See https://github.com/autofac/Autofac/releases/tag/v6.0.0 and bellow

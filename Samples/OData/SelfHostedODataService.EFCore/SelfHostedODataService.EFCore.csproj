@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.OData" Version="2.0.0" />
+    <PackageReference Include="Joker.OData" Version="2.1.0" />
     <PackageReference Include="Joker.Redis" Version="2.2.0" />
     <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
