@@ -5,6 +5,7 @@ using Joker.Disposables;
 using Joker.OData.Middleware.Logging;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -44,8 +45,6 @@ namespace Joker.OData.Startup
 
     #region Properties
 
-    internal virtual bool UseCors { get; }
-    
     internal abstract bool EnableEndpointRouting { get; }
 
     public ILifetimeScope AutofacContainer { get; private set; }
@@ -94,8 +93,42 @@ namespace Joker.OData.Startup
 
       if (StartupSettings.UseHealthChecks)
         ConfigureHealthChecks(services.AddHealthChecks());
-
+      
+      if (StartupSettings.UseCors)
+      {
+        services.AddCors(OnConfigureCorsPolicy);
+      }
+      
       OnConfigureServices(services);
+    }
+
+    #endregion
+
+    #region AddDefaultCorsPolicy
+
+    protected virtual void OnConfigureCorsPolicy(CorsOptions options)
+    {
+    }
+    
+    protected string MyAllowSpecificOrigins { get; set; } = "AllowSpecificOrigin";
+    
+    /// <summary>
+    /// Sets AllowAnyOrigin, AllowAnyMethod and AllowAnyHeader.
+    /// </summary>
+    /// <param name="corsOptions">Adds policy to configure the provided <see cref="CorsOptions"/>.</param>
+    /// <returns></returns>
+    protected void AddDefaultCorsPolicy(CorsOptions corsOptions)
+    {
+      corsOptions.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+          builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+
+      corsOptions.DefaultPolicyName = MyAllowSpecificOrigins;
     }
 
     #endregion
@@ -173,15 +206,13 @@ namespace Joker.OData.Startup
     #endregion
 
     #region OnAddExtensions
-
-    protected string MyAllowSpecificOrigins { get; set; } = "AllowSpecificOrigin";
      
     protected virtual void OnAddExtensions(IApplicationBuilder app)
     {
       if(EnableEndpointRouting)
         app.UseRouting();
       
-      if(UseCors)
+      if(StartupSettings.UseCors)
         app.UseCors(MyAllowSpecificOrigins);
       
       if(StartupSettings.UseAuthentication)

@@ -11,6 +11,8 @@
     public bool UseAuthorization { get; set; } = true;
 
     public bool UseAuthentication { get; set; } = true;
+    
+    public bool UseCors { get; set; }
 
     public bool UseHealthChecks { get; set; } = true;
 
