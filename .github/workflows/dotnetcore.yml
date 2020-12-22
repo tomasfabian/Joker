@@ -13,6 +13,8 @@ jobs:
       Joker_Redis_Test_Project_Path: Tests\Joker.Redis.Tests\Joker.Redis.Tests.csproj
 
     steps:
+    - name: Clean
+      run: dotnet clean Joker.sln --configuration Release && dotnet nuget locals all --clear
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
