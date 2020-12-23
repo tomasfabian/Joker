@@ -1,0 +1,59 @@
+﻿<!--<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <RootNamespace>Joker.BlazorApp.Sample</RootNamespace>
+  </PropertyGroup>-->
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Joker.BlazorApp.Sample</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Reactive.Wasm" Version="1.2.2" />
+  </ItemGroup>
+  <!--<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
+    <PackageReference Include="Reactive.Wasm" Version="1.2.2" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+  </ItemGroup>-->
+
+  <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+  <!--<Import Project="..\..\..\NugetProjects\Microsoft.OData.Extensions.Client.csprojimport" />-->
+  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
+  <!--<Import Project="..\..\..\NugetProjects\System.Net.Http.Json.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.csprojimport" />-->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
+    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.Dev.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
