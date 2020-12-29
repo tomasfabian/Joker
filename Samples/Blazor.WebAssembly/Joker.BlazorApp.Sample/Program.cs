@@ -18,7 +18,6 @@ using Joker.BlazorApp.Sample.Subscribers;
 using Joker.Factories.Schedulers;
 using Joker.Notifications;
 using Joker.PubSubUI.Shared.Navigation;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Extensions.Client;
@@ -35,8 +34,10 @@ namespace Joker.BlazorApp.Sample
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
       builder.Logging.SetMinimumLevel(LogLevel.Error);
-     
-      var httpClient = new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
+      
+      var odataUrl = builder.Configuration["ODataUrl"];
+      
+      var httpClient = new HttpClient {BaseAddress = new Uri(odataUrl)};
       
       var serviceModel = await ODataServiceContext.GetServiceModelAsync(httpClient);
 
@@ -44,7 +45,7 @@ namespace Joker.BlazorApp.Sample
 
       builder.RootComponents.Add<App>("app");
 
-      builder.Services.AddTransient(sp => httpClient);
+      builder.Services.AddScoped(sp => httpClient);
 
       builder.Services.AddODataClient().AddHttpClient(httpClient);
 
@@ -71,7 +72,7 @@ namespace Joker.BlazorApp.Sample
           .As<IPlatformSchedulersFactory, ISchedulersFactory>()
           .SingleInstance();
 
-        containerBuilder.RegisterType<Joker.BlazorApp.Sample.Navigation.DialogManager>()
+        containerBuilder.RegisterType<Navigation.DialogManager>()
           .As<IBlazorDialogManager, IDialogManager>()
           .SingleInstance();
 
@@ -85,7 +86,7 @@ namespace Joker.BlazorApp.Sample
         containerBuilder.RegisterType<ViewModelsFactory>().As<IViewModelsFactory>();
 
         containerBuilder.RegisterType<DomainEntitiesSubscriber<Product>>()
-          .WithParameter(new NamedParameter("url", builder.HostEnvironment.BaseAddress))
+          .WithParameter(new NamedParameter("url", builder.Configuration["ODataUrl"]))
           .As<IDomainEntitiesSubscriber>();
       });
     }
