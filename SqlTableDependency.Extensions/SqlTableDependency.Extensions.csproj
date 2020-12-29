@@ -40,6 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker" Version="1.7.0" />
+    <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 </Project>
