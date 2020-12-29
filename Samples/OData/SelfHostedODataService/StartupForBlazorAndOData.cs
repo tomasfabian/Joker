@@ -39,9 +39,6 @@ namespace SelfHostedODataService
     {
       base.OnConfigureServices(services);
 
-      services.AddControllersWithViews();
-      services.AddRazorPages();
-
       ConfigureSignalR(services);
 
       services.AddResponseCompression(opts =>
@@ -54,29 +51,21 @@ namespace SelfHostedODataService
     protected override void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
     {
       base.OnConfigureApp(app, env, applicationLifetime);
-
-      if (env.IsDevelopment())
-      {
-        app.UseWebAssemblyDebugging();
-      }
-
+      
       app.UseResponseCompression();
-
-      app.UseBlazorFrameworkFiles();
+      
       app.UseStaticFiles();
     }
 
     protected override void OnUseEndpoints(IEndpointRouteBuilder endpoints)
     {
       base.OnUseEndpoints(endpoints);
-
-      endpoints.MapHub<DataChangesHub>("/dataChangesHub");
       
       endpoints.MapGet("generateToken", c => c.Response.WriteAsync(GenerateJwtToken(c)));
 
       endpoints.MapRazorPages();
-      endpoints.MapControllers();
-      endpoints.MapFallbackToFile("index.html");
+
+      endpoints.MapHub<DataChangesHub>("/dataChangesHub");
     }
 
     #region ConfigureSignalR
@@ -86,8 +75,8 @@ namespace SelfHostedODataService
 
     private void ConfigureSignalR(IServiceCollection services)
     {
-      services.AddSignalR();
-
+      services.AddSignalR(options => { options.EnableDetailedErrors = true; });
+      
       services.AddAuthorization(options =>
       {
         options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
