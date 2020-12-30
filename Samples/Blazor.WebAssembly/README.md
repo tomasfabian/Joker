@@ -8,8 +8,7 @@
 
 `CD Joker`
 
-Blazor WebAssembly client with SignalR pubsub from Sql server. OData server hosting
+Blazor WebAssembly client with SignalR pubsub from Sql server. This project depends on [OData server project](https://github.com/tomasfabian/Joker/tree/master/Samples/OData/SelfHostedODataService)
 
 #Work in progress
-- OData client does not support WASM platform. HttpClient is added with package Microsoft.OData.Extensions.Client.
 - Redis ISubscriber does not support WASM platform. SignalR is used instead of it.
