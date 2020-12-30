@@ -20,7 +20,6 @@ using Joker.Notifications;
 using Joker.PubSubUI.Shared.Navigation;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
-using Microsoft.OData.Extensions.Client;
 using OData.Client;
 using ReactiveListViewModelFactory = Joker.BlazorApp.Sample.Factories.ViewModels.ReactiveListViewModelFactory;
 using ViewModelsFactory = Joker.BlazorApp.Sample.Factories.ViewModels.ViewModelsFactory;
@@ -36,7 +35,7 @@ namespace Joker.BlazorApp.Sample
       builder.Logging.SetMinimumLevel(LogLevel.Error);
       
       var odataUrl = builder.Configuration["ODataUrl"];
-      
+
       var httpClient = new HttpClient {BaseAddress = new Uri(odataUrl)};
       
       var serviceModel = await ODataServiceContext.GetServiceModelAsync(httpClient);
@@ -46,9 +45,7 @@ namespace Joker.BlazorApp.Sample
       builder.RootComponents.Add<App>("app");
 
       builder.Services.AddScoped(sp => httpClient);
-
-      builder.Services.AddODataClient().AddHttpClient(httpClient);
-
+      
       await builder.Build().RunAsync();
     }
 

@@ -10,7 +10,6 @@
 
   <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Extensions.Client.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
   <Import Project="..\..\..\NugetProjects\System.Net.Http.Json.csprojimport" />
