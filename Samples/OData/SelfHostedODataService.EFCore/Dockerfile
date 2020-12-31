@@ -8,10 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Samples/OData/SelfHostedODataService.EFCore/SelfHostedODataService.EFCore.csproj", "Samples/OData/SelfHostedODataService.EFCore/"]
-COPY ["Joker.Redis/Joker.Redis.csproj", "Joker.Redis/"]
-COPY ["SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj", "SqlTableDependency.Extensions/"]
-COPY ["Joker/Joker.csproj", "Joker/"]
-COPY ["Samples/Sample.Data/Sample.Data.csproj", "Samples/Sample.Data/"]
+COPY ["Samples/Sample.DataCore/Sample.DataCore.csproj", "Samples/Sample.DataCore/"]
 COPY ["Samples/Sample.Domain/Sample.Domain.csproj", "Samples/Sample.Domain/"]
 RUN dotnet restore "Samples/OData/SelfHostedODataService.EFCore/SelfHostedODataService.EFCore.csproj"
 COPY . .

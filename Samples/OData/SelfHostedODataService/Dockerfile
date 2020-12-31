@@ -8,9 +8,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Samples/OData/SelfHostedODataService/SelfHostedODataService.csproj", "Samples/OData/SelfHostedODataService/"]
-COPY ["Joker.Redis/Joker.Redis.csproj", "Joker.Redis/"]
-COPY ["SqlTableDependency.Extensions/SqlTableDependency.Extensions.csproj", "SqlTableDependency.Extensions/"]
-COPY ["Joker/Joker.csproj", "Joker/"]
 COPY ["Samples/Sample.Data/Sample.Data.csproj", "Samples/Sample.Data/"]
 COPY ["Samples/Sample.Domain/Sample.Domain.csproj", "Samples/Sample.Domain/"]
 RUN dotnet restore "Samples/OData/SelfHostedODataService/SelfHostedODataService.csproj"
