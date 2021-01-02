@@ -18,9 +18,9 @@ using StackExchange.Redis;
 
 namespace SelfHostedODataService
 {
-  public class StartupForBlazorAndOData : StartupBaseWithOData
+  public class ODataStartupWithPubSub : StartupBaseWithOData
   {
-    public StartupForBlazorAndOData(IWebHostEnvironment env) 
+    public ODataStartupWithPubSub(IWebHostEnvironment env) 
       : base(env)
     {
     }
