@@ -9,7 +9,7 @@ using Serilog;
 
 namespace SelfHostedODataService.EFCore
 {
-  public class ODataHost : ODataHost<StartupBaseWithOData>
+  public class ODataHost : ODataHost<ODataStartupWithPubSub>
   {
     protected override void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
     {

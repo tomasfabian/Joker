@@ -4,6 +4,7 @@ using Joker.OData.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SelfHostedODataService.EFCore.HostedServices;
+using SelfHostedODataService.HostedServices;
 using Serilog;
 
 namespace SelfHostedODataService.EFCore
@@ -15,7 +16,8 @@ namespace SelfHostedODataService.EFCore
       var startupSettings = new KestrelODataWebHostConfig()
       {
         ConfigureServices = services =>
-        {
+        {          
+          services.AddHostedService<ProductChangesHostedService>();
           services.AddHostedService<SqlTableDependencyProviderHostedService>();
         }
       };
