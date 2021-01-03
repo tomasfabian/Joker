@@ -23,7 +23,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Joker.PubSubUI.Shared", "..
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{1a20b92e-2241-45bb-bd44-567a508b3feb}*SharedItemsImports = 5
 		..\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{28c8ed4f-505f-4344-8ed1-d52355af59f7}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

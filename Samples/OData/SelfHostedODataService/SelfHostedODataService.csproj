@@ -16,12 +16,10 @@
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.Server.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
   <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.csproj" />
     <ProjectReference Include="..\..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
