@@ -8,6 +8,8 @@
 
 `CD Joker`
 
+Set **docker-compose** as the startup project in Joker.sln and run it for OData server with SqlTableDependencyRedisProvider
+
 Blazor WebAssembly client with SignalR pubsub from Sql server. This project depends on running [OData server project](https://github.com/tomasfabian/Joker/tree/master/Samples/OData/SelfHostedODataService)
 
 #Work in progress
