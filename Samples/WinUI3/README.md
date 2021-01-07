@@ -9,11 +9,9 @@
 
 `CD Joker`
 
-Set (multiple) startup project(s) in Joker.sln/Examples:
-* Use **docker-compose** for OData server with SqlTableDependencyRedisProvider
+
+* Set **docker-compose** as the startup project in Joker.sln and run it for OData server with SqlTableDependencyRedisProvider
 * CD Joker\Samples\WinUI3\
 * [WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/#install-winui-3-preview-3) in Desktop and UWP Preview 3 can be found in Joker\Samples\WinUI3\Joker.WinUI3.Sample.sln.
    1. project "Joker.WinUI3.Desktop (Package)"
    2. project "Joker.WinUI3.UWP.Sample (Universal Windows)"
-
-
