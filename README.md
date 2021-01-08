@@ -1,3 +1,4 @@
+![Joker in action](jokerinaction.mp4)
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
