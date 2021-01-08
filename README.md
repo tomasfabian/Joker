@@ -1,4 +1,4 @@
-![Joker in action](jokerinaction.gif)
+<img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
