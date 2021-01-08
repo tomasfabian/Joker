@@ -1,6 +1,7 @@
 Data change notifications from Sql Server via SqlTableDependency, OData and Redis to different .NET clients (WinUI3, WPF, Blazor Wasm, etc)
 
 <img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
+
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
