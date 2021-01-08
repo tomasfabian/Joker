@@ -12,7 +12,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.1" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
@@ -22,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
     <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
-    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
     <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.Dev.csproj" />
