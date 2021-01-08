@@ -1,6 +1,6 @@
-Data change notifications from Sql Server via SqlTableDependency, OData and Redis to different .NET clients (WinUI3, WPF, Blazor Wasm, etc). Blazor Wasm notifications are redirected with SignalR.
+Data change notifications from Sql Server via [SqlTableDependency](https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency), [OData](https://docs.microsoft.com/en-us/odata/overview) and [Redis](https://github.com/StackExchange/StackExchange.Redis) to different [.NET](https://dotnet.microsoft.com/) clients ([WinUI3 - UWP and Win32 apps](https://microsoft.github.io/microsoft-ui-xaml/about.html#what-is-it), [WPF](https://github.com/dotnet/wpf), [Blazor Wasm](https://docs.microsoft.com/sk-sk/aspnet/core/blazor/?view=aspnetcore-5.0#blazor-webassembly), etc). Blazor Wasm notifications are redirected with [SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr).
 
-<img src="jokerinaction.mp4" alt="Joker in action" width="1024"/>
+<img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
