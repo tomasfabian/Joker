@@ -29,6 +29,11 @@ namespace Joker.Kafka.Extensions.KSql.Query
         case ExpressionType.Constant:
           VisitConstant((ConstantExpression)expression);
           break;
+
+        case ExpressionType.AndAlso:
+        case ExpressionType.OrElse:
+          VisitBinary((BinaryExpression)expression);
+          break;
       }
 
       return expression;
@@ -68,6 +73,28 @@ namespace Joker.Kafka.Extensions.KSql.Query
       }
 
       return constantExpression;
+    }
+    
+    protected override Expression VisitBinary(BinaryExpression binaryExpression)
+    {
+      if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
+
+      Visit(binaryExpression.Left);
+
+      //https://docs.ksqldb.io/en/latest/reference/sql/appendix/
+      string @operator = binaryExpression.NodeType switch
+      {
+        ExpressionType.AndAlso => "AND",
+        ExpressionType.OrElse => "OR",
+      };
+
+      @operator = $" {@operator} ";
+
+      Append(@operator);
+
+      Visit(binaryExpression.Right);
+
+      return binaryExpression;
     }
 
     protected void Append(string value)
