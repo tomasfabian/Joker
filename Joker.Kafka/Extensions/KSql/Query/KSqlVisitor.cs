@@ -32,6 +32,12 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
         case ExpressionType.AndAlso:
         case ExpressionType.OrElse:
+        case ExpressionType.NotEqual:
+        case ExpressionType.Equal:
+        case ExpressionType.GreaterThan:
+        case ExpressionType.GreaterThanOrEqual:
+        case ExpressionType.LessThan:
+        case ExpressionType.LessThanOrEqual:
           VisitBinary((BinaryExpression)expression);
           break;
       }
@@ -86,6 +92,12 @@ namespace Joker.Kafka.Extensions.KSql.Query
       {
         ExpressionType.AndAlso => "AND",
         ExpressionType.OrElse => "OR",
+        ExpressionType.Equal => "=",
+        ExpressionType.NotEqual => "!=",
+        ExpressionType.LessThan => "<",
+        ExpressionType.LessThanOrEqual => "<=",
+        ExpressionType.GreaterThan => ">",
+        ExpressionType.GreaterThanOrEqual => ">=",
       };
 
       @operator = $" {@operator} ";
