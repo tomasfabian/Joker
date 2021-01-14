@@ -117,6 +117,95 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
         //Assert
         query.Should().BeEquivalentTo("True OR False");
       }
+    
+      [TestMethod]
+      public void BinaryEqual_BuildKSql_PrintsEqual()
+      {
+        //Arrange
+        ConstantExpression constant = Expression.Constant(1);
+        var expression = Expression.Equal(constant, constant);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("1 = 1");
+      }
+    
+      [TestMethod]
+      public void BinaryNotEqual_BuildKSql_PrintsNotEqual()
+      {
+        //Arrange
+        ConstantExpression constant1 = Expression.Constant(1);
+        ConstantExpression constant2 = Expression.Constant(2);
+        var expression = Expression.NotEqual(constant1, constant2);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("1 != 2");
+      }
+    
+      [TestMethod]
+      public void BinaryLessThan_BuildKSql_PrintsLessThan()
+      {
+        //Arrange
+        ConstantExpression constant1 = Expression.Constant(1);
+        ConstantExpression constant2 = Expression.Constant(2);
+        var expression = Expression.LessThan(constant1, constant2);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("1 < 2");
+      }
+          
+      [TestMethod]
+      public void BinaryLessThanOrEqual_BuildKSql_PrintsLessThanOrEqual()
+      {
+        //Arrange
+        ConstantExpression constant1 = Expression.Constant(1);
+        ConstantExpression constant2 = Expression.Constant(2);
+        var expression = Expression.LessThanOrEqual(constant1, constant2);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("1 <= 2");
+      }
+          
+      [TestMethod]
+      public void BinaryGreaterThan_BuildKSql_PrintsGreaterThan()
+      {
+        //Arrange
+        ConstantExpression constant1 = Expression.Constant(2);
+        ConstantExpression constant2 = Expression.Constant(1);
+        var expression = Expression.GreaterThan(constant1, constant2);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("2 > 1");
+      }
+          
+      [TestMethod]
+      public void BinaryGreaterThanOrEqual_BuildKSql_PrintsGreaterThanOrEqual()
+      {
+        //Arrange
+        ConstantExpression constant1 = Expression.Constant(2);
+        ConstantExpression constant2 = Expression.Constant(1);
+        var expression = Expression.GreaterThanOrEqual(constant1, constant2);
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("2 >= 1");
+      }
 
       #endregion
   }

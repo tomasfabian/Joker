@@ -77,6 +77,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{D8F332EF-469
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{4FD87675-B0D8-4DAE-BA39-6D76DF38B3F2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.Kafka.Tests", "Tests\Joker.Kafka.Tests\Joker.Kafka.Tests.csproj", "{B482DC2C-D4EF-4363-90C3-51E8150FFCB4}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
@@ -196,6 +198,10 @@ Global
 		{6EA6F70F-A158-46D2-ADF7-26CC354B05B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EA6F70F-A158-46D2-ADF7-26CC354B05B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EA6F70F-A158-46D2-ADF7-26CC354B05B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B482DC2C-D4EF-4363-90C3-51E8150FFCB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B482DC2C-D4EF-4363-90C3-51E8150FFCB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B482DC2C-D4EF-4363-90C3-51E8150FFCB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B482DC2C-D4EF-4363-90C3-51E8150FFCB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,6 +239,7 @@ Global
 		{6EA6F70F-A158-46D2-ADF7-26CC354B05B1} = {F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}
 		{D8F332EF-4694-4A30-9FE1-349173DF7A6A} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{4FD87675-B0D8-4DAE-BA39-6D76DF38B3F2} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
+		{B482DC2C-D4EF-4363-90C3-51E8150FFCB4} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
