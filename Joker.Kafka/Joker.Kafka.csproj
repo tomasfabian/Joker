@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
@@ -14,6 +14,7 @@
     <PackageTags>kafka broker</PackageTags>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <LangVersion>9.0</LangVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.txt</PackageReleaseNotes>
   </PropertyGroup>
 
