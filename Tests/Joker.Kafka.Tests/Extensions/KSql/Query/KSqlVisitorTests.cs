@@ -89,5 +89,35 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
       }
 
       #endregion
+
+      #region Binary
+
+      [TestMethod]
+      public void BinaryAnd_BuildKSql_PrintsOperatorAnd()
+      {
+        //Arrange
+        var andAlso = Expression.AndAlso(Expression.Constant(true), Expression.Constant(true));
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(andAlso);
+
+        //Assert
+        query.Should().BeEquivalentTo("True AND True");
+      }
+
+      [TestMethod]
+      public void BinaryOr_BuildKSql_PrintsOperatorOr()
+      {
+        //Arrange
+        var orElse = Expression.OrElse(Expression.Constant(true), Expression.Constant(false));
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(orElse);
+
+        //Assert
+        query.Should().BeEquivalentTo("True OR False");
+      }
+
+      #endregion
   }
 }
