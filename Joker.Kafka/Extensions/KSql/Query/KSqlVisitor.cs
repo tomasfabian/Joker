@@ -53,19 +53,13 @@ namespace Joker.Kafka.Extensions.KSql.Query
         case ExpressionType.New:
           VisitNew((NewExpression)expression);
           break;
+
+        case ExpressionType.Call:
+          VisitMethodCall((MethodCallExpression)expression);
+          break;
       }
 
       return expression;
-    }
-    
-    protected override Expression VisitNew(NewExpression newExpression)
-    {
-      if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
-
-      if(newExpression.Type.IsAnonymousType())
-        Append(newExpression.Members.Select(c => c.Name));
-
-      return newExpression;
     }
 
     protected override Expression VisitConstant(ConstantExpression constantExpression)
@@ -120,6 +114,16 @@ namespace Joker.Kafka.Extensions.KSql.Query
       return binaryExpression;
     }
     
+    protected override Expression VisitNew(NewExpression newExpression)
+    {
+      if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
+
+      if(newExpression.Type.IsAnonymousType())
+        Append(newExpression.Members.Select(c => c.Name));
+
+      return newExpression;
+    }
+
     protected override Expression VisitMember(MemberExpression memberExpression)
     {
       if (memberExpression == null) throw new ArgumentNullException(nameof(memberExpression));
@@ -129,6 +133,28 @@ namespace Joker.Kafka.Extensions.KSql.Query
       }
 
       return memberExpression;
+    }
+
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression) {
+      if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
+          methodCallExpression.Method.Name == nameof(Queryable.Where)) {
+        
+        Append("WHERE ");
+
+        LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
+        
+        Visit(lambda.Body);
+      } 
+
+      return methodCallExpression;
+    }
+
+    protected static Expression StripQuotes(Expression expression) {
+      while (expression.NodeType == ExpressionType.Quote) {
+        expression = ((UnaryExpression)expression).Operand;
+      }
+
+      return expression;
     }
 
     protected void Append(string value)
