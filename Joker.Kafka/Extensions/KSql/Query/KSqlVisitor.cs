@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -40,9 +41,27 @@ namespace Joker.Kafka.Extensions.KSql.Query
         case ExpressionType.LessThanOrEqual:
           VisitBinary((BinaryExpression)expression);
           break;
+        
+        case ExpressionType.Lambda:
+          base.Visit(expression);
+          break;
+
+        case ExpressionType.New:
+          VisitNew((NewExpression)expression);
+          break;
       }
 
       return expression;
+    }
+    
+    protected override Expression VisitNew(NewExpression newExpression)
+    {
+      if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
+
+      if(newExpression.Type.IsAnonymousType())
+        Append(newExpression.Members.Select(c => c.Name));
+
+      return newExpression;
     }
 
     protected override Expression VisitConstant(ConstantExpression constantExpression)
@@ -53,19 +72,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
       if (value is not string && value is IEnumerable enumerable)
       {
-        bool isFirst = true;
-
-        foreach (var constant in enumerable)
-        {
-          if (isFirst)
-            isFirst = false;
-          else
-          {
-            stringBuilder.Append(", ");
-          }
-
-          stringBuilder.Append(constant);
-        }
+        Append(enumerable);
       }
       else if (value is string)
       {
@@ -80,7 +87,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
       return constantExpression;
     }
-    
+
     protected override Expression VisitBinary(BinaryExpression binaryExpression)
     {
       if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
@@ -112,6 +119,23 @@ namespace Joker.Kafka.Extensions.KSql.Query
     protected void Append(string value)
     {
       stringBuilder.Append(value);
+    }
+
+    protected void Append(IEnumerable enumerable)
+    {
+      bool isFirst = true;
+
+      foreach (var constant in enumerable)
+      {
+        if (isFirst)
+          isFirst = false;
+        else
+        {
+          stringBuilder.Append(", ");
+        }
+
+        stringBuilder.Append(constant);
+      }
     }
   }
 }
