@@ -11,6 +11,7 @@ jobs:
       Test_Project_Path: Tests\SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj
       Joker_MVVM_Test_Project_Path: Tests\Joker.Tests\Joker.MVVM.Tests.csproj
       Joker_Redis_Test_Project_Path: Tests\Joker.Redis.Tests\Joker.Redis.Tests.csproj
+      Joker_Kafka_Test_Project_Path: Tests\Joker.Kafka.Tests\Joker.Kafka.Tests.csproj
 
     steps:
     - uses: actions/checkout@v2
@@ -32,3 +33,5 @@ jobs:
       run: dotnet test $env:Joker_MVVM_Test_Project_Path
     - name: Execute Joker.Redis Unit Tests
       run: dotnet test $env:Joker_Redis_Test_Project_Path
+    - name: Execute Joker.Kafka Unit Tests
+      run: dotnet test $env:Joker_Kafka_Test_Project_Path
