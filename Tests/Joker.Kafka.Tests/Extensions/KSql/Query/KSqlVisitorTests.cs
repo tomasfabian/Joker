@@ -278,6 +278,65 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
       }
 
       #endregion
+
+      #region MemberAccess
+
+      [TestMethod]
+      public void MemberAccess_BuildKSql_PrintsNameOfTheProperty()
+      {
+        //Arrange
+        Expression<Func<Location, double>> predicate = l => l.Longitude;
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(predicate);
+
+        //Assert
+        query.Should().BeEquivalentTo(nameof(Location.Longitude));
+      }
+
+      [TestMethod]
+      public void Predicate_BuildKSql_PrintsOperatorAndOperands()
+      {
+        //Arrange
+        Expression<Func<Location, bool>> predicate = l => l.Latitude != "ahoj svet";
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(predicate);
+
+        //Assert
+        query.Should().BeEquivalentTo($"{nameof(Location.Latitude)} != 'ahoj svet'");
+      }
+
+      [Ignore("Figure out what to do")]
+      [TestMethod]
+      public void PredicateCompareWithVariable_BuildKSql_PrintsOperatorAndOperands()
+      {
+        //Arrange
+        string value = "ahoj svet";
+
+        Expression<Func<Location, bool>> predicate = l => l.Latitude != value;
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(predicate);
+
+        //Assert
+        query.Should().BeEquivalentTo($"{nameof(Location.Latitude)} != '${value}'");
+      }
+
+      [TestMethod]
+      public void PredicateCompareWithDouble_BuildKSql_PrintsOperatorAndOperands()
+      {
+        //Arrange
+        Expression<Func<Location, bool>> predicate = l => l.Longitude == 1.2;
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(predicate);
+
+        //Assert
+        query.Should().BeEquivalentTo($"{nameof(Location.Longitude)} = 1.2");
+      }
+
+      #endregion
     
       public class Location
       {
