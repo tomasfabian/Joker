@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using FluentAssertions;
 using Joker.Kafka.Extensions.KSql.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -208,5 +209,80 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
       }
 
       #endregion
+
+      #region New
+
+      [TestMethod]
+      public void NewAnonymousType_BuildKSql_PrintsMemberName()
+      {
+        //Arrange
+        Expression<Func<Location, object>> expression = l => new { l.Longitude };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo(nameof(Location.Longitude));
+      }
+
+      [TestMethod]
+      public void NewAnonymousTypeMultipleMembers_BuildKSql_PrintsAllCommaSeparatedMemberNames()
+      {
+        //Arrange
+        Expression<Func<Location, object>> expression = l => new { l.Longitude, l.Latitude };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo($"{nameof(Location.Longitude)}, {nameof(Location.Latitude)}");
+      }
+
+      [TestMethod]
+      public void NewAnonymousTypeMultipleMembersOneHasAlias_BuildKSql_PrintsAllCommaSeparatedMemberNames()
+      {
+        //Arrange
+        Expression<Func<Location, object>> expression = l => new { l.Longitude, La = l.Latitude };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo($"{nameof(Location.Longitude)}, La");
+      }
+
+      [TestMethod]
+      public void NewReferenceType_BuildKSql_PrintsNothing()
+      {
+        //Arrange
+        Expression<Func<Location, object>> expression = l => new Location();
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEmpty();
+      }
+
+      [TestMethod]
+      public void NewMemberInit_BuildKSql_PrintsNothing()
+      {
+        //Arrange
+        Expression<Func<Location, object>> expression = l => new Location { Latitude = "t" };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEmpty();
+      }
+
+      #endregion
+    
+      public class Location
+      {
+        public double Longitude { get; set; }
+        public string Latitude { get; set; }
+      }
   }
 }
