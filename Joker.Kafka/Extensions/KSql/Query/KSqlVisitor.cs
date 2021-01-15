@@ -41,6 +41,10 @@ namespace Joker.Kafka.Extensions.KSql.Query
         case ExpressionType.LessThanOrEqual:
           VisitBinary((BinaryExpression)expression);
           break;
+          
+        case ExpressionType.MemberAccess:
+          VisitMember((MemberExpression)expression);
+          break;
         
         case ExpressionType.Lambda:
           base.Visit(expression);
@@ -114,6 +118,17 @@ namespace Joker.Kafka.Extensions.KSql.Query
       Visit(binaryExpression.Right);
 
       return binaryExpression;
+    }
+    
+    protected override Expression VisitMember(MemberExpression memberExpression)
+    {
+      if (memberExpression == null) throw new ArgumentNullException(nameof(memberExpression));
+
+      if (memberExpression.Expression != null && memberExpression.Expression.NodeType == ExpressionType.Parameter) {
+        Append(memberExpression.Member.Name);
+      }
+
+      return memberExpression;
     }
 
     protected void Append(string value)
