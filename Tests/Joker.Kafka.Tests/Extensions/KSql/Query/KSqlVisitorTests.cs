@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using Joker.Kafka.Extensions.KSql.Query;
+using Joker.Kafka.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 

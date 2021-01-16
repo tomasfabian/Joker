@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Joker.Kafka.Extensions.KSql.Query
 {
-  public class KSqlQueryLanguageVisitor2 : ExpressionVisitor
+  public class KSqlQueryLanguageVisitor : ExpressionVisitor
   {
     private KSqlVisitor kSqlVisitor = new();
 
@@ -42,8 +42,8 @@ namespace Joker.Kafka.Extensions.KSql.Query
         kSqlVisitor.Visit(methodCallExpression);
       }
 
-      // if(ShouldEmitChanges)
-        // kSqlVisitor.Append(" EMIT CHANGES;");
+      if(ShouldEmitChanges)
+        kSqlVisitor.Append(" EMIT CHANGES;");
 
       return kSqlVisitor.BuildKSql();
     }
