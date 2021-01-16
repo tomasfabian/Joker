@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Joker.Kafka.Extensions.KSql.Query
 {
-  public class KSqlQueryLanguageVisitor : ExpressionVisitor
+  public class KSqlQueryLanguageVisitor2 : ExpressionVisitor
   {
     private KSqlVisitor kSqlVisitor = new();
 
@@ -17,6 +16,15 @@ namespace Joker.Kafka.Extensions.KSql.Query
       whereClauses = new Queue<Expression>();
 
       Visit(expression);
+      
+      kSqlVisitor.Append("SELECT ");
+
+      if(@select != null)
+        kSqlVisitor.Visit(@select.Body);
+      else
+        kSqlVisitor.Append("*");
+
+      kSqlVisitor.Append(" FROM "); //TODO: KStream or KTable name
 
       bool isFirst = true;
 
@@ -33,6 +41,9 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
         kSqlVisitor.Visit(methodCallExpression);
       }
+
+      // if(ShouldEmitChanges)
+        // kSqlVisitor.Append(" EMIT CHANGES;");
 
       return kSqlVisitor.BuildKSql();
     }
@@ -54,6 +65,21 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression) {
       if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
+          methodCallExpression.Method.Name == nameof(Queryable.Select)) {
+        
+        LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
+
+        if (select == null)
+          select = lambda;
+        
+        var firstPart = methodCallExpression.Arguments[0];
+        if(firstPart.NodeType == ExpressionType.Call)
+        {
+          Visit(firstPart);
+        }
+      }
+
+      if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
           methodCallExpression.Method.Name == nameof(Queryable.Where)) {
         
         var firstPart = methodCallExpression.Arguments[0];
@@ -68,6 +94,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
     }
 
     private Queue<Expression> whereClauses;
+    private LambdaExpression select;
 
     protected static Expression StripQuotes(Expression expression) {
       while (expression.NodeType == ExpressionType.Quote) {
