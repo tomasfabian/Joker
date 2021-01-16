@@ -42,8 +42,8 @@ namespace Joker.Kafka.Extensions.KSql.Query
         kSqlVisitor.Visit(methodCallExpression);
       }
 
-      if(ShouldEmitChanges)
-        kSqlVisitor.Append(" EMIT CHANGES;");
+      // if(ShouldEmitChanges)
+        // kSqlVisitor.Append(" EMIT CHANGES;");
 
       return kSqlVisitor.BuildKSql();
     }
