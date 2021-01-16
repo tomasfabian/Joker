@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Joker.Kafka.Extensions.KSql.Query;
@@ -355,34 +354,5 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
       }
 
       #endregion
-
-      #region Where
-
-      [TestMethod]
-      public void Where_BuildKSql_PrintsWhere()
-      {
-        //Arrange
-        var query = new[]
-            {
-              new Location { Latitude = "1" },
-              new Location { Latitude = "2" }
-            }.AsQueryable()
-          //.Select(l => new { l.Longitude, l.Latitude })
-            .Where(p => p.Latitude == "1");
-
-        //Act
-        var ksql = ClassUnderTest.BuildKSql(query.Expression);
-
-        //Assert
-        ksql.Should().BeEquivalentTo($"WHERE {nameof(Location.Latitude)} = '1'");
-      }
-
-      #endregion
-
-      public class Location
-      {
-        public double Longitude { get; set; }
-        public string Latitude { get; set; }
-      }
   }
 }

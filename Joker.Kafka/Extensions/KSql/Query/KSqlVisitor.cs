@@ -10,6 +10,15 @@ namespace Joker.Kafka.Extensions.KSql.Query
   {
     private readonly StringBuilder stringBuilder = new();
 
+    public string BuildKSql()
+    {
+      var ksql = stringBuilder.ToString();
+      
+      stringBuilder.Clear();
+
+      return ksql;
+    }
+
     public string BuildKSql(Expression expression)
     {
       stringBuilder.Clear();
@@ -41,10 +50,6 @@ namespace Joker.Kafka.Extensions.KSql.Query
         case ExpressionType.LessThanOrEqual:
           VisitBinary((BinaryExpression)expression);
           break;
-          
-        case ExpressionType.MemberAccess:
-          VisitMember((MemberExpression)expression);
-          break;
         
         case ExpressionType.Lambda:
           base.Visit(expression);
@@ -52,6 +57,10 @@ namespace Joker.Kafka.Extensions.KSql.Query
 
         case ExpressionType.New:
           VisitNew((NewExpression)expression);
+          break;
+          
+        case ExpressionType.MemberAccess:
+          VisitMember((MemberExpression)expression);
           break;
 
         case ExpressionType.Call:
@@ -86,6 +95,8 @@ namespace Joker.Kafka.Extensions.KSql.Query
       return constantExpression;
     }
 
+    private const string OperatorAnd = "AND";
+
     protected override Expression VisitBinary(BinaryExpression binaryExpression)
     {
       if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
@@ -95,7 +106,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
       //https://docs.ksqldb.io/en/latest/reference/sql/appendix/
       string @operator = binaryExpression.NodeType switch
       {
-        ExpressionType.AndAlso => "AND",
+        ExpressionType.AndAlso => OperatorAnd,
         ExpressionType.OrElse => "OR",
         ExpressionType.Equal => "=",
         ExpressionType.NotEqual => "!=",
@@ -135,29 +146,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
       return memberExpression;
     }
 
-    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression) {
-      if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
-          methodCallExpression.Method.Name == nameof(Queryable.Where)) {
-        
-        Append("WHERE ");
-
-        LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
-        
-        Visit(lambda.Body);
-      } 
-
-      return methodCallExpression;
-    }
-
-    protected static Expression StripQuotes(Expression expression) {
-      while (expression.NodeType == ExpressionType.Quote) {
-        expression = ((UnaryExpression)expression).Operand;
-      }
-
-      return expression;
-    }
-
-    protected void Append(string value)
+    public void Append(string value)
     {
       stringBuilder.Append(value);
     }
