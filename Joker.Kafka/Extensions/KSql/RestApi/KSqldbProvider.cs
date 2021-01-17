@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Joker.Kafka.Extensions.KSql.RestApi
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
   public class KSqldbProvider<T> : IKSqldbProvider<T>
   {

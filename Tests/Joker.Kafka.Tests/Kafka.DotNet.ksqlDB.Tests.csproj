@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
-    <ProjectReference Include="..\..\Joker.Kafka\Joker.Kafka.csproj" />
+    <ProjectReference Include="..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 </Project>

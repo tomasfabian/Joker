@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace Joker.Kafka.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public class KSqlVisitor : ExpressionVisitor
   {

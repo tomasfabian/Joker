@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Joker.Kafka.Extensions.KSql.RestApi
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
   public sealed class KsqlQueryParameters
   {

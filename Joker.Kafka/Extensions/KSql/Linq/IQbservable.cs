@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Joker.Kafka.Extensions.ksql.Linq
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 {
   public interface IQbservable
   {

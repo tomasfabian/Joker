@@ -1,15 +1,14 @@
 ﻿using FluentAssertions;
-using Joker.Kafka.Extensions.ksql.Linq;
-using Joker.Kafka.Extensions.KSql.Linq;
-using Joker.Kafka.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
-using Location = Joker.Kafka.Tests.Models.Location;
+using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 
-namespace Joker.Kafka.Tests.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryLanguageVisitor<Location>>
+  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryLanguageVisitor<Models.Location>>
   {
     string streamName = nameof(Location);
 

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq.Expressions;
 using FluentAssertions;
-using Joker.Kafka.Extensions.KSql.Query;
-using Joker.Kafka.Tests.Models;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
-using Location = Joker.Kafka.Tests.Models.Location;
+using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 
-namespace Joker.Kafka.Tests.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
   public class KSqlVisitorTests : TestBase<KSqlVisitor>

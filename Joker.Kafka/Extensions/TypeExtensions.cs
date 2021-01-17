@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Joker.Kafka.Extensions
+namespace Kafka.DotNet.ksqlDB.Extensions
 {
   internal static class TypeExtensions
   {

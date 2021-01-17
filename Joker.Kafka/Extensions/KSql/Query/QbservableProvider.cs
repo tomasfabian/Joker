@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using Joker.Kafka.Extensions.ksql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
-namespace Joker.Kafka.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public class QbservableProvider : IQbservableProvider
   {

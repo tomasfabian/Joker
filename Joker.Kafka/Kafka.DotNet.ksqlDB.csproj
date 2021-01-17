@@ -10,26 +10,16 @@
     <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
     <Copyright>@tomasfabian</Copyright>
-    <Description>Confluent Kafka extensions</Description>
-    <PackageTags>kafka broker</PackageTags>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>Confluent Kafka ksqlDB LINQ provider</Description>
+    <PackageTags>kafka ksql ksqlDB LINQ</PackageTags>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <LangVersion>9.0</LangVersion>
-    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.txt</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.md</PackageReleaseNotes>
   </PropertyGroup>
-
-  <Import Project="..\NugetProjects\Confluent.Kafka.csprojimport" />
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="5.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\Joker\License.txt" Link="License.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 
 </Project>

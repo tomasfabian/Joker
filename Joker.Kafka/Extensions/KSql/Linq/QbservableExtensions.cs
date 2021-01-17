@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Joker.Kafka.Extensions.ksql.Linq;
-using Joker.Kafka.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
-namespace Joker.Kafka.Extensions.KSql.Linq
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 {
   public static class QbservableExtensions
   {

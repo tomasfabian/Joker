@@ -1,4 +1,4 @@
-﻿namespace Joker.Kafka.Tests.Models
+﻿namespace Kafka.DotNet.ksqlDB.Tests.Models
 {
   public class Location
   {
