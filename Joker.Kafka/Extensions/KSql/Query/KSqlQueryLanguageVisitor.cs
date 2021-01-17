@@ -4,11 +4,16 @@ using System.Linq.Expressions;
 
 namespace Joker.Kafka.Extensions.KSql.Query
 {
-  public class KSqlQueryLanguageVisitor : ExpressionVisitor
+  public class KSqlQueryLanguageVisitor<TEntity> : ExpressionVisitor
   {
     private KSqlVisitor kSqlVisitor = new();
 
-    public bool ShouldEmitChanges { get; set; } = true;
+    private readonly string streamName;
+
+    public KSqlQueryLanguageVisitor()
+    {
+      streamName = typeof(TEntity).Name;
+    }
 
     public string BuildKSql(Expression expression)
     {
@@ -23,8 +28,8 @@ namespace Joker.Kafka.Extensions.KSql.Query
         kSqlVisitor.Visit(@select.Body);
       else
         kSqlVisitor.Append("*");
-
-      kSqlVisitor.Append(" FROM "); //TODO: KStream or KTable name
+      
+      kSqlVisitor.Append($" FROM {streamName}");
 
       bool isFirst = true;
 
