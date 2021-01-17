@@ -8,7 +8,7 @@ using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryLanguageVisitor<Models.Location>>
+  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator<Models.Location>>
   {
     string streamName = nameof(Location);
 
@@ -17,7 +17,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     {
       base.TestInitialize();
 
-      ClassUnderTest = new KSqlQueryLanguageVisitor<Location>();
+      ClassUnderTest = new KSqlQueryGenerator<Location>();
     }
 
     private IQbservable<Location> CreateStreamSource()

@@ -12,7 +12,7 @@ Interfaces:
 
 Implementations:
 - KSqlVisitor
-- KSqlLanguageVisitor - compiler
+- KSqlQueryGenerator - compiler
 - KStreamSet
 - QbservableProvider
 - KSqldbProvider<T> - ksqldb REST api provider for push queries

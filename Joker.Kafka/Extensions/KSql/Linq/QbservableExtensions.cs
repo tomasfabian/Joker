@@ -86,7 +86,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     public static string ToQueryString<TSource>(this IQbservable<TSource> source)
     {
-      var ksqlQuery = new KSqlQueryLanguageVisitor<TSource>().BuildKSql(source.Expression);
+      var ksqlQuery = new KSqlQueryGenerator<TSource>().BuildKSql(source.Expression);
 
       return ksqlQuery;
     }

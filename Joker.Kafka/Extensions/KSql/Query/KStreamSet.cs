@@ -29,7 +29,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
     {
-      var ksqlQuery = new KSqlQueryLanguageVisitor<TEntity>().BuildKSql(expression);
+      var ksqlQuery = new KSqlQueryGenerator<TEntity>().BuildKSql(expression);
 
       //TODO: implement
       return null;

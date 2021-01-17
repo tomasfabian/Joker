@@ -4,13 +4,13 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KSqlQueryLanguageVisitor<TEntity> : ExpressionVisitor
+  public class KSqlQueryGenerator<TEntity> : ExpressionVisitor
   {
     private KSqlVisitor kSqlVisitor = new();
 
     private readonly string streamName;
 
-    public KSqlQueryLanguageVisitor()
+    public KSqlQueryGenerator()
     {
       streamName = typeof(TEntity).Name;
     }
