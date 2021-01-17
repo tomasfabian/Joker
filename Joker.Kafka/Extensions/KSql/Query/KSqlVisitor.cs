@@ -151,6 +151,11 @@ namespace Joker.Kafka.Extensions.KSql.Query
       stringBuilder.Append(value);
     }
 
+    public void AppendLine(string value)
+    {
+      stringBuilder.AppendLine(value);
+    }
+
     protected void Append(IEnumerable enumerable)
     {
       bool isFirst = true;

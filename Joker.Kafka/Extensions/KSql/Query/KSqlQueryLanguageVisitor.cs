@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using Joker.Kafka.Extensions.KSql.Linq;
 
 namespace Joker.Kafka.Extensions.KSql.Query
 {
@@ -15,6 +15,8 @@ namespace Joker.Kafka.Extensions.KSql.Query
       streamName = typeof(TEntity).Name;
     }
 
+    public bool ShouldEmitChanges { get; set; } = true;
+
     public string BuildKSql(Expression expression)
     {
       kSqlVisitor = new KSqlVisitor();
@@ -28,7 +30,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
         kSqlVisitor.Visit(@select.Body);
       else
         kSqlVisitor.Append("*");
-      
+
       kSqlVisitor.Append($" FROM {streamName}");
 
       bool isFirst = true;
@@ -37,6 +39,7 @@ namespace Joker.Kafka.Extensions.KSql.Query
       {
         if (isFirst)
         {
+          kSqlVisitor.AppendLine("");
           kSqlVisitor.Append("WHERE ");
           
           isFirst = false;
@@ -47,11 +50,18 @@ namespace Joker.Kafka.Extensions.KSql.Query
         kSqlVisitor.Visit(methodCallExpression);
       }
 
-      // if(ShouldEmitChanges)
-        // kSqlVisitor.Append(" EMIT CHANGES;");
+      if(ShouldEmitChanges)
+        kSqlVisitor.Append(" EMIT CHANGES");
+
+      if(Limit.HasValue)
+        kSqlVisitor.Append($" LIMIT {Limit}");
+
+      kSqlVisitor.Append(";");
 
       return kSqlVisitor.BuildKSql();
     }
+
+    protected int? Limit;
 
     public override Expression? Visit(Expression? expression)
     {
@@ -68,34 +78,47 @@ namespace Joker.Kafka.Extensions.KSql.Query
       return expression;
     }
 
-    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression) {
-      if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
-          methodCallExpression.Method.Name == nameof(Queryable.Select)) {
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
+    {
+      var methodInfo = methodCallExpression.Method;
+
+      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
+          methodInfo.Name == nameof(QbservableExtensions.Select)) {
         
         LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
         if (select == null)
           select = lambda;
         
-        var firstPart = methodCallExpression.Arguments[0];
-        if(firstPart.NodeType == ExpressionType.Call)
-        {
-          Visit(firstPart);
-        }
+        VisitChained(methodCallExpression);
       }
 
-      if (methodCallExpression.Method.DeclaringType == typeof(Queryable) &&
-          methodCallExpression.Method.Name == nameof(Queryable.Where)) {
-        
-        var firstPart = methodCallExpression.Arguments[0];
-        if(firstPart.NodeType == ExpressionType.Call)
-          Visit(firstPart);
-        
+      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
+          methodInfo.Name == nameof(QbservableExtensions.Where))
+      {
+        VisitChained(methodCallExpression);
+
         LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
         whereClauses.Enqueue(lambda.Body);
       } 
 
+      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
+          methodInfo.Name == nameof(QbservableExtensions.Take))
+      {
+        var arg = (ConstantExpression)methodCallExpression.Arguments[1];
+        Limit = (int)arg.Value;
+
+        VisitChained(methodCallExpression);
+      } 
+
       return methodCallExpression;
+    }
+
+    protected void VisitChained(MethodCallExpression methodCallExpression)
+    {        var firstPart = methodCallExpression.Arguments[0];
+      if(firstPart.NodeType == ExpressionType.Call)
+        Visit(firstPart);
+
     }
 
     private Queue<Expression> whereClauses;

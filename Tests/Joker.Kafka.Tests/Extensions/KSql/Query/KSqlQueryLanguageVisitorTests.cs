@@ -1,22 +1,29 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Joker.Kafka.Extensions.ksql.Linq;
+using Joker.Kafka.Extensions.KSql.Linq;
 using Joker.Kafka.Extensions.KSql.Query;
-using Joker.Kafka.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
-using static System.String;
+using Location = Joker.Kafka.Tests.Models.Location;
 
 namespace Joker.Kafka.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryLanguageVisitor>
+  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryLanguageVisitor<Location>>
   {
+    string streamName = nameof(Location);
+
     [TestInitialize]
     public override void TestInitialize()
     {
       base.TestInitialize();
 
-      ClassUnderTest = new KSqlQueryLanguageVisitor();
+      ClassUnderTest = new KSqlQueryLanguageVisitor<Location>();
+    }
+
+    private IQbservable<Location> CreateStreamSource()
+    {
+      return new KStreamSet<Location>(new QbservableProvider());
     }
 
     #region Select
@@ -25,42 +32,31 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
     public void Select_BuildKSql_PrintsSelect()
     {
       //Arrange
-      var query = new[]
-        {
-          new Location {Latitude = "1"},
-          new Location {Latitude = "2"}
-        }.AsQueryable()
+      var query = CreateStreamSource()
         .Select(l => new {l.Longitude, l.Latitude});
-
-      //TODO: stream name
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression);
 
       //Assert
-      ksql.Should().BeEquivalentTo($"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM ");
+      ksql.Should().BeEquivalentTo(@$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName} EMIT CHANGES;");
     }
     
     [TestMethod]
     public void SelectWhere_BuildKSql_PrintsSelectFromWhere()
     {
       //Arrange
-      var query = new[]
-        {
-          new Location {Latitude = "1"},
-          new Location {Latitude = "2"}
-        }.AsQueryable()
+      var query = CreateStreamSource()
         .Select(l => new {l.Longitude, l.Latitude})
         .Where(p => p.Latitude == "1");
-
-      string streamName = Empty; //TODO: stream name
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression);
 
       //Assert
       string expectedKsql =
-        $"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}WHERE {nameof(Location.Latitude)} = '1'";
+        @$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}
+WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
@@ -69,23 +65,18 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
     public void SelectMultipleWhere_BuildKSql_PrintsSelectFromWheres()
     {
       //Arrange
-      var query = new[]
-        {
-          new Location {Latitude = "1"},
-          new Location {Latitude = "2"}
-        }.AsQueryable()
+      var query = CreateStreamSource()
         .Where(p => p.Latitude == "1")
         .Where(p => p.Longitude == 0.1)
         .Select(l => new {l.Longitude, l.Latitude});
-
-      string streamName = Empty; //TODO: stream name
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression);
 
       //Assert
       string expectedKsql =
-        $"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}WHERE {nameof(Location.Latitude)} = '1' AND {nameof(Location.Longitude)} = 0.1";
+        @$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}
+WHERE {nameof(Location.Latitude)} = '1' AND {nameof(Location.Longitude)} = 0.1 EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
@@ -98,46 +89,55 @@ namespace Joker.Kafka.Tests.Extensions.KSql.Query
     public void Where_BuildKSql_PrintsWhere()
     {
       //Arrange
-      var query = new[]
-        {
-          new Location { Latitude = "1" },
-          new Location { Latitude = "2" }
-        }.AsQueryable()
+      var query = CreateStreamSource()
         .Where(p => p.Latitude == "1");
-      
-      string streamName = Empty; //TODO: stream name
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression);
 
       //Assert
-      ksql.Should().BeEquivalentTo($"SELECT * FROM {streamName}WHERE {nameof(Location.Latitude)} = '1'");
+      ksql.Should().BeEquivalentTo(@$"SELECT * FROM {streamName}
+WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;");
     }
     
     [TestMethod]
     public void WhereSelect_BuildKSql_PrintsSelectFromWhere()
     {
       //Arrange
-      var query = new[]
-        {
-          new Location {Latitude = "1"},
-          new Location {Latitude = "2"}
-        }.AsQueryable()
+      var query = CreateStreamSource()
         .Where(p => p.Latitude == "1")
         .Select(l => new {l.Longitude, l.Latitude});
-
-      string streamName = Empty; //TODO: stream name
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression);
 
       //Assert
       string expectedKsql =
-        $"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}WHERE {nameof(Location.Latitude)} = '1'";
+        @$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}
+WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
 
+    #endregion
+
+    #region Take
+
+    [TestMethod]
+    public void Take_BuildKSql_PrintsLimit()
+    {
+      //Arrange
+      int limit = 2;
+
+      var query = CreateStreamSource()
+        .Take(limit);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression);
+
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT * FROM {streamName} EMIT CHANGES LIMIT {limit};");
+    }
     #endregion
   }
 }
