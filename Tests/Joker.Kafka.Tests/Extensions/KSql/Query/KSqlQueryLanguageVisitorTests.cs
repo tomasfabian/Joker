@@ -8,38 +8,24 @@ using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator<Models.Location>>
+  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator>
   {
-    string streamName = nameof(Location);
+    string streamName = nameof(Location) + "s";
 
     [TestInitialize]
     public override void TestInitialize()
     {
       base.TestInitialize();
 
-      ClassUnderTest = new KSqlQueryGenerator<Location>();
+      ClassUnderTest = new KSqlQueryGenerator();
     }
 
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KStreamSet<Location>(new QbservableProvider());
+      return new KStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
     }
 
     #region Select
-
-    [TestMethod]
-    public void Select_BuildKSql_PrintsSelect()
-    {
-      //Arrange
-      var query = CreateStreamSource()
-        .Select(l => new {l.Longitude, l.Latitude});
-
-      //Act
-      var ksql = ClassUnderTest.BuildKSql(query.Expression);
-
-      //Assert
-      ksql.Should().BeEquivalentTo(@$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName} EMIT CHANGES;");
-    }
     
     [TestMethod]
     public void SelectWhere_BuildKSql_PrintsSelectFromWhere()
@@ -137,6 +123,27 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM {streamName} EMIT CHANGES LIMIT {limit};");
     }
+
+    #endregion
+
+    #region ToQueryString
+
+    [TestMethod]
+    public void ToQueryString_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      int limit = 2;
+
+      var query = CreateStreamSource()
+        .Take(limit);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression);
+      
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT * FROM {streamName} EMIT CHANGES LIMIT {limit};");
+    }
+
     #endregion
   }
 }

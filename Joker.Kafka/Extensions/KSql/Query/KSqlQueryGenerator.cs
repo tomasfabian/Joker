@@ -1,19 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KSqlQueryGenerator<TEntity> : ExpressionVisitor
+  public class KSqlQueryGenerator : ExpressionVisitor
   {
     private KSqlVisitor kSqlVisitor = new();
-
-    private readonly string streamName;
-
-    public KSqlQueryGenerator()
-    {
-      streamName = typeof(TEntity).Name;
-    }
 
     public bool ShouldEmitChanges { get; set; } = true;
 
@@ -31,7 +25,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       else
         kSqlVisitor.Append("*");
 
-      kSqlVisitor.Append($" FROM {streamName}");
+      kSqlVisitor.Append($" FROM {Pluralize(streamName)}");
 
       bool isFirst = true;
 
@@ -61,6 +55,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return kSqlVisitor.BuildKSql();
     }
 
+    protected virtual string Pluralize(string value)
+    {
+      return value + "s";
+    }
+
     protected int? Limit;
 
     public override Expression? Visit(Expression? expression)
@@ -70,12 +69,28 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
       switch (expression.NodeType)
       {
+        case ExpressionType.Constant:
+          VisitConstant((ConstantExpression)expression);
+          break;
         case ExpressionType.Call:
           VisitMethodCall((MethodCallExpression)expression);
           break;
       }
 
       return expression;
+    }
+    
+    private string streamName;
+
+    protected override Expression VisitConstant(ConstantExpression constantExpression)
+    {
+      if (constantExpression == null) throw new ArgumentNullException(nameof(constantExpression));
+
+      var type = constantExpression.Type;
+      if (type.Name == typeof(KStreamSet<>).Name)
+        streamName = constantExpression.Type.GenericTypeArguments[0].Name;
+
+      return constantExpression;
     }
 
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
@@ -115,10 +130,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     }
 
     protected void VisitChained(MethodCallExpression methodCallExpression)
-    {        var firstPart = methodCallExpression.Arguments[0];
-      if(firstPart.NodeType == ExpressionType.Call)
-        Visit(firstPart);
+    {        
+      var firstPart = methodCallExpression.Arguments[0];
 
+      if(firstPart.NodeType == ExpressionType.Call || firstPart.NodeType == ExpressionType.Constant)
+        Visit(firstPart);
     }
 
     private Queue<Expression> whereClauses;
