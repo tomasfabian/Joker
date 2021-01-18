@@ -3,7 +3,7 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks> 
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageLicenseFile>License.txt</PackageLicenseFile>
