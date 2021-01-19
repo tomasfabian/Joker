@@ -1,16 +1,17 @@
-v 0.1.0
-ksql provider:
+# v0.1.0
+
+### ksql provider:
 - SELECT projections
 - FROM entity type (KStream name)
 - WHERE conditions (AND, OR)
 - EMIT CHANGES
 - LIMIT take linq extension method
 
-Interfaces:
+### Interfaces:
 - IQbservableProvider
 - IQbservable<TEntity>
 
-Implementations:
+### Implementations:
 - KSqlVisitor
 - KSqlQueryGenerator - compiler
 - KStreamSet
