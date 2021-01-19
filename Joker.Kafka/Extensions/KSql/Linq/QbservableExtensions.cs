@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Reflection;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
@@ -60,9 +62,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     }
 
     #endregion
-    
+
     #region Take
-    
+
     private static MethodInfo? takeTSource;
 
     public static MethodInfo TakeTSource(Type TSource) =>
@@ -86,9 +88,73 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     public static string ToQueryString<TSource>(this IQbservable<TSource> source)
     {
-      var ksqlQuery = new KSqlQueryGenerator<TSource>().BuildKSql(source.Expression);
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      var ksqlQuery = new KSqlQueryGenerator().BuildKSql(source.Expression);
 
       return ksqlQuery;
+    }
+
+    #endregion
+
+    #region Subscribe delegate-based overloads
+
+    /// <summary>
+    /// Subscribes an element handler and an exception handler to an qbservable sequence.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
+    /// <param name="source">Observable sequence to subscribe to.</param>
+    /// <param name="onNext">Action to invoke for each element in the qbservable sequence.</param>
+    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable sequence.</param>
+    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable sequence.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="onNext"/> or <paramref name="onError"/> is <c>null</c>.</exception>
+    public static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext, Action<Exception> onError)
+    {
+      if (source == null)
+        throw new ArgumentNullException(nameof(source));
+
+      if (onNext == null)
+        throw new ArgumentNullException(nameof(onNext));
+
+      if (onError == null)
+        throw new ArgumentNullException(nameof(onError));
+
+      return source.Subscribe(new AnonymousObserver<T>(onNext, onError, () => { }));
+    }
+
+    /// <summary>
+    /// Subscribes an element handler, an exception handler, and a completion handler to an qbservable sequence.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
+    /// <param name="source">Observable sequence to subscribe to.</param>
+    /// <param name="onNext">Action to invoke for each element in the qbservable sequence.</param>
+    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable sequence.</param>
+    /// <param name="onCompleted">Action to invoke upon graceful termination of the qbservable sequence.</param>
+    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable sequence.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="onNext"/> or <paramref name="onError"/> or <paramref name="onCompleted"/> is <c>null</c>.</exception>
+    public static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException(nameof(source));
+      }
+
+      if (onNext == null)
+      {
+        throw new ArgumentNullException(nameof(onNext));
+      }
+
+      if (onError == null)
+      {
+        throw new ArgumentNullException(nameof(onError));
+      }
+
+      if (onCompleted == null)
+      {
+        throw new ArgumentNullException(nameof(onCompleted));
+      }
+
+      return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));
     }
 
     #endregion
