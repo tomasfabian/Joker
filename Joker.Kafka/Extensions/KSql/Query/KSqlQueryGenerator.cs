@@ -87,8 +87,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       if (constantExpression == null) throw new ArgumentNullException(nameof(constantExpression));
 
       var type = constantExpression.Type;
-      if (type.Name == typeof(KStreamSet<>).Name)
-        streamName = constantExpression.Type.GenericTypeArguments[0].Name;
+      if (type.BaseType?.Name == typeof(KStreamSet<>).Name)
+        streamName = constantExpression.Type.BaseType?.GenericTypeArguments[0].Name;
 
       return constantExpression;
     }

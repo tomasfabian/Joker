@@ -18,10 +18,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     /// <summary>
     /// Gets the query provider that is associated with this data source.
     /// </summary>
-    IQbservableProvider Provider { get; }
+    IKSqlQbservableProvider Provider { get; }
   }
 
-  public interface IQbservable<out T> : IQbservable, IObservable<T>
+  public interface IQbservable<out T> : IQbservable
   {
+    IDisposable Subscribe(IObserver<T> observer);
   }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 
@@ -14,7 +14,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   {
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
+      return new KQueryStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
     }
 
     [TestMethod]
@@ -47,8 +47,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       using var disposable = query.Subscribe(value =>
       {
         results.Add(value);
-      });
-      
+      }, error => { }, () => { });
+
       //Assert
       Assert.AreEqual(2, results.Count);
     }

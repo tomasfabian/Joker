@@ -1,38 +1,44 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reactive.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KStreamSet<TEntity> : IQbservable<TEntity>
+  public abstract class KStreamSet<TEntity> : IQbservable<TEntity>
   {
     private readonly Expression expression;
 
-    public KStreamSet(IQbservableProvider provider = null)
+    protected KStreamSet(IKSqlQbservableProvider provider)
     {
       Provider = provider;
-      Provider = new QbservableProvider();
+      
       expression = Expression.Constant(this);
     }
 
-    public KStreamSet(IQbservableProvider provider, Expression expression)
-    {
+    protected KStreamSet(IKSqlQbservableProvider provider, Expression expression)
+    {            
       this.Provider = provider;
       this.expression = expression;
     }
+
+    protected abstract IKSqldbProvider<TEntity> CreateKSqlDbProvider();
+
+    protected abstract object CreateQueryParameters(string ksqlQuery);
 
     public Expression Expression => expression;
 
     public Type ElementType => typeof(TEntity);
 
-    public IQbservableProvider Provider { get; }
+    public IKSqlQbservableProvider Provider { get; }
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
-    {
+    {      
       var ksqlQuery = new KSqlQueryGenerator().BuildKSql(expression);
 
       //TODO: implement
-      return null;
+      return Disposable.Empty;
     }
   }
 }
