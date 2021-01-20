@@ -27,6 +27,10 @@ jobs:
       run: dotnet build Joker.sln --configuration Release
     
     # Test
+    - name: Setup DotNet 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
     - name: Execute Unit Tests
       run: dotnet test $env:Test_Project_Path
     - name: Execute Joker.MVVM Unit Tests
