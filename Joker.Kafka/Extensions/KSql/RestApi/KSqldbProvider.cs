@@ -23,8 +23,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
         BaseAddress = new Uri(url)
       };
     }
-
-    public async IAsyncEnumerable<T> Run([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    
+    public async IAsyncEnumerable<T> Run(object parameters, CancellationToken cancellationToken = default)
     {
       //https://docs.ksqldb.io/en/latest/developer-guide/api/
       //TODO: connect to ksqldb REST API
