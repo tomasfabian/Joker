@@ -135,24 +135,16 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     public static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
     {
       if (source == null)
-      {
         throw new ArgumentNullException(nameof(source));
-      }
 
       if (onNext == null)
-      {
         throw new ArgumentNullException(nameof(onNext));
-      }
 
       if (onError == null)
-      {
         throw new ArgumentNullException(nameof(onError));
-      }
 
       if (onCompleted == null)
-      {
         throw new ArgumentNullException(nameof(onCompleted));
-      }
 
       return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));
     }
