@@ -9,11 +9,11 @@
 
 ### Interfaces:
 - IQbservableProvider
-- IQbservable<TEntity>
+- ```IQbservable<TEntity>```
 
 ### Implementations:
 - KSqlVisitor
 - KSqlQueryGenerator - compiler
-- KStreamSet
+- KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
-- KSqldbProvider<T> - ksqldb REST api provider for push queries
+- ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
