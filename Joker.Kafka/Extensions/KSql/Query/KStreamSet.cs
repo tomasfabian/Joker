@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Linq;
 using System.Reactive.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
@@ -34,11 +36,27 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     public IKSqlQbservableProvider Provider { get; }
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
-    {      
+    {
       var ksqlQuery = new KSqlQueryGenerator().BuildKSql(expression);
 
-      //TODO: implement
-      return Disposable.Empty;
+      var ksqlDBProvider = CreateKSqlDbProvider();
+
+      var cancellationTokenSource = new CancellationTokenSource();
+
+      var queryParameters = CreateQueryParameters(ksqlQuery);
+      
+      var querySubscription = ksqlDBProvider.Run(queryParameters, cancellationTokenSource.Token)
+        .ToObservable()
+        .Subscribe(observer);
+      
+      var compositeDisposable = new CompositeDisposable
+      {
+        Disposable.Create(() => cancellationTokenSource.Cancel()), 
+        querySubscription, 
+        cancellationTokenSource
+      };
+
+      return compositeDisposable;
     }
   }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Reflection;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
