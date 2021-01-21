@@ -79,6 +79,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB", "Joke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.Tests", "Tests\Joker.Kafka.Tests\Kafka.DotNet.ksqlDB.Tests.csproj", "{10FDC732-88D3-44A2-95D3-91E62CCC1932}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{F7869AB7-6548-43D7-91BD-B7E0B267D9DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.Sample", "Samples\Kafka\Kafka.DotNet.ksqlDB.Sample\Kafka.DotNet.ksqlDB.Sample.csproj", "{F8D2B905-A377-42FD-921A-B36E98B67CF7}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
@@ -202,6 +206,10 @@ Global
 		{10FDC732-88D3-44A2-95D3-91E62CCC1932}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10FDC732-88D3-44A2-95D3-91E62CCC1932}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10FDC732-88D3-44A2-95D3-91E62CCC1932}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8D2B905-A377-42FD-921A-B36E98B67CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8D2B905-A377-42FD-921A-B36E98B67CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8D2B905-A377-42FD-921A-B36E98B67CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8D2B905-A377-42FD-921A-B36E98B67CF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,6 +248,8 @@ Global
 		{4FD87675-B0D8-4DAE-BA39-6D76DF38B3F2} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
 		{71DEAFC8-816A-4F64-A508-78ACCBB845D0} = {F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}
 		{10FDC732-88D3-44A2-95D3-91E62CCC1932} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
+		{F7869AB7-6548-43D7-91BD-B7E0B267D9DA} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
+		{F8D2B905-A377-42FD-921A-B36E98B67CF7} = {F7869AB7-6548-43D7-91BD-B7E0B267D9DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
