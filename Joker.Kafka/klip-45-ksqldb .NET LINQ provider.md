@@ -5,7 +5,7 @@
 **Status**: _In Development_ | 
 **Discussion**: TBD
            
-The aim of this package is to provide a compile type safe [LINQ Provider](https://docs.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/dev-tools/linq-provider-c) for ksqlDB push queries generation and subscription similarly to in process [Rx.NET](https://github.com/dotnet/reactive) or Rx.Java, but executed server side. Only the observations will be accomplished locally.
+The aim of this package is to provide a compile type safe [LINQ Provider](https://docs.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/dev-tools/linq-provider-c) for ksqlDB push queries generation and subscription similarly to in process [Rx.NET](https://github.com/dotnet/reactive) or [Rx.Java](https://github.com/ReactiveX/RxJava) etc., but executed server side. Only the observations will be accomplished locally.
 
 ## Motivation and background
 

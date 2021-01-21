@@ -7,12 +7,12 @@
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tomasfabian/Joker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tomasfabian/Joker</RepositoryUrl>
     <Copyright>@tomasfabian</Copyright>
     <Description>Confluent Kafka ksqlDB LINQ provider</Description>
     <PackageTags>kafka ksql ksqlDB LINQ</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-alpha</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <LangVersion>9.0</LangVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.md</PackageReleaseNotes>
@@ -22,6 +22,13 @@
     <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" /> 
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

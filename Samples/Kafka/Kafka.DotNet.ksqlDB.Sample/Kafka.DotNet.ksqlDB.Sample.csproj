@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
+    <PackageReference Include="Kafka.DotNet.ksqlDB" Version="0.1.0-alpha" />
   </ItemGroup>
+
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
+  </ItemGroup>-->
 
 </Project>

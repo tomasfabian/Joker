@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Sample.Model;
@@ -16,7 +14,6 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
       var ksqlDbUrl = @"http:\\localhost:8088";
 
-      // using var disposable = new KQuerySet<Tweet>(new QbservableProvider(ksqlDbUrl))
       using var disposable = new KQueryStreamSet<Tweet>(new QbservableProvider(ksqlDbUrl))
         .Where(p => p.Message != "Hello world" || p.Id == 1)
         .Select(l => new { l.Message, l.Id })
@@ -28,7 +25,6 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
           Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
         }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
-      // .Subscribe(new TweetsObserver());
 
       Console.WriteLine("Press any key to stop the subscription");
 
