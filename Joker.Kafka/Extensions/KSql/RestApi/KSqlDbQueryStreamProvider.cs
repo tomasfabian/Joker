@@ -35,7 +35,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
       httpClient.DefaultRequestVersion = new Version(2, 0);
 #endif
 
-      return httpClientFactory.CreateClient();
+      return httpClient;
     }
 
     private QueryStreamHeader queryStreamHeader;

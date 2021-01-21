@@ -23,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Observers
       if(string.IsNullOrEmpty(tweetMessage.Message))
         return;
 
-      Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Message}");
+      Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
     }
   }
 }

@@ -76,9 +76,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
           stringBuilder.Append(",");
         }
 
-        var columnName = column.ColumnName.Split(" ").First().Trim('`');
+        var columnInfo = column.ColumnName.TrimStart(' ').Split(" ");
+        var columnName = columnInfo.First().Trim('`');
 
-        stringBuilder.AppendLine($"\"{columnName}\": \"{column.Value}\"");
+        var value = columnInfo[1].ToUpper() == "STRING" ? $"\"{column.Value}\"" : column.Value;
+        stringBuilder.AppendLine($"\"{columnName}\": {value}");
 
         isFirst = false;
       }

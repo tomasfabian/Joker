@@ -35,7 +35,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
     private static IDisposable KQueryWithObserver(string ksqlDbUrl)
     {
-      var subscriptions = new KQuerySet<Tweet>(new QbservableProvider(ksqlDbUrl))
+      var subscriptions = new KQueryStreamSet<Tweet>(new QbservableProvider(ksqlDbUrl))
         .Where(p => p.Message != "Hello world" && p.Id != 1)
         .Take(2)
         .Subscribe(new TweetsObserver());
