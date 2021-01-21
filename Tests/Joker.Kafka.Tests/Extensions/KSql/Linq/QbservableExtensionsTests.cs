@@ -36,7 +36,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     #region Subscribe
 
     [TestMethod]
-    [Ignore]
     public void Subscribe_BuildKSql_ObservesItems()
     {
       //Arrange
