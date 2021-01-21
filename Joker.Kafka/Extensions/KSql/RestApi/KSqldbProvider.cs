@@ -1,42 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public class KSqldbProvider<T> : IKSqldbProvider<T>
+  public abstract class KSqlDbProvider<T> : IKSqldbProvider<T>
   {
-    private readonly HttpClient httpClient;
+    private readonly IHttpClientFactory httpClientFactory;
 
-    public KSqldbProvider(HttpClient httpClient)
+    protected KSqlDbProvider(IHttpClientFactory httpClientFactory)
     {
-      this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+      this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
 
-    public KSqldbProvider(string url)
+    public abstract string ContentType { get; }
+
+    protected abstract string QueryEndPointName { get; }
+
+    protected virtual HttpClient OnCreateHttpClient()
     {
-      httpClient = new HttpClient
-      {
-        BaseAddress = new Uri(url)
-      };
+      return httpClientFactory.CreateClient();
     }
-    
-    public async IAsyncEnumerable<T> Run(object parameters, CancellationToken cancellationToken = default)
+
+    public async IAsyncEnumerable<T> Run(object parameters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+      using var httpClient = OnCreateHttpClient();
+
+      var httpRequestMessage = CreateQueryHttpRequestMessage(httpClient, parameters);
+
       //https://docs.ksqldb.io/en/latest/developer-guide/api/
-      //TODO: connect to ksqldb REST API
-      await Task.FromResult(default(T));
-      
-      while (true)
+      var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
+        HttpCompletionOption.ResponseHeadersRead,
+        cancellationToken);
+
+      var stream = await httpResponseMessage.Content.ReadAsStreamAsync();
+      using var streamReader = new StreamReader(stream);
+
+      while (!streamReader.EndOfStream)
       {
-        if(cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
           yield break;
 
-        yield return default;
+        var rawJson = await streamReader.ReadLineAsync();
+
+        var record = OnLineRed(rawJson);
+
+        if (record != null) yield return record;
       }
+    }
+
+    protected abstract T OnLineRed(string rawJson);
+
+    private JsonSerializerOptions jsonSerializerOptions;
+
+    protected JsonSerializerOptions GetOrCreateJsonSerializerOptions()
+    {
+      if (jsonSerializerOptions == null)
+        jsonSerializerOptions = OnCreateJsonSerializerOptions();
+
+      return jsonSerializerOptions;
+    }
+
+    protected virtual JsonSerializerOptions OnCreateJsonSerializerOptions()
+    {
+      jsonSerializerOptions = new JsonSerializerOptions
+      {
+        PropertyNameCaseInsensitive = true
+      };
+
+      return jsonSerializerOptions;
+    }
+
+    protected virtual HttpRequestMessage CreateQueryHttpRequestMessage(HttpClient httpClient, object parameters)
+    {
+      var json = JsonSerializer.Serialize(parameters);
+
+      var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+      httpClient.DefaultRequestHeaders.Accept.Add(
+        new MediaTypeWithQualityHeaderValue(ContentType));
+
+      var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, QueryEndPointName)
+      {
+        Content = data
+      };
+
+      return httpRequestMessage;
     }
   }
 }
