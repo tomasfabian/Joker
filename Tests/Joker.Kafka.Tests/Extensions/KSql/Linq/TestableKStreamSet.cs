@@ -15,16 +15,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public TestableKStreamSet(IKSqlQbservableProvider provider) 
       : base(provider)
     {
+      KSqldbProviderMock = new Mock<IKSqldbProvider<string>>();
     }
+
+    public Mock<IKSqldbProvider<string>> KSqldbProviderMock { get; }
+
+    public CancellationToken CancellationToken { get; private set; }
 
     protected override IKSqldbProvider<string> CreateKSqlDbProvider()
     {
-      var mock = new Mock<IKSqldbProvider<string>>();
-
-      mock.Setup(c => c.Run(It.IsAny<object>(), It.IsAny<CancellationToken>()))
+      KSqldbProviderMock.Setup(c => c.Run(It.IsAny<object>(), It.IsAny<CancellationToken>()))
+        .Callback<object, CancellationToken>((par, ct) =>
+        {
+          CancellationToken = ct;
+        })
         .Returns(GetTestValues);
 
-      return mock.Object;
+      return KSqldbProviderMock.Object;
     }
 
     protected override object CreateQueryParameters(string ksqlQuery)
