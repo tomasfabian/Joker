@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
@@ -92,6 +95,33 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
       var ksqlQuery = new KSqlQueryGenerator().BuildKSql(source.Expression);
 
       return ksqlQuery;
+    }
+
+    #endregion
+
+    #region ToObservable
+
+    /// <summary>
+    /// Converts an async-enumerable sequence to an observable sequence.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+    /// <param name="source">Enumerable sequence to convert to an observable sequence.</param>
+    /// <returns>The observable sequence whose elements are pulled from the given enumerable sequence.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
+    public static IObservable<TSource> ToObservable<TSource>(this IQbservable<TSource> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      return Observable.Defer(() =>
+      {
+        var streamSet = source as KStreamSet<TSource>;
+
+        var cancellationTokenSource = new CancellationTokenSource();
+
+        var observable = streamSet?.RunStreamAsObservable(cancellationTokenSource);
+      
+        return observable?.Finally(() => cancellationTokenSource.Cancel());
+      });
     }
 
     #endregion

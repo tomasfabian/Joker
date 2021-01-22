@@ -1,3 +1,7 @@
+# v0.2.0
+- added ToObservable extension
+- KQuerySet was set to internal for maintanance reasons. Is KQueryStreamSet good enough for all push queries?
+
 # v0.1.0
 
 ### ksql provider:

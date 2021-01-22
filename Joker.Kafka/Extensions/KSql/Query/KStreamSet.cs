@@ -10,26 +10,24 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public abstract class KStreamSet<TEntity> : IQbservable<TEntity>
   {
-    private readonly Expression expression;
-
     protected KStreamSet(IKSqlQbservableProvider provider)
     {
       Provider = provider;
       
-      expression = Expression.Constant(this);
+      Expression = Expression.Constant(this);
     }
 
     protected KStreamSet(IKSqlQbservableProvider provider, Expression expression)
     {            
-      this.Provider = provider;
-      this.expression = expression;
+      Provider = provider;
+      Expression = expression;
     }
 
     protected abstract IKSqldbProvider<TEntity> CreateKSqlDbProvider();
 
     protected abstract object CreateQueryParameters(string ksqlQuery);
 
-    public Expression Expression => expression;
+    public Expression Expression { get; }
 
     public Type ElementType => typeof(TEntity);
 
@@ -37,18 +35,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
     {
-      var ksqlQuery = new KSqlQueryGenerator().BuildKSql(expression);
+      var cancellationTokenSource = new CancellationTokenSource(); 
 
-      var ksqlDBProvider = CreateKSqlDbProvider();
-
-      var cancellationTokenSource = new CancellationTokenSource();
-
-      var queryParameters = CreateQueryParameters(ksqlQuery);
-      
-      var querySubscription = ksqlDBProvider.Run(queryParameters, cancellationTokenSource.Token)
-        .ToObservable()
+      var querySubscription = RunStreamAsObservable(cancellationTokenSource)
         .Subscribe(observer);
-      
+
       var compositeDisposable = new CompositeDisposable
       {
         Disposable.Create(() => cancellationTokenSource.Cancel()), 
@@ -57,6 +48,20 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       };
 
       return compositeDisposable;
+    }
+
+    internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
+    {
+      var ksqlQuery = new KSqlQueryGenerator().BuildKSql(Expression);
+
+      var ksqlDBProvider = CreateKSqlDbProvider();
+
+      var queryParameters = CreateQueryParameters(ksqlQuery);
+
+      var observableStream = ksqlDBProvider.Run(queryParameters, cancellationTokenSource.Token)
+        .ToObservable();
+
+      return observableStream;
     }
   }
 }
