@@ -44,7 +44,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
       while (!streamReader.EndOfStream)
       {
-        if (cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested) //TODO: terminate query
           yield break;
 
         var rawJson = await streamReader.ReadLineAsync();

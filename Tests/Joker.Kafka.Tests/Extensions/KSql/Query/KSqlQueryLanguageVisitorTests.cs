@@ -22,7 +22,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KQuerySet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
+      return new KQueryStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
     }
 
     #region Select

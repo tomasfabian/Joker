@@ -6,14 +6,14 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KQuerySet<TEntity> : KStreamSet<TEntity>
+  internal class KQuerySet<TEntity> : KStreamSet<TEntity>
   {
-    public KQuerySet(IKSqlQbservableProvider provider) 
+    internal KQuerySet(IKSqlQbservableProvider provider) 
       : base(provider)
     {
     }
 
-    public KQuerySet(IKSqlQbservableProvider provider, Expression expression) 
+    internal KQuerySet(IKSqlQbservableProvider provider, Expression expression) 
       : base(provider, expression)
     {
     }
