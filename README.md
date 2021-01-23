@@ -2,6 +2,26 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 
 <img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 
+# Kafka.DotNet.ksqlDB push queries LINQ provider (preview)
+Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
+
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0-alpha2
+```
+```C#
+using System;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Sample.Model;
+
+var ksqlDbUrl = @"http:\\localhost:8088";
+
+using var disposable = new KQueryStreamSet<Tweet>(new QbservableProvider(ksqlDbUrl))
+  .Where(p => p.Message != "Hello world" || p.Id == 1)
+  .Select(l => new { l.Message, l.Id })
+  .Take(2)
+```
+
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
