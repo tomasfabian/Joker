@@ -14,14 +14,16 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   [TestClass]
   public class QbservableExtensionsTests : TestBase
   {
+    public const string KsqlDBUrl = @"http:\\localhost:8088";
+
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KQueryStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
+      return new KQueryStreamSet<Location>(new QbservableProvider(KsqlDBUrl));
     }    
     
     private TestableKStreamSet CreateTestableKStreamSet()
     {
-      return new TestableKStreamSet(new QbservableProvider(@"http:\\localhost:8088"));
+      return new TestableKStreamSet(new QbservableProvider(KsqlDBUrl));
     }
 
     [TestMethod]
@@ -38,6 +40,19 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       
       //Assert
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM Locations EMIT CHANGES LIMIT {limit};");
+    }
+
+    [TestMethod]
+    public void ToQueryString_BuildKSqlOnDerivedClass_PrintsQuery()
+    {
+      //Arrange
+      var query = new TweetsQueryStream(KsqlDBUrl);
+
+      //Act
+      var ksql = query.ToQueryString();
+      
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT * FROM Tweets EMIT CHANGES;");
     }
 
     [TestMethod]

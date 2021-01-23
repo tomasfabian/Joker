@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
 namespace Kafka.DotNet.ksqlDB.Extensions
 {
@@ -9,5 +10,22 @@ namespace Kafka.DotNet.ksqlDB.Extensions
       => type.Name.StartsWith("<>", StringComparison.Ordinal)
          && type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), inherit: false).Length > 0
          && type.Name.Contains("AnonymousType");
+
+    internal static Type TryFindKStreamSetAncestor(this Type type)
+    {
+      Type baseType = type.BaseType;
+
+      while (baseType != null)
+      {
+        if (baseType.Name == typeof(KStreamSet<>).Name)
+        {
+          return baseType;
+        }
+
+        baseType = baseType.BaseType;
+      }
+
+      return null;
+    }
   }
 }

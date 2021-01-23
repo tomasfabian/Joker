@@ -16,7 +16,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       Console.WriteLine("Subscription started");
 
       var ksqlDbUrl = @"http:\\localhost:8088";
-      ToQueryStringExample(ksqlDbUrl);
+
       using var disposable = new KQueryStreamSet<Tweet>(new QbservableProvider(ksqlDbUrl))
         .Where(p => p.Message != "Hello world" || p.Id == 1)
         //.Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
@@ -61,7 +61,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
     {
       var ksql = new TweetsQueryStream(ksqlDbUrl).ToQueryString();
 
-      //prints SELECT * FROM s EMIT CHANGES;
+      //prints SELECT * FROM Tweets EMIT CHANGES;
       Console.WriteLine(ksql);
     }
   }
