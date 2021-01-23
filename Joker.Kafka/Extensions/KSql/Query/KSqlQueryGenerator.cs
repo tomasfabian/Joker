@@ -5,7 +5,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KSqlQueryGenerator : ExpressionVisitor
+  public class KSqlQueryGenerator : ExpressionVisitor, IKSqlQueryGenerator
   {
     private KSqlVisitor kSqlVisitor = new();
 
@@ -25,7 +25,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       else
         kSqlVisitor.Append("*");
 
-      kSqlVisitor.Append($" FROM {Pluralize(streamName)}");
+      kSqlVisitor.Append($" FROM {InterceptStreamName(streamName)}");
 
       bool isFirst = true;
 
@@ -55,7 +55,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return kSqlVisitor.BuildKSql();
     }
 
-    protected virtual string Pluralize(string value)
+    protected virtual string InterceptStreamName(string value)
     {
       return value + "s";
     }

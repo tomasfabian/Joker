@@ -6,12 +6,14 @@
     <!-- <TargetFramework>net5.0</TargetFramework> -->
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Kafka.DotNet.ksqlDB" Version="0.1.0-alpha2" />
-  </ItemGroup>
+  <Import Project="..\..\..\NugetProjects\Pluralize.NET.csprojimport" />
 
   <!--<ItemGroup>
-    <ProjectReference Include="..\..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
+    <PackageReference Include="Kafka.DotNet.ksqlDB" Version="0.1.0-alpha2" />
   </ItemGroup>-->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
+  </ItemGroup>
 
 </Project>

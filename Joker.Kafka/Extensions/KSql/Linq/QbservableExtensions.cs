@@ -92,7 +92,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     {
       if (source == null) throw new ArgumentNullException(nameof(source));
 
-      var ksqlQuery = new KSqlQueryGenerator().BuildKSql(source.Expression);
+      var kStreamSet = source as KStreamSet<TSource>;
+
+      var ksqlQuery = kStreamSet?.CreateKSqlQueryGenerator()?.BuildKSql(source.Expression);
 
       return ksqlQuery;
     }

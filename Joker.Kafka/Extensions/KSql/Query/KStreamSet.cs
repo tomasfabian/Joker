@@ -25,6 +25,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     protected abstract IKSqldbProvider<TEntity> CreateKSqlDbProvider();
 
+    public virtual IKSqlQueryGenerator CreateKSqlQueryGenerator()
+    {
+      return new KSqlQueryGenerator();
+    }
+
     protected abstract object CreateQueryParameters(string ksqlQuery);
 
     public Expression Expression { get; }
@@ -52,7 +57,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
     {
-      var ksqlQuery = new KSqlQueryGenerator().BuildKSql(Expression);
+      var ksqlQuery = CreateKSqlQueryGenerator().BuildKSql(Expression);
 
       var ksqlDBProvider = CreateKSqlDbProvider();
 

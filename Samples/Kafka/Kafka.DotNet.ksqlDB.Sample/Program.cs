@@ -63,6 +63,11 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
       //prints SELECT * FROM Tweets EMIT CHANGES;
       Console.WriteLine(ksql);
+
+      ksql = new PeopleQueryStream(ksqlDbUrl).ToQueryString();
+
+      //prints SELECT * FROM People EMIT CHANGES;
+      Console.WriteLine(ksql);
     }
   }
 }
