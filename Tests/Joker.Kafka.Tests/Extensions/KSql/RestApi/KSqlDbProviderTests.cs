@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 
       [JsonPropertyName("MESSAGE")]
       public string Message { get; set; }
+    
+      public bool IsRobot { get; set; }
+
+      public double Amount { get; set; }
     }
 
     [TestInitialize]
@@ -40,10 +45,74 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var tweets = ClassUnderTest.Run(queryParameters);
 
       //Assert
+      var receivedTweets = new List<Tweet>();
       await foreach (var tweet in tweets)
       {
         tweet.Should().NotBeNull();
+        receivedTweets.Add(tweet);
       }
+
+      receivedTweets.Count.Should().Be(2);
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_StringFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.Message.Should().Be("Hello world");
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_BooleanFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.IsRobot.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_DoubleFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.Amount.Should().Be(0.1);
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_IntegerFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.Id.Should().Be(1);
     }
 
     [TestMethod]

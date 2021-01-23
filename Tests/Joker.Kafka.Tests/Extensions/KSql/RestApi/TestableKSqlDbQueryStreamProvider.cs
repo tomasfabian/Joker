@@ -21,9 +21,9 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     protected override HttpClient OnCreateHttpClient()
     {      
       var queryResponse =
-        @"{""queryId"":""5f7c685f-d9cd-44ec-b74d-1170d0d758a7"",""columnNames"":[""MESSAGE"",""ID""],""columnTypes"":[""STRING"",""INTEGER""]}
-[""Hello world"",1]
-[""Good bye"",2]";
+        @"{""queryId"":""59df818e-7d88-436f-95ac-3c59becc9bfb"",""columnNames"":[""MESSAGE"",""ID"",""ISROBOT"",""AMOUNT""],""columnTypes"":[""STRING"",""INTEGER"",""BOOLEAN"",""DOUBLE""]}
+[""Hello world"",1,true,0.1]
+[""Wall-e"",2,false,1.1]";
 
       var errorResponse =
         @"{""@type"":""generic_error"",""error_code"":40001,""message"":""Line: 1, Col: 21: SELECT column 'KVAK' cannot be resolved.\nStatement: SELECT Message, Id, Kvak FROM Tweets\r\nWHERE Message = 'Hello world' EMIT CHANGES LIMIT 2;""}";
