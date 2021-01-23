@@ -6,14 +6,14 @@ namespace Kafka.DotNet.ksqlDB.Sample.QueryStreams
 {
   public class TweetsQueryStream : KQueryStreamSet<Tweet>
   {
-    public TweetsQueryStream(string ksqlDbUrl) 
+    public TweetsQueryStream(string ksqlDbUrl)
       : base(new QbservableProvider(ksqlDbUrl))
     {
     }
 
-    protected override QueryStreamParameters CreateQueryParameters(string ksqlQuery)
+    protected override object CreateQueryParameters(string ksqlQuery)
     {
-      var queryParameters = base.CreateQueryParameters(ksqlQuery);
+      var queryParameters = base.CreateQueryParameters(ksqlQuery) as QueryStreamParameters;
 
       queryParameters["auto.offset.reset"] = "earliest";
 

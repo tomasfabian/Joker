@@ -3,10 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <!-- <TargetFramework>net5.0</TargetFramework> -->
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kafka.DotNet.ksqlDB" Version="0.1.0-alpha" />
+    <PackageReference Include="Kafka.DotNet.ksqlDB" Version="0.1.0-alpha2" />
   </ItemGroup>
 
   <!--<ItemGroup>
