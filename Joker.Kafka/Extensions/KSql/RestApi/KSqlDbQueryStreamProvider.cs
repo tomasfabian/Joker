@@ -42,7 +42,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
     protected override T OnLineRed(string rawJson)
     {
-      Console.WriteLine(rawJson);
       if (rawJson.Contains("queryId"))
       {
         queryStreamHeader = JsonSerializer.Deserialize<QueryStreamHeader>(rawJson);
