@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
@@ -352,6 +353,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
         //Assert
         ksql.Should().BeEmpty();
+      }
+
+      #endregion
+
+      #region Convert
+
+      [TestMethod]
+      public void Convert_BuildKSql_PrintsParameterName()
+      {
+        //Arrange
+        Expression<Func<KSqlDbProviderTests.Tweet, object>> expression = t => t.RowTime >= 1;
+
+        //Act
+        var ksql = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        ksql.Should().Be("RowTime >= 1");
       }
 
       #endregion

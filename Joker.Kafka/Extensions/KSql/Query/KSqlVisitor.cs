@@ -66,6 +66,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         case ExpressionType.Call:
           VisitMethodCall((MethodCallExpression)expression);
           break;
+
+        case ExpressionType.Convert:
+        case ExpressionType.ConvertChecked:
+          VisitUnary((UnaryExpression)expression);
+          break;
       }
 
       return expression;
@@ -144,6 +149,18 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       }
 
       return memberExpression;
+    }
+
+    protected override Expression VisitUnary(UnaryExpression unaryExpression)
+    {
+      switch (unaryExpression.NodeType)
+      {
+        case ExpressionType.Convert:
+        case ExpressionType.ConvertChecked:
+          return base.Visit(unaryExpression.Operand);
+        default:
+          return base.VisitUnary(unaryExpression);
+      }
     }
 
     public void Append(string value)

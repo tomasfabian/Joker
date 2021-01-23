@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Exceptions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +16,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
   [TestClass]
   public class KSqlDbProviderTests: TestBase<TestableKSqlDbQueryStreamProvider>
   {  
-    public class Tweet
+    public class Tweet : Record
     {
       public int Id { get; set; }
 
@@ -98,6 +99,21 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var tweet = tweets[0];
 
       tweet.Amount.Should().Be(0.1);
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_BigintRowTimeFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.RowTime.Should().Be(1611327570881);
     }
 
     [TestMethod]

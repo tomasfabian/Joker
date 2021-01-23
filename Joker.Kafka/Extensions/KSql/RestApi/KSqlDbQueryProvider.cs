@@ -7,7 +7,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public class KSqlDbQueryProvider<T> : KSqlDbProvider<T>
+  internal class KSqlDbQueryProvider<T> : KSqlDbProvider<T>
   {
     public KSqlDbQueryProvider(IHttpClientFactory httpClientFactory) 
       : base(httpClientFactory)

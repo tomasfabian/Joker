@@ -1,3 +1,7 @@
+# v0.1.0-preview3
+- convert query visitor
+- Record base type with RowTime property
+
 # v0.1.0-preview2
 - added ToObservable extension
 - KQuerySet was set to internal for maintanance reasons. Is KQueryStreamSet good enough for all push queries?
