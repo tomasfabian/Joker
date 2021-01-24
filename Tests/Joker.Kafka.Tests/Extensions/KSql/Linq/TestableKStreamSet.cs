@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
@@ -10,29 +11,33 @@ using Moq;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
-  internal class TestableKStreamSet : KStreamSet<string>
+  internal abstract class TestableKStreamSet<TEntity> : KStreamSet<TEntity>
   {
-    public TestableKStreamSet(IKSqlQbservableProvider provider) 
+    protected TestableKStreamSet(IKSqlQbservableProvider provider)
       : base(provider)
     {
-      KSqldbProviderMock = new Mock<IKSqldbProvider<string>>();
+      KSqldbProviderMock = new Mock<IKSqldbProvider<TEntity>>();
     }
 
-    public Mock<IKSqldbProvider<string>> KSqldbProviderMock { get; }
+    protected TestableKStreamSet(IKSqlQbservableProvider provider, Expression expression)
+      : base(provider, expression)
+    {
+    }
+
+    public Mock<IKSqldbProvider<TEntity>> KSqldbProviderMock { get; }
 
     public CancellationToken CancellationToken { get; private set; }
 
-    protected override IKSqldbProvider<string> CreateKSqlDbProvider()
+    protected override IKSqldbProvider<TEntity> CreateKSqlDbProvider()
     {
       KSqldbProviderMock.Setup(c => c.Run(It.IsAny<object>(), It.IsAny<CancellationToken>()))
-        .Callback<object, CancellationToken>((par, ct) =>
-        {
-          CancellationToken = ct;
-        })
+        .Callback<object, CancellationToken>((par, ct) => { CancellationToken = ct; })
         .Returns(GetTestValues);
 
       return KSqldbProviderMock.Object;
     }
+
+    protected abstract IAsyncEnumerable<TEntity> GetTestValues();
 
     protected override object CreateQueryParameters(string ksqlQuery)
     {
@@ -44,8 +49,16 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
       return queryParameters;
     }
+  }
 
-    public static async IAsyncEnumerable<string> GetTestValues()
+  internal class TestableKStreamSet : TestableKStreamSet<string>
+  {
+    public TestableKStreamSet(IKSqlQbservableProvider provider) 
+      : base(provider)
+    {
+    }
+
+    protected override async IAsyncEnumerable<string> GetTestValues()
     {
       yield return "Hello world";
 

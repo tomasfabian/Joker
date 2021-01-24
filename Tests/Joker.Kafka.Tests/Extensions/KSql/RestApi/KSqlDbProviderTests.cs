@@ -26,6 +26,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       public bool IsRobot { get; set; }
 
       public double Amount { get; set; }
+
+      public decimal AccountBalance { get; set; }
     }
 
     [TestInitialize]
@@ -98,7 +100,22 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       //Assert
       var tweet = tweets[0];
 
-      tweet.Amount.Should().Be(0.1);
+      tweet.Amount.Should().Be(0.00042);
+    }
+
+    [TestMethod]
+    public async Task Run_HttpStatusCodeOK_DecimalFieldWasParsed()
+    {
+      //Arrange
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+
+      //Assert
+      var tweet = tweets[0];
+
+      tweet.AccountBalance.Should().Be(9999999999999999.1234M);
     }
 
     [TestMethod]

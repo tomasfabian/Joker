@@ -4,6 +4,7 @@ using System.Threading;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -14,16 +15,14 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   [TestClass]
   public class QbservableExtensionsTests : TestBase
   {
-    public const string KsqlDBUrl = @"http:\\localhost:8088";
-
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KQueryStreamSet<Location>(new QbservableProvider(KsqlDBUrl));
+      return new KQueryStreamSet<Location>(new QbservableProvider(TestParameters.KsqlDBUrl));
     }    
     
     private TestableKStreamSet CreateTestableKStreamSet()
     {
-      return new TestableKStreamSet(new QbservableProvider(KsqlDBUrl));
+      return new TestableKStreamSet(new QbservableProvider(TestParameters.KsqlDBUrl));
     }
 
     [TestMethod]
@@ -46,7 +45,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public void ToQueryString_BuildKSqlOnDerivedClass_PrintsQuery()
     {
       //Arrange
-      var query = new TweetsQueryStream(KsqlDBUrl);
+      var query = new TweetsQueryStream(TestParameters.KsqlDBUrl);
 
       //Act
       var ksql = query.ToQueryString();
