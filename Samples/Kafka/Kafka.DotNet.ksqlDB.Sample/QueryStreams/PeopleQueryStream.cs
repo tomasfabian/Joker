@@ -18,6 +18,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.QueryStreams
 
     private class EnglishKSqlQueryGenerator : KSqlQueryGenerator
     {
+      //Install-Package Pluralize.NET -Version 1.0.2
       private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
 
       protected override string InterceptStreamName(string value)

@@ -1,6 +1,7 @@
 # v0.1.0-preview3
 - convert query visitor
 - Record base type with RowTime property
+- interception of the stream name in ksql query generation
 
 # v0.1.0-preview2
 - added ToObservable extension
