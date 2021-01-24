@@ -6,8 +6,8 @@ namespace Kafka.DotNet.ksqlDB.Sample.QueryStreams
 {
   public class PeopleQueryStream : KQueryStreamSet<Person>
   {
-    public PeopleQueryStream(string ksqlDbUrl)
-      : base(new QbservableProvider(ksqlDbUrl))
+    public PeopleQueryStream(IKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
     }
 

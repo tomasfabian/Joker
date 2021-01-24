@@ -4,7 +4,6 @@ using System.Threading;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -17,12 +16,12 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   {
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KQueryStreamSet<Location>(new QbservableProvider(TestParameters.KsqlDBUrl));
+      return new KQueryStreamSet<Location>(new TestKStreamSetDependencies());
     }    
     
     private TestableKStreamSet CreateTestableKStreamSet()
     {
-      return new TestableKStreamSet(new QbservableProvider(TestParameters.KsqlDBUrl));
+      return new TestableKStreamSet(new TestKStreamSetDependencies());
     }
 
     [TestMethod]
@@ -45,7 +44,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public void ToQueryString_BuildKSqlOnDerivedClass_PrintsQuery()
     {
       //Arrange
-      var query = new TweetsQueryStream(TestParameters.KsqlDBUrl);
+      var query = new TweetsQueryStream();
 
       //Act
       var ksql = query.ToQueryString();
@@ -66,7 +65,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Assert
       observable.Should().NotBeNull();
       
-      query.KSqldbProviderMock.Verify(c => c.Run(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Never);
+      query.KSqldbProviderMock.Verify(c => c.Run<string>(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [TestMethod]

@@ -45,7 +45,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = ClassUnderTest.Run(queryParameters);
+      var tweets = ClassUnderTest.Run<Tweet>(queryParameters);
 
       //Assert
       var receivedTweets = new List<Tweet>();
@@ -65,7 +65,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -80,7 +80,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -95,7 +95,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -110,7 +110,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -125,7 +125,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -140,7 +140,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = await ClassUnderTest.Run(queryParameters).ToListAsync();
+      var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
 
       //Assert
       var tweet = tweets[0];
@@ -158,7 +158,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var queryParameters = new KsqlQueryParameters();
 
       //Act
-      var tweets = ClassUnderTest.Run(queryParameters);
+      var tweets = ClassUnderTest.Run<Tweet>(queryParameters);
 
       //Assert
       await foreach (var tweet in tweets)
@@ -175,7 +175,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var cts = new CancellationTokenSource();
 
       //Act
-      IAsyncEnumerable<Tweet> tweets = ClassUnderTest.Run(queryParameters, cts.Token);
+      IAsyncEnumerable<Tweet> tweets = ClassUnderTest.Run<Tweet>(queryParameters, cts.Token);
       cts.Cancel();
 
       //Assert

@@ -1,5 +1,4 @@
 ﻿using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Moq;
 using Moq.Protected;
 
@@ -7,18 +6,11 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
   public class PeopleQueryStream : KQueryStreamSet<Person>
   {
-    public PeopleQueryStream(string ksqlDbUrl)
-      : base(new QbservableProvider(ksqlDbUrl))
+    public PeopleQueryStream()
+      : base(new TestKStreamSetDependencies())
     {
     }
 
-    protected override IKSqldbProvider<Person> CreateKSqlDbProvider()
-    {
-      var dbProvider = new Mock<IKSqldbProvider<Person>>();
-
-      return dbProvider.Object;
-    }    
-    
     public override IKSqlQueryGenerator CreateKSqlQueryGenerator()
     {
       var queryGenerator = MockExtensions.CreateKSqlQueryGenerator("People");

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
@@ -22,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
     private IQbservable<Location> CreateStreamSource()
     {
-      return new KQueryStreamSet<Location>(new QbservableProvider(@"http:\\localhost:8088"));
+      return new KQueryStreamSet<Location>(new TestKStreamSetDependencies());
     }
 
     #region Select

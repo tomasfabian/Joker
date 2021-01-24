@@ -3,8 +3,8 @@ using System.Threading;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public interface IKSqldbProvider<T>
+  public interface IKSqldbProvider
   {
-    IAsyncEnumerable<T> Run(object parameters, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<T> Run<T>(object parameters, CancellationToken cancellationToken = default);
   }
 }

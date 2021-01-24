@@ -1,5 +1,4 @@
 ﻿using System;
-//using System.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq.Grouping;
 using System.Linq.Expressions;
 using System.Reactive;

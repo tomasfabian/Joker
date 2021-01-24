@@ -5,18 +5,20 @@ using Moq;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
-  public class TweetsQueryStream : KQueryStreamSet<KSqlDbProviderTests.Tweet>
+  internal class TweetsTestKStreamSetDependencies : TestKStreamSetDependencies
   {
-    public TweetsQueryStream(string ksqlDbUrl)
-      : base(new QbservableProvider(ksqlDbUrl))
-    {
-    }
-
-    protected override IKSqldbProvider<KSqlDbProviderTests.Tweet> CreateKSqlDbProvider()
+    public TweetsTestKStreamSetDependencies()
     {
       var httpClientMock = new Mock<IHttpClientFactory>();
 
-      return new TestableKSqlDbQueryStreamProvider(httpClientMock.Object);
+      KsqlDBProvider = new TestableKSqlDbQueryStreamProvider(httpClientMock.Object);
+    }
+  }
+  public class TweetsQueryStream : KQueryStreamSet<KSqlDbProviderTests.Tweet>
+  {
+    public TweetsQueryStream()
+      : base(new TweetsTestKStreamSetDependencies())
+    {
     }
   }
 }

@@ -10,7 +10,7 @@ using Moq.Protected;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {
-  public class TestableKSqlDbQueryStreamProvider : KSqlDbQueryStreamProvider<KSqlDbProviderTests.Tweet>
+  public class TestableKSqlDbQueryStreamProvider : KSqlDbQueryStreamProvider
   {
     public TestableKSqlDbQueryStreamProvider(IHttpClientFactory httpClientFactory) 
       : base(httpClientFactory)

@@ -1,30 +1,19 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   internal class KQuerySet<TEntity> : KStreamSet<TEntity>
   {
-    internal KQuerySet(IKSqlQbservableProvider provider) 
-      : base(provider)
+    internal KQuerySet(IKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
     }
 
-    internal KQuerySet(IKSqlQbservableProvider provider, Expression expression) 
-      : base(provider, expression)
+    internal KQuerySet(IKStreamSetDependencies dependencies, Expression expression)
+      : base(dependencies, expression)
     {
-    }
-    
-    protected override IKSqldbProvider<TEntity> CreateKSqlDbProvider()
-    {
-      var uri = new Uri(Provider.Url);
-
-      var httpClientFactory = new HttpClientFactory(uri);
-
-      return new KSqlDbQueryProvider<TEntity>(httpClientFactory);
     }
 
 #if NETCOREAPP3_1

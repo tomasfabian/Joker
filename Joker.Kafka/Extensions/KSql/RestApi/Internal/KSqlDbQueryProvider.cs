@@ -7,7 +7,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  internal class KSqlDbQueryProvider<T> : KSqlDbProvider<T>
+  internal class KSqlDbQueryProvider : KSqlDbProvider
   {
     public KSqlDbQueryProvider(IHttpClientFactory httpClientFactory) 
       : base(httpClientFactory)
@@ -20,7 +20,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
     private HeaderResponse headerResponse;
 
-    protected override T OnLineRed(string rawJson)
+    protected override T OnLineRed<T>(string rawJson)
     {
       if (rawJson.StartsWith("["))
         rawJson = rawJson.Substring(startIndex: 1);

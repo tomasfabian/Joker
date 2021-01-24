@@ -2,6 +2,5 @@
 {
   public interface IKSqlQbservableProvider : IQbservableProvider
   {
-    string Url { get; }
   }
 }

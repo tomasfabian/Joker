@@ -6,8 +6,8 @@ namespace Kafka.DotNet.ksqlDB.Sample.QueryStreams
 {
   public class TweetsQueryStream : KQueryStreamSet<Tweet>
   {
-    public TweetsQueryStream(string ksqlDbUrl)
-      : base(new QbservableProvider(ksqlDbUrl))
+    public TweetsQueryStream(IKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
     }
 

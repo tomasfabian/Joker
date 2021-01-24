@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public abstract class KSqlDbProvider<T> : IKSqldbProvider<T>
+  public abstract class KSqlDbProvider : IKSqldbProvider
   {
     private readonly IHttpClientFactory httpClientFactory;
 
@@ -28,7 +28,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
       return httpClientFactory.CreateClient();
     }
 
-    public async IAsyncEnumerable<T> Run(object parameters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<T> Run<T>(object parameters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
       using var httpClient = OnCreateHttpClient();
 
@@ -49,13 +49,13 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
         var rawJson = await streamReader.ReadLineAsync();
 
-        var record = OnLineRed(rawJson);
+        var record = OnLineRed<T>(rawJson);
 
         if (record != null) yield return record;
       }
     }
 
-    protected abstract T OnLineRed(string rawJson);
+    protected abstract T OnLineRed<T>(string rawJson);
 
     private JsonSerializerOptions jsonSerializerOptions;
 

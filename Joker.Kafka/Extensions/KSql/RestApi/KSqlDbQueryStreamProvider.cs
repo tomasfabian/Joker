@@ -9,7 +9,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public class KSqlDbQueryStreamProvider<T> : KSqlDbProvider<T>
+  public class KSqlDbQueryStreamProvider : KSqlDbProvider
   {
     private readonly IHttpClientFactory httpClientFactory;
 
@@ -40,7 +40,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
     private QueryStreamHeader queryStreamHeader;
 
-    protected override T OnLineRed(string rawJson)
+    protected override T OnLineRed<T>(string rawJson)
     {
       if (rawJson.Contains("queryId"))
       {

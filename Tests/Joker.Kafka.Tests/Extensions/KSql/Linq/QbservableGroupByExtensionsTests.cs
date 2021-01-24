@@ -44,12 +44,12 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   internal class CitiesStreamSet : TestableKStreamSet<City>
   {
     public CitiesStreamSet()
-      : base(new QbservableProvider(TestParameters.KsqlDBUrl))
+      : base(new TestKStreamSetDependencies())
     {
     }
 
-    public CitiesStreamSet(IKSqlQbservableProvider provider, Expression expression)
-      : base(provider, expression)
+    public CitiesStreamSet(TestKStreamSetDependencies dependencies, Expression expression)
+      : base(dependencies, expression)
     {
     }
 

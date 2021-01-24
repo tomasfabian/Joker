@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 
@@ -13,7 +12,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public void InterceptStreamName()
     {
       //Arrange
-      var query = new PeopleQueryStream(TestParameters.KsqlDBUrl);
+      var query = new PeopleQueryStream();
 
       //Act
       var ksql = query.ToQueryString();

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
@@ -13,29 +13,24 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
   internal abstract class TestableKStreamSet<TEntity> : KStreamSet<TEntity>
   {
-    protected TestableKStreamSet(IKSqlQbservableProvider provider)
-      : base(provider)
+    protected TestableKStreamSet(TestKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
-      KSqldbProviderMock = new Mock<IKSqldbProvider<TEntity>>();
-    }
-
-    protected TestableKStreamSet(IKSqlQbservableProvider provider, Expression expression)
-      : base(provider, expression)
-    {
-    }
-
-    public Mock<IKSqldbProvider<TEntity>> KSqldbProviderMock { get; }
-
-    public CancellationToken CancellationToken { get; private set; }
-
-    protected override IKSqldbProvider<TEntity> CreateKSqlDbProvider()
-    {
-      KSqldbProviderMock.Setup(c => c.Run(It.IsAny<object>(), It.IsAny<CancellationToken>()))
+      KSqldbProviderMock = dependencies.KSqldbProviderMock;
+            
+      KSqldbProviderMock.Setup(c => c.Run<TEntity>(It.IsAny<object>(), It.IsAny<CancellationToken>()))
         .Callback<object, CancellationToken>((par, ct) => { CancellationToken = ct; })
         .Returns(GetTestValues);
-
-      return KSqldbProviderMock.Object;
     }
+
+    protected TestableKStreamSet(IKStreamSetDependencies dependencies, Expression expression)
+      : base(dependencies, expression)
+    {
+    }
+
+    public Mock<IKSqldbProvider> KSqldbProviderMock { get; }
+
+    public CancellationToken CancellationToken { get; private set; }
 
     protected abstract IAsyncEnumerable<TEntity> GetTestValues();
 
@@ -53,8 +48,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
   internal class TestableKStreamSet : TestableKStreamSet<string>
   {
-    public TestableKStreamSet(IKSqlQbservableProvider provider) 
-      : base(provider)
+    public TestableKStreamSet(TestKStreamSetDependencies dependencies) 
+      : base(dependencies)
     {
     }
 

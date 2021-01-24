@@ -4,26 +4,28 @@ using System.Threading;
 using System.Linq;
 using System.Reactive.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public abstract class KStreamSet<TEntity> : IQbservable<TEntity>
   {
-    protected KStreamSet(IKSqlQbservableProvider provider)
+    private readonly IKStreamSetDependencies dependencies;
+
+    protected KStreamSet(IKStreamSetDependencies dependencies)
     {
-      Provider = provider;
-      
+      this.dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
+
+      Provider = dependencies.Provider;
       Expression = Expression.Constant(this);
     }
 
-    protected KStreamSet(IKSqlQbservableProvider provider, Expression expression)
-    {            
-      Provider = provider;
+    protected KStreamSet(IKStreamSetDependencies dependencies, Expression expression)
+    {
+      this.dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
+
+      Provider = dependencies.Provider;
       Expression = expression;
     }
-
-    protected abstract IKSqldbProvider<TEntity> CreateKSqlDbProvider();
 
     public virtual IKSqlQueryGenerator CreateKSqlQueryGenerator()
     {
@@ -59,11 +61,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     {
       var ksqlQuery = CreateKSqlQueryGenerator().BuildKSql(Expression);
 
-      var ksqlDBProvider = CreateKSqlDbProvider();
+      var ksqlDBProvider = dependencies.KsqlDBProvider;
 
       var queryParameters = CreateQueryParameters(ksqlQuery);
 
-      var observableStream = ksqlDBProvider.Run(queryParameters, cancellationTokenSource.Token)
+      var observableStream = ksqlDBProvider.Run<TEntity>(queryParameters, cancellationTokenSource.Token)
         .ToObservable();
 
       return observableStream;

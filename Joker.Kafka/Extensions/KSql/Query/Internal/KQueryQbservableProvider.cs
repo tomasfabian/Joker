@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   internal class KQueryQbservableProvider : IKSqlQbservableProvider
   {
-    public KQueryQbservableProvider(string url)
-    {
-      if(string.IsNullOrEmpty(url))
-        throw new ArgumentNullException(nameof(url));
+    private readonly IServiceProvider serviceProvider;
 
-      Url = url;
+    public KQueryQbservableProvider(IServiceProvider serviceProvider)
+    {
+      this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
-    
+
     IQbservable<TResult> IQbservableProvider.CreateQuery<TResult>(Expression expression)
-    {
-      return new KQuerySet<TResult>(this, expression);
-    }
+    {      
+      var dependencies = serviceProvider.GetService<IKStreamSetDependencies>();
 
-    public string Url { get; }
+      return new KQuerySet<TResult>(dependencies, expression);
+    }
   }
 }
