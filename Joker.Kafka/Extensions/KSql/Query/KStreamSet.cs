@@ -32,8 +32,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return new KSqlQueryGenerator();
     }
 
-    protected abstract object CreateQueryParameters(string ksqlQuery);
-
     public Expression Expression { get; }
 
     public Type ElementType => typeof(TEntity);
@@ -63,7 +61,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
       var ksqlDBProvider = dependencies.KsqlDBProvider;
 
-      var queryParameters = CreateQueryParameters(ksqlQuery);
+
+      var queryParameters = dependencies.QueryStreamParameters;
+      queryParameters.Sql = ksqlQuery;
 
       var observableStream = ksqlDBProvider.Run<TEntity>(queryParameters, cancellationTokenSource.Token)
         .ToObservable();

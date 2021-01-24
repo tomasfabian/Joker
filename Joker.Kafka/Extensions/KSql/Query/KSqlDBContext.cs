@@ -14,20 +14,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     {
       this.contextOptions = contextOptions ?? throw new ArgumentNullException(nameof(contextOptions));
 
-      RegisterDependencies(contextOptions);
-
-      BuildServicesProvider();
+      RegisterDependencies();
     }
 
-    private void BuildServicesProvider()
-    {
-      var serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
-
-      var provider = serviceProvider.GetService<IKSqlQbservableProvider>();
-      var dbProvider = serviceProvider.GetService<IKSqldbProvider>();
-    }
-
-    private void RegisterDependencies(KSqlDBContextOptions contextOptions)
+    private void RegisterDependencies()
     {
       serviceCollection = new ServiceCollection();
 
@@ -41,12 +31,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         new HttpClientFactory(uri));
 
       serviceCollection.AddTransient<IKSqldbProvider, KSqlDbQueryStreamProvider>();
+      serviceCollection.AddSingleton(contextOptions.QueryStreamParameters);
       serviceCollection.AddTransient<IKStreamSetDependencies, KStreamSetDependencies>();
-    }
-
-    private static ServiceProvider BuildServiceProvider(IServiceCollection services, bool validateScopes)
-    {
-      return services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = validateScopes });
     }
 
     public IQbservable<TEntity> CreateStreamSet<TEntity>()

@@ -5,7 +5,6 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Sample.Model;
 using Kafka.DotNet.ksqlDB.Sample.Observers;
-using Kafka.DotNet.ksqlDB.Sample.QueryStreams;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
@@ -67,11 +66,15 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
     private static void ToQueryStringExample(string ksqlDbUrl)
     {
-      // var ksql = new TweetsQueryStream().ToQueryString();
+      var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
+      var context = new KSqlDBContext(contextOptions);
+
+      var ksql = context.CreateStreamSet<Tweet>().ToQueryString();
 
       //prints SELECT * FROM Tweets EMIT CHANGES;
-      // Console.WriteLine(ksql);
+      Console.WriteLine(ksql);
 
+      //TODO: language provider stream interception
       //ksql = new PeopleQueryStream().ToQueryString();
 
       ////prints SELECT * FROM People EMIT CHANGES;

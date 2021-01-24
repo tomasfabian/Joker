@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 using Moq;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
@@ -33,17 +32,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public CancellationToken CancellationToken { get; private set; }
 
     protected abstract IAsyncEnumerable<TEntity> GetTestValues();
-
-    protected override object CreateQueryParameters(string ksqlQuery)
-    {
-      var queryParameters = new KsqlQueryParameters
-      {
-        KSql = ksqlQuery,
-        ["ksql.streams.auto.offset.reset"] = "earliest"
-      };
-
-      return queryParameters;
-    }
   }
 
   internal class TestableKStreamSet : TestableKStreamSet<string>
