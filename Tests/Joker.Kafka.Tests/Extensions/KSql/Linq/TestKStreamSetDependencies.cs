@@ -15,11 +15,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
       KsqlDBProvider = KSqldbProviderMock.Object;
 
+      KSqlQueryGenerator = new KSqlQueryGenerator();
+
       QueryStreamParameters = new QueryStreamParameters();
 
       var serviceCollection = new ServiceCollection();
 
-      serviceCollection.AddTransient<IKStreamSetDependencies, TestKStreamSetDependencies>();
+      serviceCollection.AddSingleton<IKStreamSetDependencies>(this);
       
       var serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
       Provider = new QbservableProvider(serviceProvider);
@@ -27,6 +29,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
     public IKSqlQbservableProvider Provider { get; }
     public IKSqldbProvider KsqlDBProvider { get; set; }
+    public IKSqlQueryGenerator KSqlQueryGenerator { get; set; }
     public QueryStreamParameters QueryStreamParameters { get; }
 
     public Mock<IKSqldbProvider> KSqldbProviderMock { get; }

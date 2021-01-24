@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
-using Kafka.DotNet.ksqlDB.Tests.Helpers;
-using Kafka.DotNet.ksqlDB.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using UnitTests;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
@@ -19,15 +15,19 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   }
 
   [TestClass]
-  [Ignore("NotImplemented")]
   public class QbservableGroupByExtensionsTests : TestBase
   {
-
     [TestMethod]
     public void GroupBy_BuildKSql_PrintsQuery()
     {
       //Arrange
-      var grouping = new CitiesStreamSet()
+      var dependencies = new TestKStreamSetDependencies
+      {
+        KSqlQueryGenerator = new CitiesKSqlQueryGenerator()
+        //KSqlQueryGenerator = MockExtensions.CreateKSqlQueryGenerator("Cities")
+      };
+
+      var grouping = new CitiesStreamSet(dependencies)
           .GroupBy(c => c.RegionCode);
 
       //Act
@@ -43,13 +43,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
   internal class CitiesStreamSet : TestableKStreamSet<City>
   {
-    public CitiesStreamSet()
-      : base(new TestKStreamSetDependencies())
-    {
-    }
-
-    public CitiesStreamSet(TestKStreamSetDependencies dependencies, Expression expression)
-      : base(dependencies, expression)
+    public CitiesStreamSet(TestKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
     }
 
@@ -62,13 +57,14 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       yield return new City { RegionCode = "A1" };
       
       await Task.CompletedTask;
-    } 
-    
-    public override IKSqlQueryGenerator CreateKSqlQueryGenerator()
-    {
-      var queryGenerator = MockExtensions.CreateKSqlQueryGenerator("Cities");
+    }
+  }
 
-      return queryGenerator;
+  public class CitiesKSqlQueryGenerator : KSqlQueryGenerator
+  {
+    protected override string InterceptStreamName(string value)
+    {
+      return "Cities";
     }
   }
 }

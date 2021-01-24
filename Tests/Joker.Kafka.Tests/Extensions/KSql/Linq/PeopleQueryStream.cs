@@ -1,4 +1,5 @@
-﻿using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+﻿using System;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Moq;
 using Moq.Protected;
 
@@ -6,16 +7,14 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
   public class PeopleQueryStream : KQueryStreamSet<Person>
   {
-    public PeopleQueryStream()
-      : base(new TestKStreamSetDependencies())
-    {
-    }
+    private readonly TestKStreamSetDependencies dependencies;
 
-    public override IKSqlQueryGenerator CreateKSqlQueryGenerator()
+    public PeopleQueryStream(TestKStreamSetDependencies dependencies)
+      : base(dependencies)
     {
-      var queryGenerator = MockExtensions.CreateKSqlQueryGenerator("People");
+      this.dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
 
-      return queryGenerator;
+      dependencies.KSqlQueryGenerator = MockExtensions.CreateKSqlQueryGenerator("People");
     }
   }
 

@@ -46,8 +46,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
       if (groupBy != null)
       {
-        kSqlVisitor.Append(" GROUP BY ");
+        kSqlVisitor.Append(" GROUP BY '");
         kSqlVisitor.Visit(groupBy.Body);
+        kSqlVisitor.Append("'");
       }
 
       if(ShouldEmitChanges)

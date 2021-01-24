@@ -12,7 +12,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     public void InterceptStreamName()
     {
       //Arrange
-      var query = new PeopleQueryStream();
+      var dependencies = new TestKStreamSetDependencies();
+      var query = new PeopleQueryStream(dependencies);
 
       //Act
       var ksql = query.ToQueryString();

@@ -11,10 +11,10 @@ namespace Kafka.DotNet.ksqlDB.Sample.QueryStreams
     {
     }
 
-    public override IKSqlQueryGenerator CreateKSqlQueryGenerator()
-    {
-      return new EnglishKSqlQueryGenerator();
-    }
+    //public override IKSqlQueryGenerator CreateKSqlQueryGenerator()
+    //{
+    //  return new EnglishKSqlQueryGenerator();
+    //}
 
     private class EnglishKSqlQueryGenerator : KSqlQueryGenerator
     {

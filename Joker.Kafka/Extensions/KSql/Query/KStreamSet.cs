@@ -27,16 +27,13 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       Expression = expression;
     }
 
-    public virtual IKSqlQueryGenerator CreateKSqlQueryGenerator()
-    {
-      return new KSqlQueryGenerator();
-    }
-
     public Expression Expression { get; }
 
     public Type ElementType => typeof(TEntity);
 
     public IKSqlQbservableProvider Provider { get; }
+
+    public IKSqlQueryGenerator KSqlQueryGenerator => dependencies.KSqlQueryGenerator;
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
     {
@@ -57,7 +54,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
     {
-      var ksqlQuery = CreateKSqlQueryGenerator().BuildKSql(Expression);
+      var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression);
 
       var ksqlDBProvider = dependencies.KsqlDBProvider;
 
