@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+//using System.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq.Grouping;
 using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -178,6 +179,30 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
         throw new ArgumentNullException(nameof(onCompleted));
 
       return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));
+    }
+
+    #endregion
+
+    #region GroupBy
+    
+    private static MethodInfo? groupByTSourceTKey3;
+
+    public static MethodInfo GroupByTSourceTKey3(Type TSource, Type TKey) =>
+      (groupByTSourceTKey3 ??
+       (groupByTSourceTKey3 = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
+      .MakeGenericMethod(TSource, TKey);
+
+    internal static IQbservable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IQbservable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+      if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+
+      return source.Provider.CreateQuery<IGrouping<TKey, TSource>>(
+        Expression.Call(
+          null,
+          GroupByTSourceTKey3(typeof(TSource), typeof(TKey)),
+          source.Expression, Expression.Quote(keySelector))
+        );
     }
 
     #endregion

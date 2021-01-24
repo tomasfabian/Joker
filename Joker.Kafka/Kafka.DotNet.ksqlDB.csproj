@@ -12,7 +12,7 @@
     <Copyright>@tomasfabian</Copyright>
     <Description>Confluent Kafka ksqlDB LINQ provider</Description>
     <PackageTags>kafka ksql ksqlDB LINQ</PackageTags>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.1.0-alpha2</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <LangVersion>9.0</LangVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.md</PackageReleaseNotes>
@@ -29,6 +29,17 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\KSql\Linq\Grouping\" />
+    <Folder Include="Extensions\KSql\Query\Grouping\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Kafka.DotNet.ksqlDB.Tests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

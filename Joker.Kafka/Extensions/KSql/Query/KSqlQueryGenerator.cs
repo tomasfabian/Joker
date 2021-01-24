@@ -44,6 +44,12 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         kSqlVisitor.Visit(methodCallExpression);
       }
 
+      if (groupBy != null)
+      {
+        kSqlVisitor.Append(" GROUP BY ");
+        kSqlVisitor.Visit(groupBy.Body);
+      }
+
       if(ShouldEmitChanges)
         kSqlVisitor.Append(" EMIT CHANGES");
 
@@ -129,6 +135,14 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         VisitChained(methodCallExpression);
       } 
 
+      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
+          methodInfo.Name == nameof(QbservableExtensions.GroupBy))
+      {
+        groupBy = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
+
+        VisitChained(methodCallExpression);
+      } 
+
       return methodCallExpression;
     }
 
@@ -142,6 +156,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     private Queue<Expression> whereClauses;
     private LambdaExpression select;
+    private LambdaExpression groupBy;
 
     protected static Expression StripQuotes(Expression expression) {
       while (expression.NodeType == ExpressionType.Quote) {
