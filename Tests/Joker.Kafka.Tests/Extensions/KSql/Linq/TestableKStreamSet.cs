@@ -12,7 +12,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
   internal abstract class TestableKStreamSet<TEntity> : KStreamSet<TEntity>
   {
-    protected TestableKStreamSet(TestKStreamSetDependencies dependencies)
+    internal TestableKStreamSet(TestKStreamSetDependencies dependencies)
       : base(dependencies)
     {
       KSqldbProviderMock = dependencies.KSqldbProviderMock;

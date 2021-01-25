@@ -20,7 +20,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
     private HeaderResponse headerResponse;
 
-    protected override T OnLineRed<T>(string rawJson)
+    protected override RowValue<T> OnLineRed<T>(string rawJson)
     {
       if (rawJson.StartsWith("["))
         rawJson = rawJson.Substring(startIndex: 1);
@@ -52,7 +52,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
         var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
         var record = JsonSerializer.Deserialize<T>(jsonRecord, jsonSerializerOptions);
 
-        return record;
+        return new RowValue<T>(record);
       }
 
       return default;

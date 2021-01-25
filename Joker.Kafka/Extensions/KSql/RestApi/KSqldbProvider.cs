@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
-{
+{    
   public abstract class KSqlDbProvider : IKSqldbProvider
   {
     private readonly IHttpClientFactory httpClientFactory;
@@ -44,18 +44,18 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
       while (!streamReader.EndOfStream)
       {
-        if (cancellationToken.IsCancellationRequested) //TODO: terminate query
+        if (cancellationToken.IsCancellationRequested)
           yield break;
 
         var rawJson = await streamReader.ReadLineAsync();
 
         var record = OnLineRed<T>(rawJson);
 
-        if (record != null) yield return record;
+        if (record != null) yield return record.Value;
       }
     }
 
-    protected abstract T OnLineRed<T>(string rawJson);
+    protected abstract RowValue<T> OnLineRed<T>(string rawJson);
 
     private JsonSerializerOptions jsonSerializerOptions;
 

@@ -40,7 +40,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 
     private QueryStreamHeader queryStreamHeader;
 
-    protected override T OnLineRed<T>(string rawJson)
+    protected override RowValue<T> OnLineRed<T>(string rawJson)
     {
       if (rawJson.Contains("queryId"))
       {
@@ -59,14 +59,17 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
       else
       {
         var result = rawJson.Substring(1, rawJson.Length - 2);
+        
+        var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
+
+        if (queryStreamHeader.ColumnTypes.Length == 1 && queryStreamHeader.ColumnTypes.Count(c => c != "BIGINT") == 0)
+          return new RowValue<T>(JsonSerializer.Deserialize<T>(result, jsonSerializerOptions));
 
         var jsonRecord = CreateJson(result);
 
-        var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
-
         var record = JsonSerializer.Deserialize<T>(jsonRecord, jsonSerializerOptions);
 
-        return record;
+        return new RowValue<T>(record);
       }
 
       return default;
