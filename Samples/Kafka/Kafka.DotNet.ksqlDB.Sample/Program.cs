@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Sample.Model;
 using Kafka.DotNet.ksqlDB.Sample.Observers;
 
@@ -22,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
         .Where(p => p.Message != "Hello world" || p.Id == 1)
         .Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
         .Select(l => new { l.Id, l.Message, l.RowTime })
-        .Take(2)     
+        .Take(2) // LIMIT 2    
         .ToObservable() // client side processing starts here lazily after subscription
         .ObserveOn(TaskPoolScheduler.Default)
         .Subscribe(tweetMessage =>
@@ -69,16 +70,47 @@ namespace Kafka.DotNet.ksqlDB.Sample
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
       var context = new KSqlDBContext(contextOptions);
 
-      var ksql = context.CreateStreamSet<Tweet>().ToQueryString();
-
-      //prints SELECT * FROM Tweets EMIT CHANGES;
+      var ksql = context.CreateStreamSet<Person>().ToQueryString();
+      
+      //prints SELECT * FROM People EMIT CHANGES;
       Console.WriteLine(ksql);
+    }    
+    
+    private static void GroupBy()
+    {
+      var ksqlDbUrl = @"http:\\localhost:8088";
+      var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
 
-      //TODO: language provider stream interception
-      //ksql = new PeopleQueryStream().ToQueryString();
+      contextOptions.QueryStreamParameters["auto.offset.reset"] = "latest";
+      var context = new KSqlDBContext(contextOptions);
 
-      ////prints SELECT * FROM People EMIT CHANGES;
-      //Console.WriteLine(ksql);
+      context.CreateStreamSet<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => new { Id = g.Key, Count = g.Count() })
+        .Subscribe(count =>
+        {
+          Console.WriteLine($"{count.Id} Count: {count.Count}");
+          Console.WriteLine();
+        }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
+
+
+      context.CreateStreamSet<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => g.Count())        
+        .Subscribe(count =>
+        {
+          Console.WriteLine($"Count: {count}");
+          Console.WriteLine();
+        }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
+
+      context.CreateStreamSet<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => new { Count = g.Count() })
+        .Subscribe(count =>
+        {
+          Console.WriteLine($"Count: {count}");
+          Console.WriteLine();
+        }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
     }
   }
 }
