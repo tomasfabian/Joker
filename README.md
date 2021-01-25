@@ -6,20 +6,24 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0-alpha2
+Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0-alpha3
 ```
 ```C#
-using System;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Sample.Model;
+var context = new KSqlDBContext(@"http:\\localhost:8088");
 
-var ksqlDbUrl = @"http:\\localhost:8088";
-
-using var disposable = new KQueryStreamSet<Tweet>(new QbservableProvider(ksqlDbUrl))
+using var disposable = context.CreateStreamSet<Tweet>()
   .Where(p => p.Message != "Hello world" || p.Id == 1)
-  .Select(l => new { l.Message, l.Id })
-  .Take(2)
+  .Where(p => p.RowTime >= 1510923225000)
+  .Select(l => new { l.Id, l.Message, l.RowTime })
+  .Take(2)     
+  .ToObservable() // client side processing starts here lazily after subscription
+  .Delay(TimeSpan.FromSeconds(2)) // IObservable extensions
+  .ObserveOn(TaskPoolScheduler.Default)
+  .Subscribe(tweetMessage =>
+  {
+    Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
+    Console.WriteLine();
+  }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
 ```
 
 # Joker Model-View-ViewModel:
