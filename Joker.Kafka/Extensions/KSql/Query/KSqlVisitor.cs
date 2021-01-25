@@ -76,6 +76,42 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return expression;
     }
 
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
+    {
+      var methodInfo = methodCallExpression.Method;
+
+
+      var result = EnumerableSelectExpression(methodCallExpression);
+
+      if(result != null)
+        Append(result);
+
+      return base.VisitMethodCall(methodCallExpression);
+    }
+
+    private string EnumerableSelectExpression(MethodCallExpression methodCallExpression)
+    {
+      var methodInfo = methodCallExpression.Method;
+
+      if (methodCallExpression.Object == null
+          && methodInfo.DeclaringType == typeof(Enumerable)
+          && methodCallExpression.Arguments.Count > 0)
+      {
+        switch (methodInfo.Name)
+        {
+          case nameof(Enumerable.Count):
+            if (methodCallExpression.Arguments.Count == 1)
+            {
+              return "COUNT(*)";
+            }
+
+            break;
+        }
+      }
+
+      return null;
+    }
+
     protected override Expression VisitConstant(ConstantExpression constantExpression)
     {
       if (constantExpression == null) throw new ArgumentNullException(nameof(constantExpression));
@@ -134,8 +170,18 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     {
       if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
 
-      if(newExpression.Type.IsAnonymousType())
-        Append(newExpression.Members.Select(c => c.Name));
+      if (newExpression.Type.IsAnonymousType())
+      {
+        var selectExpressions = newExpression.Members.Zip(newExpression.Arguments).Select(c =>
+        {
+          if (c.Second.NodeType == ExpressionType.Call)
+            return EnumerableSelectExpression(c.Second as MethodCallExpression) + " " + c.First.Name;
+
+          return c.First.Name;
+        });
+
+        Append(selectExpressions);
+      }
 
       return newExpression;
     }
@@ -153,6 +199,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     protected override Expression VisitUnary(UnaryExpression unaryExpression)
     {
+      if (unaryExpression == null) throw new ArgumentNullException(nameof(unaryExpression));
+
       switch (unaryExpression.NodeType)
       {
         case ExpressionType.Convert:

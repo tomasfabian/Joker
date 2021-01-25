@@ -1,5 +1,5 @@
 ﻿using System;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq.Grouping;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -15,7 +15,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     private static MethodInfo? selectTSourceTResult;
 
-    public static MethodInfo SelectTSourceTResult(Type TSource, Type TResult) =>
+    private static MethodInfo SelectTSourceTResult(Type TSource, Type TResult) =>
       (selectTSourceTResult ??
        (selectTSourceTResult = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<object>>(Select).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource, TResult);
@@ -42,7 +42,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     private static MethodInfo? whereTSource;
 
-    public static MethodInfo WhereTSource(Type TSource) =>
+    private static MethodInfo WhereTSource(Type TSource) =>
       (whereTSource ??
        (whereTSource = new Func<IQbservable<object>, Expression<Func<object, bool>>, IQbservable<object>>(QbservableExtensions.Where).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource);
@@ -69,7 +69,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     private static MethodInfo? takeTSource;
 
-    public static MethodInfo TakeTSource(Type TSource) =>
+    private static MethodInfo TakeTSource(Type TSource) =>
       (takeTSource ??
        (takeTSource = new Func<IQbservable<object>, int, IQbservable<object>>(Take).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource);
@@ -94,7 +94,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
       var kStreamSet = source as KStreamSet<TSource>;
 
-      var ksqlQuery = kStreamSet?.KSqlQueryGenerator?.BuildKSql(source.Expression);
+      var ksqlQuery = kStreamSet?.KSqlQueryGenerator?.BuildKSql(source.Expression, kStreamSet.QueryContext);
 
       return ksqlQuery;
     }
@@ -180,15 +180,26 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
       return source.Subscribe(new AnonymousObserver<T>(onNext, onError, onCompleted));
     }
 
+    internal static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext)
+    {
+      if (source == null)
+        throw new ArgumentNullException(nameof(source));
+
+      if (onNext == null)
+        throw new ArgumentNullException(nameof(onNext));
+
+      return source.Subscribe(new AnonymousObserver<T>(onNext, e => throw e, () => {}));
+    }
+
     #endregion
 
     #region GroupBy
     
-    private static MethodInfo? groupByTSourceTKey3;
+    private static MethodInfo? groupByTSourceTKey;
 
-    public static MethodInfo GroupByTSourceTKey3(Type TSource, Type TKey) =>
-      (groupByTSourceTKey3 ??
-       (groupByTSourceTKey3 = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
+    private static MethodInfo GroupByTSourceTKey(Type TSource, Type TKey) =>
+      (groupByTSourceTKey ??
+       (groupByTSourceTKey = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource, TKey);
 
     internal static IQbservable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IQbservable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
@@ -199,7 +210,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
       return source.Provider.CreateQuery<IGrouping<TKey, TSource>>(
         Expression.Call(
           null,
-          GroupByTSourceTKey3(typeof(TSource), typeof(TKey)),
+          GroupByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Quote(keySelector))
         );
     }

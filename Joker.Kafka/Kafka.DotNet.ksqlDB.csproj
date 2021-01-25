@@ -18,6 +18,8 @@
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.md</PackageReleaseNotes>
   </PropertyGroup>
 
+  <Import Project="..\NugetProjects\Pluralize.NET.csprojimport" />
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
@@ -30,11 +32,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\KSql\Linq\Grouping\" />
-    <Folder Include="Extensions\KSql\Query\Grouping\" />
   </ItemGroup>
 
   <ItemGroup>
