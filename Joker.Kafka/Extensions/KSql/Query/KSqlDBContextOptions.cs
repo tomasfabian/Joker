@@ -16,8 +16,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       {
         ["auto.offset.reset"] = "earliest"
       };
-    }    
-    
+    }
+
+    public bool ShouldPluralizeStreamName { get; set; } = true;
+
     public string Url { get; }
 
     public QueryStreamParameters QueryStreamParameters { get; }

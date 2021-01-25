@@ -35,11 +35,25 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       serviceCollection.AddTransient<IKStreamSetDependencies, KStreamSetDependencies>();
     }
 
-    public IQbservable<TEntity> CreateStreamSet<TEntity>()
+    private bool wasRegistered;
+
+    public IQbservable<TEntity> CreateStreamSet<TEntity>(string streamName = null)
     {
+      if(!wasRegistered)
+      {
+        wasRegistered = true;
+
+        RegisterDependencies();
+      }
+
+      if (streamName == String.Empty)
+        streamName = null;
+
       var serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
 
       var dependencies = serviceProvider.GetService<IKStreamSetDependencies>();
+      
+      dependencies.QueryContext.StreamName = streamName;
 
       return new KQueryStreamSet<TEntity>(dependencies);
     }

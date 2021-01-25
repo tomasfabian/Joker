@@ -6,6 +6,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
   {
     bool ShouldEmitChanges { get; set; }
 
-    string BuildKSql(Expression expression);
+    string BuildKSql(Expression expression, QueryContext queryContext);
   }
 }

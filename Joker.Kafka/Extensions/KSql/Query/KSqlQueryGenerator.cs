@@ -2,16 +2,25 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public class KSqlQueryGenerator : ExpressionVisitor, IKSqlQueryGenerator
   {
+    private readonly KSqlDBContextOptions options;
+    private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
+
     private KSqlVisitor kSqlVisitor = new();
 
     public bool ShouldEmitChanges { get; set; } = true;
 
-    public string BuildKSql(Expression expression)
+    public KSqlQueryGenerator(KSqlDBContextOptions options)
+    {
+      this.options = options ?? throw new ArgumentNullException(nameof(options));
+    }
+
+    public string BuildKSql(Expression expression, QueryContext queryContext)
     {
       kSqlVisitor = new KSqlVisitor();
       whereClauses = new Queue<Expression>();
@@ -25,7 +34,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       else
         kSqlVisitor.Append("*");
 
-      kSqlVisitor.Append($" FROM {InterceptStreamName(streamName)}");
+      kSqlVisitor.Append($" FROM {queryContext.StreamName ?? InterceptStreamName(streamName)}");
 
       bool isFirst = true;
 
@@ -46,9 +55,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
       if (groupBy != null)
       {
-        kSqlVisitor.Append(" GROUP BY '");
+        kSqlVisitor.Append(" GROUP BY ");
         kSqlVisitor.Visit(groupBy.Body);
-        kSqlVisitor.Append("'");
       }
 
       if(ShouldEmitChanges)
@@ -64,7 +72,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     protected virtual string InterceptStreamName(string value)
     {
-      return value + "s";
+      if(options.ShouldPluralizeStreamName)
+        return EnglishPluralizationService.Pluralize(value);
+
+      return value;
     }
 
     protected int? Limit;

@@ -12,13 +12,18 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       KsqlDBProvider = ksqlDBProvider;
       KSqlQueryGenerator = queryGenerator;
       QueryStreamParameters = queryStreamParameters;
+
+      QueryContext = new QueryContext();
     }
 
     public IKSqlQbservableProvider Provider { get; }
 
     public IKSqldbProvider KsqlDBProvider { get; }
+
     public IKSqlQueryGenerator KSqlQueryGenerator { get; }
 
     public QueryStreamParameters QueryStreamParameters { get; }
+
+    public QueryContext QueryContext { get; }
   }
 }
