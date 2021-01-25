@@ -19,15 +19,16 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 
     public bool ShouldThrowException { get; set; }
 
-    protected override HttpClient OnCreateHttpClient()
-    {      
-      var queryResponse =
-        @"{""queryId"":""59df818e-7d88-436f-95ac-3c59becc9bfb"",""columnNames"":[""ROWTIME"",""MESSAGE"",""ID"",""ISROBOT"",""ACCOUNTBALANCE"",""AMOUNT""],""columnTypes"":[""BIGINT"",""STRING"",""INTEGER"",""BOOLEAN"",""DECIMAL(16, 4)"",""DOUBLE""]}
+    protected string QueryResponse =
+      @"{""queryId"":""59df818e-7d88-436f-95ac-3c59becc9bfb"",""columnNames"":[""ROWTIME"",""MESSAGE"",""ID"",""ISROBOT"",""ACCOUNTBALANCE"",""AMOUNT""],""columnTypes"":[""BIGINT"",""STRING"",""INTEGER"",""BOOLEAN"",""DECIMAL(16, 4)"",""DOUBLE""]}
 [1611327570881,""Hello world"",1,true,9999999999999999.1234,4.2E-4]
 [1611327671476,""Wall-e"",2,false,1.2000,1.0]";
 
-      var errorResponse =
-        @"{""@type"":""generic_error"",""error_code"":40001,""message"":""Line: 1, Col: 21: SELECT column 'Foo' cannot be resolved.\nStatement: SELECT Message, Id, Foo FROM Tweets\r\nWHERE Message = 'Hello world' EMIT CHANGES LIMIT 2;""}";
+    protected string ErrorResponse =
+      @"{""@type"":""generic_error"",""error_code"":40001,""message"":""Line: 1, Col: 21: SELECT column 'Foo' cannot be resolved.\nStatement: SELECT Message, Id, Foo FROM Tweets\r\nWHERE Message = 'Hello world' EMIT CHANGES LIMIT 2;""}";
+
+    protected override HttpClient OnCreateHttpClient()
+    {      
 
       var handlerMock = new Mock<HttpMessageHandler>();
 
@@ -41,7 +42,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
         .ReturnsAsync(new HttpResponseMessage()
         {
           StatusCode = HttpStatusCode.OK,
-          Content = new StringContent(ShouldThrowException ? errorResponse : queryResponse),
+          Content = new StringContent(ShouldThrowException ? ErrorResponse : QueryResponse),
         })
         .Verifiable();
 
