@@ -1,7 +1,7 @@
 ﻿using System;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 {
   public sealed class KSqlDBContextOptions
   {

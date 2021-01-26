@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {

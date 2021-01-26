@@ -4,6 +4,7 @@ using System.Threading;
 using System.Linq;
 using System.Reactive.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
@@ -59,7 +60,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, dependencies.QueryContext);
 
       var ksqlDBProvider = dependencies.KsqlDBProvider;
-
 
       var queryParameters = dependencies.QueryStreamParameters;
       queryParameters.Sql = ksqlQuery;

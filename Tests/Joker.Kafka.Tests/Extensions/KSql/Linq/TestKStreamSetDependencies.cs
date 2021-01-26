@@ -1,5 +1,6 @@
 ﻿using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
@@ -12,7 +13,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   {
     public TestKStreamSetDependencies()
     {
-      KSqldbProviderMock = new Mock<IKSqldbProvider>();
+      KSqldbProviderMock = new Mock<IKSqlDbProvider>();
 
       KsqlDBProvider = KSqldbProviderMock.Object;
 
@@ -32,7 +33,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     }
 
     public IKSqlQbservableProvider Provider { get; }
-    public IKSqldbProvider KsqlDBProvider { get; set; }
+    public IKSqlDbProvider KsqlDBProvider { get; set; }
     public IKSqlQueryGenerator KSqlQueryGenerator { get; set; }
     public QueryStreamParameters QueryStreamParameters { get; }
     
@@ -40,6 +41,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
     public KSqlDBContextOptions KSqlDBContextOptions { get; set; }
 
-    public Mock<IKSqldbProvider> KSqldbProviderMock { get; }
+    public Mock<IKSqlDbProvider> KSqldbProviderMock { get; }
   }
 }

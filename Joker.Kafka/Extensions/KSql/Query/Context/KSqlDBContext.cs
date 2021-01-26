@@ -5,9 +5,9 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 {
-  public sealed class KSqlDBContext : IKSqlDBContext
+  public class KSqlDBContext : IKSqlDBContext
   {
     private readonly KSqlDBContextOptions contextOptions;
     private readonly IServiceCollection serviceCollection;
@@ -26,20 +26,27 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     private void RegisterDependencies()
     {
+      OnConfigureServices(serviceCollection);
+
       serviceCollection.TryAddTransient<IKSqlQbservableProvider, QbservableProvider>();
 
       var uri = new Uri(contextOptions.Url);
 
       serviceCollection.TryAddTransient<IKSqlQueryGenerator, KSqlQueryGenerator>();
 
-      if(!HasRegistration<IHttpClientFactory>())
+      if (!HasRegistration<IHttpClientFactory>())
         serviceCollection.AddSingleton<IHttpClientFactory, HttpClientFactory>(_ =>
           new HttpClientFactory(uri));
       
-      serviceCollection.TryAddTransient<IKSqldbProvider, KSqlDbQueryStreamProvider>();
+      serviceCollection.TryAddTransient<IKSqlDbProvider, KSqlDbQueryStreamProvider>();
       serviceCollection.TryAddSingleton(contextOptions);
       serviceCollection.TryAddSingleton(contextOptions.QueryStreamParameters);
       serviceCollection.TryAddTransient<IKStreamSetDependencies, KStreamSetDependencies>();
+    }
+
+    protected virtual void OnConfigureServices(IServiceCollection serviceCollection)
+    {
+
     }
 
     private bool HasRegistration<TType>()
@@ -47,25 +54,25 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return serviceCollection.Any(x => x.ServiceType == typeof(TType));
     }
 
-    public void RegisterHttpClientFactory<TFactory>()
+    private void RegisterHttpClientFactory<TFactory>()
       where TFactory: class, IHttpClientFactory
     {
       serviceCollection.AddSingleton<IHttpClientFactory, TFactory>();
     }
 
-    public void RegisterKSqlDbProvider<KSqlDbProvider>()
-      where KSqlDbProvider: class, IKSqldbProvider
+    private void RegisterKSqlDbProvider<TProvider>()
+      where TProvider: class, IKSqlDbProvider
     {
-      serviceCollection.AddTransient<IKSqldbProvider, KSqlDbProvider>();
+      serviceCollection.AddTransient<IKSqlDbProvider, TProvider>();
     }
 
-    private bool wasRegistered;
+    private bool wasConfigured;
 
     public IQbservable<TEntity> CreateStreamSet<TEntity>(string streamName = null)
     {
-      if(!wasRegistered)
+      if(!wasConfigured)
       {
-        wasRegistered = true;
+        wasConfigured = true;
 
         RegisterDependencies();
       }

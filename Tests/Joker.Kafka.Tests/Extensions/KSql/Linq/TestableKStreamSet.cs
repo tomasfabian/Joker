@@ -27,7 +27,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     {
     }
 
-    public Mock<IKSqldbProvider> KSqldbProviderMock { get; }
+    public Mock<IKSqlDbProvider> KSqldbProviderMock { get; }
 
     public CancellationToken CancellationToken { get; private set; }
 
