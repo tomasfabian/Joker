@@ -190,4 +190,22 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       cts.Dispose();
     }
   }
+
+  [TestClass]
+  public class SingleValueKSqlDbProviderTests : TestBase
+  {
+    [TestMethod]
+    public async Task Count_ParseSingleFields_IntegersAreConsumed()
+    {
+      //Arrange
+      var provider = MockingKernel.Get<AggregationsKsqlDbQueryStreamProvider>();
+      var queryParameters = new KsqlQueryParameters();
+
+      //Act
+      var counts = provider.Run<int>(queryParameters);     
+      
+      //Assert
+      (await counts.ToListAsync()).Count.Should().Be(2);
+    }
+  }
 }
