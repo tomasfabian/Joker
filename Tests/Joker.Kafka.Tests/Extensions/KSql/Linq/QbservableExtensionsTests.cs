@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
@@ -22,6 +23,34 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     private TestableKStreamSet CreateTestableKStreamSet()
     {
       return new TestableKStreamSet(new TestKStreamSetDependencies());
+    }
+
+    [TestMethod]
+    public void SelectConstant_BuildKSql_PrintsConstant()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => "Hello world");
+
+      //Act
+      var ksql = query.ToQueryString();
+      
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT 'Hello world' FROM Locations EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    [Ignore("TODO")]
+    public void SelectConstants_BuildKSql_PrintsConstants()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { Message = "Hello world", Age = 23 });
+
+      //Act
+      var ksql = query.ToQueryString();
+      
+      //Assert
     }
 
     [TestMethod]
@@ -51,6 +80,38 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       
       //Assert
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM Tweets EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public async Task ToAsyncEnumerable_Query_KSqldbProviderRunWasCalled()
+    {
+      //Arrange
+      var query = CreateTestableKStreamSet();
+
+      //Act
+      var asyncEnumerable = query.ToAsyncEnumerable();
+
+      //Assert
+      query.KSqldbProviderMock.Verify(c => c.Run<string>(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Once);
+
+      await asyncEnumerable.GetAsyncEnumerator().DisposeAsync();
+    }
+
+    [TestMethod]
+    public async Task ToAsyncEnumerable_Enumerate_ValuesWereReceived()
+    {
+      //Arrange
+      var query = CreateTestableKStreamSet();
+
+      //Act
+      var asyncEnumerable = query.ToAsyncEnumerable();
+
+      //Assert
+      bool wasValueReceived = false;
+      await foreach (var value in asyncEnumerable)
+        wasValueReceived = true;
+
+      wasValueReceived.Should().BeTrue();
     }
 
     [TestMethod]

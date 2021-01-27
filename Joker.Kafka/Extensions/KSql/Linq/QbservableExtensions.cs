@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive;
@@ -104,11 +105,11 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     #region ToObservable
 
     /// <summary>
-    /// Converts an async-enumerable sequence to an observable sequence.
+    /// Runs the ksqlDb query as an observable sequence.
     /// </summary>
-    /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
-    /// <param name="source">Enumerable sequence to convert to an observable sequence.</param>
-    /// <returns>The observable sequence whose elements are pulled from the given enumerable sequence.</returns>
+    /// <typeparam name="TSource">The type of the elements in the source stream.</typeparam>
+    /// <param name="source">ksqlDb query to convert to an observable sequence.</param>
+    /// <returns>The observable sequence whose elements are pushed from the given query.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
     public static IObservable<TSource> ToObservable<TSource>(this IQbservable<TSource> source)
     {
@@ -128,16 +129,36 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     #endregion
 
+    #region AsAsyncEnumerable
+
+    /// <summary>
+    /// Runs the query as an async-enumerable sequence.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the elements in the source stream.</typeparam>
+    /// <param name="source">An ksqlDb query to subscribe to.</param>
+    /// <returns>An async-enumerable sequence for the query.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
+    public static IAsyncEnumerable<TSource> ToAsyncEnumerable<TSource>(this IQbservable<TSource> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      var streamSet = source as KStreamSet<TSource>;
+      
+      return streamSet?.RunStreamAsAsyncEnumerable();
+    }
+
+    #endregion
+
     #region Subscribe delegate-based overloads
 
     /// <summary>
-    /// Subscribes an element handler and an exception handler to an qbservable sequence.
+    /// Subscribes an element handler and an exception handler to an qbservable stream.
     /// </summary>
-    /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
-    /// <param name="source">Observable sequence to subscribe to.</param>
-    /// <param name="onNext">Action to invoke for each element in the qbservable sequence.</param>
-    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable sequence.</param>
-    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable sequence.</returns>
+    /// <typeparam name="T">The type of the elements in the source stream.</typeparam>
+    /// <param name="source">Observable stream to subscribe to.</param>
+    /// <param name="onNext">Action to invoke for each element in the qbservable stream.</param>
+    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable stream.</param>
+    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable stream.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="onNext"/> or <paramref name="onError"/> is <c>null</c>.</exception>
     public static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext, Action<Exception> onError)
     {
@@ -154,14 +175,14 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
     }
 
     /// <summary>
-    /// Subscribes an element handler, an exception handler, and a completion handler to an qbservable sequence.
+    /// Subscribes an element handler, an exception handler, and a completion handler to an qbservable stream.
     /// </summary>
-    /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
+    /// <typeparam name="T">The type of the elements in the source stream.</typeparam>
     /// <param name="source">Observable sequence to subscribe to.</param>
-    /// <param name="onNext">Action to invoke for each element in the qbservable sequence.</param>
-    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable sequence.</param>
-    /// <param name="onCompleted">Action to invoke upon graceful termination of the qbservable sequence.</param>
-    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable sequence.</returns>
+    /// <param name="onNext">Action to invoke for each element in the qbservable stream.</param>
+    /// <param name="onError">Action to invoke upon exceptional termination of the qbservable stream.</param>
+    /// <param name="onCompleted">Action to invoke upon graceful termination of the qbservable stream.</param>
+    /// <returns><see cref="IDisposable"/> object used to unsubscribe from the qbservable stream.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="onNext"/> or <paramref name="onError"/> or <paramref name="onCompleted"/> is <c>null</c>.</exception>
     public static IDisposable Subscribe<T>(this IQbservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
     {

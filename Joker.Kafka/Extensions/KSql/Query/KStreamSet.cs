@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Linq;
@@ -55,8 +56,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return compositeDisposable;
     }
 
-    internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
+    internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationTokenSource cancellationTokenSource = default)
     {
+      var cancellationToken = cancellationTokenSource?.Token ?? CancellationToken.None;
+
       var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, dependencies.QueryContext);
 
       var ksqlDBProvider = dependencies.KsqlDBProvider;
@@ -64,7 +67,12 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       var queryParameters = dependencies.QueryStreamParameters;
       queryParameters.Sql = ksqlQuery;
 
-      var observableStream = ksqlDBProvider.Run<TEntity>(queryParameters, cancellationTokenSource.Token)
+      return ksqlDBProvider.Run<TEntity>(queryParameters, cancellationToken);
+    }
+
+    internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
+    {
+      var observableStream = RunStreamAsAsyncEnumerable(cancellationTokenSource)
         .ToObservable();
 
       return observableStream;
