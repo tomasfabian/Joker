@@ -1,12 +1,29 @@
+# v0.1.0-preview4
+### ExtensionsMethods:
+- AsAsyncEnumerable
+- Sum Aggregation 
+- Windows TODO
+
+- KSqlDBContext async disposition AsyncDisposableObject
+
 # v0.1.0-preview3
+
+### Implementations:
 - convert query visitor
 - Record base type with RowTime property
 - KSqlDBContext, KSqlDBContextOptions, QueryContext
 - ServiceProvider
 
+### ExtensionsMethods:
+- GroupBy
+- Count Aggregation  
+
 # v0.1.0-preview2
-- added ToObservable extension
 - KQuerySet was set to internal for maintanance reasons. Is KQueryStreamSet good enough for all push queries?
+
+### ToObservable:
+- ToObservable
+- Subscribe overloads 
 
 # v0.1.0-preview1
 ### ksql provider:
@@ -16,6 +33,9 @@
 - EMIT CHANGES
 - LIMIT take linq extension method
 
+### ExtensionsMethods:
+- Subscribe 
+ 
 ### Interfaces:
 - IQbservableProvider
 - ```IQbservable<TEntity>```

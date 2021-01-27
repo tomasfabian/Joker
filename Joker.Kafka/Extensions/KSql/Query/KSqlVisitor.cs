@@ -13,7 +13,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     public string BuildKSql()
     {
       var ksql = stringBuilder.ToString();
-      
+
       stringBuilder.Clear();
 
       return ksql;
@@ -50,7 +50,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         case ExpressionType.LessThanOrEqual:
           VisitBinary((BinaryExpression)expression);
           break;
-        
+
         case ExpressionType.Lambda:
           base.Visit(expression);
           break;
@@ -58,7 +58,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         case ExpressionType.New:
           VisitNew((NewExpression)expression);
           break;
-          
+
         case ExpressionType.MemberAccess:
           VisitMember((MemberExpression)expression);
           break;
@@ -77,20 +77,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     }
 
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
-    {
-      var methodInfo = methodCallExpression.Method;
-
-
-      var result = EnumerableSelectExpression(methodCallExpression);
-
-      if(result != null)
-        Append(result);
-
-      return base.VisitMethodCall(methodCallExpression);
-    }
-
-    private string EnumerableSelectExpression(MethodCallExpression methodCallExpression)
-    {
+    {      
       var methodInfo = methodCallExpression.Method;
 
       if (methodCallExpression.Object == null
@@ -99,17 +86,26 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       {
         switch (methodInfo.Name)
         {
+          case nameof(Enumerable.Sum):
+            if (methodCallExpression.Arguments.Count == 2)
+            {
+              Append("SUM(");
+              Visit(methodCallExpression.Arguments[1]);
+              Append(")");
+            }
+
+            break;
           case nameof(Enumerable.Count):
             if (methodCallExpression.Arguments.Count == 1)
             {
-              return "COUNT(*)";
+              Append("COUNT(*)");
             }
 
             break;
         }
       }
 
-      return null;
+      return methodCallExpression;
     }
 
     protected override Expression VisitConstant(ConstantExpression constantExpression)
@@ -165,22 +161,30 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
       return binaryExpression;
     }
-    
+
     protected override Expression VisitNew(NewExpression newExpression)
     {
       if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
 
       if (newExpression.Type.IsAnonymousType())
       {
-        var selectExpressions = newExpression.Members.Zip(newExpression.Arguments).Select(c =>
+        bool isFirst = true;
+
+        foreach (var c in newExpression.Members.Zip(newExpression.Arguments))
         {
+          if (isFirst)
+            isFirst = false;
+          else
+            Append(ColumnsSeparator);
+
           if (c.Second.NodeType == ExpressionType.Call)
-            return EnumerableSelectExpression(c.Second as MethodCallExpression) + " " + c.First.Name;
+          {
+            VisitMethodCall(c.Second as MethodCallExpression);
+            Append(" ");
+          }
 
-          return c.First.Name;
-        });
-
-        Append(selectExpressions);
+          Append(c.First.Name);
+        }
       }
 
       return newExpression;
@@ -190,7 +194,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     {
       if (memberExpression == null) throw new ArgumentNullException(nameof(memberExpression));
 
-      if (memberExpression.Expression != null && memberExpression.Expression.NodeType == ExpressionType.Parameter) {
+      if (memberExpression.Expression != null && memberExpression.Expression.NodeType == ExpressionType.Parameter)
+      {
         Append(memberExpression.Member.Name);
       }
 
@@ -221,6 +226,8 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       stringBuilder.AppendLine(value);
     }
 
+    private const string ColumnsSeparator = ", ";
+
     protected void Append(IEnumerable enumerable)
     {
       bool isFirst = true;
@@ -230,9 +237,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         if (isFirst)
           isFirst = false;
         else
-        {
-          stringBuilder.Append(", ");
-        }
+          stringBuilder.Append(ColumnsSeparator);
 
         stringBuilder.Append(constant);
       }

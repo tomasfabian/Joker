@@ -13,6 +13,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   public class City
   {
     public string RegionCode { get; set; }
+    public long Citizens { get; set; }
   }
 
   [TestClass]
@@ -23,6 +24,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       var dependencies = new TestKStreamSetDependencies();
 
       dependencies.KSqldbProviderMock.Setup(c => c.Run<int>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetTestValues);
+      dependencies.KSqldbProviderMock.Setup(c => c.Run<long>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetDecimalTestValues);
 
       return new CitiesStreamSet(dependencies);
     }
@@ -91,7 +93,67 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       subscription.Dispose();
     }
 
+    [TestMethod]
+    public void GroupByAndSum_Subscribe_ReceivesValues()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Sum(c => c.Citizens));
+
+      bool valuesWereReceived = false;
+
+      //Act
+      var subscription = grouping.Subscribe(c => { valuesWereReceived = true; });
+
+      //Assert
+      valuesWereReceived.Should().BeTrue();
+
+      subscription.Dispose();
+    }
+
+    [TestMethod]
+    public void GroupByAndSum_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Sum(c => c.Citizens));
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT SUM(Citizens) FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void GroupByAndSumWithColumn_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => new { RegionCode = g.Key, MySum = g.Sum(c => c.Citizens)});
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT RegionCode, SUM(Citizens) MySum FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
     public static async IAsyncEnumerable<int> GetTestValues()
+    {
+      yield return 1;
+
+      yield return 2;
+      
+      yield return 3;
+      
+      await Task.CompletedTask;
+    }
+
+    public static async IAsyncEnumerable<long> GetDecimalTestValues()
     {
       yield return 1;
 

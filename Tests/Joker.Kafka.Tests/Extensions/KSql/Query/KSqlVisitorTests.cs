@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
@@ -370,6 +372,36 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
         //Assert
         ksql.Should().Be("RowTime >= 1");
+      }
+
+      #endregion
+
+      #region Lambda
+    
+      [TestMethod]
+      public void LambdaWithNewCount_BuildKSql_PrintsKeyAndCountAsterix()
+      {
+        //Arrange
+        Expression<Func<IGrouping<int, Location>, object>> expression = l => new { Key = l.Key, Agg = l.Count() };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("Key, Count(*) Agg");
+      }
+    
+      [TestMethod]
+      public void LambdaWithNewSum_BuildKSql_PrintsKeyAndSumColumnName()
+      {
+        //Arrange
+        Expression<Func<IGrouping<int, Location>, object>> expression = l => new { l.Key, Agg = l.Sum(x => x.Longitude) };
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("Key, Sum(Longitude) Agg");
       }
 
       #endregion
