@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 {
-  public class KSqlDBContext : IKSqlDBContext
+  public class KSqlDBContext : AsyncDisposableObject, IKSqlDBContext
   {
     private readonly KSqlDBContextOptions contextOptions;
     private readonly IServiceCollection serviceCollection;
@@ -28,7 +30,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
     {
       OnConfigureServices(serviceCollection);
 
-      serviceCollection.TryAddTransient<IKSqlQbservableProvider, QbservableProvider>();
+      serviceCollection.TryAddScoped<IKSqlQbservableProvider, QbservableProvider>();
 
       var uri = new Uri(contextOptions.Url);
 
@@ -38,10 +40,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
         serviceCollection.AddSingleton<IHttpClientFactory, HttpClientFactory>(_ =>
           new HttpClientFactory(uri));
       
-      serviceCollection.TryAddTransient<IKSqlDbProvider, KSqlDbQueryStreamProvider>();
+      serviceCollection.TryAddScoped<IKSqlDbProvider, KSqlDbQueryStreamProvider>();
       serviceCollection.TryAddSingleton(contextOptions);
       serviceCollection.TryAddSingleton(contextOptions.QueryStreamParameters);
-      serviceCollection.TryAddTransient<IKStreamSetDependencies, KStreamSetDependencies>();
+      serviceCollection.TryAddScoped<IKStreamSetDependencies, KStreamSetDependencies>();
     }
 
     protected virtual void OnConfigureServices(IServiceCollection serviceCollection)
@@ -63,8 +65,10 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
     private void RegisterKSqlDbProvider<TProvider>()
       where TProvider: class, IKSqlDbProvider
     {
-      serviceCollection.AddTransient<IKSqlDbProvider, TProvider>();
+      serviceCollection.AddScoped<IKSqlDbProvider, TProvider>();
     }
+
+    private ServiceProvider ServiceProvider { get; set; }
 
     private bool wasConfigured;
 
@@ -75,18 +79,27 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
         wasConfigured = true;
 
         RegisterDependencies();
+
+        ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
       }
 
       if (streamName == String.Empty)
         streamName = null;
+      
+      var serviceScope = ServiceProvider.CreateScope();
 
-      var serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
-
-      var dependencies = serviceProvider.GetService<IKStreamSetDependencies>();
+      var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
       
       dependencies.QueryContext.StreamName = streamName;
+      // serviceScope.Dispose(); //TODO
 
       return new KQueryStreamSet<TEntity>(dependencies);
+    }
+
+    protected override async ValueTask OnDisposeAsync()
+    {
+      if(ServiceProvider != null)
+        await ServiceProvider.DisposeAsync();
     }
   }
 }
