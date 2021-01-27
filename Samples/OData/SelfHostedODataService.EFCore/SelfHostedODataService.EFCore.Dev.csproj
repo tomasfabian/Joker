@@ -18,12 +18,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\SelfHostedODataService\HostedServices\ProductChangesHostedService.cs" Link="HostedServices\ProductChangesHostedService.cs" />
+    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\DataChangesHub.cs" Link="SignalR\Hubs\DataChangesHub.cs" />
+    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\IDataChangesHub.cs" Link="SignalR\Hubs\IDataChangesHub.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
   <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
@@ -45,4 +52,5 @@
     <ProjectReference Include="..\..\Sample.DataCore\Sample.DataCore.Dev.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
   </ItemGroup>
+
 </Project>
