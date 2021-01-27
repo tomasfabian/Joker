@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using UnitTests;
@@ -78,37 +74,31 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       context.KSqldbProviderMock.Verify(c => c.Run<string>(It.Is<QueryStreamParameters>(parameters => parameters["auto.offset.reset"] == "latest"), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    private class TestableDbProvider<TValue> : KSqlDBContext
+    [TestMethod]
+    public async Task DisposeAsync_ServiceProviderIsNull_ContextWasDisposed()
     {
-      public TestableDbProvider(string ksqlDbUrl) : base(ksqlDbUrl)
-      {
-        InitMocks();
-      }
+      //Arrange
+      var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
 
-      public TestableDbProvider(KSqlDBContextOptions contextOptions) : base(contextOptions)
-      {
-        InitMocks();
-      }
+      //Act
+      await context.DisposeAsync().ConfigureAwait(false);
 
-      private void InitMocks()
-      {
-        KSqldbProviderMock.Setup(c => c.Run<TValue>(It.IsAny<object>(), It.IsAny<CancellationToken>()))
-          .Returns(GetEmptyAsyncEnumerable);
-      }
+      //Assert
+      context.IsDisposed.Should().BeTrue();
+    }
 
-      private static IAsyncEnumerable<TValue> GetEmptyAsyncEnumerable()
-      {
-        return new List<TValue>().ToAsyncEnumerable();
-      }
+    [TestMethod]
+    public async Task DisposeAsync_ServiceProviderWasBuilt_ContextWasDisposed()
+    {
+      //Arrange
+      var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
+      context.CreateStreamSet<string>();
 
-      public readonly Mock<IKSqlDbProvider> KSqldbProviderMock = new Mock<IKSqlDbProvider>();
-      public readonly Mock<IKSqlQueryGenerator> KSqlQueryGenerator = new Mock<IKSqlQueryGenerator>();
+      //Act
+      await context.DisposeAsync().ConfigureAwait(false);
 
-      protected override void OnConfigureServices(IServiceCollection serviceCollection)
-      {
-        serviceCollection.AddSingleton(KSqldbProviderMock.Object);
-        serviceCollection.AddSingleton(KSqlQueryGenerator.Object);
-      }
+      //Assert
+      context.IsDisposed.Should().BeTrue();
     }
   }
 }
