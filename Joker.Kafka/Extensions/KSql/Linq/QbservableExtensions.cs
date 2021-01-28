@@ -144,7 +144,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
       var streamSet = source as KStreamSet<TSource>;
       
-      return streamSet?.RunStreamAsAsyncEnumerable();
+      var cancellationTokenSource = new CancellationTokenSource();
+
+      return streamSet?.RunStreamAsAsyncEnumerable(cancellationTokenSource).Finally(() => cancellationTokenSource.Cancel());
     }
 
     #endregion
