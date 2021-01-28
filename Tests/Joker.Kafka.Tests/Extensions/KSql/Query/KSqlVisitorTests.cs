@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -382,7 +382,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       public void LambdaWithNewCount_BuildKSql_PrintsKeyAndCountAsterix()
       {
         //Arrange
-        Expression<Func<IGrouping<int, Location>, object>> expression = l => new { Key = l.Key, Agg = l.Count() };
+        Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => new { Key = l.Key, Agg = l.Count() };
 
         //Act
         var query = ClassUnderTest.BuildKSql(expression);
@@ -395,7 +395,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       public void LambdaWithNewSum_BuildKSql_PrintsKeyAndSumColumnName()
       {
         //Arrange
-        Expression<Func<IGrouping<int, Location>, object>> expression = l => new { l.Key, Agg = l.Sum(x => x.Longitude) };
+        Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => new { l.Key, Agg = l.Sum(x => x.Longitude) };
 
         //Act
         var query = ClassUnderTest.BuildKSql(expression);

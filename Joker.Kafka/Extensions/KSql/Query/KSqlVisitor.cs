@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
@@ -80,23 +81,22 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
     {      
       var methodInfo = methodCallExpression.Method;
 
-      if (methodCallExpression.Object == null
-          && methodInfo.DeclaringType == typeof(Enumerable)
-          && methodCallExpression.Arguments.Count > 0)
+      if (methodCallExpression.Object != null
+          && (methodInfo.DeclaringType.Name == typeof(IAggregations<>).Name || methodInfo.DeclaringType.Name == nameof(IAggregations)))
       {
         switch (methodInfo.Name)
         {
-          case nameof(Enumerable.Sum):
-            if (methodCallExpression.Arguments.Count == 2)
+          case nameof(IAggregations<object>.Sum):
+            if (methodCallExpression.Arguments.Count == 1)
             {
               Append("SUM(");
-              Visit(methodCallExpression.Arguments[1]);
+              Visit(methodCallExpression.Arguments[0]);
               Append(")");
             }
 
             break;
-          case nameof(Enumerable.Count):
-            if (methodCallExpression.Arguments.Count == 1)
+          case nameof(IAggregations.Count):
+            if (methodCallExpression.Arguments.Count == 0)
             {
               Append("COUNT(*)");
             }

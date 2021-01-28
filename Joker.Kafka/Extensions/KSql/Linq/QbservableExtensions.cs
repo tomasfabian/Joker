@@ -222,15 +222,15 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     private static MethodInfo GroupByTSourceTKey(Type TSource, Type TKey) =>
       (groupByTSourceTKey ??
-       (groupByTSourceTKey = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
+       (groupByTSourceTKey = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IKSqlGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource, TKey);
 
-    public static IQbservable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IQbservable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+    public static IQbservable<IKSqlGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IQbservable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
     {
       if (source == null) throw new ArgumentNullException(nameof(source));
       if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
 
-      return source.Provider.CreateQuery<IGrouping<TKey, TSource>>(
+      return source.Provider.CreateQuery<IKSqlGrouping<TKey, TSource>>(
         Expression.Call(
           null,
           GroupByTSourceTKey(typeof(TSource), typeof(TKey)),
