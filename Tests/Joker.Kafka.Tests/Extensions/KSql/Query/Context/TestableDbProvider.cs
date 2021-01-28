@@ -9,7 +9,7 @@ using Moq;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
 {
-  class TestableDbProvider<TValue> : KSqlDBContext
+  public class TestableDbProvider<TValue> : KSqlDBContext
   {
     public TestableDbProvider(string ksqlDbUrl) : base(ksqlDbUrl)
     {

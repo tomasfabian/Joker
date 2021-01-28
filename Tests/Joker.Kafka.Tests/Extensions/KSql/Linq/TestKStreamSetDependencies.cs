@@ -29,7 +29,9 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       serviceCollection.AddSingleton<IKStreamSetDependencies>(this);
       
       var serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
-      Provider = new QbservableProvider(serviceProvider);
+      var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+
+      Provider = new QbservableProvider(serviceScopeFactory);
     }
 
     public IKSqlQbservableProvider Provider { get; }

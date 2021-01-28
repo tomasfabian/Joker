@@ -5,28 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.Tests.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using UnitTests;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 {
-  public class City
-  {
-    public string RegionCode { get; set; }
-    public long Citizens { get; set; }
-  }
-
   [TestClass]
   public class QbservableGroupByExtensionsTests : TestBase
   {
-    private CitiesStreamSet CreateQbservable()
+    private IQbservable<City> CreateQbservable()
     {
-      var dependencies = new TestKStreamSetDependencies();
+      var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
+      
+      context.KSqldbProviderMock.Setup(c => c.Run<int>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetTestValues);
+      context.KSqldbProviderMock.Setup(c => c.Run<long>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetDecimalTestValues);
 
-      dependencies.KSqldbProviderMock.Setup(c => c.Run<int>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetTestValues);
-      dependencies.KSqldbProviderMock.Setup(c => c.Run<long>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetDecimalTestValues);
-
-      return new CitiesStreamSet(dependencies);
+      return context.CreateStreamSet<City>();
     }
 
     [TestMethod]
@@ -162,25 +160,39 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       yield return 3;
       
       await Task.CompletedTask;
-    }
-  }
+    }  
 
-  internal class CitiesStreamSet : TestableKStreamSet<City>
-  {
-    public CitiesStreamSet(TestKStreamSetDependencies dependencies)
-      : base(dependencies)
-    {
-    }
-
-    protected override async IAsyncEnumerable<City> GetTestValues()
+    protected async IAsyncEnumerable<City> GetCities()
     {
       yield return new City { RegionCode = "A1" };
 
-      yield return new City { RegionCode = "B@" };
+      yield return new City { RegionCode = "B1" };
 
       yield return new City { RegionCode = "A1" };
       
       await Task.CompletedTask;
+    }
+
+    public class City
+    {
+      public string RegionCode { get; set; }
+      public long Citizens { get; set; }
+    }
+  }
+
+  class TestableDbProvider : TestableDbProvider<QbservableGroupByExtensionsTests.City>
+  {
+    public TestableDbProvider(string ksqlDbUrl) : base(ksqlDbUrl)
+    {
+    }
+
+    public TestableDbProvider(KSqlDBContextOptions contextOptions) : base(contextOptions)
+    {
+    }
+
+    protected override void OnConfigureServices(IServiceCollection serviceCollection)
+    {
+      serviceCollection.AddSingleton(KSqldbProviderMock.Object);
     }
   }
 }
