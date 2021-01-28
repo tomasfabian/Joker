@@ -6,27 +6,39 @@ using System.Linq;
 using System.Reactive.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   public abstract class KStreamSet<TEntity> : IQbservable<TEntity>
   {
     private readonly IKStreamSetDependencies dependencies;
+    private readonly IServiceScope serviceScope;
 
-    protected KStreamSet(IKStreamSetDependencies dependencies)
+    protected KStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
     {
-      this.dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
+      QueryContext = queryContext;
 
-      Provider = dependencies.Provider;
+      serviceScope = serviceScopeFactory.CreateScope();
+      
+      dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+
+      Provider = new QbservableProvider(serviceScopeFactory, queryContext);
+      
       Expression = Expression.Constant(this);
     }
 
-    protected KStreamSet(IKStreamSetDependencies dependencies, Expression expression)
+    protected KStreamSet(IServiceScopeFactory serviceScopeFactory, Expression expression, QueryContext queryContext = null)
     {
-      this.dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
+      QueryContext = queryContext;
 
-      Provider = dependencies.Provider;
-      Expression = expression;
+      serviceScope = serviceScopeFactory.CreateScope();
+      
+      dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+
+      Provider = new QbservableProvider(serviceScopeFactory, queryContext);
+
+      Expression = expression ?? throw new ArgumentNullException(nameof(expression));
     }
 
     public Expression Expression { get; }
@@ -37,7 +49,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     internal IKSqlQueryGenerator KSqlQueryGenerator => dependencies.KSqlQueryGenerator;
 
-    internal QueryContext QueryContext => dependencies.QueryContext;
+    internal QueryContext QueryContext { get; }
+
+    internal IServiceScope ServiceScope => serviceScope;
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
     {
@@ -49,18 +63,19 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       var compositeDisposable = new CompositeDisposable
       {
         Disposable.Create(() => cancellationTokenSource.Cancel()), 
-        querySubscription, 
-        cancellationTokenSource
+        querySubscription
       };
 
       return compositeDisposable;
     }
 
-    internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationTokenSource cancellationTokenSource = default)
+    internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationTokenSource cancellationTokenSource)
     {
-      var cancellationToken = cancellationTokenSource?.Token ?? CancellationToken.None;
+      var cancellationToken = cancellationTokenSource.Token;
 
-      var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, dependencies.QueryContext);
+      cancellationToken.Register(() => serviceScope.Dispose());
+
+      var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, QueryContext);
 
       var ksqlDBProvider = dependencies.KsqlDBProvider;
 
@@ -70,7 +85,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       return ksqlDBProvider.Run<TEntity>(queryParameters, cancellationToken);
     }
 
-    internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource = default)
+    internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource)
     {
       var observableStream = RunStreamAsAsyncEnumerable(cancellationTokenSource)
         .ToObservable();

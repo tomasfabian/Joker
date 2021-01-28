@@ -74,7 +74,22 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 
     public IQbservable<TEntity> CreateStreamSet<TEntity>(string streamName = null)
     {
-      if(!wasConfigured)
+      var serviceScopeFactory = Initialize();
+
+      if (streamName == String.Empty)
+        streamName = null;
+
+      var queryStreamContext = new QueryContext
+      {
+        StreamName = streamName
+      };
+
+      return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
+    }
+
+    internal IServiceScopeFactory Initialize()
+    {
+      if (!wasConfigured)
       {
         wasConfigured = true;
 
@@ -83,17 +98,9 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
         ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
       }
 
-      if (streamName == String.Empty)
-        streamName = null;
-      
-      var serviceScope = ServiceProvider.CreateScope();
+      var serviceScopeFactory = ServiceProvider.GetService<IServiceScopeFactory>();
 
-      var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
-      
-      dependencies.QueryContext.StreamName = streamName;
-      // serviceScope.Dispose(); //TODO
-
-      return new KQueryStreamSet<TEntity>(dependencies);
+      return serviceScopeFactory;
     }
 
     protected override async ValueTask OnDisposeAsync()

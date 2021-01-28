@@ -2,23 +2,23 @@
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
   internal class KQueryQbservableProvider : IKSqlQbservableProvider
   {
-    private readonly IServiceProvider serviceProvider;
+    private readonly IServiceScopeFactory serviceScopeFactory;
+    private readonly QueryContext queryContext;
 
-    public KQueryQbservableProvider(IServiceProvider serviceProvider)
+    public KQueryQbservableProvider(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
     {
-      this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+      this.queryContext = queryContext;
     }
-
     IQbservable<TResult> IQbservableProvider.CreateQuery<TResult>(Expression expression)
-    {      
-      var dependencies = serviceProvider.GetService<IKStreamSetDependencies>();
-
-      return new KQuerySet<TResult>(dependencies, expression);
+    {
+      return new KQuerySet<TResult>(serviceScopeFactory, queryContext, expression);
     }
   }
 }
