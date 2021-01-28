@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows;
 using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
@@ -52,6 +53,14 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
           kSqlVisitor.Append(" AND ");
 
         kSqlVisitor.Visit(methodCallExpression);
+      }
+
+      if (windowedBy != null)
+      {
+        kSqlVisitor.Append($" WINDOW TUMBLING (SIZE {windowedBy.Duration.Value} {windowedBy.Duration.TimeUnit}");
+        if(windowedBy.GracePeriod != null)
+          kSqlVisitor.Append($", GRACE PERIOD {windowedBy.GracePeriod.Value} {windowedBy.GracePeriod.TimeUnit}");
+        kSqlVisitor.Append(")");
       }
 
       if (groupBy != null)
@@ -149,6 +158,15 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
       } 
 
       if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
+          methodInfo.Name == nameof(QbservableExtensions.WindowedBy))
+      {
+        var arg = (ConstantExpression)StripQuotes(methodCallExpression.Arguments[1]);        
+        windowedBy = (TimeWindows)arg.Value;
+
+        VisitChained(methodCallExpression);
+      } 
+
+      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
           methodInfo.Name == nameof(QbservableExtensions.GroupBy))
       {
         groupBy = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
@@ -169,6 +187,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 
     private Queue<Expression> whereClauses;
     private LambdaExpression select;
+    private TimeWindows windowedBy;
     private LambdaExpression groupBy;
 
     protected static Expression StripQuotes(Expression expression) {

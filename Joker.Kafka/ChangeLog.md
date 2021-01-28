@@ -2,9 +2,10 @@
 ### ExtensionsMethods:
 - AsAsyncEnumerable
 - Sum Aggregation 
-- Windows TODO
+- Tumbling window, 
 
 - KSqlDBContext async disposition AsyncDisposableObject
+- IKSqlGrouping
 
 # v0.1.0-preview3
 

@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 {
@@ -236,6 +237,28 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
           GroupByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Quote(keySelector))
         );
+    }
+
+    #endregion
+
+    #region WindowedBy
+
+    private static MethodInfo? windowedByTSource;
+
+    private static MethodInfo WindowedByTSource(Type TSource) =>
+      (windowedByTSource ??
+       (windowedByTSource = new Func<IQbservable<object>, TimeWindows, IQbservable<object>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition()))
+      .MakeGenericMethod(TSource);
+
+    public static IQbservable<TSource> WindowedBy<TSource>(this IQbservable<TSource> source, TimeWindows timeWindows)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+      if (timeWindows == null) throw new ArgumentNullException(nameof(timeWindows));
+
+      return source.Provider.CreateQuery<TSource>(
+        Expression.Call(null, 
+          WindowedByTSource(typeof(TSource)),
+          source.Expression, Expression.Constant(timeWindows)));
     }
 
     #endregion
