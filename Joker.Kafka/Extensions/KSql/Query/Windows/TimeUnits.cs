@@ -4,6 +4,7 @@
   {
     SECONDS,
     MINUTES,
-    HOURS
+    HOURS,
+    DAYS
   }
 }

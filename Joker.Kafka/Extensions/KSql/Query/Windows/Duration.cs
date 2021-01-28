@@ -31,5 +31,14 @@
         Value = hours
       };
     }
+
+    public static Duration OfDays(int days)
+    {
+      return new()
+      {
+        TimeUnit = TimeUnits.HOURS,
+        Value = days
+      };
+    }
   }
 }
