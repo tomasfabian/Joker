@@ -6,7 +6,7 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0-alpha3
+Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
 ```
 ```C#
 var context = new KSqlDBContext(@"http:\\localhost:8088");
