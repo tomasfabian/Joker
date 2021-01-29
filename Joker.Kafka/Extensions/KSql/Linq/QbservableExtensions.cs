@@ -243,21 +243,21 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
 
     #region WindowedBy
 
-    private static MethodInfo? windowedByTSource;
+    private static MethodInfo? windowedByTSourceTKey;
 
-    private static MethodInfo WindowedByTSource(Type TSource) =>
-      (windowedByTSource ??
-       (windowedByTSource = new Func<IQbservable<object>, TimeWindows, IQbservable<object>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition()))
-      .MakeGenericMethod(TSource);
+    private static MethodInfo WindowedByTSourceTKey(Type TSource, Type TKey)  =>
+      (windowedByTSourceTKey ??
+       (windowedByTSourceTKey = new Func<IQbservable<IKSqlGrouping<object, object>>, TimeWindows, IQbservable<IWindowedKSql<object, object>>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition()))
+      .MakeGenericMethod(TSource, TKey);
 
-    public static IQbservable<TSource> WindowedBy<TSource>(this IQbservable<TSource> source, TimeWindows timeWindows)
+    public static IQbservable<IWindowedKSql<TKey, TSource>> WindowedBy<TSource, TKey>(this IQbservable<IKSqlGrouping<TKey, TSource>> source, TimeWindows timeWindows)
     {
       if (source == null) throw new ArgumentNullException(nameof(source));
       if (timeWindows == null) throw new ArgumentNullException(nameof(timeWindows));
 
-      return source.Provider.CreateQuery<TSource>(
+      return source.Provider.CreateQuery<IWindowedKSql<TKey, TSource>>(
         Expression.Call(null, 
-          WindowedByTSource(typeof(TSource)),
+          WindowedByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Constant(timeWindows)));
     }
 
