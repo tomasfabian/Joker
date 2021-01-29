@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query

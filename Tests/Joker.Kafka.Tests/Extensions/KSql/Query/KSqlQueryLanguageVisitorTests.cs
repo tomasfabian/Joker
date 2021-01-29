@@ -35,7 +35,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       
       var context = new TestableDbProvider(contextOptions);
       
-      return context.CreateStreamSet<Location>();
+      return context.CreateQueryStream<Location>();
     }
 
     #region Select

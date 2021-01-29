@@ -117,7 +117,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
       context.KSqldbProviderMock.Setup(c => c.Run<string>(It.IsAny<object>(), It.IsAny<CancellationToken>()))
         .Returns(GetTestValues);
-      var query = context.CreateStreamSet<string>();
+      var query = context.CreateQueryStream<string>();
 
       //Act
       var asyncEnumerable = query.ToAsyncEnumerable();
@@ -151,7 +151,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
       
-      var query = context.CreateStreamSet<string>();
+      var query = context.CreateQueryStream<string>();
 
       //Act
       var observable = query.ToObservable();
@@ -173,7 +173,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
         .Callback<object, CancellationToken>((par, ct) => { cancellationToken = ct; })
         .Returns(GetTestValues);
 
-      var query = context.CreateStreamSet<string>();
+      var query = context.CreateQueryStream<string>();
 
       //Act
       query.ToObservable().Subscribe().Dispose();
@@ -213,7 +213,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     {
       var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
       
-      return context.CreateStreamSet<Location>();
+      return context.CreateQueryStream<Location>();
     }
 
     private IQbservable<string> CreateTestableKStreamSet()
@@ -223,7 +223,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       context.KSqldbProviderMock.Setup(c => c.Run<string>(It.IsAny<object>(), It.IsAny<CancellationToken>()))
         .Returns(GetTestValues);
       
-      return context.CreateStreamSet<string>();
+      return context.CreateQueryStream<string>();
     }
   }
 }

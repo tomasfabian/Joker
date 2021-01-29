@@ -22,7 +22,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
 
       //Act
-      var streamSet = context.CreateStreamSet<string>().Subscribe(_ => {});
+      var streamSet = context.CreateQueryStream<string>().Subscribe(_ => {});
 
       //Assert
       streamSet.Should().NotBeNull();
@@ -39,7 +39,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       var context = new TestableDbProvider<string>(contextOptions);
 
       //Act
-      var subscription = context.CreateStreamSet<string>().Subscribe(_ => {});
+      var subscription = context.CreateQueryStream<string>().Subscribe(_ => {});
 
       //Assert
       context.KSqldbProviderMock.Verify(c => c.Run<string>(It.Is<QueryStreamParameters>(c => c["auto.offset.reset"] == "latest"), It.IsAny<CancellationToken>()), Times.Once);
@@ -52,7 +52,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
 
       //Act
-      var subscription = context.CreateStreamSet<string>().Subscribe(_ => {});
+      var subscription = context.CreateQueryStream<string>().Subscribe(_ => {});
 
       //Assert
       context.KSqlQueryGenerator.Verify(c => c.BuildKSql(It.IsAny<Expression>(), It.IsAny<QueryContext>()), Times.Once);
@@ -68,7 +68,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       var context = new TestableDbProvider<string>(contextOptions);
 
       //Act
-      var subscription = context.CreateStreamSet<string>().Subscribe(_ => {}, e => {});
+      var subscription = context.CreateQueryStream<string>().Subscribe(_ => {}, e => {});
 
       //Assert
       context.KSqldbProviderMock.Verify(c => c.Run<string>(It.Is<QueryStreamParameters>(parameters => parameters["auto.offset.reset"] == "latest"), It.IsAny<CancellationToken>()), Times.Once);
@@ -92,7 +92,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
     {
       //Arrange
       var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
-      context.CreateStreamSet<string>();
+      context.CreateQueryStream<string>();
 
       //Act
       await context.DisposeAsync().ConfigureAwait(false);

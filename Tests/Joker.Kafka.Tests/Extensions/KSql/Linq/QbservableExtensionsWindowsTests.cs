@@ -25,7 +25,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -43,7 +43,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)))
         .Select(g => new { g.WindowStart, g.WindowEnd, CardNumber = g.Key, Count = g.Count() });
@@ -61,7 +61,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new HoppingWindows(Duration.OfMinutes(5)).WithAdvanceBy(Duration.OfMinutes(4)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -79,7 +79,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithRetention(Duration.OfDays(7)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -98,7 +98,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithAdvanceBy(Duration.OfSeconds(7)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -114,7 +114,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new TimeWindows(Duration.OfSeconds(5)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -132,7 +132,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping = context.CreateStreamSet<Transaction>()
+      var grouping = context.CreateQueryStream<Transaction>()
         .GroupBy(c => c.CardNumber)
         .WindowedBy(new TimeWindows(Duration.OfSeconds(5)).WithGracePeriod(Duration.OfHours(2)))
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
@@ -150,11 +150,11 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Arrange
       var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
 
-      var grouping1 = context.CreateStreamSet<Transaction>("authorization_attempts_1")
+      var grouping1 = context.CreateQueryStream<Transaction>("authorization_attempts_1")
         .GroupBy(c => c.CardNumber)
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
 
-      var grouping2 = context.CreateStreamSet<Transaction>("authorization_attempts_2")
+      var grouping2 = context.CreateQueryStream<Transaction>("authorization_attempts_2")
         .GroupBy(c => c.CardNumber)
         .Select(g => new { CardNumber = g.Key, Count = g.Count() });
 

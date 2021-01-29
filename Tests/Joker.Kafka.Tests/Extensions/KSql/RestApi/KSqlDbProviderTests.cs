@@ -42,7 +42,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_ReturnsTweets()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = ClassUnderTest.Run<Tweet>(queryParameters);
@@ -62,7 +62,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_StringFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -77,7 +77,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_BooleanFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -92,7 +92,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_DoubleFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -107,7 +107,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_DecimalFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -122,7 +122,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_BigintRowTimeFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -137,7 +137,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_HttpStatusCodeOK_IntegerFieldWasParsed()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = await ClassUnderTest.Run<Tweet>(queryParameters).ToListAsync();
@@ -155,7 +155,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       //Arrange
       ClassUnderTest.ShouldThrowException = true;
 
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var tweets = ClassUnderTest.Run<Tweet>(queryParameters);
@@ -171,7 +171,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     public async Task Run_Disposed_NothingWasReceived()
     {
       //Arrange
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
       var cts = new CancellationTokenSource();
 
       //Act
@@ -199,7 +199,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
     {
       //Arrange
       var provider = MockingKernel.Get<AggregationsKsqlDbQueryStreamProvider>();
-      var queryParameters = new KsqlQueryParameters();
+      var queryParameters = new QueryStreamParameters();
 
       //Act
       var counts = provider.Run<int>(queryParameters);     

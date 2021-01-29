@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -36,7 +37,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 
       serviceCollection.TryAddTransient<IKSqlQueryGenerator, KSqlQueryGenerator>();
 
-      if (!HasRegistration<IHttpClientFactory>())
+      if (!serviceCollection.HasRegistration<IHttpClientFactory>())
         serviceCollection.AddSingleton<IHttpClientFactory, HttpClientFactory>(_ =>
           new HttpClientFactory(uri));
       
@@ -49,11 +50,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
     protected virtual void OnConfigureServices(IServiceCollection serviceCollection)
     {
 
-    }
-
-    private bool HasRegistration<TType>()
-    {
-      return serviceCollection.Any(x => x.ServiceType == typeof(TType));
     }
 
     private void RegisterHttpClientFactory<TFactory>()
@@ -72,7 +68,7 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 
     private bool wasConfigured;
 
-    public IQbservable<TEntity> CreateStreamSet<TEntity>(string streamName = null)
+    public IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null)
     {
       var serviceScopeFactory = Initialize();
 

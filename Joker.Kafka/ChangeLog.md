@@ -1,4 +1,4 @@
-# v0.1.0-preview4
+# v0.1.0
 ### ExtensionsMethods:
 - AsAsyncEnumerable
 - Sum Aggregation 
@@ -6,6 +6,8 @@
 
 - KSqlDBContext async disposition AsyncDisposableObject
 - IKSqlGrouping
+
+- Queries UCASE and LCASE
 
 # v0.1.0-preview3
 

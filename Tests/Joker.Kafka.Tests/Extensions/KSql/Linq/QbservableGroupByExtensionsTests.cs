@@ -24,7 +24,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       context.KSqldbProviderMock.Setup(c => c.Run<int>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetTestValues);
       context.KSqldbProviderMock.Setup(c => c.Run<long>(It.IsAny<object>(), It.IsAny<CancellationToken>())).Returns(GetDecimalTestValues);
 
-      return context.CreateStreamSet<City>();
+      return context.CreateQueryStream<City>();
     }
 
     [TestMethod]

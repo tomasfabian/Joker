@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
-namespace Kafka.DotNet.ksqlDB.Extensions
+namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
 {
   internal static class TypeExtensions
   {

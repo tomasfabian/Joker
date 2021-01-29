@@ -5,6 +5,6 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
 {
   public interface IKSqlDBContext : IAsyncDisposable
   {
-    IQbservable<TEntity> CreateStreamSet<TEntity>(string streamName = null);
+    IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null);
   }
 }
