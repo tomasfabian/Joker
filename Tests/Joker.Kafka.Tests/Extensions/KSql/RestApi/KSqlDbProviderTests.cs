@@ -14,7 +14,7 @@ using UnitTests;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {
   [TestClass]
-  internal class KSqlDbProviderTests: TestBase<TestableKSqlDbQueryStreamProvider>
+  public class KSqlDbProviderTests: TestBase
   {  
     public class Tweet : Record
     {
@@ -29,6 +29,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 
       public decimal AccountBalance { get; set; }
     }
+
+    private TestableKSqlDbQueryStreamProvider ClassUnderTest { get; set; }
 
     [TestInitialize]
     public override void TestInitialize()

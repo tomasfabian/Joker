@@ -11,8 +11,10 @@ using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  internal class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator>
+  public class KSqlQueryLanguageVisitorTests : TestBase
   {
+    private KSqlQueryGenerator ClassUnderTest { get; set; }
+
     string streamName = nameof(Location) + "s";
 
     private KSqlDBContextOptions contextOptions;
