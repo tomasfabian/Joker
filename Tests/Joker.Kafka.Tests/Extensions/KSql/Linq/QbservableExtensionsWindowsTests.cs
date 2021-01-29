@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,95 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   [TestClass]
   public class QbservableExtensionsWindowsTests : TestBase
   {
+    [TestMethod]
+    public void GroupByAndCount_BuildKSql_PrintsQueryWithHoppingWindow()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateStreamSet<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)))
+        .Select(g => new { CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM Transactions WINDOW HOPPING (SIZE 5 SECONDS, ADVANCE BY 5 SECONDS) GROUP BY CardNumber EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void WindowStartAndEnd_BuildKSql_PrintsQueryWithHoppingWindow()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateStreamSet<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)))
+        .Select(g => new { g.WindowStart, g.WindowEnd, CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT WindowStart, WindowEnd, CardNumber, COUNT(*) Count FROM Transactions WINDOW HOPPING (SIZE 5 SECONDS, ADVANCE BY 5 SECONDS) GROUP BY CardNumber EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void GroupByAndCount_BuildKSql_PrintsQueryWithHoppingWindowAdvanceBy()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateStreamSet<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new HoppingWindows(Duration.OfMinutes(5)).WithAdvanceBy(Duration.OfMinutes(4)))
+        .Select(g => new { CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM Transactions WINDOW HOPPING (SIZE 5 MINUTES, ADVANCE BY 4 MINUTES) GROUP BY CardNumber EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void GroupByAndCount_BuildKSql_PrintsQueryWithHoppingWindowRetention()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateStreamSet<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithRetention(Duration.OfDays(7)))
+        .Select(g => new { CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM Transactions WINDOW HOPPING (SIZE 5 SECONDS, ADVANCE BY 5 SECONDS, RETENTION 7 DAYS) GROUP BY CardNumber EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void AdvanceByIsBiggerThenWindowSize_BuildKSql_Throws()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateStreamSet<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithAdvanceBy(Duration.OfSeconds(7)))
+        .Select(g => new { CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+
+      //Assert
+    }
+
     [TestMethod]
     public void GroupByAndCount_BuildKSql_PrintsQueryWithTumblingWindow()
     {

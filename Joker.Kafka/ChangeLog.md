@@ -2,7 +2,7 @@
 ### ExtensionsMethods:
 - AsAsyncEnumerable
 - Sum Aggregation 
-- Tumbling window, 
+- Tumbling window, Hopping window
 
 - KSqlDBContext async disposition AsyncDisposableObject
 - IKSqlGrouping

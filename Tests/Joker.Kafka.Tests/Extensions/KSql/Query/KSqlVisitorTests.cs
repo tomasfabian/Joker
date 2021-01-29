@@ -405,5 +405,36 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       }
 
       #endregion
+
+      #region String
+
+      [TestMethod]
+      public void ToUpper_BuildKSql_PrintsUCase()
+      {
+        //Arrange
+        Expression<Func<Location, string>> expression = l => l.Latitude.ToUpper();
+        //Expression<Func<Location, string>> expression = l => l.Latitude.ToUpper() != "hi";
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("UCASE(Latitude)");
+      }
+      
+      [TestMethod]
+      public void ToLower_BuildKSql_PrintsLCase()
+      {
+        //Arrange
+        Expression<Func<Location, string>> expression = l => l.Latitude.ToLower();
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("LCASE(Latitude)");
+      }
+
+      #endregion
   }
 }

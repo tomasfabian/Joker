@@ -105,6 +105,22 @@ namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
         }
       }
 
+      if (methodCallExpression.Type == typeof(string))
+      {
+        if (methodInfo.Name == nameof(string.ToUpper))
+        {
+          Append("UCASE(");
+          Visit(methodCallExpression.Object);
+          Append(")");
+        }
+        if (methodInfo.Name == nameof(string.ToLower))
+        {
+          Append("LCASE(");
+          Visit(methodCallExpression.Object);
+          Append(")");
+        }
+      }
+
       return methodCallExpression;
     }
 
