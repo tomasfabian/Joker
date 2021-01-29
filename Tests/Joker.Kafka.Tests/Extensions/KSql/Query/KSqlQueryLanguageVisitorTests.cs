@@ -3,7 +3,6 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
@@ -12,7 +11,7 @@ using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator>
+  internal class KSqlQueryLanguageVisitorTests : TestBase<KSqlQueryGenerator>
   {
     string streamName = nameof(Location) + "s";
 

@@ -12,7 +12,7 @@ using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
   [TestClass]
-  public class KSqlVisitorTests : TestBase<KSqlVisitor>
+  internal class KSqlVisitorTests : TestBase<KSqlVisitor>
   {
       [TestInitialize]
       public override void TestInitialize()
@@ -413,13 +413,25 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       {
         //Arrange
         Expression<Func<Location, string>> expression = l => l.Latitude.ToUpper();
-        //Expression<Func<Location, string>> expression = l => l.Latitude.ToUpper() != "hi";
 
         //Act
         var query = ClassUnderTest.BuildKSql(expression);
 
         //Assert
         query.Should().BeEquivalentTo("UCASE(Latitude)");
+      }
+
+      [TestMethod]
+      public void ToUpperInCondition_BuildKSql_PrintsUCase()
+      {
+        //Arrange
+        Expression<Func<Location, bool>> expression = l => l.Latitude.ToUpper() != "hi";
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("UCASE(Latitude) != 'hi'");
       }
       
       [TestMethod]
@@ -433,6 +445,32 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
         //Assert
         query.Should().BeEquivalentTo("LCASE(Latitude)");
+      }
+      
+      [TestMethod]
+      public void ToLowerInCondition_BuildKSql_PrintsLCase()
+      {
+        //Arrange
+        Expression<Func<Location, bool>> expression = l => l.Latitude.ToLower() != "hi";
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("LCASE(Latitude) != 'hi'");
+      }
+      
+      [TestMethod]
+      public void ConstantToLowerInCondition_BuildKSql_PrintsLCase()
+      {
+        //Arrange
+        Expression<Func<Location, bool>> expression = l => l.Latitude.ToLower() != "HI".ToLower();
+
+        //Act
+        var query = ClassUnderTest.BuildKSql(expression);
+
+        //Assert
+        query.Should().BeEquivalentTo("LCASE(Latitude) != LCASE('HI')");
       }
 
       #endregion

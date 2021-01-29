@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {    
-  public abstract class KSqlDbProvider : IKSqlDbProvider
+  internal abstract class KSqlDbProvider : IKSqlDbProvider
   {
     private readonly IHttpClientFactory httpClientFactory;
 

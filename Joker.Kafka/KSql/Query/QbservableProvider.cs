@@ -6,7 +6,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class QbservableProvider : IKSqlQbservableProvider
+  internal class QbservableProvider : IKSqlQbservableProvider
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
     private readonly QueryContext queryContext;

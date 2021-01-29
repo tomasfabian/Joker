@@ -65,14 +65,14 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM Locations EMIT CHANGES LIMIT {limit};");
     }
 
-    public class TweetsKQueryStreamSet : KQueryStreamSet<KSqlDbProviderTests.Tweet>
+    internal class TweetsKQueryStreamSet : KQueryStreamSet<KSqlDbProviderTests.Tweet>
     {
       public TweetsKQueryStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext) : base(serviceScopeFactory, queryContext)
       {
       }
     }
 
-    public class TestableDbProviderExt : TestableDbProvider<KSqlDbProviderTests.Tweet>
+    internal class TestableDbProviderExt : TestableDbProvider<KSqlDbProviderTests.Tweet>
     {
       public TestableDbProviderExt(string ksqlDbUrl) : base(ksqlDbUrl)
       {
@@ -224,6 +224,20 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
         .Returns(GetTestValues);
       
       return context.CreateQueryStream<string>();
+    }
+    
+    [TestMethod]
+    public void SelectPredicate_BuildKSql_PrintsPredicate()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => c.Latitude.ToLower() != "HI".ToLower());
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT LCASE({nameof(Location.Latitude)}) != LCASE('HI') FROM Locations EMIT CHANGES;");
     }
   }
 }

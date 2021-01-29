@@ -5,7 +5,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KStreamSetDependencies : IKStreamSetDependencies
+  internal class KStreamSetDependencies : IKStreamSetDependencies
   {
     public KStreamSetDependencies(IKSqlQbservableProvider provider, IKSqlDbProvider ksqlDBProvider, IKSqlQueryGenerator queryGenerator, QueryStreamParameters queryStreamParameters)
     {

@@ -9,7 +9,7 @@ using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KSqlQueryGenerator : ExpressionVisitor, IKSqlQueryGenerator
+  internal class KSqlQueryGenerator : ExpressionVisitor, IKSqlQueryGenerator
   {
     private readonly KSqlDBContextOptions options;
     private static readonly IPluralize EnglishPluralizationService = new Pluralizer();

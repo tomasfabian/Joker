@@ -14,7 +14,7 @@ using UnitTests;
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {
   [TestClass]
-  public class KSqlDbProviderTests: TestBase<TestableKSqlDbQueryStreamProvider>
+  internal class KSqlDbProviderTests: TestBase<TestableKSqlDbQueryStreamProvider>
   {  
     public class Tweet : Record
     {

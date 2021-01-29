@@ -8,7 +8,7 @@ using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KSqlVisitor : ExpressionVisitor
+  internal class KSqlVisitor : ExpressionVisitor
   {
     private readonly StringBuilder stringBuilder = new();
 

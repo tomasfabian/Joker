@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
 {
-  public class KQueryStreamSet<TEntity> : KStreamSet<TEntity>
+  internal class KQueryStreamSet<TEntity> : KStreamSet<TEntity>
   {
     public KQueryStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext) 
       : base(serviceScopeFactory, queryContext)

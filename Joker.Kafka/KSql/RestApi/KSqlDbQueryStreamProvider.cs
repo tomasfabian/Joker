@@ -9,7 +9,7 @@ using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses;
 
 namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
 {
-  public class KSqlDbQueryStreamProvider : KSqlDbProvider
+  internal class KSqlDbQueryStreamProvider : KSqlDbProvider
   {
     private readonly IHttpClientFactory httpClientFactory;
 
