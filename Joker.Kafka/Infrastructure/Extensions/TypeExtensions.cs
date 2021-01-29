@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Kafka.DotNet.ksqlDB.KSql.Query;
 
 namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
 {

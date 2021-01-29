@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;

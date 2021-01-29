@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Moq;
 using Moq.Protected;
