@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
+namespace Kafka.DotNet.ksqlDB.KSql.Linq
 {
   public interface IQbservableProvider
   {

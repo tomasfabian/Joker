@@ -1,7 +1,7 @@
 ﻿using System;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
+namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
   public interface IKSqlDBContext : IAsyncDisposable
   {

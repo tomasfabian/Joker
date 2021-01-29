@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 

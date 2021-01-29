@@ -1,4 +1,4 @@
-﻿namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
+﻿namespace Kafka.DotNet.ksqlDB.KSql.Linq
 {
   public interface IWindowedKSql<out TKey, out TElement> : IKSqlGrouping<TKey, TElement> 
   {

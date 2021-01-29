@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;

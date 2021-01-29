@@ -1,4 +1,4 @@
-﻿namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
+﻿namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
   public class QueryContext
   {

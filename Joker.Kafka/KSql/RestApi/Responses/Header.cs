@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses
+namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Responses
 {
   public class Header
   {

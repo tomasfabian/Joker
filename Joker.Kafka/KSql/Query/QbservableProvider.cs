@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Microsoft.Extensions.DependencyInjection;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class QbservableProvider : IKSqlQbservableProvider
   {

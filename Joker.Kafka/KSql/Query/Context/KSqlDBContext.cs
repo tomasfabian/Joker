@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Disposables;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
+using Kafka.DotNet.ksqlDB.KSql.Disposables;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context
+namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
   public class KSqlDBContext : AsyncDisposableObject, IKSqlDBContext
   {

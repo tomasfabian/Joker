@@ -1,10 +1,10 @@
 ﻿using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

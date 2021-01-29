@@ -1,4 +1,4 @@
-﻿namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+﻿namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   public class Record
   {

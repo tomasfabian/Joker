@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows
+namespace Kafka.DotNet.ksqlDB.KSql.Query.Windows
 {
   public class TimeWindows
   {

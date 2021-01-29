@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Exceptions
+namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions
 {
   public class KSqlQueryException : Exception
   {        

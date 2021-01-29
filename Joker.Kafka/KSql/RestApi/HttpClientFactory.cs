@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
+namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 {
   public class HttpClientFactory : IHttpClientFactory
   {

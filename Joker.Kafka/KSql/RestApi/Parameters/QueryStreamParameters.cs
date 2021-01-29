@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters
+namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters
 {
   public sealed class QueryStreamParameters
   {

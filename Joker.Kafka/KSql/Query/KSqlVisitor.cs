@@ -3,10 +3,10 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class KSqlVisitor : ExpressionVisitor
   {

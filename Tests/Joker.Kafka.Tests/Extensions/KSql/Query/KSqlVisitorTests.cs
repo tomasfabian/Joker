@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;

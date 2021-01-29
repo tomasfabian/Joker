@@ -4,10 +4,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Exceptions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Responses;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Responses;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
+namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 {
   internal class KSqlDbQueryStreamProvider : KSqlDbProvider
   {

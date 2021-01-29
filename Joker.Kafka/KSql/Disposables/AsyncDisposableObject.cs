@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Disposables
+namespace Kafka.DotNet.ksqlDB.KSql.Disposables
 {
   public abstract class AsyncDisposableObject : IAsyncDisposable
   {

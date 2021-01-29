@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Pluralize.NET;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class KSqlQueryGenerator : ExpressionVisitor, IKSqlQueryGenerator
   {

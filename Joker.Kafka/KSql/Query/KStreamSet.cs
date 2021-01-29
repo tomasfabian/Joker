@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reactive.Disposables;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using System.Threading;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal abstract class KStreamSet<TEntity> : IQbservable<TEntity>
   {

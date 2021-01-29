@@ -6,10 +6,10 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows;
+using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Linq
+namespace Kafka.DotNet.ksqlDB.KSql.Linq
 {
   public static class QbservableExtensions
   {

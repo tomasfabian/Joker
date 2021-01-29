@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class KQueryStreamSet<TEntity> : KStreamSet<TEntity>
   {

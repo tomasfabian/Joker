@@ -1,7 +1,7 @@
-﻿using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi.Parameters;
+﻿using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 
-namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal interface IKStreamSetDependencies
   {

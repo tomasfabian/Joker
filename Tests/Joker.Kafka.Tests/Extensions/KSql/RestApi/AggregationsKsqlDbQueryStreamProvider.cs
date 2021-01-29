@@ -1,4 +1,4 @@
-﻿using Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi;
+﻿using Kafka.DotNet.ksqlDB.KSql.RestApi;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {

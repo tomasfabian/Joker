@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query;
 
 namespace Kafka.DotNet.ksqlDB.Sample.Model
 {

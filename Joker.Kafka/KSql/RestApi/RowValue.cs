@@ -1,4 +1,4 @@
-﻿namespace Kafka.DotNet.ksqlDB.Extensions.KSql.RestApi
+﻿namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 {
   internal class RowValue<T>
   { 
