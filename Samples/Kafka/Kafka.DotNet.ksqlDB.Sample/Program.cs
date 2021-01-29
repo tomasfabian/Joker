@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Linq;
-using Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Context;
+using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Sample.Model;
 using Kafka.DotNet.ksqlDB.Sample.Observers;
 
@@ -11,15 +12,15 @@ namespace Kafka.DotNet.ksqlDB.Sample
 {
   public static class Program
   {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
       var ksqlDbUrl = @"http:\\localhost:8088";
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
-      var context = new KSqlDBContext(contextOptions);
+      await using var context = new KSqlDBContext(contextOptions);
 
       Console.WriteLine("Subscription started");
       
-      using var disposable = context.CreateStreamSet<Tweet>()
+      using var disposable = context.CreateQueryStream<Tweet>()
         .Where(p => p.Message != "Hello world" || p.Id == 1)
         .Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
         .Select(l => new { l.Id, l.Message, l.RowTime })
@@ -44,7 +45,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
       var context = new KSqlDBContext(contextOptions);
 
-      var subscriptions = context.CreateStreamSet<Tweet>()
+      var subscriptions = context.CreateQueryStream<Tweet>()
         .Where(p => p.Message != "Hello world" && p.Id != 1)
         .Take(2)
         .Subscribe(new TweetsObserver());
@@ -57,7 +58,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
       var context = new KSqlDBContext(contextOptions);
 
-      var subscriptions = context.CreateStreamSet<Tweet>()
+      var subscriptions = context.CreateQueryStream<Tweet>()
         .ToObservable()
         .Delay(TimeSpan.FromSeconds(2)) // IObservable extensions
         .Subscribe(new TweetsObserver());
@@ -70,7 +71,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
       var context = new KSqlDBContext(contextOptions);
 
-      var ksql = context.CreateStreamSet<Person>().ToQueryString();
+      var ksql = context.CreateQueryStream<Person>().ToQueryString();
       
       //prints SELECT * FROM People EMIT CHANGES;
       Console.WriteLine(ksql);
@@ -84,7 +85,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       contextOptions.QueryStreamParameters["auto.offset.reset"] = "latest";
       var context = new KSqlDBContext(contextOptions);
 
-      context.CreateStreamSet<Tweet>()
+      context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
         .Select(g => new { Id = g.Key, Count = g.Count() })
         .Subscribe(count =>
@@ -94,7 +95,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
         }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
 
 
-      context.CreateStreamSet<Tweet>()
+      context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
         .Select(g => g.Count())        
         .Subscribe(count =>
@@ -103,7 +104,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
           Console.WriteLine();
         }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
 
-      context.CreateStreamSet<Tweet>()
+      context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
         .Select(g => new { Count = g.Count() })
         .Subscribe(count =>
