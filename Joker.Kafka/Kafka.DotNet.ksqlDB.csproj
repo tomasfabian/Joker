@@ -7,12 +7,14 @@
     <Authors>Tomas Fabian</Authors>
     <Company />
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/tomasfabian/Joker</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomasfabian/Joker</RepositoryUrl>
     <Copyright>@tomasfabian</Copyright>
-    <Description>Confluent Kafka ksqlDB LINQ provider</Description>
-    <PackageTags>kafka ksql ksqlDB LINQ</PackageTags>
-    <Version>0.1.0-alpha3</Version>
+    <Description>Kafka.DotNet.ksqlDB is a LINQ-enabled client API for issuing ksqlDB push queries and consuming JSON payloads. 
+Targets .NET 5 and .NET Core 3.1.
+Documentation for the library can be found at https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider.</Description>
+    <PackageTags>kafka ksql ksqlDB LINQ .NET</PackageTags>
+    <Version>0.1.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <LangVersion>9.0</LangVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.Kafka/ChangeLog.md</PackageReleaseNotes>
