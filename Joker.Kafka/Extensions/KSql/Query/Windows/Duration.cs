@@ -1,11 +1,13 @@
-﻿namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows
+﻿using System;
+
+namespace Kafka.DotNet.ksqlDB.Extensions.KSql.Query.Windows
 {
   public class Duration
   {
     public TimeUnits TimeUnit { get; private set; }
-    public int Value { get; private set; }
+    public uint Value { get; private set; }
 
-    public static Duration OfSeconds(int seconds)
+    public static Duration OfSeconds(uint seconds)
     {
       return new()
       {
@@ -14,7 +16,7 @@
       };
     }
 
-    public static Duration OfMinutes(int minutes)
+    public static Duration OfMinutes(uint minutes)
     {
       return new()
       {
@@ -23,7 +25,7 @@
       };
     }
 
-    public static Duration OfHours(int hours)
+    public static Duration OfHours(uint hours)
     {
       return new()
       {
@@ -32,13 +34,30 @@
       };
     }
 
-    public static Duration OfDays(int days)
+    public static Duration OfDays(uint days)
     {
       return new()
       {
-        TimeUnit = TimeUnits.HOURS,
+        TimeUnit = TimeUnits.DAYS,
         Value = days
       };
+    }
+
+    public Duration TotalSeconds
+    {
+      get
+      {
+        var totalSeconds = TimeUnit switch
+        {
+          TimeUnits.SECONDS => Value,
+          TimeUnits.MINUTES => Value * 60,
+          TimeUnits.HOURS => Value * 60 * 60,
+          TimeUnits.DAYS => Value * 60 * 60 * 24,
+          _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return Duration.OfSeconds(totalSeconds);
+      }
     }
   }
 }
