@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Responses;
 
@@ -63,7 +64,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         
         var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
 
-        if (queryStreamHeader.ColumnTypes.Length == 1)
+        if (queryStreamHeader.ColumnTypes.Length == 1 && !typeof(T).IsAnonymousType())
           return new RowValue<T>(JsonSerializer.Deserialize<T>(result, jsonSerializerOptions));
 
         var jsonRecord = CreateJson(result);
