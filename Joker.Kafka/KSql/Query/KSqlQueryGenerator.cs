@@ -89,10 +89,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       var windowType = windowedBy switch
       {
         HoppingWindows _ => "HOPPING",
+        SessionWindow _ => "SESSION",
         _ => "TUMBLING"
       };
 
-      kSqlVisitor.Append($" WINDOW {windowType} (SIZE {windowedBy.Duration.Value} {windowedBy.Duration.TimeUnit}");
+      string size = windowType == "SESSION" ? String.Empty : "SIZE ";
+
+      kSqlVisitor.Append($" WINDOW {windowType} ({size}{windowedBy.Duration.Value} {windowedBy.Duration.TimeUnit}");
 
       if(windowedBy is HoppingWindows {AdvanceBy: { }} hoppingWindows)
         kSqlVisitor.Append($", ADVANCE BY {hoppingWindows.AdvanceBy.Value} {hoppingWindows.AdvanceBy.TimeUnit}");

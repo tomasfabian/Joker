@@ -27,13 +27,15 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       return context.CreateQueryStream<City>();
     }
 
+    #region Count
+
     [TestMethod]
     public void GroupByAndCount_BuildKSql_PrintsQuery()
     {
       //Arrange
       var grouping = CreateQbservable()
-          .GroupBy(c => c.RegionCode)
-          .Select(g => g.Count());
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Count());
 
       //Act
       var ksql = grouping.ToQueryString();
@@ -62,8 +64,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     {
       //Arrange
       var grouping = CreateQbservable()
-          .GroupBy(c => c.RegionCode)
-          .Select(g => new { RegionCode = g.Key, Count = g.Count()});
+        .GroupBy(c => c.RegionCode)
+        .Select(g => new { RegionCode = g.Key, Count = g.Count()});
 
       //Act
       var ksql = grouping.ToQueryString();
@@ -73,12 +75,28 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
     }
 
     [TestMethod]
+    public void GroupByAndCountHaving_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Having(c => c.Count() > 2)
+        .Select(g => new { RegionCode = g.Key, Count = g.Count()});
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT RegionCode, COUNT(*) Count FROM Cities GROUP BY RegionCode HAVING Count(*) > 2 EMIT CHANGES;");
+    }
+
+    [TestMethod]
     public void GroupByAndCount_Subscribe_ReceivesValues()
     {
       //Arrange
       var grouping = CreateQbservable()
-          .GroupBy(c => c.RegionCode)
-          .Select(g => g.Count());
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Count());
 
       bool valuesWereReceived = false;
 
@@ -90,6 +108,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
       subscription.Dispose();
     }
+
+    #endregion
+
+    #region Sum
 
     [TestMethod]
     public void GroupByAndSum_Subscribe_ReceivesValues()
@@ -139,6 +161,65 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Assert
       ksql.Should().BeEquivalentTo("SELECT RegionCode, SUM(Citizens) MySum FROM Cities GROUP BY RegionCode EMIT CHANGES;");
     }
+
+    #endregion
+
+    #region Avg
+
+    [TestMethod]
+    public void GroupByAndAvg_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Avg(c => c.Citizens));
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT Avg(Citizens) FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
+    #endregion
+
+    #region Min
+
+    [TestMethod]
+    public void GroupByAndMin_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Min(c => c.Citizens));
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT MIN(Citizens) FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
+    #endregion
+
+    #region Max
+
+    [TestMethod]
+    public void GroupByAndMax_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var grouping = CreateQbservable()
+        .GroupBy(c => c.RegionCode)
+        .Select(g => g.Max(c => c.Citizens));
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT MAX(Citizens) FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
+    #endregion
 
     public static async IAsyncEnumerable<int> GetTestValues()
     {

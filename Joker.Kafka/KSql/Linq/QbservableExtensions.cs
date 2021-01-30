@@ -46,7 +46,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
     private static MethodInfo WhereTSource(Type TSource) =>
       (whereTSource ??
-       (whereTSource = new Func<IQbservable<object>, Expression<Func<object, bool>>, IQbservable<object>>(QbservableExtensions.Where).GetMethodInfo().GetGenericMethodDefinition()))
+       (whereTSource = new Func<IQbservable<object>, Expression<Func<object, bool>>, IQbservable<object>>(Where).GetMethodInfo().GetGenericMethodDefinition()))
       .MakeGenericMethod(TSource);
 
     public static IQbservable<TSource> Where<TSource>(this IQbservable<TSource> source, Expression<Func<TSource, bool>> predicate)
@@ -222,8 +222,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo? groupByTSourceTKey;
 
     private static MethodInfo GroupByTSourceTKey(Type TSource, Type TKey) =>
-      (groupByTSourceTKey ??
-       (groupByTSourceTKey = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IKSqlGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition()))
+      (groupByTSourceTKey ??= new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<IKSqlGrouping<object, object>>>(GroupBy).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource, TKey);
 
     public static IQbservable<IKSqlGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IQbservable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
@@ -237,6 +236,33 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
           GroupByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Quote(keySelector))
         );
+    }
+
+    #endregion
+
+    #region Having
+
+    private static MethodInfo? havingTSource;
+
+    private static MethodInfo HavingTSource(Type TSource, Type TKey) =>
+      (havingTSource ??
+       (havingTSource = new Func<IQbservable<IKSqlGrouping<object, object>>, Expression<Func<IKSqlGrouping<object, object>, bool>>, IQbservable<IKSqlGrouping<object, object>>>(Having).GetMethodInfo().GetGenericMethodDefinition()))
+      .MakeGenericMethod(TSource, TKey);
+
+    public static IQbservable<IKSqlGrouping<TKey, TSource>> Having<TSource, TKey>(this IQbservable<IKSqlGrouping<TKey, TSource>> source, Expression<Func<IKSqlGrouping<TKey, TSource>, bool>> predicate)
+    {
+      if (source == null)
+        throw new ArgumentNullException(nameof(source));
+
+      if (predicate == null)
+        throw new ArgumentNullException(nameof(predicate));
+
+      return source.Provider.CreateQuery<IKSqlGrouping<TKey, TSource>>(
+        Expression.Call(
+          null,
+          HavingTSource(typeof(TSource), typeof(TKey)),
+          source.Expression, Expression.Quote(predicate)
+        ));
     }
 
     #endregion
