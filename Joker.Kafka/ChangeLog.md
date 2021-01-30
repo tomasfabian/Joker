@@ -1,3 +1,16 @@
+# v0.2.0 preview
+
+### ExtensionsMethods:
+- Having
+- Window Session
+- Avg - Return the average value for a given column
+- Min
+- Max
+**TODO:**
+- Trim, Len, LPad, RPad, Sign, Sqrt
+- LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH
+- KSqlFunctions - LIKE
+
 # v0.1.0
 ### ExtensionsMethods:
 - AsAsyncEnumerable

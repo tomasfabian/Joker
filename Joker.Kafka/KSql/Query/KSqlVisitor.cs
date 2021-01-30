@@ -5,12 +5,23 @@ using System.Linq.Expressions;
 using System.Text;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class KSqlVisitor : ExpressionVisitor
   {
-    private readonly StringBuilder stringBuilder = new();
+    private readonly StringBuilder stringBuilder;
+    public KSqlVisitor()
+    {
+      stringBuilder = new();
+    }
+
+    internal KSqlVisitor(StringBuilder stringBuilder)
+    {
+      this.stringBuilder = stringBuilder;
+    }
 
     public string BuildKSql()
     {
@@ -85,25 +96,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       if (methodCallExpression.Object != null
           && (methodInfo.DeclaringType.Name == typeof(IAggregations<>).Name || methodInfo.DeclaringType.Name == nameof(IAggregations)))
       {
-        switch (methodInfo.Name)
-        {
-          case nameof(IAggregations<object>.Sum):
-            if (methodCallExpression.Arguments.Count == 1)
-            {
-              Append("SUM(");
-              Visit(methodCallExpression.Arguments[0]);
-              Append(")");
-            }
-
-            break;
-          case nameof(IAggregations.Count):
-            if (methodCallExpression.Arguments.Count == 0)
-            {
-              Append("COUNT(*)");
-            }
-
-            break;
-        }
+        new AggregationFunctionExpression(stringBuilder).Visit(methodCallExpression);
       }
 
       if (methodCallExpression.Type == typeof(string))
