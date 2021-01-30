@@ -61,7 +61,7 @@ run in command line:
 
 ```docker compose up -d```
 
-# Setting query parameters
+# Setting query parameters (v.0.1.0)
 Default settings:
 'auto.offset.reset' is set to 'earliest' by default. 
 New parameters could be added or existing ones changed in the following manner:
@@ -71,7 +71,7 @@ var contextOptions = new KSqlDBContextOptions(@"http:\\localhost:8088");
 contextOptions.QueryStreamParameters["auto.offset.reset"] = "latest";
 ```
 
-### Record (row) class
+### Record (row) class (v.0.1.0)
 Record class is a base class for rows returned in push queries. It has a 'RowTime' property.
 
 ```C#
@@ -84,7 +84,7 @@ context.CreateQueryStream<Tweet>()
   .Select(c => new { c.RowTime, c.Message });
 ```
 
-### Overriding stream name
+### Overriding stream name (v.0.1.0)
 Stream names are generated based on the generic record types. They are pluralized with Pluralize.NET package
 ```C#
 context.CreateQueryStream<Person>();
@@ -115,7 +115,7 @@ FROM custom_topic_name
 
 # ```IQbservable<T>``` extension methods
 
-### Select
+### Select (v.0.1.0)
 Projects each element of a stream into a new form.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -131,7 +131,7 @@ Omitting select is equivalent to SELECT *
 | DOUBLE  | double |
 | BOOLEAN | bool   |
 
-### Where
+### Where (v.0.1.0)
 Filters a stream of values based on a predicate.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -157,7 +157,7 @@ Supported operators are:
 | AND      | logical AND                 | &&   |
 | OR       | logical OR                  | \|\| |
 
-### Take (Limit)
+### Take (Limit) (v.0.1.0)
 Returns a specified number of contiguous elements from the start of a stream. Depends on the 'auto.topic.offset' parameter.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -188,7 +188,7 @@ System.IObservable<Tweet> observable = queryStream.ToObservable();
 observable.Throttle(TimeSpan.FromSeconds(3)).Subscribe();
 ```
 
-### ToQueryString
+### ToQueryString (v.0.1.0)
 ToQueryString is helpful for debugging purposes. Returns the generated ksql query without executing it.
 ```C#
 var ksql = context.CreateQueryStream<Tweet>().ToQueryString();
@@ -197,8 +197,8 @@ var ksql = context.CreateQueryStream<Tweet>().ToQueryString();
 Console.WriteLine(ksql);
 ```
 
-### GroupBy
-#### Count
+### GroupBy (v.0.1.0)
+#### Count (v.0.1.0)
 Count the number of rows. When * is specified, the count returned will be the total number of rows.
 ```C#
 var ksqlDbUrl = @"http:\\localhost:8088";
@@ -239,7 +239,7 @@ Equivalent to KSql:
 SELECT Id, SUM(Amount) Agg FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
-### ToAsyncEnumerable
+### ToAsyncEnumerable (v.0.1.0)
 Creates an [async iterator](https://docs.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8) from the query:
 ```C#
 var cts = new CancellationTokenSource();
@@ -249,7 +249,7 @@ await foreach (var tweet in asyncTweetsEnumerable.WithCancellation(cts.Token))
   Console.WriteLine(tweet.Message);
 ```
 
-### WindowedBy
+### WindowedBy (v.0.1.0)
 Creation of windowed aggregation
 
 [Tumbling window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#tumbling-window):
@@ -285,7 +285,7 @@ SELECT WindowStart, WindowEnd, Id, COUNT(*) Count FROM Tweets
 ```
 Window advancement interval should be more than zero and less than window duration
 
-### Functions
+### String Functions UCase, LCase (v.0.1.0)
 ```C#
 l => l.Message.ToLower() != "hi";
 l => l.Message.ToUpper() != "HI";
@@ -296,7 +296,9 @@ UCASE(Latitude) != 'HI'
 ```
 
 # v0.2.0 preview
-### Having
+Planned:
+
+### Having (v.0.2.0)
 ```C#
 var query = context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
@@ -308,7 +310,7 @@ KSQL:
 SELECT Id, COUNT(*) Count FROM Tweets GROUP BY Id HAVING Count(*) > 2 EMIT CHANGES;
 ```
 
-### Session Window
+### Session Window (v.0.2.0)
 A [session window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#session-window) aggregates records into a session, which represents a period of activity separated by a specified gap of inactivity, or "idleness". 
 ```C#
 var query = context.CreateQueryStream<Transaction>()
@@ -324,7 +326,7 @@ SELECT CardNumber, COUNT(*) Count FROM Transactions
   EMIT CHANGES;
 ```
 
-### Avg
+### Avg (v.0.2.0)
 ```KSQL
 AVG(col1)
 ``` 
@@ -335,7 +337,7 @@ var query = CreateQbservable()
   .Select(g => g.Avg(c => c.Citizens));
 ```
 
-### Min and Max
+### Min and Max (v.0.2.0)
 ```KSQL
 MIN(col1)
 MAX(col1)
@@ -348,6 +350,19 @@ var queryMin = CreateQbservable()
 var queryMax = CreateQbservable()
   .GroupBy(c => c.RegionCode)
   .Select(g => g.Max(c => c.Citizens));
+```
+
+### Like (v.0.2.0)
+```C#
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+
+Expression<Func<Tweet, bool>> likeExpression = c => KSql.Functions.Like(c.Message, "%santa%");
+
+Expression<Func<Tweet, bool>> likeLCaseExpression = c => KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
+```
+KSQL
+```KSQL
+"LCASE(Message) LIKE LCASE('%santa%')"
 ```
 
 **TODO:**

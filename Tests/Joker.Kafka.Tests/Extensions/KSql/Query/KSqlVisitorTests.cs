@@ -4,10 +4,12 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
+using Functions = Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
@@ -473,6 +475,36 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
       //Assert
       query.Should().BeEquivalentTo("LCASE(Latitude) != LCASE('HI')");
+    }
+
+    #endregion
+
+    #region Like
+
+    [TestMethod]
+    public void Like_BuildKSql_PrintsLikeCondition()
+    {
+      //Arrange
+      Expression<Func<Location, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Latitude, "santa%");
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(likeExpression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"{nameof(Location.Latitude)} LIKE 'santa%'");
+    }
+
+    [TestMethod]
+    public void LikeToLower_BuildKSql_PrintsLikeCondition()
+    {
+      //Arrange
+      Expression<Func<Location, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Latitude.ToLower(), "%santa%".ToLower());
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(likeExpression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LCASE({nameof(Location.Latitude)}) LIKE LCASE('%santa%')");
     }
 
     #endregion

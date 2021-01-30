@@ -93,6 +93,19 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {      
       var methodInfo = methodCallExpression.Method;
 
+      if (methodCallExpression.Object == null
+          && (methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions)))
+      {
+        switch (methodInfo.Name)
+        {
+          case nameof(KSqlFunctionsExtensions.Like):
+            Visit(methodCallExpression.Arguments[1]);
+            Append(" LIKE ");
+            Visit(methodCallExpression.Arguments[2]);
+            break;
+        }
+      }
+
       if (methodCallExpression.Object != null
           && (methodInfo.DeclaringType.Name == typeof(IAggregations<>).Name || methodInfo.DeclaringType.Name == nameof(IAggregations)))
       {
