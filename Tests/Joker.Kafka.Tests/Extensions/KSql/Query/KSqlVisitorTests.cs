@@ -6,6 +6,7 @@ using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;

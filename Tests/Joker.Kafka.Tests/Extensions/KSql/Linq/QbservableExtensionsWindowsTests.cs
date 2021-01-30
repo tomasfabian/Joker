@@ -6,6 +6,7 @@ using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
@@ -183,11 +184,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       ksql1.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM authorization_attempts_1 GROUP BY CardNumber EMIT CHANGES;");
       ksql2.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM authorization_attempts_2 GROUP BY CardNumber EMIT CHANGES;");
       ksqlTake.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM authorization_attempts_2 GROUP BY CardNumber EMIT CHANGES LIMIT 2;");
-    }
-
-    internal class Transaction : Record
-    {
-      public string CardNumber { get; set; }
     }
 
     class TransactionsDbProvider : TestableDbProvider<Transaction>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 using UnitTests;

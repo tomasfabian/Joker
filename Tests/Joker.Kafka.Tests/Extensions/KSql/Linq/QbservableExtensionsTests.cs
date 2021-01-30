@@ -11,6 +11,7 @@ using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Models;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
