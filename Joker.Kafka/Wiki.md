@@ -365,6 +365,15 @@ KSQL
 "LCASE(Message) LIKE LCASE('%santa%')"
 ```
 
+### String function - Length (LEN) (v.0.2.0)
+```C#
+Expression<Func<Tweet, int>> lengthExpression = c => c.Message.Length;
+```
+KSQL
+```KSQL
+LEN(Message)
+```
+
 **TODO:**
 - [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) except of count and sum (released in v0.1.0)
 - [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)

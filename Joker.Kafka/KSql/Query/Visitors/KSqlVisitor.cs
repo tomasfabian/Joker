@@ -217,9 +217,23 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       if (memberExpression == null) throw new ArgumentNullException(nameof(memberExpression));
 
-      if (memberExpression.Expression != null && memberExpression.Expression.NodeType == ExpressionType.Parameter)
+      if (memberExpression.Expression == null)
+        return memberExpression;
+      
+      var memberName = memberExpression.Member.Name;
+
+      if (memberExpression.Expression.NodeType == ExpressionType.Parameter)
       {
-        Append(memberExpression.Member.Name);
+        Append(memberName);
+      }
+      else if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
+      {
+        if (memberName == nameof(string.Length)) //TODO: check type
+        {
+          Append("LEN(");
+          Visit(memberExpression.Expression);
+          Append(")");
+        }
       }
 
       return memberExpression;

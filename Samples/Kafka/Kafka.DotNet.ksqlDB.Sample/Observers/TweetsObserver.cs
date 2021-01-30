@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
-using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.Sample.Model;
 
 namespace Kafka.DotNet.ksqlDB.Sample.Observers
@@ -26,19 +24,6 @@ namespace Kafka.DotNet.ksqlDB.Sample.Observers
         return;
 
       Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
-    }
-  }
-}
-
-namespace ET
-{
-  public class T
-  {
-    public T()
-    {
-      
-      Expression<Func<Tweet, bool>> likeExpression = c => KSql.Functions.Like(c.Message, "%santa%");
-      Expression<Func<Tweet, bool>> likeUCaseExpression = c => KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
     }
   }
 }

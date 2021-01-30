@@ -369,7 +369,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     public void Convert_BuildKSql_PrintsParameterName()
     {
       //Arrange
-      Expression<Func<KSqlDbProviderTests.Tweet, object>> expression = t => t.RowTime >= 1;
+      Expression<Func<Tweet, object>> expression = t => t.RowTime >= 1;
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(expression);
@@ -410,72 +410,93 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 
     #endregion
 
-    #region String
+    #region String functions
+
+    #region Case
 
     [TestMethod]
     public void ToUpper_BuildKSql_PrintsUCase()
     {
       //Arrange
-      Expression<Func<Location, string>> expression = l => l.Latitude.ToUpper();
+      Expression<Func<Tweet, string>> expression = l => l.Message.ToUpper();
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("UCASE(Latitude)");
+      query.Should().BeEquivalentTo("UCASE(Message)");
     }
 
     [TestMethod]
     public void ToUpperInCondition_BuildKSql_PrintsUCase()
     {
       //Arrange
-      Expression<Func<Location, bool>> expression = l => l.Latitude.ToUpper() != "hi";
+      Expression<Func<Tweet, bool>> expression = l => l.Message.ToUpper() != "hi";
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("UCASE(Latitude) != 'hi'");
+      query.Should().BeEquivalentTo("UCASE(Message) != 'hi'");
     }
 
     [TestMethod]
     public void ToLower_BuildKSql_PrintsLCase()
     {
       //Arrange
-      Expression<Func<Location, string>> expression = l => l.Latitude.ToLower();
+      Expression<Func<Tweet, string>> expression = l => l.Message.ToLower();
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("LCASE(Latitude)");
+      query.Should().BeEquivalentTo("LCASE(Message)");
     }
 
     [TestMethod]
     public void ToLowerInCondition_BuildKSql_PrintsLCase()
     {
       //Arrange
-      Expression<Func<Location, bool>> expression = l => l.Latitude.ToLower() != "hi";
+      Expression<Func<Tweet, bool>> expression = l => l.Message.ToLower() != "hi";
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("LCASE(Latitude) != 'hi'");
+      query.Should().BeEquivalentTo("LCASE(Message) != 'hi'");
     }
 
     [TestMethod]
     public void ConstantToLowerInCondition_BuildKSql_PrintsLCase()
     {
       //Arrange
-      Expression<Func<Location, bool>> expression = l => l.Latitude.ToLower() != "HI".ToLower();
+      Expression<Func<Tweet, bool>> expression = l => l.Message.ToLower() != "HI".ToLower();
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("LCASE(Latitude) != LCASE('HI')");
+      query.Should().BeEquivalentTo("LCASE(Message) != LCASE('HI')");
     }
+
+    #endregion
+
+    #region Lenght
+
+    [TestMethod]
+    public void Lenght_BuildKSql_PrintsLenFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, int>> lengthExpression = c => c.Message.Length;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(lengthExpression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LEN({nameof(Tweet.Message)})");
+    }
+
+    #endregion
 
     #endregion
 
@@ -485,26 +506,26 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     public void Like_BuildKSql_PrintsLikeCondition()
     {
       //Arrange
-      Expression<Func<Location, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Latitude, "santa%");
+      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message, "santa%");
 
       //Act
       var query = ClassUnderTest.BuildKSql(likeExpression);
 
       //Assert
-      query.Should().BeEquivalentTo($"{nameof(Location.Latitude)} LIKE 'santa%'");
+      query.Should().BeEquivalentTo($"{nameof(Tweet.Message)} LIKE 'santa%'");
     }
 
     [TestMethod]
     public void LikeToLower_BuildKSql_PrintsLikeCondition()
     {
       //Arrange
-      Expression<Func<Location, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Latitude.ToLower(), "%santa%".ToLower());
+      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
 
       //Act
       var query = ClassUnderTest.BuildKSql(likeExpression);
 
       //Assert
-      query.Should().BeEquivalentTo($"LCASE({nameof(Location.Latitude)}) LIKE LCASE('%santa%')");
+      query.Should().BeEquivalentTo($"LCASE({nameof(Tweet.Message)}) LIKE LCASE('%santa%')");
     }
 
     #endregion

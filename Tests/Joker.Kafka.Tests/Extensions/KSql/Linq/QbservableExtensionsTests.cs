@@ -65,20 +65,20 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM Locations EMIT CHANGES LIMIT {limit};");
     }
 
-    internal class TweetsKQueryStreamSet : KQueryStreamSet<KSqlDbProviderTests.Tweet>
+    internal class TweetsKQueryStreamSet : KQueryStreamSet<Tweet>
     {
       public TweetsKQueryStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext) : base(serviceScopeFactory, queryContext)
       {
       }
     }
 
-    internal class TestableDbProviderExt : TestableDbProvider<KSqlDbProviderTests.Tweet>
+    internal class TestableDbProviderExt : TestableDbProvider<Tweet>
     {
       public TestableDbProviderExt(string ksqlDbUrl) : base(ksqlDbUrl)
       {
       }
 
-      public IQbservable<KSqlDbProviderTests.Tweet> CreateTweetsStreamSet(string streamName = null)
+      public IQbservable<Tweet> CreateTweetsStreamSet(string streamName = null)
       {
         var serviceScopeFactory = Initialize();
 

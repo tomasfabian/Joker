@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,20 +14,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
   [TestClass]
   public class KSqlDbProviderTests: TestBase
   {  
-    public class Tweet : Record
-    {
-      public int Id { get; set; }
-
-      [JsonPropertyName("MESSAGE")]
-      public string Message { get; set; }
-    
-      public bool IsRobot { get; set; }
-
-      public double Amount { get; set; }
-
-      public decimal AccountBalance { get; set; }
-    }
-
     private TestableKSqlDbQueryStreamProvider ClassUnderTest { get; set; }
 
     [TestInitialize]
