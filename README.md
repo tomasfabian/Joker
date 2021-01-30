@@ -2,7 +2,7 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 
 <img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 
-# Kafka.DotNet.ksqlDB push queries LINQ provider (preview)
+# Kafka.DotNet.ksqlDB push queries LINQ provider
 Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
