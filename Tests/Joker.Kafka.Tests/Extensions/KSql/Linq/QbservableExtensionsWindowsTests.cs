@@ -16,6 +16,24 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
   public class QbservableExtensionsWindowsTests : TestBase
   {
     [TestMethod]
+    public void GroupByAndCount_BuildKSql_PrintsQueryWithWindowSession()
+    {
+      //Arrange
+      var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateQueryStream<Transaction>()
+        .GroupBy(c => c.CardNumber)
+        .WindowedBy(new SessionWindow(Duration.OfSeconds(5)))
+        .Select(g => new { CardNumber = g.Key, Count = g.Count() });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo("SELECT CardNumber, COUNT(*) Count FROM Transactions WINDOW SESSION (5 SECONDS) GROUP BY CardNumber EMIT CHANGES;");
+    }
+
+    [TestMethod]
     public void GroupByAndCount_BuildKSql_PrintsQueryWithHoppingWindow()
     {
       //Arrange

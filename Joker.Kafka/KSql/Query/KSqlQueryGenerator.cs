@@ -64,6 +64,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         kSqlVisitor.Visit(groupBy.Body);
       }
 
+      if (having != null)
+      {
+        kSqlVisitor.Append(" HAVING ");
+        kSqlVisitor.Visit(having.Body);
+      }
+
       if (ShouldEmitChanges)
         kSqlVisitor.Append(" EMIT CHANGES");
 
@@ -82,7 +88,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       var windowType = windowedBy switch
       {
-        HoppingWindows apple => "HOPPING",
+        HoppingWindows _ => "HOPPING",
         _ => "TUMBLING"
       };
 
@@ -148,10 +154,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       var methodInfo = methodCallExpression.Method;
 
-      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
-          methodInfo.Name == nameof(QbservableExtensions.Select))
-      {
+      if(methodInfo.DeclaringType != typeof(QbservableExtensions))
+        return methodCallExpression;
 
+      if (methodInfo.Name == nameof(QbservableExtensions.Select))
+      {
         LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
         if (select == null)
@@ -160,8 +167,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
-          methodInfo.Name == nameof(QbservableExtensions.Where))
+      if (methodInfo.Name == nameof(QbservableExtensions.Where))
       {
         VisitChained(methodCallExpression);
 
@@ -169,8 +175,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         whereClauses.Enqueue(lambda.Body);
       }
 
-      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
-          methodInfo.Name == nameof(QbservableExtensions.Take))
+      if (methodInfo.Name == nameof(QbservableExtensions.Take))
       {
         var arg = (ConstantExpression)methodCallExpression.Arguments[1];
         Limit = (int)arg.Value;
@@ -178,8 +183,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
-          methodInfo.Name == nameof(QbservableExtensions.WindowedBy))
+      if (methodInfo.Name == nameof(QbservableExtensions.WindowedBy))
       {
         var arg = (ConstantExpression)StripQuotes(methodCallExpression.Arguments[1]);
         windowedBy = (TimeWindows)arg.Value;
@@ -187,10 +191,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.DeclaringType == typeof(QbservableExtensions) &&
-          methodInfo.Name == nameof(QbservableExtensions.GroupBy))
+      if (methodInfo.Name == nameof(QbservableExtensions.GroupBy))
       {
         groupBy = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
+
+        VisitChained(methodCallExpression);
+      }
+
+      if (methodInfo.Name == nameof(QbservableExtensions.Having))
+      {
+        having = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
         VisitChained(methodCallExpression);
       }
@@ -210,6 +220,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     private LambdaExpression select;
     private TimeWindows windowedBy;
     private LambdaExpression groupBy;
+    private LambdaExpression having;
 
     protected static Expression StripQuotes(Expression expression)
     {
