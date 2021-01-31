@@ -1,4 +1,7 @@
-﻿2.3.4
+﻿3.0.0
+- System.Configuration.ConfigurationManager, System.Reactive and System.ComponentModel.Annotations 5.0
+
+2.3.4
 - SqlTableDependencyWithReconnection.Dispose finalizer fix
 - removed duplicated code from overridden Stop
 
