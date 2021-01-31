@@ -1,4 +1,4 @@
-# v0.2.0 preview
+# v0.2.0 preview (not released)
 
 ### ExtensionsMethods:
 - Having
@@ -6,11 +6,13 @@
 - Avg - Return the average value for a given column
 - Min
 - Max
+- arithmetic operators
 - KSqlFunctions - LIKE
-- String functions - Len
+- String functions - LPad, RPad, Trim, Len
+- Numeric scalar functions - Sign, Sqrt
+
 **TODO:**
-- Trim, LPad, RPad, Sign, Sqrt
-- LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH
+- SUBSTRING
 
 # v0.1.0
 ### ExtensionsMethods:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -13,6 +14,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
   internal class KSqlVisitor : ExpressionVisitor
   {
     private readonly StringBuilder stringBuilder;
+
+    internal StringBuilder StringBuilder => stringBuilder;
+
     public KSqlVisitor()
     {
       stringBuilder = new();
@@ -52,7 +56,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.Constant:
           VisitConstant((ConstantExpression)expression);
           break;
-
+          
+        //arithmetic
+        case ExpressionType.Add:
+        case ExpressionType.Subtract: 
+        case ExpressionType.Divide: 
+        case ExpressionType.Multiply: 
+        case ExpressionType.Modulo: 
+        //conditionals
         case ExpressionType.AndAlso:
         case ExpressionType.OrElse:
         case ExpressionType.NotEqual:
@@ -94,22 +105,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       var methodInfo = methodCallExpression.Method;
 
       if (methodCallExpression.Object == null
-          && (methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions)))
-      {
-        switch (methodInfo.Name)
-        {
-          case nameof(KSqlFunctionsExtensions.Like):
-            Visit(methodCallExpression.Arguments[1]);
-            Append(" LIKE ");
-            Visit(methodCallExpression.Arguments[2]);
-            break;
-        }
-      }
+          && methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions))
+        new KSqlFunctionVisitor(stringBuilder).Visit(methodCallExpression);
 
       if (methodCallExpression.Object != null
           && (methodInfo.DeclaringType.Name == typeof(IAggregations<>).Name || methodInfo.DeclaringType.Name == nameof(IAggregations)))
       {
-        new AggregationFunctionExpression(stringBuilder).Visit(methodCallExpression);
+        new AggregationFunctionVisitor(stringBuilder).Visit(methodCallExpression);
       }
 
       if (methodCallExpression.Type == typeof(string))
@@ -129,6 +131,25 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       }
 
       return methodCallExpression;
+    }
+
+    protected void PrintFunctionArguments(IEnumerable<Expression> expressions)
+    {
+      Append("(");
+
+      bool isFirst = true;
+
+      foreach (var expression in expressions)
+      {
+        if (isFirst)
+          isFirst = false;
+        else
+          stringBuilder.Append(ColumnsSeparator);
+
+        Visit(expression);
+      }
+
+      Append(")");
     }
 
     protected override Expression VisitConstant(ConstantExpression constantExpression)
@@ -166,6 +187,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       //https://docs.ksqldb.io/en/latest/reference/sql/appendix/
       string @operator = binaryExpression.NodeType switch
       {
+        //arithmetic
+        ExpressionType.Add => "+",
+        ExpressionType.Subtract => "-",
+        ExpressionType.Divide => "/",
+        ExpressionType.Multiply => "*",
+        ExpressionType.Modulo => "%",
+        //conditionals
         ExpressionType.AndAlso => OperatorAnd,
         ExpressionType.OrElse => "OR",
         ExpressionType.Equal => "=",
@@ -193,20 +221,28 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       {
         bool isFirst = true;
 
-        foreach (var c in newExpression.Members.Zip(newExpression.Arguments))
+        foreach (var memberWithArguments in newExpression.Members.Zip(newExpression.Arguments))
         {
           if (isFirst)
             isFirst = false;
           else
             Append(ColumnsSeparator);
 
-          if (c.Second.NodeType == ExpressionType.Call)
+          if (memberWithArguments.Second.NodeType == ExpressionType.Call)
           {
-            VisitMethodCall(c.Second as MethodCallExpression);
+            VisitMethodCall(memberWithArguments.Second as MethodCallExpression);
             Append(" ");
           }
+          else if(memberWithArguments.Second is BinaryExpression)
+          {
+            Visit(memberWithArguments.Second);
+            Append(" AS ");
+            Append(memberWithArguments.First.Name);
 
-          Append(c.First.Name);
+            return newExpression;
+          }
+
+          Append(memberWithArguments.First.Name);
         }
       }
 
@@ -251,6 +287,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         default:
           return base.VisitUnary(unaryExpression);
       }
+    }
+    protected static Expression StripQuotes(Expression expression)
+    {
+      while (expression.NodeType == ExpressionType.Quote)
+      {
+        expression = ((UnaryExpression)expression).Operand;
+      }
+
+      return expression;
     }
 
     public void Append(string value)

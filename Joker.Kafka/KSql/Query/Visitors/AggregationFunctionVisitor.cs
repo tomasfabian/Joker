@@ -4,9 +4,9 @@ using Kafka.DotNet.ksqlDB.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
 {
-  internal class AggregationFunctionExpression : KSqlVisitor
+  internal class AggregationFunctionVisitor : KSqlVisitor
   {
-    public AggregationFunctionExpression(StringBuilder stringBuilder)
+    public AggregationFunctionVisitor(StringBuilder stringBuilder)
       : base(stringBuilder)
     {
     }
@@ -21,6 +21,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         case nameof(IAggregations<object>.Avg):
         case nameof(IAggregations<object>.Min):
         case nameof(IAggregations<object>.Max):
+        case nameof(IAggregations<object>.Sqrt):
+        case nameof(IAggregations<object>.Sign):
           if (methodCallExpression.Arguments.Count == 1)
           {
             Append($"{methodInfo.Name.ToUpper()}(");
