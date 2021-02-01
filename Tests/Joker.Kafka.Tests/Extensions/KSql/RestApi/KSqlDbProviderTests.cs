@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -193,6 +194,27 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       
       //Assert
       (await counts.ToListAsync()).Count.Should().Be(2);
+    }
+
+    [TestMethod]
+    public async Task NewCount_ParseSingleFields_IntegersAreConsumed()
+    {
+      //Arrange
+
+      //Act
+      var counts = Run(new { Count = 1 });     
+      
+      //Assert
+      (await counts.ToListAsync()).Count.Should().Be(2);
+    }
+    
+    IAsyncEnumerable<T> Run<T>(T anonymousType) {
+      var provider = MockingKernel.Get<AggregationsKsqlDbQueryStreamProvider>();
+      var queryParameters = new QueryStreamParameters();
+
+      var asyncEnumerable = provider.Run<T>(queryParameters);
+
+      return asyncEnumerable;
     }
   }
 }
