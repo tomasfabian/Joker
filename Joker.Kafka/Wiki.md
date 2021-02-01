@@ -1,4 +1,4 @@
-﻿This package generates ksql queries from your C# linq queries. You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
+﻿This package generates ksql queries from your .NET C# linq queries. You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
 Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
@@ -27,10 +27,10 @@ Console.WriteLine("Press any key to stop the subscription");
 Console.ReadKey();
 ```
 
-In the above code snippet everything runs in the server side except of the ``` IQbservable<TEntity>.Subscribe``` method. It subscribes to your ksqlDB stream created in the following manner:
+In the above mentioned code snippet everything runs server side except of the ``` IQbservable<TEntity>.Subscribe``` method. It subscribes to your ksqlDB stream created in the following manner:
 ```SQL
 CREATE STREAM tweets(id INT, message VARCHAR)
-  WITH (kafka_topic='tweetsTopic', value_format='json', partitions=1);
+  WITH (kafka_topic='tweetsTopic', value_format='JSON', partitions=1);
 ```
 
 LINQ code written in C# from the sample is equivalent to this ksql query:
@@ -41,12 +41,13 @@ EMIT CHANGES
 LIMIT 2;
 ```
 
-Run the following insert statement to stream messages with your ksqldb-cli
+Run the following insert statements to stream some messages with your ksqldb-cli
 ```
 docker exec -it $(docker ps -q -f name=ksqldb-cli) ksql http://localhost:8088
 ```
 ```SQL
 INSERT INTO tweets (id, message) VALUES (1, 'Hello world');
+INSERT INTO tweets (id, message) VALUES (2, 'ksqlDB rulez!');
 ```
 Sample project can be found under [Examples/Kafka](https://github.com/tomasfabian/Joker/tree/master/Samples/Kafka/Kafka.DotNet.ksqlDB.Sample) solution folder in Joker.sln or Joker.DotNet5.sln 
 
@@ -179,7 +180,7 @@ using var disposable = context.CreateQueryStream<Tweet>()
 ```
 Be cautious regarding to server side and client side processings:
 ```C#
-Extensions.KSql.Linq.IQbservable<Tweet> queryStream = context.CreateQueryStream<Tweet>().Take(2);
+KSql.Linq.IQbservable<Tweet> queryStream = context.CreateQueryStream<Tweet>().Take(2);
 
 System.IObservable<Tweet> observable = queryStream.ToObservable();
 
@@ -254,7 +255,7 @@ Creation of windowed aggregation
 
 [Tumbling window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#tumbling-window):
 ```C#
-var context = new TransactionsDbProvider(TestParameters.KsqlDBUrl);
+var context = new TransactionsDbProvider(ksqlDbUrl);
 
 var windowedQuery = context.CreateQueryStream<Transaction>()
   .WindowedBy(new TimeWindows(Duration.OfSeconds(5)).WithGracePeriod(Duration.OfHours(2)))
@@ -270,7 +271,6 @@ SELECT CardNumber, COUNT(*) Count FROM Transactions
 
 [Hopping window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#hopping-window):
 ```C#
-
 var subscription = context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
   .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithAdvanceBy(Duration.OfSeconds(4)).WithRetention(Duration.OfDays(7)))
@@ -365,6 +365,15 @@ KSQL
 "LCASE(Message) LIKE LCASE('%santa%')"
 ```
 
+### Arithmetic operations on columns) (v.0.2.0)
+The usual arithmetic operators (+,-,/,*,%) may be applied to numeric types, like INT, BIGINT, and DOUBLE:
+```KSQL
+SELECT USERID, LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH FROM USERS EMIT CHANGES;
+```
+```C#
+Expression<Func<Person, object>> expression = c => c.FirstName.Length * c.LastName.Length;
+```
+
 ### String function - Length (LEN) (v.0.2.0)
 ```C#
 Expression<Func<Tweet, int>> lengthExpression = c => c.Message.Length;
@@ -372,6 +381,27 @@ Expression<Func<Tweet, int>> lengthExpression = c => c.Message.Length;
 KSQL
 ```KSQL
 LEN(Message)
+```
+
+### LPad, RPad, Trim (v.0.2.0)
+```C#
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+
+Expression<Func<Tweet, string>> expression1 = c => KSql.Functions.LPad(c.Message);
+Expression<Func<Tweet, string>> expression2 = c => KSql.Functions.RPad(c.Message);
+Expression<Func<Tweet, string>> expression3 = c => KSql.Functions.Trim(c.Message);
+```
+KSQL
+```KSQL
+LPAD(Message)
+RPAD(Message)
+TRIM(Message)
+```
+
+### Numeric scalar functions - Sign, Sqrt (v.0.2.0)
+
+```C#
+Expression<Func<IKSqlGrouping<int, Rectangle>, object>> expression = l => new { Sqrt = l.Sqrt(c => c.Height) };
 ```
 
 **TODO:**
