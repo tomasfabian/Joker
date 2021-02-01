@@ -4,13 +4,10 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
-using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
-using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
-using Functions = Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
 {
@@ -497,36 +494,88 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       query.Should().BeEquivalentTo($"LEN({nameof(Tweet.Message)})");
     }
 
-    #endregion
-
-    #endregion
-
-    #region Like
-
     [TestMethod]
-    public void Like_BuildKSql_PrintsLikeCondition()
+    public void LengthWithPMinusOperator_BuildKSql_PrintsQuery()
     {
       //Arrange
-      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message, "santa%");
+      Expression<Func<Person, int>> lengthExpression = c => c.FirstName.Length - c.LastName.Length;
 
       //Act
-      var query = ClassUnderTest.BuildKSql(likeExpression);
+      var query = ClassUnderTest.BuildKSql(lengthExpression);
 
       //Assert
-      query.Should().BeEquivalentTo($"{nameof(Tweet.Message)} LIKE 'santa%'");
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) - LEN({nameof(Person.LastName)})");
     }
 
     [TestMethod]
-    public void LikeToLower_BuildKSql_PrintsLikeCondition()
+    public void LengthWithPlusOperator_BuildKSql_PrintsQuery()
     {
       //Arrange
-      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
+      Expression<Func<Person, int>> lengthExpression = c => c.FirstName.Length + c.LastName.Length;
 
       //Act
-      var query = ClassUnderTest.BuildKSql(likeExpression);
+      var query = ClassUnderTest.BuildKSql(lengthExpression);
 
       //Assert
-      query.Should().BeEquivalentTo($"LCASE({nameof(Tweet.Message)}) LIKE LCASE('%santa%')");
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) + LEN({nameof(Person.LastName)})");
+    }
+
+    [TestMethod]
+    public void LengthWithPlusNew_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      Expression<Func<Person, object>> lengthExpression = c => new { NAME_LENGTH = c.FirstName.Length + c.LastName.Length };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(lengthExpression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) + LEN({nameof(Person.LastName)}) AS NAME_LENGTH");
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Arithmetic
+    
+    [TestMethod]
+    public void Divide_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      Expression<Func<Person, object>> expression = c => c.FirstName.Length / c.LastName.Length;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) / LEN({nameof(Person.LastName)})");
+    }
+    
+    [TestMethod]
+    public void Multiply_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      Expression<Func<Person, object>> expression = c => c.FirstName.Length * c.LastName.Length;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) * LEN({nameof(Person.LastName)})");
+    }
+    
+    [TestMethod]
+    public void Modulo_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      Expression<Func<Person, object>> expression = c => c.FirstName.Length % c.LastName.Length;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LEN({nameof(Person.FirstName)}) % LEN({nameof(Person.LastName)})");
     }
 
     #endregion
