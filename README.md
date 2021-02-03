@@ -9,9 +9,9 @@ Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. Fo
 Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
 ```
 ```C#
-var context = new KSqlDBContext(@"http:\\localhost:8088");
+await using var context = new KSqlDBContext(@"http:\\localhost:8088");
 
-using var disposable = context.CreateStreamSet<Tweet>()
+using var disposable = context.CreateQueryStream<Tweet>()
   .Where(p => p.Message != "Hello world" || p.Id == 1)
   .Where(p => p.RowTime >= 1510923225000)
   .Select(l => new { l.Id, l.Message, l.RowTime })
