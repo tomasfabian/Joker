@@ -22,7 +22,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       base.TestInitialize();
 
       StringBuilder = new StringBuilder();
-      ClassUnderTest = new AggregationFunctionVisitor(StringBuilder);
+      ClassUnderTest = new AggregationFunctionVisitor(StringBuilder, useTableAlias: false);
     }
 
     [TestMethod]
