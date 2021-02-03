@@ -25,5 +25,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
+
+    public static string Substring(this KSqlFunctions kSqlFunctions, string input, int position, int length)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
   }
 }

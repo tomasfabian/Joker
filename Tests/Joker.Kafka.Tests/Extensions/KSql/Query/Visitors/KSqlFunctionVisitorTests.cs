@@ -24,7 +24,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       base.TestInitialize();
 
       StringBuilder = new StringBuilder();
-      ClassUnderTest = new KSqlFunctionVisitor(StringBuilder);
+      ClassUnderTest = new KSqlFunctionVisitor(StringBuilder, useTableAlias: false);
     }
 
     #region Trim
@@ -47,16 +47,50 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     #region LPad
     
     [TestMethod]
-    public void LPad_BuildKSql_PrintsTrimFunction()
+    public void LPad_BuildKSql_PrintsLPadFunction()
     {
       //Arrange
-      Expression<Func<Tweet, string>> expression = c => K.Functions.LPad(c.Message, 8, "0");
+      Expression<Func<Tweet, string>> expression = c => K.Functions.LPad(c.Message, 8, "x");
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"LPAD({nameof(Tweet.Message)}, 8, '0')");
+      query.Should().BeEquivalentTo($"LPAD({nameof(Tweet.Message)}, 8, 'x')");
+    }
+
+    #endregion
+
+    #region RPad
+    
+    [TestMethod]
+    public void RPad_BuildKSql_PrintsRPadFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, string>> expression = c => K.Functions.RPad(c.Message, 8, "x");
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"RPAD({nameof(Tweet.Message)}, 8, 'x')");
+    }
+
+    #endregion
+
+    #region Substring
+    
+    [TestMethod]
+    public void Substring_BuildKSql_PrintsSubstringFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, string>> expression = c => K.Functions.Substring(c.Message, 2, 3);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Substring({nameof(Tweet.Message)}, 2, 3)");
     }
 
     #endregion

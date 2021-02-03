@@ -7,8 +7,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
 {
   internal class KSqlFunctionVisitor : KSqlVisitor
   {
-    public KSqlFunctionVisitor(StringBuilder stringBuilder)
-      : base(stringBuilder)
+    public KSqlFunctionVisitor(StringBuilder stringBuilder, bool useTableAlias)
+      : base(stringBuilder, useTableAlias)
     {
     }
 
@@ -33,6 +33,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
             break;
           case nameof(KSqlFunctionsExtensions.LPad):
           case nameof(KSqlFunctionsExtensions.RPad):
+          case nameof(KSqlFunctionsExtensions.Substring):
             Append($"{methodInfo.Name.ToUpper()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;
