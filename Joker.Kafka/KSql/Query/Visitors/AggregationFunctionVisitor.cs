@@ -6,8 +6,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
 {
   internal class AggregationFunctionVisitor : KSqlVisitor
   {
-    public AggregationFunctionVisitor(StringBuilder stringBuilder)
-      : base(stringBuilder)
+    public AggregationFunctionVisitor(StringBuilder stringBuilder, bool useTableAlias)
+      : base(stringBuilder, useTableAlias)
     {
     }
 

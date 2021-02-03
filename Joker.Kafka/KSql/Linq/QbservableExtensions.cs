@@ -15,7 +15,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
   {
     #region Select
 
-    private static MethodInfo? selectTSourceTResult;
+    private static MethodInfo selectTSourceTResult;
 
     private static MethodInfo SelectTSourceTResult(Type TSource, Type TResult) =>
       (selectTSourceTResult ??
@@ -42,7 +42,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
     #region Where
 
-    private static MethodInfo? whereTSource;
+    private static MethodInfo whereTSource;
 
     private static MethodInfo WhereTSource(Type TSource) =>
       (whereTSource ??
@@ -69,7 +69,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
     #region Take
 
-    private static MethodInfo? takeTSource;
+    private static MethodInfo takeTSource;
 
     private static MethodInfo TakeTSource(Type TSource) =>
       (takeTSource ??
@@ -242,7 +242,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
     #region Having
 
-    private static MethodInfo? havingTSource;
+    private static MethodInfo havingTSource;
 
     private static MethodInfo HavingTSource(Type TSource, Type TKey) =>
       (havingTSource ??
@@ -285,6 +285,30 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
         Expression.Call(null, 
           WindowedByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Constant(timeWindows)));
+    }
+
+    #endregion
+
+    #region Join
+
+    private static MethodInfo joinTOuterTInnerTKeyTResult;
+
+    private static MethodInfo JoinTOuterTInnerTKeyTResult(Type TOuter, Type TInner, Type TKey, Type TResult) =>
+      (joinTOuterTInnerTKeyTResult ??= new Func<IQbservable<object>, IQbservable<object>, Expression<Func<object, object>>, Expression<Func<object, object>>, Expression<Func<object, object, object>>, IQbservable<object>>(Join).GetMethodInfo().GetGenericMethodDefinition())
+      .MakeGenericMethod(TOuter, TInner, TKey, TResult);
+
+    public static IQbservable<TResult> Join<TOuter, TInner, TKey, TResult>(this IQbservable<TOuter> outer, IQbservable<TInner> inner, Expression<Func<TOuter, TKey>> outerKeySelector, Expression<Func<TInner, TKey>> innerKeySelector, Expression<Func<TOuter, TInner, TResult>> resultSelector)
+    {
+      if (outer == null) throw new ArgumentNullException(nameof(outer));
+      if (inner == null) throw new ArgumentNullException(nameof(inner));
+      if (outerKeySelector == null) throw new ArgumentNullException(nameof(outerKeySelector));
+      if (innerKeySelector == null) throw new ArgumentNullException(nameof(innerKeySelector));
+      if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
+
+      return outer.Provider.CreateQuery<TResult>(
+        Expression.Call(
+          null,
+          JoinTOuterTInnerTKeyTResult(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)), outer.Expression, inner.Expression, outerKeySelector, innerKeySelector, resultSelector));
     }
 
     #endregion

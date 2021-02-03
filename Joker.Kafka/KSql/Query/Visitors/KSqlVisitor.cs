@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
@@ -14,6 +15,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
   internal class KSqlVisitor : ExpressionVisitor
   {
     private readonly StringBuilder stringBuilder;
+    private readonly bool useTableAlias;
 
     internal StringBuilder StringBuilder => stringBuilder;
 
@@ -22,9 +24,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       stringBuilder = new();
     }
 
-    internal KSqlVisitor(StringBuilder stringBuilder)
+    internal KSqlVisitor(StringBuilder stringBuilder, bool useTableAlias)
     {
       this.stringBuilder = stringBuilder;
+      this.useTableAlias = useTableAlias;
     }
 
     public string BuildKSql()
@@ -106,12 +109,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       if (methodCallExpression.Object == null
           && methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions))
-        new KSqlFunctionVisitor(stringBuilder).Visit(methodCallExpression);
+        new KSqlFunctionVisitor(stringBuilder, useTableAlias).Visit(methodCallExpression);
 
       if (methodCallExpression.Object != null
           && (methodInfo.DeclaringType.Name == typeof(IAggregations<>).Name || methodInfo.DeclaringType.Name == nameof(IAggregations)))
       {
-        new AggregationFunctionVisitor(stringBuilder).Visit(methodCallExpression);
+        new AggregationFunctionVisitor(stringBuilder, useTableAlias).Visit(methodCallExpression);
       }
 
       if (methodCallExpression.Type == typeof(string))
@@ -242,11 +245,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
             return newExpression;
           }
 
-          Append(memberWithArguments.First.Name);
+          ProcessVisitNewMember(memberWithArguments);
         }
       }
 
       return newExpression;
+    }
+
+    protected virtual void ProcessVisitNewMember((MemberInfo memberInfo, Expression expresion) v)
+    {
+      Append(v.memberInfo.Name);
     }
 
     protected override Expression VisitMember(MemberExpression memberExpression)
@@ -260,7 +268,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       if (memberExpression.Expression.NodeType == ExpressionType.Parameter)
       {
-        Append(memberName);
+        if (useTableAlias)
+        {
+          Append(((ParameterExpression)memberExpression.Expression).Name);
+          Append(".");
+        }
+        Append(memberExpression.Member.Name);
       }
       else if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
       {

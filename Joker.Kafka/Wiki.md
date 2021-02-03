@@ -326,6 +326,48 @@ SELECT CardNumber, COUNT(*) Count FROM Transactions
   EMIT CHANGES;
 ```
 
+### Inner Joins (v.0.2.0)
+How to [join table and table](https://kafka-tutorials.confluent.io/join-a-table-to-a-table/ksql.html)
+```C#
+public class Movie : Record
+{
+  public string Title { get; set; }
+  public int Id { get; set; }
+  public int Release_Year { get; set; }
+}
+
+public class Lead_Actor : Record
+{
+  public string Title { get; set; }
+  public string Actor_Name { get; set; }
+}
+
+var query = context.CreateQueryStream<Movie>()
+  .Join(
+    context.CreateQueryStream<Lead_Actor>(nameof(Lead_Actor)),
+    movie => movie.Title,
+    actor => actor.Title,
+    (movie, actor) => new
+    {
+      movie.Id,
+      Title = movie.Title,
+      movie.Release_Year,
+      ActorName = K.Functions.RPad(K.Functions.LPad(actor.Actor_Name.ToUpper(), 15, "*"), 25, "^"),
+      ActorTitle = actor.Title
+    }
+  );
+
+var joinQueryString = query.ToQueryString();
+```
+KSQL:
+```KSQL
+SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, RPAD(LPAD(UCASE(L.Actor_Name), 15, '*'), 25, '^') ActorName, L.Title ActorTitle 
+FROM Movies M
+INNER JOIN Lead_Actor L
+ON M.Title = L.Title
+EMIT CHANGES;
+```
+
 ### Avg (v.0.2.0)
 ```KSQL
 AVG(col1)
@@ -383,19 +425,21 @@ KSQL
 LEN(Message)
 ```
 
-### LPad, RPad, Trim (v.0.2.0)
+### LPad, RPad, Trim, Substring (v.0.2.0)
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
-Expression<Func<Tweet, string>> expression1 = c => KSql.Functions.LPad(c.Message);
-Expression<Func<Tweet, string>> expression2 = c => KSql.Functions.RPad(c.Message);
+Expression<Func<Tweet, string>> expression1 = c => KSql.Functions.LPad(c.Message, 8, "x");
+Expression<Func<Tweet, string>> expression2 = c => KSql.Functions.RPad(c.Message, 8, "x");
 Expression<Func<Tweet, string>> expression3 = c => KSql.Functions.Trim(c.Message);
+Expression<Func<Tweet, string>> expression4 = c => K.Functions.Substring(c.Message, 2, 3);
 ```
 KSQL
 ```KSQL
-LPAD(Message)
-RPAD(Message)
+LPAD(Message, 8, 'x')
+RPAD(Message, 8, 'x')
 TRIM(Message)
+Substring(Message, 2, 3)
 ```
 
 ### Numeric scalar functions - Sign, Sqrt (v.0.2.0)

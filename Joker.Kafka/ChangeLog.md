@@ -8,11 +8,19 @@
 - Max
 - arithmetic operators
 - KSqlFunctions - LIKE
-- String functions - LPad, RPad, Trim, Len
+- String functions - LPad, RPad, Trim, Len, Substring
 - Numeric scalar functions - Sign, Sqrt
+- Inner Join
 
-**TODO:**
-- SUBSTRING
+### Fixes:
+- parse single value for anonymous type - KSqlDbQueryStreamProvider bug fix
+
+### TODO:
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
+- string functions: Replace, Regex**
+- CreateQueryStream options parameter
+- Joins: Left outer, Full outer
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
 
 # v0.1.0
 ### ExtensionsMethods:
