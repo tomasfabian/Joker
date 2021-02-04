@@ -6,7 +6,7 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
+Install-Package Kafka.DotNet.ksqlDB
 ```
 ```C#
 await using var context = new KSqlDBContext(@"http:\\localhost:8088");
@@ -31,7 +31,7 @@ Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.4.1
+Install-Package Joker.MVVM
 
 # Joker OData:
 Plumbing code for OData web services. Support for batching and end points. Please help out the community by sharing your suggestions and code improvements:
@@ -51,11 +51,11 @@ Please use data streaming and process it with the help of reactive programming a
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
-Install-Package SqlTableDependency.Extensions -Version 2.3.2
+Install-Package SqlTableDependency.Extensions
 
 or
 
-dotnet add package SqlTableDependency.Extensions --version 2.3.2
+dotnet add package SqlTableDependency.Extensions --version 3.0.0
 
 ## See:
 Following package is based on christiandelbianco's SqlTableDependency:
@@ -202,7 +202,7 @@ namespace SqlTableDependency.Extensions.Sample
 # Joker.Redis
 SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
 
-Install-Package Joker.Redis -Version 1.3.0
+Install-Package Joker.Redis
 
 Download and run redis-server (https://redis.io/download) or use Docker (see above).
 
