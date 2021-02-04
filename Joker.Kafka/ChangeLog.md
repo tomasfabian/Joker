@@ -1,4 +1,4 @@
-# v0.2.0 preview (not released)
+# v0.2.0 preview (RC1)
 
 ### ExtensionsMethods:
 - Having

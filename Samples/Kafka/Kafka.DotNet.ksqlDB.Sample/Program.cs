@@ -10,6 +10,9 @@ using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Sample.Model;
 using Kafka.DotNet.ksqlDB.Sample.Observers;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+using Kafka.DotNet.ksqlDB.Sample.Models.Movies;
+using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
@@ -19,29 +22,52 @@ namespace Kafka.DotNet.ksqlDB.Sample
     {
       var ksqlDbUrl = @"http:\\localhost:8088";
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
-
+      
       await using var context = new KSqlDBContext(contextOptions);
 
-      Console.WriteLine("Subscription started");
-      
       using var disposable = context.CreateQueryStream<Tweet>()
         .Where(p => p.Message != "Hello world" || p.Id == 1)
+        .Where( c => K.Functions.Like(c.Message.ToLower(), "%ALL%".ToLower()))
         .Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
         .Select(l => new { l.Id, l.Message, l.RowTime })
         .Take(2) // LIMIT 2    
         .ToObservable() // client side processing starts here lazily after subscription
         .ObserveOn(TaskPoolScheduler.Default)
-        .Subscribe(tweetMessage =>
+        .Subscribe(onNext: tweetMessage =>
         {
           Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
           Console.WriteLine();
-        }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
+        }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 
       Console.WriteLine("Press any key to stop the subscription");
 
       Console.ReadKey();
 
       Console.WriteLine("Subscription completed");
+    }
+
+    private static IDisposable JoinTables(KSqlDBContext context)
+    {
+      var query = context.CreateQueryStream<Movie>()
+        .Join(
+          context.CreateQueryStream<Lead_Actor>(nameof(Lead_Actor)),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            movie.Id,
+            Title = movie.Title,
+            movie.Release_Year,
+            ActorName = K.Functions.RPad(K.Functions.LPad(actor.Actor_Name.ToUpper(), 15, "*"), 25, "^"),
+            ActorTitle = actor.Title,
+            Substr = K.Functions.Substring(actor.Title, 2, 4)
+          }
+        );
+
+      var joinQueryString = query.ToQueryString();
+
+      return query        
+        .Subscribe(c => { Console.WriteLine($"{c.Id}: {c.ActorName} - {c.Title} - {c.ActorTitle}"); }, exception => { Console.WriteLine(exception.Message);});
     }
 
     private static IDisposable Window(KSqlDBContext context)
@@ -52,16 +78,21 @@ namespace Kafka.DotNet.ksqlDB.Sample
         .Select(g => new { g.WindowStart, g.WindowEnd, Id = g.Key, Count = g.Count() })
         .Subscribe(c => { Console.WriteLine($"{c.Id}: {c.Count}: {c.WindowStart}: {c.WindowEnd}"); }, exception => {});
 
-      var subscription2 = context.CreateQueryStream<Tweet>()
+      var query = context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
-        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithAdvanceBy(Duration.OfSeconds(4)).WithRetention(Duration.OfDays(7)))
-        .Select(g => new { Id = g.Key, Count = g.Count() })
+        .WindowedBy(new HoppingWindows(Duration.OfSeconds(5)).WithAdvanceBy(Duration.OfSeconds(4))
+          .WithRetention(Duration.OfDays(7)))
+        .Select(g => new {Id = g.Key, Count = g.Count()});
+      
+      var hoppingWindowQueryString = query.ToQueryString();
+
+      var subscription2 = query
         .Subscribe(c => { Console.WriteLine($"{c.Id}: {c.Count}"); }, exception => {});
 
       return new CompositeDisposable { subscription1, subscription2 };
     }
 
-    private static async Task AsynEnumerable(KSqlDBContext context)
+    private static async Task AsyncEnumerable(KSqlDBContext context)
     {
       var cts = new CancellationTokenSource();
       var asyncTweetsEnumerable = context.CreateQueryStream<Tweet>().ToAsyncEnumerable();

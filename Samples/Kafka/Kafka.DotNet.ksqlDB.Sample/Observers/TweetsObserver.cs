@@ -5,25 +5,19 @@ namespace Kafka.DotNet.ksqlDB.Sample.Observers
 {
   public class TweetsObserver : IObserver<Tweet>
   {
-    public void OnCompleted()
+    public void OnNext(Tweet tweetMessage)
     {
-      Console.WriteLine($"{nameof(Tweet)}: completed successfully");
+      Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
     }
 
     public void OnError(Exception error)
     {
       Console.WriteLine($"{nameof(Tweet)}: {error.Message}");
     }
-    
-    public void OnNext(Tweet tweetMessage)
-    {
-      if (tweetMessage == null)
-        return;
-        
-      if(string.IsNullOrEmpty(tweetMessage.Message))
-        return;
 
-      Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
+    public void OnCompleted()
+    {
+      Console.WriteLine($"{nameof(Tweet)}: completed successfully");
     }
   }
 }
