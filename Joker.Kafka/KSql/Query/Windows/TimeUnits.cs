@@ -2,6 +2,7 @@
 {
   public enum TimeUnits
   {
+    MILLISECONDS,
     SECONDS,
     MINUTES,
     HOURS,

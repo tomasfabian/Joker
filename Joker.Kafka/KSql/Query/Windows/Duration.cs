@@ -7,6 +7,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Windows
     public TimeUnits TimeUnit { get; private set; }
     public uint Value { get; private set; }
 
+    public static Duration OfMilliseconds(uint seconds)
+    {
+      return new()
+      {
+        TimeUnit = TimeUnits.MILLISECONDS,
+        Value = seconds
+      };
+    }
+
     public static Duration OfSeconds(uint seconds)
     {
       return new()
