@@ -62,7 +62,7 @@ run in command line:
 
 ```docker compose up -d```
 
-# Setting query parameters (v.0.1.0)
+# Setting query parameters (v0.1.0)
 Default settings:
 'auto.offset.reset' is set to 'earliest' by default. 
 New parameters could be added or existing ones changed in the following manner:
@@ -72,7 +72,7 @@ var contextOptions = new KSqlDBContextOptions(@"http:\\localhost:8088");
 contextOptions.QueryStreamParameters["auto.offset.reset"] = "latest";
 ```
 
-### Record (row) class (v.0.1.0)
+### Record (row) class (v0.1.0)
 Record class is a base class for rows returned in push queries. It has a 'RowTime' property.
 
 ```C#
@@ -85,7 +85,7 @@ context.CreateQueryStream<Tweet>()
   .Select(c => new { c.RowTime, c.Message });
 ```
 
-### Overriding stream name (v.0.1.0)
+### Overriding stream name (v0.1.0)
 Stream names are generated based on the generic record types. They are pluralized with Pluralize.NET package
 ```C#
 context.CreateQueryStream<Person>();
@@ -116,7 +116,7 @@ FROM custom_topic_name
 
 # ```IQbservable<T>``` extension methods
 
-### Select (v.0.1.0)
+### Select (v0.1.0)
 Projects each element of a stream into a new form.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -132,7 +132,7 @@ Omitting select is equivalent to SELECT *
 | DOUBLE  | double |
 | BOOLEAN | bool   |
 
-### Where (v.0.1.0)
+### Where (v0.1.0)
 Filters a stream of values based on a predicate.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -158,7 +158,7 @@ Supported operators are:
 | AND      | logical AND                 | &&   |
 | OR       | logical OR                  | \|\| |
 
-### Take (Limit) (v.0.1.0)
+### Take (Limit) (v0.1.0)
 Returns a specified number of contiguous elements from the start of a stream. Depends on the 'auto.topic.offset' parameter.
 ```C#
 context.CreateQueryStream<Tweet>()
@@ -166,6 +166,45 @@ context.CreateQueryStream<Tweet>()
 ```
 ```SQL
 SELECT * from tweets EMIT CHANGES LIMIT 2;
+```
+
+### Subscribe (v0.1.0)
+Providing ```IObserver<T>```:
+```C#
+using var subscription = new KSqlDBContextOptions(@"http:\\localhost:8088")
+  .CreateQueryStream<Tweet>()
+  .Subscribe(new TweetsObserver());
+
+public class TweetsObserver : System.IObserver<Tweet>
+{
+  public void OnNext(Tweet tweetMessage)
+  {
+    Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
+  }
+
+  public void OnError(Exception error)
+  {
+    Console.WriteLine($"{nameof(Tweet)}: {error.Message}");
+  }
+
+  public void OnCompleted()
+  {
+    Console.WriteLine($"{nameof(Tweet)}: completed successfully");
+  }
+}
+```
+Providing ```Action<T> onNext, Action<Exception> onError and Action onCompleted```:
+```C#
+using var subscription = new KSqlDBContextOptions(@"http:\\localhost:8088")
+    .CreateQueryStream<Tweet>()
+    .Subscribe(
+      onNext: tweetMessage =>
+      {
+        Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
+      },
+      onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, 
+      onCompleted: () => Console.WriteLine("Completed")
+      );
 ```
 
 ### ToObservable moving to [Rx.NET](https://github.com/dotnet/reactive)
@@ -189,7 +228,7 @@ System.IObservable<Tweet> observable = queryStream.ToObservable();
 observable.Throttle(TimeSpan.FromSeconds(3)).Subscribe();
 ```
 
-### ToQueryString (v.0.1.0)
+### ToQueryString (v0.1.0)
 ToQueryString is helpful for debugging purposes. Returns the generated ksql query without executing it.
 ```C#
 var ksql = context.CreateQueryStream<Tweet>().ToQueryString();
@@ -198,8 +237,8 @@ var ksql = context.CreateQueryStream<Tweet>().ToQueryString();
 Console.WriteLine(ksql);
 ```
 
-### GroupBy (v.0.1.0)
-#### Count (v.0.1.0)
+### GroupBy (v0.1.0)
+#### Count (v0.1.0)
 Count the number of rows. When * is specified, the count returned will be the total number of rows.
 ```C#
 var ksqlDbUrl = @"http:\\localhost:8088";
@@ -218,7 +257,11 @@ context.CreateQueryStream<Tweet>()
 ```SQL
 SELECT Id, COUNT(*) Count FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
-Or
+` `
+> ⚠ There is a known limitation in the early access versions (bellow 1.0). The aggregation functions have to be named/aliased COUNT(*) Count, otherwise the deserialization won't be able to map the unknown column name KSQL_COL_0. 
+The Key should be mapped back to the respective column too Id = g.Key
+
+Or without the new expression:
 ```C#
 context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
@@ -240,7 +283,7 @@ Equivalent to KSql:
 SELECT Id, SUM(Amount) Agg FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
-### ToAsyncEnumerable (v.0.1.0)
+### ToAsyncEnumerable (v0.1.0)
 Creates an [async iterator](https://docs.microsoft.com/en-us/archive/msdn-magazine/2019/november/csharp-iterating-with-async-enumerables-in-csharp-8) from the query:
 ```C#
 var cts = new CancellationTokenSource();
@@ -250,7 +293,7 @@ await foreach (var tweet in asyncTweetsEnumerable.WithCancellation(cts.Token))
   Console.WriteLine(tweet.Message);
 ```
 
-### WindowedBy (v.0.1.0)
+### WindowedBy (v0.1.0)
 Creation of windowed aggregation
 
 [Tumbling window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#tumbling-window):
@@ -285,7 +328,7 @@ SELECT WindowStart, WindowEnd, Id, COUNT(*) Count FROM Tweets
 ```
 Window advancement interval should be more than zero and less than window duration
 
-### String Functions UCase, LCase (v.0.1.0)
+### String Functions UCase, LCase (v0.1.0)
 ```C#
 l => l.Message.ToLower() != "hi";
 l => l.Message.ToUpper() != "HI";
@@ -296,7 +339,9 @@ UCASE(Latitude) != 'HI'
 ```
 
 # v0.2.0 preview
-Planned:
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.2.0-RC1
+```
 
 ### Having (v.0.2.0)
 ```C#
@@ -324,6 +369,22 @@ SELECT CardNumber, COUNT(*) Count FROM Transactions
   WINDOW SESSION (5 SECONDS)
   GROUP BY CardNumber 
   EMIT CHANGES;
+```
+Time units:
+```C#
+public enum TimeUnits
+{
+  MILLISECONDS, // v2.0.0
+  SECONDS,
+  MINUTES,
+  HOURS,
+  DAYS
+}
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
+
+Duration duration = Duration.OfHours(2);
+
+Console.WriteLine($"{duration.Value} {duration.TimeUnit}");
 ```
 
 ### Inner Joins (v.0.2.0)
@@ -367,6 +428,9 @@ INNER JOIN Lead_Actor L
 ON M.Title = L.Title
 EMIT CHANGES;
 ```
+` `
+> ⚠ There is a known limitation in the early access versions (bellow 1.0). 
+The Key column, in this case movie.Title, has to be aliased Title = movie.Title, otherwise the deserialization won't be able to map the unknown column name M_TITLE. 
 
 ### Avg (v.0.2.0)
 ```KSQL
