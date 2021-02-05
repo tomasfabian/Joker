@@ -294,10 +294,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo joinTOuterTInnerTKeyTResult;
 
     private static MethodInfo JoinTOuterTInnerTKeyTResult(Type TOuter, Type TInner, Type TKey, Type TResult) =>
-      (joinTOuterTInnerTKeyTResult ??= new Func<IQbservable<object>, IQbservable<object>, Expression<Func<object, object>>, Expression<Func<object, object>>, Expression<Func<object, object, object>>, IQbservable<object>>(Join).GetMethodInfo().GetGenericMethodDefinition())
+      (joinTOuterTInnerTKeyTResult ??= new Func<IQbservable<object>, ISource<object>, Expression<Func<object, object>>, Expression<Func<object, object>>, Expression<Func<object, object, object>>, IQbservable<object>>(Join).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TOuter, TInner, TKey, TResult);
 
-    public static IQbservable<TResult> Join<TOuter, TInner, TKey, TResult>(this IQbservable<TOuter> outer, IQbservable<TInner> inner, Expression<Func<TOuter, TKey>> outerKeySelector, Expression<Func<TInner, TKey>> innerKeySelector, Expression<Func<TOuter, TInner, TResult>> resultSelector)
+    public static IQbservable<TResult> Join<TOuter, TInner, TKey, TResult>(this IQbservable<TOuter> outer, ISource<TInner> inner, Expression<Func<TOuter, TKey>> outerKeySelector, Expression<Func<TInner, TKey>> innerKeySelector, Expression<Func<TOuter, TInner, TResult>> resultSelector)
     {
       if (outer == null) throw new ArgumentNullException(nameof(outer));
       if (inner == null) throw new ArgumentNullException(nameof(inner));

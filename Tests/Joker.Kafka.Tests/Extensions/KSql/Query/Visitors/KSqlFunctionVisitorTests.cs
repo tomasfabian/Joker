@@ -101,7 +101,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     public void Like_BuildKSql_PrintsLikeCondition()
     {
       //Arrange
-      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message, "santa%");
+      Expression<Func<Tweet, bool>> likeExpression = c => ksqlDB.KSql.Query.Functions.KSql.Functions.Like(c.Message, "santa%");
 
       //Act
       var query = ClassUnderTest.BuildKSql(likeExpression);
@@ -114,7 +114,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     public void LikeToLower_BuildKSql_PrintsLikeCondition()
     {
       //Arrange
-      Expression<Func<Tweet, bool>> likeExpression = c => Functions.KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
+      Expression<Func<Tweet, bool>> likeExpression = c => ksqlDB.KSql.Query.Functions.KSql.Functions.Like(c.Message.ToLower(), "%santa%".ToLower());
 
       //Act
       var query = ClassUnderTest.BuildKSql(likeExpression);

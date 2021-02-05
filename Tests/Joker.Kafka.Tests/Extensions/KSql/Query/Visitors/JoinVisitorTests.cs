@@ -31,7 +31,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
         .Join(
-          KSqlDBContext.CreateQueryStream<Lead_Actor>(),
+          Source.Of<Lead_Actor>(),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
@@ -56,14 +56,14 @@ ON M.Title = L.Title
       
       ksql.Should().Be(expectedQuery);
     }
-    
+
     [TestMethod]
     public void JoinAndSelectWithAliases_BuildKSql_PrintsInnerJoin()
     {
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
         .Join(
-          KSqlDBContext.CreateQueryStream<Lead_Actor>(),
+          Source.Of<Lead_Actor>(),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
@@ -81,17 +81,17 @@ ON M.Title = L.Title
 INNER JOIN Lead_Actors L
 ON M.Title = L.Title
  EMIT CHANGES;";
-      
+
       ksql.Should().Be(expectedQuery);
     }
-    
+
     [TestMethod]
     public void SameStreamName_BuildKSql_PrintsDifferentAliases()
     {
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
         .Join(
-          KSqlDBContext.CreateQueryStream<Movie>(),
+          Source.Of<Movie>(),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
@@ -108,17 +108,17 @@ ON M.Title = L.Title
 INNER JOIN Movies M1
 ON M.Title = M1.Title
  EMIT CHANGES;";
-      
+
       ksql.Should().Be(expectedQuery);
     }
-    
+
     [TestMethod]
     public void OverrideStreamName_BuildKSql_Prints()
     {
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
         .Join(
-          KSqlDBContext.CreateQueryStream<Lead_Actor>("Actors"),
+          Source.Of<Lead_Actor>("Actors"),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
@@ -135,7 +135,7 @@ ON M.Title = M1.Title
 INNER JOIN Actors A
 ON M.Title = A.Title
  EMIT CHANGES;";
-      
+
       ksql.Should().Be(expectedQuery);
     }
 

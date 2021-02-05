@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Pluralize.NET;
 
@@ -84,11 +84,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
     {
       if (constantExpression == null) throw new ArgumentNullException(nameof(constantExpression));
 
-      if (constantExpression.Value is KStreamSet kStreamSet)
+      if (constantExpression.Value is ISource source)
       {
-        streamName = constantExpression.Type.BaseType?.GenericTypeArguments[0].Name;
+        streamName = constantExpression.Type.GenericTypeArguments[0].Name;
 
-        streamName = kStreamSet?.QueryContext?.StreamName ?? InterceptStreamName(streamName);
+        streamName = source?.QueryContext?.StreamName ?? InterceptStreamName(streamName);
       }
 
       return constantExpression;
