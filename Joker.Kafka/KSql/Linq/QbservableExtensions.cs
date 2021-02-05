@@ -96,7 +96,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
       var kStreamSet = source as KStreamSet<TSource>;
 
-      var ksqlQuery = kStreamSet?.KSqlQueryGenerator?.BuildKSql(source.Expression, kStreamSet.QueryContext);
+      var ksqlQuery = kStreamSet?.BuildKsql();
 
       return ksqlQuery;
     }

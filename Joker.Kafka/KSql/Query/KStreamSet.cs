@@ -21,16 +21,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
   internal abstract class KStreamSet<TEntity> : KStreamSet, IQbservable<TEntity>
   {
-    private readonly IKStreamSetDependencies dependencies;
-    private readonly IServiceScope serviceScope;
+    private readonly IServiceScopeFactory serviceScopeFactory;
+    private IServiceScope serviceScope;
 
     protected KStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
     {
-      QueryContext = queryContext;
-
-      serviceScope = serviceScopeFactory.CreateScope();
+      this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
       
-      dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+      QueryContext = queryContext;
 
       Provider = new QbservableProvider(serviceScopeFactory, queryContext);
       
@@ -39,11 +37,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
     protected KStreamSet(IServiceScopeFactory serviceScopeFactory, Expression expression, QueryContext queryContext = null)
     {
-      QueryContext = queryContext;
-
-      serviceScope = serviceScopeFactory.CreateScope();
+      this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
       
-      dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+      QueryContext = queryContext;
 
       Provider = new QbservableProvider(serviceScopeFactory, queryContext);
 
@@ -51,10 +47,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     }
 
     public override Type ElementType => typeof(TEntity);
-
-    internal IKSqlQueryGenerator KSqlQueryGenerator => dependencies.KSqlQueryGenerator;
-
-    internal IServiceScope ServiceScope => serviceScope;
 
     public IDisposable Subscribe(IObserver<TEntity> observer)
     {
@@ -75,8 +67,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationTokenSource cancellationTokenSource)
     {
       var cancellationToken = cancellationTokenSource.Token;
+      
+      serviceScope = serviceScopeFactory.CreateScope();
+      var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
 
-      cancellationToken.Register(() => serviceScope.Dispose());
+      cancellationToken.Register(() => serviceScope?.Dispose());
 
       var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, QueryContext);
 
@@ -94,6 +89,19 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         .ToObservable();
 
       return observableStream;
+    }
+
+    internal string BuildKsql()
+    {
+      serviceScope = serviceScopeFactory.CreateScope();
+      
+      var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+
+      var ksqlQuery = dependencies.KSqlQueryGenerator?.BuildKSql(Expression, QueryContext);
+      
+      serviceScope.Dispose();
+
+      return ksqlQuery;
     }
   }
 }
