@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using System.Text;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 
@@ -21,8 +22,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         case nameof(IAggregations<object>.Avg):
         case nameof(IAggregations<object>.Min):
         case nameof(IAggregations<object>.Max):
-        case nameof(IAggregations<object>.Sqrt):
-        case nameof(IAggregations<object>.Sign):
           if (methodCallExpression.Arguments.Count == 1)
           {
             Append($"{methodInfo.Name.ToUpper()}(");
@@ -38,9 +37,38 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           }
 
           break;
+        case nameof(IAggregations<object>.EarliestByOffset):
+        case nameof(IAggregations<object>.LatestByOffset):
+        case nameof(IAggregations<object>.EarliestByOffsetAllowNulls):
+        case nameof(IAggregations<object>.LatestByOffsetAllowNulls):
+          if (methodCallExpression.Arguments.Count == 1)
+          {
+            var functionName = GetFunctionName(methodInfo.Name);
+            var ignoreNulls = !methodInfo.Name.ToLower().EndsWith("Nulls".ToLower());
+            Append($"{functionName}(");
+            Visit(methodCallExpression.Arguments[0]);
+            Append($", {ignoreNulls})");
+          }
+
+          break;
       }
 
       return methodCallExpression;
+    }
+
+    private string GetFunctionName(string methodName)
+    {
+      switch (methodName)
+      {
+        case nameof(IAggregations<object>.EarliestByOffset):
+        case nameof(IAggregations<object>.EarliestByOffsetAllowNulls):
+          return "EARLIEST_BY_OFFSET";
+        case nameof(IAggregations<object>.LatestByOffset):
+        case nameof(IAggregations<object>.LatestByOffsetAllowNulls):
+          return "LATEST_BY_OFFSET";
+        default:
+          throw new NotSupportedException();
+      }
     }
   }
 }
