@@ -1,4 +1,4 @@
-﻿This package generates ksql queries from your .NET C# linq queries. You can filter, project and limit your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
+﻿This package generates ksql queries from your .NET C# linq queries. You can filter, project, limit etc. your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
 Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
@@ -54,7 +54,7 @@ Sample project can be found under [Examples/Kafka](https://github.com/tomasfabia
 
 
 **External dependencies:**
-- kafka broker and ksqlDB
+- [kafka broker](https://kafka.apache.org/intro) and [ksqlDB](https://ksqldb.io/overview.html)
 
 CD to [Examples/Kafka](https://github.com/tomasfabian/Joker/tree/master/Samples/Kafka/Kafka.DotNet.ksqlDB.Sample)
 
@@ -115,6 +115,7 @@ FROM custom_topic_name
 ```
 
 # ```IQbservable<T>``` extension methods
+<img src="https://sec.ch9.ms/ecn/content/images/WhatHowWhere.jpg" />
 
 ### Select (v0.1.0)
 Projects each element of a stream into a new form.
@@ -338,7 +339,7 @@ LCASE(Latitude) != 'hi'
 UCASE(Latitude) != 'HI'
 ```
 
-# v0.2.0 preview
+# v0.2.0
 ```
 Install-Package Kafka.DotNet.ksqlDB -Version 0.2.0-RC1
 ```
@@ -403,9 +404,11 @@ public class Lead_Actor : Record
   public string Actor_Name { get; set; }
 }
 
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+
 var query = context.CreateQueryStream<Movie>()
   .Join(
-    context.CreateQueryStream<Lead_Actor>(nameof(Lead_Actor)),
+    Source.Of<Lead_Actor>(nameof(Lead_Actor)),
     movie => movie.Title,
     actor => actor.Title,
     (movie, actor) => new
@@ -443,7 +446,7 @@ var query = CreateQbservable()
   .Select(g => g.Avg(c => c.Citizens));
 ```
 
-### Min and Max (v.0.2.0)
+### Aggregation functions Min and Max (v.0.2.0)
 ```KSQL
 MIN(col1)
 MAX(col1)
@@ -471,7 +474,7 @@ KSQL
 "LCASE(Message) LIKE LCASE('%santa%')"
 ```
 
-### Arithmetic operations on columns) (v.0.2.0)
+### Arithmetic operations on columns (v.0.2.0)
 The usual arithmetic operators (+,-,/,*,%) may be applied to numeric types, like INT, BIGINT, and DOUBLE:
 ```KSQL
 SELECT USERID, LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH FROM USERS EMIT CHANGES;
@@ -506,14 +509,12 @@ TRIM(Message)
 Substring(Message, 2, 3)
 ```
 
-### Numeric scalar functions - Sign, Sqrt (v.0.2.0)
+# v0.3.0 preview (not released)
 
-```C#
-Expression<Func<IKSqlGrouping<int, Rectangle>, object>> expression = l => new { Sqrt = l.Sqrt(c => c.Height) };
-```
+### Numeric functions - Abs, Ceil, Floor, Random, Sign (v.0.3.0)
 
 **TODO:**
-- [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) except of count and sum (released in v0.1.0)
-- [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
+- missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
+- Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
 - backpressure support

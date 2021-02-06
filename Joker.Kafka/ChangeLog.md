@@ -1,26 +1,19 @@
-# v0.2.0 preview (RC1)
+# v0.2.0
 
 ### ExtensionsMethods:
 - Having
 - Window Session
-- Avg - Return the average value for a given column
-- Min
-- Max
 - arithmetic operators
 - KSqlFunctions - LIKE
 - String functions - LPad, RPad, Trim, Len, Substring
-- Numeric scalar functions - Sign, Sqrt
+- Aggregation functions - Min and Max
+- Avg - Return the average value for a given column
 - Inner Join
+- TimeUnit milliseconds
+- Source.of for inner join helper
 
 ### Fixes:
 - parse single value for anonymous type - KSqlDbQueryStreamProvider bug fix
-
-### TODO:
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
-- string functions: Replace, Regex**
-- CreateQueryStream options parameter
-- Joins: Left outer, Full outer
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
 
 # v0.1.0
 ### ExtensionsMethods:
@@ -73,3 +66,12 @@
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
+
+### TODO v0.3.0:
+- numeric functions Abs, Ceil, Floor, Random, Sign
+
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
+- string functions: Replace, Regex**
+- CreateQueryStream options parameter
+- Joins: Left outer, Full outer
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
