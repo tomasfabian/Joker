@@ -66,6 +66,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       ksql.Should().BeEquivalentTo(@$"SELECT * FROM Locations EMIT CHANGES LIMIT {limit};");
     }
 
+    [TestMethod]
+    public void ToQueryString_CalledTwice_PrintsSameQuery()
+    {
+      //Arrange
+      int limit = 2;
+
+      var query = CreateStreamSource()
+        .Take(limit);
+
+      //Act
+      var ksql1 = query.ToQueryString();
+      var ksql2 = query.ToQueryString();
+
+      //Assert
+      ksql1.Should().BeEquivalentTo(ksql2);
+    }
+
     internal class TweetsKQueryStreamSet : KQueryStreamSet<Tweet>
     {
       public TweetsKQueryStreamSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext) : base(serviceScopeFactory, queryContext)
