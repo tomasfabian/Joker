@@ -27,9 +27,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
             Visit(methodCallExpression.Arguments[2]);
             break;
           case nameof(KSqlFunctionsExtensions.Trim):
-            Append("TRIM(");
+          case nameof(KSqlFunctionsExtensions.Abs):
+          case nameof(KSqlFunctionsExtensions.Ceil):
+          case nameof(KSqlFunctionsExtensions.Floor):
+          case nameof(KSqlFunctionsExtensions.Sign):
+            Append($"{methodInfo.Name.ToUpper()}(");
             Visit(methodCallExpression.Arguments[1]);
             Append(")");
+            break;          
+          case nameof(KSqlFunctionsExtensions.Random):
+            Append($"{methodInfo.Name.ToUpper()}()");
             break;
           case nameof(KSqlFunctionsExtensions.LPad):
           case nameof(KSqlFunctionsExtensions.RPad):
