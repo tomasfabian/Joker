@@ -102,5 +102,31 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"Key, LATEST_BY_OFFSET({nameof(Transaction.Amount)}, false) LatestByOffsetAllowNulls");
     }
+
+    [TestMethod]
+    public void TopK_BuildKSql_PrintsTopK()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, TopK = l.TopK(c => c.Amount, 2) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, TopK({nameof(Transaction.Amount)}, 2) TopK");
+    }
+
+    [TestMethod]
+    public void TopKDistinct_BuildKSql_PrintsTopKDistinct()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, TopKDistinct = l.TopKDistinct(c => c.Amount, 2) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, TOPKDISTINCT({nameof(Transaction.Amount)}, 2) TopKDistinct");
+    }
   }
 }
