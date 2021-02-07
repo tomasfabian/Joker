@@ -140,5 +140,41 @@ ON M.Title = A.Title
     }
 
     #endregion
+
+    #region LeftJoin
+
+    [TestMethod]
+    public void LeftJoin_BuildKSql_PrintsInnerJoin()
+    {
+      //Arrange
+      var query = KSqlDBContext.CreateQueryStream<Movie>()
+        .LeftJoin(
+          Source.Of<Lead_Actor>(),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            movie.Id,
+            movie.Title,
+            movie.Release_Year,
+            ActorName = K.Functions.Trim(actor.Actor_Name),
+            UpperActorName = actor.Actor_Name.ToUpper(),
+            ActorTitle = actor.Title
+          }
+        );
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      var expectedQuery = @"SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, TRIM(L.Actor_Name) ActorName, UCASE(L.Actor_Name) UpperActorName, L.Title ActorTitle FROM Movies M
+LEFT JOIN Lead_Actors L
+ON M.Title = L.Title
+ EMIT CHANGES;";
+      
+      ksql.Should().Be(expectedQuery);
+    }
+
+    #endregion
   }
 }

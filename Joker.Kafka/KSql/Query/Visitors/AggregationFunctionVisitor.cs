@@ -18,6 +18,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
 
       switch (methodInfo.Name)
       {
+        case nameof(IAggregations.Count):
+          if (methodCallExpression.Arguments.Count == 0)
+          {
+            Append("COUNT(*)");
+          }
+
+          break;
         case nameof(IAggregations<object>.Sum):
         case nameof(IAggregations<object>.Avg):
         case nameof(IAggregations<object>.Min):
@@ -30,10 +37,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           }
 
           break;
-        case nameof(IAggregations.Count):
-          if (methodCallExpression.Arguments.Count == 0)
+        case nameof(IAggregations<object>.TopK):
+        case nameof(IAggregations<object>.TopKDistinct):
+          if (methodCallExpression.Arguments.Count == 2)
           {
-            Append("COUNT(*)");
+            Append($"{methodInfo.Name.ToUpper()}(");
+            Visit(methodCallExpression.Arguments[0]);
+            Append(", ");
+            Visit(methodCallExpression.Arguments[1]);
+            Append(")");
           }
 
           break;

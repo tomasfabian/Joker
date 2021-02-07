@@ -54,6 +54,20 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     decimal Sum(Func<TSource, float> selector);
     decimal Sum(Func<TSource, double> selector);
 
+    short[] TopK(Func<TSource, short> selector, int k);
+    int[] TopK(Func<TSource, int> selector, int k);
+    long[] TopK(Func<TSource, long> selector, int k);
+    float[] TopK(Func<TSource, float> selector, int k);
+    double[] TopK(Func<TSource, double> selector, int k);
+    decimal[] TopK(Func<TSource, decimal> selector, int k);
+
+    short[] TopKDistinct(Func<TSource, short> selector, int k);
+    int[] TopKDistinct(Func<TSource, int> selector, int k);
+    long[] TopKDistinct(Func<TSource, long> selector, int k);
+    float[] TopKDistinct(Func<TSource, float> selector, int k);
+    double[] TopKDistinct(Func<TSource, double> selector, int k);
+    decimal[] TopKDistinct(Func<TSource, decimal> selector, int k);
+
     string EarliestByOffset(Func<TSource, string> selector);
     int EarliestByOffset(Func<TSource, int> selector);
     long EarliestByOffset(Func<TSource, long> selector);
