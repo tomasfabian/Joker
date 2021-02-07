@@ -73,7 +73,7 @@
  
 #### Aggregation functions 
 - EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
-- TopK, TopKDistinct
+- TopK, TopKDistinct, LongCount, Count(col)
 
 - LeftJoin
 

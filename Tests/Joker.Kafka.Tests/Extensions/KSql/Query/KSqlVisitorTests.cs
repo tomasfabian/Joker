@@ -394,6 +394,32 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     [TestMethod]
+    public void LambdaWithNewLongCount_BuildKSql_PrintsKeyAndCountAsterix()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => new { Key = l.Key, Agg = l.LongCount() };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("Key, Count(*) Agg");
+    }
+
+    [TestMethod]
+    public void LambdaWithNewCount_BuildKSql_PrintsKeyAndCountColumnName()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => new { l.Key, Agg = l.Count(x => x.Longitude) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, Count({nameof(Location.Longitude)}) Agg");
+    }
+
+    [TestMethod]
     public void LambdaWithNewSum_BuildKSql_PrintsKeyAndSumColumnName()
     {
       //Arrange

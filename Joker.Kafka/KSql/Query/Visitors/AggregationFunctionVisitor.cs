@@ -19,16 +19,21 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
       switch (methodInfo.Name)
       {
         case nameof(IAggregations.Count):
+        case nameof(IAggregations.LongCount):
           if (methodCallExpression.Arguments.Count == 0)
           {
             Append("COUNT(*)");
           }
-
+          if (methodCallExpression.Arguments.Count == 1)
+          {
+            Append($"{methodInfo.Name.ToUpper()}(");
+            Visit(methodCallExpression.Arguments[0]);
+            Append(")");
+          }
           break;
-        case nameof(IAggregations<object>.Sum):
-        case nameof(IAggregations<object>.Avg):
         case nameof(IAggregations<object>.Min):
         case nameof(IAggregations<object>.Max):
+        case nameof(IAggregations<object>.Sum):
           if (methodCallExpression.Arguments.Count == 1)
           {
             Append($"{methodInfo.Name.ToUpper()}(");

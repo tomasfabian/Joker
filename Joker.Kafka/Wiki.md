@@ -513,7 +513,7 @@ Substring(Message, 2, 3)
 
 ### Aggregation functions 
 - EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
-- TopK, TopKDistinct
+- TopK, TopKDistinct, LongCount, Count(col)
 
 - LeftJoin
 
