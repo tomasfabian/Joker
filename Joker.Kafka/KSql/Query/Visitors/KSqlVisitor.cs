@@ -284,6 +284,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           Append(")");
         }
       }
+      else
+      {
+        var fieldInfo = (FieldInfo) memberExpression.Member;
+        var innerMember = (ConstantExpression)memberExpression.Expression;
+        var innerField = innerMember.Value;
+        object outerObj = fieldInfo.GetValue(innerField);
+        Append(outerObj.ToString());
+      }
 
       return memberExpression;
     }
