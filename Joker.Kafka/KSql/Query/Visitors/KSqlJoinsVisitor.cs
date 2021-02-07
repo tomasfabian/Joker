@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
@@ -42,8 +43,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
       return streamAliasAttempt;
     }
 
-    internal void VisitJoinTable(Expression[] expressions)
+    internal void VisitJoinTable((MethodInfo, IEnumerable<Expression>) join)
     {
+      var (methodInfo, e) = join;
+      
+      var expressions = e.ToArray();
+
       expressions = expressions.Select(StripQuotes).ToArray();
       
       Visit(expressions[0]);
@@ -60,7 +65,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
 
       AppendLine($" FROM {queryContext.StreamName} {outerStreamAlias}");
 
-      AppendLine($"INNER JOIN {streamName} {streamAlias}");
+      var joinType = methodInfo.Name switch
+      {
+        nameof(QbservableExtensions.Join) => "INNER",
+        nameof(QbservableExtensions.LeftJoin) => "LEFT",
+        _ => throw new ArgumentOutOfRangeException()
+      };
+
+      AppendLine($"{joinType} JOIN {streamName} {streamAlias}");
       Append($"ON {outerStreamAlias}.");
       Visit(expressions[1]);
       Append($" = {streamAlias}.");

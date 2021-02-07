@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
@@ -29,7 +30,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       kSqlVisitor = new KSqlVisitor();
       whereClauses = new Queue<Expression>();
-      joinTables = new List<IEnumerable<Expression>>();
+      joinTables = new List<(MethodInfo, IEnumerable<Expression>)>();
 
       Visit(expression);
       
@@ -41,7 +42,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
         foreach (var joinTable in joinTables)
         {
-          joinsVisitor.VisitJoinTable(joinTable.ToArray());
+          joinsVisitor.VisitJoinTable(joinTable);
         }
       }
       else
@@ -225,13 +226,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.Join))
+      switch (methodInfo.Name)
       {
-        var joinTable = methodCallExpression.Arguments.Skip(1);
+        case nameof(QbservableExtensions.Join):
+        case nameof(QbservableExtensions.LeftJoin):
+          var joinTable = methodCallExpression.Arguments.Skip(1);
         
-        joinTables.Add(joinTable);
+          joinTables.Add((methodInfo, joinTable));
 
-        VisitChained(methodCallExpression);
+          VisitChained(methodCallExpression);
+          break;
       }
 
       return methodCallExpression;
@@ -250,7 +254,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     private TimeWindows windowedBy;
     private LambdaExpression groupBy;
     private LambdaExpression having;
-    private List<IEnumerable<Expression>> joinTables;
+    private List<(MethodInfo, IEnumerable<Expression>)> joinTables;
 
     protected static Expression StripQuotes(Expression expression)
     {
