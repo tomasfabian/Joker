@@ -511,6 +511,12 @@ Substring(Message, 2, 3)
 
 # v0.3.0 preview (not released)
 
+### Aggregation functions 
+- EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
+- TopK, TopKDistinct
+
+- LeftJoin
+
 ### Numeric functions - Abs, Ceil, Floor, Random, Sign (v.0.3.0)
 
 **TODO:**

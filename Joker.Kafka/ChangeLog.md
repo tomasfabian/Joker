@@ -68,7 +68,14 @@
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 ### TODO v0.3.0:
-- numeric functions Abs, Ceil, Floor, Random, Sign
+#### Numeric functions
+- Abs, Ceil, Floor, Random, Sign
+ 
+#### Aggregation functions 
+- EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
+- TopK, TopKDistinct
+
+- LeftJoin
 
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - string functions: Replace, Regex**
