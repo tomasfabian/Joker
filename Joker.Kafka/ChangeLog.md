@@ -69,13 +69,17 @@
 
 ### TODO v0.3.0:
 #### Numeric functions
-- Abs, Ceil, Floor, Random, Sign
+- Abs, Ceil, Floor, Random, Sign, Round
  
 #### Aggregation functions 
 - EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
 - TopK, TopKDistinct, LongCount, Count(col)
 
 - LeftJoin
+- functions member access (variables for method arguments)
+- Having - aggregations with column
+- Where is null, is not null
+- dynamic function call (support not supported functions)
 
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - string functions: Replace, Regex**

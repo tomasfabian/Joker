@@ -8,7 +8,6 @@ using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Models;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
@@ -256,6 +255,46 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
       //Assert
       ksql.Should().BeEquivalentTo(@$"SELECT LCASE({nameof(Location.Latitude)}) != LCASE('HI') FROM Locations EMIT CHANGES;");
+    }
+    
+    [TestMethod]
+    public void WhereIsNotNull_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateQueryStream<Click>()
+        .Where(c => c.IP_ADDRESS != null)
+        .Select(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      string expectedKSql = @"SELECT IP_ADDRESS, URL, TIMESTAMP FROM Clicks
+WHERE IP_ADDRESS IS NOT NULL EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKSql);
+    }
+
+    [TestMethod]
+    public void WhereIsNull_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
+
+      var grouping = context.CreateQueryStream<Click>()
+        .Where(c => c.IP_ADDRESS == null)
+        .Select(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP });
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      string expectedKSql = @"SELECT IP_ADDRESS, URL, TIMESTAMP FROM Clicks
+WHERE IP_ADDRESS IS NULL EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKSql);
     }
   }
 }

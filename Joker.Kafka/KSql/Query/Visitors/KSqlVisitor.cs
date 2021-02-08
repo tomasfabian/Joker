@@ -79,6 +79,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           break;
 
         case ExpressionType.Lambda:
+        case ExpressionType.TypeAs:
           base.Visit(expression);
           break;
 
@@ -199,7 +200,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         //conditionals
         ExpressionType.AndAlso => OperatorAnd,
         ExpressionType.OrElse => "OR",
+        ExpressionType.Equal when binaryExpression.Right is ConstantExpression ce && ce.Value == null => "IS",
         ExpressionType.Equal => "=",
+        ExpressionType.NotEqual when binaryExpression.Right is ConstantExpression ce && ce.Value == null => "IS NOT",
         ExpressionType.NotEqual => "!=",
         ExpressionType.LessThan => "<",
         ExpressionType.LessThanOrEqual => "<=",
@@ -234,6 +237,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           if (memberWithArguments.Second.NodeType == ExpressionType.Call)
           {
             VisitMethodCall(memberWithArguments.Second as MethodCallExpression);
+            Append(" ");
+          }
+          if (memberWithArguments.Second.NodeType == ExpressionType.TypeAs)
+          {
+            Visit(memberWithArguments.Second);
             Append(" ");
           }
           else if(memberWithArguments.Second is BinaryExpression)
@@ -277,23 +285,33 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       }
       else if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
       {
-        if (memberName == nameof(string.Length)) //TODO: check type
+        if (memberName == nameof(string.Length))
         {
           Append("LEN(");
           Visit(memberExpression.Expression);
           Append(")");
         }
+        else
+          Append($"{memberExpression.Member.Name.ToUpper()}");
       }
       else
       {
-        var fieldInfo = (FieldInfo) memberExpression.Member;
-        var innerMember = (ConstantExpression)memberExpression.Expression;
-        var innerField = innerMember.Value;
-        object outerObj = fieldInfo.GetValue(innerField);
+        var outerObj = ExtractFieldValue(memberExpression);
         Append(outerObj.ToString());
       }
 
       return memberExpression;
+    }
+
+    private static object ExtractFieldValue(MemberExpression memberExpression)
+    {
+      var fieldInfo = (FieldInfo) memberExpression.Member;
+      var innerMember = (ConstantExpression) memberExpression.Expression;
+      var innerField = innerMember.Value;
+
+      object outerObj = fieldInfo.GetValue(innerField);
+
+      return outerObj;
     }
 
     protected override Expression VisitUnary(UnaryExpression unaryExpression)

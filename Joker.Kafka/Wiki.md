@@ -54,7 +54,8 @@ Sample project can be found under [Examples/Kafka](https://github.com/tomasfabia
 
 
 **External dependencies:**
-- [kafka broker](https://kafka.apache.org/intro) and [ksqlDB](https://ksqldb.io/overview.html)
+- [kafka broker](https://kafka.apache.org/intro) and [ksqlDB-server](https://ksqldb.io/overview.html) 0.14.0
+
 
 CD to [Examples/Kafka](https://github.com/tomasfabian/Joker/tree/master/Samples/Kafka/Kafka.DotNet.ksqlDB.Sample)
 
@@ -132,6 +133,12 @@ Omitting select is equivalent to SELECT *
 | BIGINT  | long   |
 | DOUBLE  | double |
 | BOOLEAN | bool   |
+| ```ARRAY<ElementType>``` | C#Type[]   |
+
+Array type mapping example (available from v0.3.0):
+```
+ARRAY<INTEGER> int[]
+```
 
 ### Where (v0.1.0)
 Filters a stream of values based on a predicate.
@@ -172,7 +179,7 @@ SELECT * from tweets EMIT CHANGES LIMIT 2;
 ### Subscribe (v0.1.0)
 Providing ```IObserver<T>```:
 ```C#
-using var subscription = new KSqlDBContextOptions(@"http:\\localhost:8088")
+using var subscription = new KSqlDBContext(@"http:\\localhost:8088")
   .CreateQueryStream<Tweet>()
   .Subscribe(new TweetsObserver());
 
@@ -196,7 +203,7 @@ public class TweetsObserver : System.IObserver<Tweet>
 ```
 Providing ```Action<T> onNext, Action<Exception> onError and Action onCompleted```:
 ```C#
-using var subscription = new KSqlDBContextOptions(@"http:\\localhost:8088")
+using var subscription = new KSqlDBContext(@"http:\\localhost:8088")
     .CreateQueryStream<Tweet>()
     .Subscribe(
       onNext: tweetMessage =>
@@ -511,16 +518,177 @@ Substring(Message, 2, 3)
 
 # v0.3.0 preview (not released)
 
-### Aggregation functions 
-- EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
-- TopK, TopKDistinct, LongCount, Count(col)
+## Aggregation functions 
+### EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull (v.0.3.0)
+[EarliestByOffset](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#earliest_by_offset),
+[LatestByOffset](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset)
+```C#
+Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression1 = l => new { EarliestByOffset = l.EarliestByOffset(c => c.Amount) };
 
-- LeftJoin
+Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression2 = l => new { LatestByOffsetAllowNulls = l.LatestByOffsetAllowNulls(c => c.Amount) };
+```
+KSQL
+```KSQL
+--EARLIEST_BY_OFFSET(col1, [ignoreNulls])
+EARLIEST_BY_OFFSET(Amount, True) EarliestByOffset
+LATEST_BY_OFFSET(Amount, False) LatestByOffsetAllowNulls
+```
+### TopK, TopKDistinct, LongCount, Count(column) (v.0.3.0)
+```C#
+Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression1 = l => new { TopK = l.TopK(c => c.Amount, 2) };
+Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression2 = l => new { TopKDistinct = l.TopKDistinct(c => c.Amount, 2) };
+Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression3 = l => new { Count = l.LongCount(c => c.Amount) };
+```
+KSQL
+```KSQL
+TOPK(Amount, 2) TopKDistinct
+TOPKDISTINCT(Amount, 2) TopKDistinct
+COUNT(Amount) Count
+```
 
-### Numeric functions - Abs, Ceil, Floor, Random, Sign (v.0.3.0)
+```C#
+new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Tweet>()
+  .GroupBy(c => c.Id)
+  .Select(g => new { Id = g.Key, TopK = g.TopKDistinct(c => c.Amount, 4) })
+  .Subscribe(onNext: tweetMessage =>
+  {
+    var tops = string.Join(',', tweetMessage.TopK);
+    Console.WriteLine($"TopKs: {tops}");
+    Console.WriteLine($"TopKs Array Length: {tops.Length}");
+  }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
+```
+
+### LeftJoin - LEFT OUTER (v.0.3.0)
+
+```C#
+var query = new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Movie>()
+  .LeftJoin(
+    Source.Of<Lead_Actor>(),
+    movie => movie.Title,
+    actor => actor.Title,
+    (movie, actor) => new
+    {
+      movie.Id,
+      ActorTitle = actor.Title
+    }
+  );
+```
+Generated KSQL:
+```KSQL
+SELECT M.Id Id, L.Title ActorTitle FROM Movies M
+LEFT JOIN Lead_Actors L
+ON M.Title = L.Title
+EMIT CHANGES;
+```
+
+### Having - aggregations with column (v.0.3.0)
+[Example](https://kafka-tutorials.confluent.io/finding-distinct-events/ksql.html) shows how to use Having with Count(column) and Group By compound key:
+```C#
+public class Click
+{
+  public string IP_ADDRESS { get; set; }
+  public string URL { get; set; }
+  public string TIMESTAMP { get; set; }
+}
+
+var query = context.CreateQueryStream<Click>()
+  .GroupBy(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP })
+  .WindowedBy(new TimeWindows(Duration.OfMinutes(2)))
+  .Having(c => c.Count(g => c.Key.IP_ADDRESS) == 1)
+  .Select(g => new { g.Key.IP_ADDRESS, g.Key.URL, g.Key.TIMESTAMP })
+  .Take(3);
+```
+Generated KSQL:
+```KSQL
+SELECT IP_ADDRESS, URL, TIMESTAMP FROM Clicks WINDOW TUMBLING (SIZE 2 MINUTES) GROUP BY IP_ADDRESS, URL, TIMESTAMP 
+HAVING COUNT(IP_ADDRESS) = 1 EMIT CHANGES LIMIT 3;
+```
+
+### Where IS NULL, IS NOT NULL (v.0.3.0)
+```C#
+using var subscription = new KSqlDBContext(@"http:\\localhost:8088")
+  .CreateQueryStream<Click>()
+  .Where(c => c.IP_ADDRESS != null || c.IP_ADDRESS == null)
+  .Select(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP });
+```
+
+Generated KSQL:
+```KSQL
+SELECT IP_ADDRESS, URL, TIMESTAMP
+FROM Clicks
+WHERE IP_ADDRESS IS NOT NULL OR IP_ADDRESS IS NULL
+EMIT CHANGES;
+```
+
+### Numeric functions - Abs, Ceil, Floor, Random, Sign, Round (v.0.3.0)
+```C#
+Expression<Func<Tweet, double>> expression1 = c => K.Functions.Abs(c.Amount);
+Expression<Func<Tweet, double>> expression2 = c => K.Functions.Ceil(c.Amount);
+Expression<Func<Tweet, double>> expression3 = c => K.Functions.Floor(c.Amount);
+Expression<Func<Tweet, double>> expression4 = c => K.Functions.Random();
+Expression<Func<Tweet, double>> expression5 = c => K.Functions.Sign(c.Amount);
+
+int scale = 3;
+Expression<Func<Tweet, double>> expression6 = c => K.Functions.Round(c.Amount, scale);
+```
+
+Generated KSQL:
+```KSQL
+ABS(Amount)
+CEIL(AccountBalance)
+FLOOR(AccountBalance)
+RANDOM()
+SIGN(Amount)
+
+ROUND(Amount, 3)
+```
+
+### Dynamic - calling not supported ksqldb functions
+Some of the ksqldb functions have not been implemented yet. This can be circumvented by calling K.Functions.Dynamic with the apropriate function call and its paramaters. The type of the column value is set with C# **as** operator.
+```C#
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+
+context.CreateQueryStream<Tweet>()
+  .Select(c => new { Col = KSql.Functions.Dynamic("IFNULL(Message, 'n/a')") as string, c.Id, c.Amount, c.Message });
+```
+The interesting part from the above query is:
+```C#
+K.Functions.Dynamic("IFNULL(Message, 'n/a')") as string
+```
+Generated KSQL:
+```KSQL
+SELECT IFNULL(Message, 'n/a') Col, Id, Amount, Message FROM Tweets EMIT CHANGES;
+```
+Result:
+```
++----------------------------+----------------------------+----------------------------+----------------------------+
+|COL                         |ID                          |AMOUNT                      |MESSAGE                     |
++----------------------------+----------------------------+----------------------------+----------------------------+
+|Hello world                 |1                           |0.0031                      |Hello world                 |
+|n/a                         |1                           |0.1                         |null                        |
+```
+
+Dynamic function call with array result example:
+```C#
+using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
+
+context.CreateQueryStream<Tweet>()
+  .Select(c => K.F.Dynamic("ARRAY_DISTINCT(ARRAY[1, 1, 2, 3, 1, 2])") as int[])
+  .Subscribe(
+    message => Console.WriteLine($"{message[0]} - {message[^1]}"), 
+    error => Console.WriteLine($"Exception: {error.Message}"));
+```
 
 **TODO:**
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
+- FULL OUTER join
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
 - backpressure support
+
+# ksqldb links
+[Scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#as_value)
+
+[Aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/)
+
+[Push query](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/)
