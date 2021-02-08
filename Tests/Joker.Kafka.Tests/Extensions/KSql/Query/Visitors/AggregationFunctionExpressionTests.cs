@@ -26,6 +26,45 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     }
 
     [TestMethod]
+    public void LongCount_BuildKSql_PrintsCountWithAsterix()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, Count = l.LongCount() };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COUNT(*) Count");
+    }
+
+    [TestMethod]
+    public void LongCount_BuildKSql_PrintsCountWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, Count = l.LongCount(c => c.Amount) };
+      
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COUNT({nameof(Transaction.Amount)}) Count");
+    }
+
+    [TestMethod]
+    public void Count_BuildKSql_PrintsCountWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, Count = l.Count(c => c.Amount) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COUNT({nameof(Transaction.Amount)}) Count");
+    }
+
+    [TestMethod]
     public void Max_BuildKSql_PrintsMaxWithColumn()
     {
       //Arrange
@@ -95,7 +134,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     {
       //Arrange
       Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, LatestByOffsetAllowNulls = l.LatestByOffsetAllowNulls(c => c.Amount) };
-
+      
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
@@ -108,12 +147,12 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     {
       //Arrange
       Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, TopK = l.TopK(c => c.Amount, 2) };
-
+      
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"Key, TopK({nameof(Transaction.Amount)}, 2) TopK");
+      query.Should().BeEquivalentTo($"Key, TOPK({nameof(Transaction.Amount)}, 2) TopK");
     }
 
     [TestMethod]
@@ -121,12 +160,26 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     {
       //Arrange
       Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, TopKDistinct = l.TopKDistinct(c => c.Amount, 2) };
-
+      
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
       query.Should().BeEquivalentTo($"Key, TOPKDISTINCT({nameof(Transaction.Amount)}, 2) TopKDistinct");
+    }
+
+    [TestMethod]
+    public void TopKDistinctWithVariableInput_BuildKSql_PrintsTopKDistinct()
+    {
+      //Arrange
+      int k = 2;
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, TopKDistinct = l.TopKDistinct(c => c.Amount, k) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, TOPKDISTINCT({nameof(Transaction.Amount)}, {k}) TopKDistinct");
     }
   }
 }

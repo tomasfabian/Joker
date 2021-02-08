@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using UnitTests;
@@ -179,6 +181,33 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
       //Assert
       ksql.Should().BeEquivalentTo("SELECT Avg(Citizens) FROM Cities GROUP BY RegionCode EMIT CHANGES;");
+    }
+
+    #endregion
+
+    #region GroupBy
+
+    [TestMethod]
+    public void GroupByCompoundKey_BuildKSql_PrintsQuery()
+    {
+      //Arrange
+      var context = new TestableDbProvider(TestParameters.KsqlDBUrl);
+
+      //https://kafka-tutorials.confluent.io/finding-distinct-events/ksql.html
+      var grouping = context.CreateQueryStream<Click>()
+        .GroupBy(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP })
+        .WindowedBy(new TimeWindows(Duration.OfMinutes(2)))
+        .Having(c => c.Count(g => c.Key.IP_ADDRESS) == 1)
+        .Select(g => new { g.Key.IP_ADDRESS, g.Key.URL, g.Key.TIMESTAMP })
+        .Take(3);
+
+      //Act
+      var ksql = grouping.ToQueryString();
+
+      //Assert
+      string expectedKSql = @"SELECT IP_ADDRESS, URL, TIMESTAMP FROM Clicks WINDOW TUMBLING (SIZE 2 MINUTES) GROUP BY IP_ADDRESS, URL, TIMESTAMP HAVING COUNT(IP_ADDRESS) = 1 EMIT CHANGES LIMIT 3;";
+      
+      ksql.Should().BeEquivalentTo(expectedKSql);
     }
 
     #endregion

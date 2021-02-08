@@ -10,12 +10,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
   public interface IAggregations<out TSource> : IAggregations
   {
-    short Count(Func<TSource, short> selector);
-    int Count(Func<TSource, int> selector);
-    long Count(Func<TSource, long> selector);
-    float Count(Func<TSource, float> selector);
-    double Count(Func<TSource, double> selector);
-    decimal Count(Func<TSource, decimal> selector);
+    int Count(Func<TSource, object> selector);
+    long LongCount(Func<TSource, object> selector);
 
     int Avg(Func<TSource, int?> selector);
     long Avg(Func<TSource, long?> selector);

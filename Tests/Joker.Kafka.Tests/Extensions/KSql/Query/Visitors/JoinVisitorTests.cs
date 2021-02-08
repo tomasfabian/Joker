@@ -113,7 +113,7 @@ ON M.Title = M1.Title
     }
 
     [TestMethod]
-    public void OverrideStreamName_BuildKSql_Prints()
+    public void InnerJoinOverrideStreamName_BuildKSql_Prints()
     {
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
@@ -144,7 +144,7 @@ ON M.Title = A.Title
     #region LeftJoin
 
     [TestMethod]
-    public void LeftJoin_BuildKSql_PrintsInnerJoin()
+    public void LeftJoin_BuildKSql_PrintsLeftJoin()
     {
       //Arrange
       var query = KSqlDBContext.CreateQueryStream<Movie>()
@@ -172,6 +172,33 @@ LEFT JOIN Lead_Actors L
 ON M.Title = L.Title
  EMIT CHANGES;";
       
+      ksql.Should().Be(expectedQuery);
+    }
+
+    [TestMethod]
+    public void LeftJoinOverrideStreamName_BuildKSql_Prints()
+    {
+      //Arrange
+      var query = KSqlDBContext.CreateQueryStream<Movie>()
+        .LeftJoin(
+          Source.Of<Lead_Actor>("Actors"),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            Title = movie.Title,
+          }
+        );
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      var expectedQuery = @"SELECT M.Title Title FROM Movies M
+LEFT JOIN Actors A
+ON M.Title = A.Title
+ EMIT CHANGES;";
+
       ksql.Should().Be(expectedQuery);
     }
 
