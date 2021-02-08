@@ -39,6 +39,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
             Append($"{methodInfo.Name.ToUpper()}()");
             break;
           case nameof(KSqlFunctionsExtensions.LPad):
+          case nameof(KSqlFunctionsExtensions.Round):
           case nameof(KSqlFunctionsExtensions.RPad):
           case nameof(KSqlFunctionsExtensions.Substring):
             Append($"{methodInfo.Name.ToUpper()}");

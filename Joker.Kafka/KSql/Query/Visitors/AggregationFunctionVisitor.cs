@@ -22,15 +22,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         case nameof(IAggregations.LongCount):
           if (methodCallExpression.Arguments.Count == 0)
           {
-            Append("COUNT(*)");
+            Append($"{nameof(IAggregations.Count).ToUpper()}(*)");
           }
           if (methodCallExpression.Arguments.Count == 1)
           {
-            Append($"{methodInfo.Name.ToUpper()}(");
+            Append($"{nameof(IAggregations.Count).ToUpper()}(");
             Visit(methodCallExpression.Arguments[0]);
             Append(")");
           }
           break;
+        case nameof(IAggregations<object>.Avg):
         case nameof(IAggregations<object>.Min):
         case nameof(IAggregations<object>.Max):
         case nameof(IAggregations<object>.Sum):
@@ -46,11 +47,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         case nameof(IAggregations<object>.TopKDistinct):
           if (methodCallExpression.Arguments.Count == 2)
           {
-            Append($"{methodInfo.Name.ToUpper()}(");
-            Visit(methodCallExpression.Arguments[0]);
-            Append(", ");
-            Visit(methodCallExpression.Arguments[1]);
-            Append(")");
+            Append($"{methodInfo.Name.ToUpper()}");
+            PrintFunctionArguments(methodCallExpression.Arguments);
           }
 
           break;

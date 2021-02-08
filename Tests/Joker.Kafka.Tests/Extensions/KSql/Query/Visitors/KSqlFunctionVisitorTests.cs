@@ -117,6 +117,67 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region Round
+
+    [TestMethod]
+    public void DoubleRound_BuildKSql_PrintsRoundFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, double>> expression = c => K.Functions.Round(c.Amount);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ROUND({nameof(Tweet.Amount)})");
+    }
+
+    [TestMethod]
+    public void DoubleRoundWithScale_BuildKSql_PrintsRoundFunction()
+    {
+      //Arrange
+      int scale = 3;
+      Expression<Func<Tweet, double>> expression = c => K.Functions.Round(c.Amount, scale);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ROUND({nameof(Tweet.Amount)}, {scale})");
+    }
+
+    [TestMethod]
+    public void DecimalRound_BuildKSql_PrintsRoundFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, decimal>> expression = c => K.Functions.Round(c.AccountBalance);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ROUND({nameof(Tweet.AccountBalance)})");
+    }
+
+    #endregion
+
+    #region Random
+    
+    [TestMethod]
+    public void Random_BuildKSql_PrintsRandomFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, double>> expression = c => K.Functions.Random();
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("RANDOM()");
+    }
+
+    #endregion
+
     #region Sign
 
     [TestMethod]
@@ -143,23 +204,6 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"SIGN({nameof(Tweet.AccountBalance)})");
-    }
-
-    #endregion
-
-    #region Random
-    
-    [TestMethod]
-    public void Random_BuildKSql_PrintsRandomFunction()
-    {
-      //Arrange
-      Expression<Func<Tweet, double>> expression = c => K.Functions.Random();
-
-      //Act
-      var query = ClassUnderTest.BuildKSql(expression);
-
-      //Assert
-      query.Should().BeEquivalentTo($"RANDOM()");
     }
 
     #endregion

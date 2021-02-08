@@ -75,6 +75,40 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
     
+    #region Round
+    
+    public static float Round(this KSqlFunctions kSqlFunctions, float input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static double Round(this KSqlFunctions kSqlFunctions, double input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static float Round(this KSqlFunctions kSqlFunctions, float input, int scale)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static double Round(this KSqlFunctions kSqlFunctions, double input, int scale)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input, int scale)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+    
     public static double Random(this KSqlFunctions kSqlFunctions)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
