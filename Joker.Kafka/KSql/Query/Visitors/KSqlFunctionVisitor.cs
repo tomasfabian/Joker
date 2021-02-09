@@ -20,7 +20,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           && methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions))
       {
         switch (methodInfo.Name)
-        {
+        {          
+          case nameof(KSqlFunctionsExtensions.Dynamic):
+            if(methodCallExpression.Arguments[1] is ConstantExpression constantExpression)
+              Append($"{constantExpression.Value}");
+            else
+              Visit(methodCallExpression.Arguments[1]);
+            break;
           case nameof(KSqlFunctionsExtensions.Like):
             Visit(methodCallExpression.Arguments[1]);
             Append(" LIKE ");
