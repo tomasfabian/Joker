@@ -304,6 +304,52 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       query.Should().BeEquivalentTo($"LCASE({nameof(Tweet.Message)}) LIKE LCASE('%santa%')");
     }
 
+    #endregion    
+
+    #region Dynamic
+
+    [TestMethod]
+    public void Dynamic_BuildKSql_PrintsStringifiedFunction()
+    {
+      //Arrange
+      string functionCall = "IFNULL(Message, 'n/a')";
+      Expression<Func<Tweet, object>> expression = c => K.Functions.Dynamic(functionCall) as string;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"{functionCall}");
+    }
+
+    [TestMethod]
+    public void DynamicNewExpression_BuildKSql_PrintsStringifiedFunction()
+    {
+      //Arrange
+      string functionCall = "IFNULL(Message, 'n/a')";
+      Expression<Func<Tweet, object>> expression = c => new { Col = K.Functions.Dynamic(functionCall) as string};
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"{functionCall} Col");
+    }
+
+    [TestMethod]
+    public void DynamicNewExpressionMultipleFields_BuildKSql_PrintsStringifiedFunction()
+    {
+      //Arrange
+      string functionCall = "IFNULL(Message, 'n/a')";
+      Expression<Func<Tweet, object>> expression = c => new { c.Id, c.Amount, Col = K.Functions.Dynamic(functionCall) as string};
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"{nameof(Tweet.Id)}, {nameof(Tweet.Amount)}, {functionCall} Col");
+    }
+
     #endregion
   }
 }

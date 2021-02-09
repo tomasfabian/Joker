@@ -2,6 +2,7 @@
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -76,6 +77,23 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       string expectedKsql =
         @$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)} FROM {streamName}
 WHERE {nameof(Location.Latitude)} = '1' AND {nameof(Location.Longitude)} = 0.1 EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }    
+    
+    [TestMethod]
+    public void SelectDynamicFunction_BuildKSql_PrintsFunctionCall()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { c.Longitude, c.Latitude, Col = ksqlDB.KSql.Query.Functions.KSql.F.Dynamic("IFNULL(Latitude, 'n/a')") as string});
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT {nameof(Location.Longitude)}, {nameof(Location.Latitude)}, IFNULL(Latitude, 'n/a') Col FROM {streamName} EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
