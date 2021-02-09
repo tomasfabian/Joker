@@ -1,6 +1,6 @@
 ﻿using Kafka.DotNet.ksqlDB.KSql.Query;
 
-namespace Kafka.DotNet.ksqlDB.Sample.Model
+namespace Kafka.DotNet.ksqlDB.Sample.Models
 {
   public class Person : Record
   {

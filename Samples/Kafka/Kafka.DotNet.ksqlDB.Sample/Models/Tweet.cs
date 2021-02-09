@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 
-namespace Kafka.DotNet.ksqlDB.Sample.Model
+namespace Kafka.DotNet.ksqlDB.Sample.Models
 {
   public class Tweet : Record
   {
@@ -9,5 +9,10 @@ namespace Kafka.DotNet.ksqlDB.Sample.Model
 
     [JsonPropertyName("MESSAGE")]
     public string Message { get; set; }
+
+    
+    public double Amount { get; set; }
+
+    public decimal AccountBalance { get; set; }
   }
 }

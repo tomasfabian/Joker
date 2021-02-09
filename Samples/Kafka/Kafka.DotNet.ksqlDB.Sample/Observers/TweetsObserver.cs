@@ -1,5 +1,5 @@
 ﻿using System;
-using Kafka.DotNet.ksqlDB.Sample.Model;
+using Kafka.DotNet.ksqlDB.Sample.Models;
 
 namespace Kafka.DotNet.ksqlDB.Sample.Observers
 {
