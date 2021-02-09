@@ -516,8 +516,10 @@ TRIM(Message)
 Substring(Message, 2, 3)
 ```
 
-# v0.3.0 preview (not released)
-
+# v0.3.0 preview
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.3.0-rc.1
+```
 ## Aggregation functions 
 ### EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull (v.0.3.0)
 [EarliestByOffset](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#earliest_by_offset),
