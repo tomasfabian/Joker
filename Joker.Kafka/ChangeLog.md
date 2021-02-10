@@ -1,3 +1,23 @@
+### v0.3.0-rc.1:
+#### Numeric functions
+- Abs, Ceil, Floor, Random, Sign, Round
+ 
+- LeftJoin
+- functions member access (variables for method arguments)
+- Having - aggregations with column
+- Where is null, is not null
+- dynamic function call (support not supported functions)
+
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
+- string functions: Replace, Regex**
+- CreateQueryStream options parameter
+- Joins: Left outer, Full outer
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
+
+#### Aggregation functions 
+- EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
+- TopK, TopKDistinct, LongCount, Count(col)
+
 # v0.2.0
 
 ### ExtensionsMethods:
@@ -67,22 +87,6 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-### TODO v0.3.0:
-#### Numeric functions
-- Abs, Ceil, Floor, Random, Sign, Round
- 
-#### Aggregation functions 
-- EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
-- TopK, TopKDistinct, LongCount, Count(col)
-
-- LeftJoin
-- functions member access (variables for method arguments)
-- Having - aggregations with column
-- Where is null, is not null
-- dynamic function call (support not supported functions)
-
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
-- string functions: Replace, Regex**
-- CreateQueryStream options parameter
-- Joins: Left outer, Full outer
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
+### v0.3.0 (not released):
+- EarliestByOffset - earliestN overload
+- LatestByOffset - latestN overload 
