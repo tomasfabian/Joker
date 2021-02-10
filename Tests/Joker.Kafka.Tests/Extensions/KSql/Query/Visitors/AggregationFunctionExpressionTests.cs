@@ -104,6 +104,19 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     }
 
     [TestMethod]
+    public void EarliestByOffsetN_BuildKSql_PrintsEarliestByOffsetWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, EarliestByOffset = l.EarliestByOffset(c => c.Amount, 2) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, EARLIEST_BY_OFFSET({nameof(Transaction.Amount)}, 2, true) EarliestByOffset");
+    }
+
+    [TestMethod]
     public void EarliestByOffsetAllowNulls_BuildKSql_PrintsEarliestByOffsetAllowNullsWithColumn()
     {
       //Arrange
@@ -114,6 +127,20 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"Key, EARLIEST_BY_OFFSET({nameof(Transaction.Amount)}, false) EarliestByOffsetAllowNulls");
+    }
+
+    [TestMethod]
+    public void EarliestByOffsetAllowNullsN_BuildKSql_PrintsEarliestByOffsetAllowNullsWithColumn()
+    {
+      //Arrange
+      int earliestN = 3;
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, EarliestByOffsetAllowNulls = l.EarliestByOffsetAllowNulls(c => c.Amount, earliestN) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, EARLIEST_BY_OFFSET({nameof(Transaction.Amount)}, {earliestN}, false) EarliestByOffsetAllowNulls");
     }
 
     [TestMethod]
@@ -130,6 +157,20 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     }
 
     [TestMethod]
+    public void LatestByOffsetN_BuildKSql_PrintsLatestByOffsetWithColumn()
+    {
+      //Arrange
+      int latestN = 3;
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, LatestByOffset = l.LatestByOffset(c => c.Amount, latestN) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, LATEST_BY_OFFSET({nameof(Transaction.Amount)}, {latestN}, true) LatestByOffset");
+    }
+
+    [TestMethod]
     public void LatestByOffsetAllowNulls_BuildKSql_PrintsLatestByOffsetAllowNullsWithColumn()
     {
       //Arrange
@@ -140,6 +181,19 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"Key, LATEST_BY_OFFSET({nameof(Transaction.Amount)}, false) LatestByOffsetAllowNulls");
+    }
+
+    [TestMethod]
+    public void LatestByOffsetAllowNullsN_BuildKSql_PrintsLatestByOffsetAllowNullsWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, LatestByOffsetAllowNulls = l.LatestByOffsetAllowNulls(c => c.Amount, 2) };
+      
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, LATEST_BY_OFFSET({nameof(Transaction.Amount)}, 2, false) LatestByOffsetAllowNulls");
     }
 
     [TestMethod]

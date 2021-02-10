@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
@@ -56,13 +58,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         case nameof(IAggregations<object>.LatestByOffset):
         case nameof(IAggregations<object>.EarliestByOffsetAllowNulls):
         case nameof(IAggregations<object>.LatestByOffsetAllowNulls):
-          if (methodCallExpression.Arguments.Count == 1)
+          if (methodCallExpression.Arguments.Count.IsOneOfFollowing(1, 2))
           {
             var functionName = GetFunctionName(methodInfo.Name);
-            var ignoreNulls = !methodInfo.Name.ToLower().EndsWith("Nulls".ToLower());
-            Append($"{functionName}(");
-            Visit(methodCallExpression.Arguments[0]);
-            Append($", {ignoreNulls})");
+            bool ignoreNulls = !methodInfo.Name.ToLower().EndsWith("Nulls".ToLower());
+            Append($"{functionName}");
+            PrintFunctionArguments(methodCallExpression.Arguments.Append(Expression.Constant(ignoreNulls)));
           }
 
           break;
