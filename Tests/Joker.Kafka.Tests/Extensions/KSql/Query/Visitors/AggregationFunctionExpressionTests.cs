@@ -63,6 +63,32 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"Key, COUNT({nameof(Transaction.Amount)}) Count");
     }
+    
+    [TestMethod]
+    public void CollectSet_BuildKSql_PrintsCollectSetWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, CollectSet = l.CollectSet(c => c.Amount) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COLLECT_SET({nameof(Transaction.Amount)}) CollectSet");
+    }
+    
+    [TestMethod]
+    public void CollectList_BuildKSql_PrintsCollectListWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, CollectList = l.CollectList(c => c.Amount) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COLLECT_LIST({nameof(Transaction.Amount)}) CollectList");
+    }
 
     [TestMethod]
     public void Max_BuildKSql_PrintsMaxWithColumn()

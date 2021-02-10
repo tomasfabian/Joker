@@ -23,6 +23,22 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
    
     int Count(Func<TSource, object> selector);
     long LongCount(Func<TSource, object> selector);
+    
+    string[] CollectList(Func<TSource, string> selector);
+    short[] CollectList(Func<TSource, short> selector);
+    int[] CollectList(Func<TSource, int> selector);
+    long[] CollectList(Func<TSource, long> selector);
+    float[] CollectList(Func<TSource, float> selector);
+    double[] CollectList(Func<TSource, double> selector);
+    decimal[] CollectList(Func<TSource, decimal> selector);
+
+    string[] CollectSet(Func<TSource, string> selector);
+    short[] CollectSet(Func<TSource, short> selector);
+    int[] CollectSet(Func<TSource, int> selector);
+    long[] CollectSet(Func<TSource, long> selector);
+    float[] CollectSet(Func<TSource, float> selector);
+    double[] CollectSet(Func<TSource, double> selector);
+    decimal[] CollectSet(Func<TSource, decimal> selector);
 
     int Min(Func<TSource, int?> selector);
     long Min(Func<TSource, long?> selector);

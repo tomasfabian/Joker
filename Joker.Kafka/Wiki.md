@@ -703,6 +703,30 @@ context.CreateQueryStream<Tweet>()
     error => Console.WriteLine($"Exception: {error.Message}"));
 ```
 
+### Aggregation functions: CollectSet, CollectList
+```C#
+var subscription = context.CreateQueryStream<Tweet>()
+  .GroupBy(c => c.Id)
+  .Select(g => new { Id = g.Key, Array = g.CollectSet(c => c.Message) })
+  //.Select(g => new { Id = g.Key, Array = g.CollectList(c => c.Message) })
+  .Subscribe(c =>
+  {
+    Console.WriteLine($"{c.Id}:");
+    foreach (var value in c.Array)
+    {
+      Console.WriteLine($"  {value}");
+    }
+  }, exception => { Console.WriteLine(exception.Message); });
+```
+Generated KSQL:
+```KSQL
+SELECT Id, COLLECT_SET(Message) Array 
+FROM Tweets GROUP BY Id EMIT CHANGES;
+
+SELECT Id, COLLECT_LIST(Message) Array 
+FROM Tweets GROUP BY Id EMIT CHANGES;
+```
+
 **TODO:**
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)

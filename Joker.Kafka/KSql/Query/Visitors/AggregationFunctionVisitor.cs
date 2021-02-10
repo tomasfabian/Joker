@@ -45,6 +45,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           }
 
           break;
+        case nameof(IAggregations<object>.CollectList):
+        case nameof(IAggregations<object>.CollectSet):
+          Append(methodInfo.Name.ToKSqlFunctionName());
+          PrintFunctionArguments(methodCallExpression.Arguments);
+
+          break;
         case nameof(IAggregations<object>.TopK):
         case nameof(IAggregations<object>.TopKDistinct):
           if (methodCallExpression.Arguments.Count == 2)
@@ -78,10 +84,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
       {
         case nameof(IAggregations<object>.EarliestByOffset):
         case nameof(IAggregations<object>.EarliestByOffsetAllowNulls):
-          return "EARLIEST_BY_OFFSET";
+          return nameof(IAggregations<object>.EarliestByOffset).ToKSqlFunctionName();
         case nameof(IAggregations<object>.LatestByOffset):
         case nameof(IAggregations<object>.LatestByOffsetAllowNulls):
-          return "LATEST_BY_OFFSET";
+          return nameof(IAggregations<object>.LatestByOffset).ToKSqlFunctionName();
         default:
           throw new NotSupportedException();
       }
