@@ -97,6 +97,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
         case ExpressionType.Convert:
         case ExpressionType.ConvertChecked:
+        case ExpressionType.ArrayLength:
           VisitUnary((UnaryExpression)expression);
           break;
       }
@@ -319,7 +320,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       if (unaryExpression == null) throw new ArgumentNullException(nameof(unaryExpression));
 
       switch (unaryExpression.NodeType)
-      {
+      {        
+        case ExpressionType.ArrayLength:
+          Append("ARRAY_LENGTH(");
+          base.Visit(unaryExpression.Operand);
+          Append(")");
+          return unaryExpression;
         case ExpressionType.Convert:
         case ExpressionType.ConvertChecked:
           return base.Visit(unaryExpression.Operand);
