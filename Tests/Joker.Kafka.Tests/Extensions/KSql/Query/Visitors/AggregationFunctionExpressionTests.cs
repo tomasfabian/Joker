@@ -63,6 +63,32 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"Key, COUNT({nameof(Transaction.Amount)}) Count");
     }
+
+    [TestMethod]
+    public void LongCountDistinct_BuildKSql_PrintsCountDistinctWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, CountDistinct = l.LongCountDistinct(c => c.Amount) };
+      
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COUNT_DISTINCT({nameof(Transaction.Amount)}) CountDistinct");
+    }
+
+    [TestMethod]
+    public void CountDistinct_BuildKSql_PrintsCountDistinctWithColumn()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, CountDistinct = l.CountDistinct(c => c.Amount) };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, COUNT_DISTINCT({nameof(Transaction.Amount)}) CountDistinct");
+    }
     
     [TestMethod]
     public void CollectSet_BuildKSql_PrintsCollectSetWithColumn()

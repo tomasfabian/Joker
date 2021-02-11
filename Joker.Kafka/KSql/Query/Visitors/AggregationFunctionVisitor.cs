@@ -28,9 +28,19 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           }
           if (methodCallExpression.Arguments.Count == 1)
           {
-            Append($"{nameof(IAggregations.Count).ToUpper()}(");
-            Visit(methodCallExpression.Arguments[0]);
-            Append(")");
+            Append($"{nameof(IAggregations.Count).ToUpper()}");
+            
+            PrintFunctionArguments(methodCallExpression.Arguments);
+          }
+          break;
+        case nameof(IAggregations<object>.CountDistinct):
+        case nameof(IAggregations<object>.LongCountDistinct):
+          if (methodCallExpression.Arguments.Count == 1)
+          {
+            string countDistinctName = nameof(IAggregations<object>.CountDistinct);
+            Append($"{countDistinctName.ToKSqlFunctionName()}");
+            
+            PrintFunctionArguments(methodCallExpression.Arguments);
           }
           break;
         case nameof(IAggregations<object>.Avg):

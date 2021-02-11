@@ -23,6 +23,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
    
     int Count(Func<TSource, object> selector);
     long LongCount(Func<TSource, object> selector);
+   
+    int CountDistinct(Func<TSource, object> selector);
+    long LongCountDistinct(Func<TSource, object> selector);
     
     string[] CollectList(Func<TSource, string> selector);
     short[] CollectList(Func<TSource, short> selector);

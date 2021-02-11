@@ -703,7 +703,7 @@ context.CreateQueryStream<Tweet>()
     error => Console.WriteLine($"Exception: {error.Message}"));
 ```
 
-### Aggregation functions: CollectSet, CollectList
+### Aggregation functions: CollectSet, CollectList, CountDistinct
 ```C#
 var subscription = context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
@@ -724,6 +724,23 @@ SELECT Id, COLLECT_SET(Message) Array
 FROM Tweets GROUP BY Id EMIT CHANGES;
 
 SELECT Id, COLLECT_LIST(Message) Array 
+FROM Tweets GROUP BY Id EMIT CHANGES;
+```
+
+CountDistinct, LongCountDistinct
+```C#
+var subscription = context.CreateQueryStream<Tweet>()
+  .GroupBy(c => c.Id)
+  // .Select(g => new { Id = g.Key, Count = g.CountDistinct(c => c.Message) })
+  .Select(g => new { Id = g.Key, Count = g.LongCountDistinct(c => c.Message) })
+  .Subscribe(c =>
+  {
+    Console.WriteLine($"{c.Id} - {c.Count}");
+  }, exception => { Console.WriteLine(exception.Message); });
+```
+Generated KSQL:
+```KSQL
+SELECT Id, COUNT_DISTINCT(Message) Count 
 FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 

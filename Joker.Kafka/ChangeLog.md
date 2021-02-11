@@ -90,4 +90,4 @@
 ### v0.3.0 (not released):
 - EarliestByOffset - earliestN overload
 - LatestByOffset - latestN overload 
-- Aggregation functions: CollectSet, CollectList
+- Aggregation functions: CollectSet, CollectList, CountDistinct
