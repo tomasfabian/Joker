@@ -100,9 +100,22 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.ArrayLength:
           VisitUnary((UnaryExpression)expression);
           break;
+
+        case ExpressionType.NewArrayInit:
+          VisitNewArray((NewArrayExpression)expression);
+          break;
       }
 
       return expression;
+    }
+
+    protected override Expression VisitNewArray(NewArrayExpression node)
+    {
+      Append("ARRAY[");
+      PrintCommaSeparated(node.Expressions);
+      Append("]");
+
+      return node;
     }
 
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
@@ -142,6 +155,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       Append("(");
 
+      PrintCommaSeparated(expressions);
+
+      Append(")");
+    }
+    protected void PrintCommaSeparated(IEnumerable<Expression> expressions)
+    {
       bool isFirst = true;
 
       foreach (var expression in expressions)
@@ -153,8 +172,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
         Visit(expression);
       }
-
-      Append(")");
     }
 
     protected override Expression VisitConstant(ConstantExpression constantExpression)
