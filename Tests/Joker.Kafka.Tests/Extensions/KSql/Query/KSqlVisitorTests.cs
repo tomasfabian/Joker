@@ -635,6 +635,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     [TestMethod]
+    [Ignore("TODO")]
     public void NegateBooleanConstant_BuildKSql_PrintsFalse()
     {
       //Arrange
