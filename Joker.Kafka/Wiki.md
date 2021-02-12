@@ -535,9 +535,9 @@ TRIM(Message)
 Substring(Message, 2, 3)
 ```
 
-# v0.3.0 preview
+# v0.3.0
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.3.0-rc.1
+Install-Package Kafka.DotNet.ksqlDB -Version 0.3.0
 ```
 ## Aggregation functions 
 ### EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull (v.0.3.0)

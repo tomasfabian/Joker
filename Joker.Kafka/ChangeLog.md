@@ -1,22 +1,22 @@
-### v0.3.0-rc.1:
-#### Numeric functions
-- Abs, Ceil, Floor, Random, Sign, Round
- 
-- LeftJoin
+### v0.3.0:
 - functions member access (variables for method arguments)
-- Having - aggregations with column
 - Where is null, is not null
 - dynamic function call (support not supported functions)
+- destructure arrays (indexer), arrays length, new array
 
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
-- string functions: Replace, Regex**
-- CreateQueryStream options parameter
-- Joins: Left outer, Full outer
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset
+### ExtensionsMethods:
+- LeftJoin
+- Having - aggregations with column
+
+#### Numeric functions
+- Abs, Ceil, Floor, Random, Sign, Round
 
 #### Aggregation functions 
 - EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull
 - TopK, TopKDistinct, LongCount, Count(col)
+- EarliestByOffset - earliestN overload
+- LatestByOffset - latestN overload 
+- CollectSet, CollectList, CountDistinct
 
 # v0.2.0
 
@@ -87,8 +87,6 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-### v0.3.0 (not released):
-- EarliestByOffset - earliestN overload
-- LatestByOffset - latestN overload 
-- Aggregation functions: CollectSet, CollectList, CountDistinct
-- destructure arrays (indexer), arrays length, new array
+### v0.4.0 (TODO: not released):
+- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
+- CreateQueryStream options parameter
