@@ -75,6 +75,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.GreaterThanOrEqual:
         case ExpressionType.LessThan:
         case ExpressionType.LessThanOrEqual:
+        //arrays
+        case ExpressionType.ArrayIndex:
           VisitBinary((BinaryExpression)expression);
           break;
 
@@ -206,6 +208,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       Visit(binaryExpression.Left);
 
+      if (binaryExpression.NodeType == ExpressionType.ArrayIndex)
+      {
+        Append("[");
+        Visit(binaryExpression.Right);
+        Append("]");
+
+        return binaryExpression;
+      }
+
       //https://docs.ksqldb.io/en/latest/reference/sql/appendix/
       string @operator = binaryExpression.NodeType switch
       {
@@ -257,7 +268,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
             VisitMethodCall(memberWithArguments.Second as MethodCallExpression);
             Append(" ");
           }
-          if (memberWithArguments.Second.NodeType == ExpressionType.TypeAs)
+          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant))
           {
             Visit(memberWithArguments.Second);
             Append(" ");
@@ -337,7 +348,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       if (unaryExpression == null) throw new ArgumentNullException(nameof(unaryExpression));
 
       switch (unaryExpression.NodeType)
-      {        
+      {
         case ExpressionType.ArrayLength:
           Append("ARRAY_LENGTH(");
           base.Visit(unaryExpression.Operand);
