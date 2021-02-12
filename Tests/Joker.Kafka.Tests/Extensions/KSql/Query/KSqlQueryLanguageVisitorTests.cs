@@ -214,5 +214,60 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     }
 
     #endregion
+
+    #region Arrays
+
+    [TestMethod]
+    public void SelectArrayLength_BuildKSql_PrintsArrayLength()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new[] { 1, 2, 3 }.Length);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY_LENGTH(ARRAY[1, 2, 3]) FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectNamedArrayLength_BuildKSql_PrintsArrayLength()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { new[] { 1, 2, 3 }.Length } );
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY_LENGTH(ARRAY[1, 2, 3]) Length FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectArrayIndex_BuildKSql_PrintsArrayIndex()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { FirstItem = new[] { 1, 2, 3 }[1] } );
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[1, 2, 3][1] AS FirstItem FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
   }
 }

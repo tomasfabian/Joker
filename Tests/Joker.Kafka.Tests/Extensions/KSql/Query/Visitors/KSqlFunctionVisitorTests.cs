@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Text;
 using FluentAssertions;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Functions = Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
@@ -348,6 +349,49 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"{nameof(Tweet.Id)}, {nameof(Tweet.Amount)}, {functionCall} Col");
+    }
+
+    #endregion
+
+    #region Arrays
+    
+    [TestMethod]
+    public void Array_BuildKSql_PrintsArray()
+    {
+      //Arrange
+      Expression<Func<int[]>> expression = () => new[] { 1, 2, 3 };
+      
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("ARRAY[1, 2, 3]");
+    }
+    
+    [TestMethod]
+    public void ArrayDestructure_BuildKSql_PrintsIndexer()
+    {
+      //Arrange
+      Expression<Func<int>> expression = () => new[] { 1, 2, 3 }[1];
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("ARRAY[1, 2, 3][1]");
+    }
+    
+    [TestMethod]
+    public void ArrayLength_BuildKSql_PrintsArrayLength()
+    {
+      //Arrange
+      Expression<Func<int>> expression = () => new[] { 1, 2, 3 }.Length;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("ARRAY_LENGTH(ARRAY[1, 2, 3])");
     }
 
     #endregion
