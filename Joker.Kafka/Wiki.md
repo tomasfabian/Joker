@@ -137,7 +137,26 @@ Omitting select is equivalent to SELECT *
 
 Array type mapping example (available from v0.3.0):
 ```
-ARRAY<INTEGER> int[]
+ksql: ARRAY<INTEGER>
+C#  : int[]
+```
+Destructuring an array (ksqldb represents the first element of an array as 1):
+```C#
+queryStream
+  .Select(_ => new { FirstItem = new[] {1, 2, 3}[1] })
+```
+Generates the following KSQL:
+```KSQL
+ARRAY[1, 2, 3][1] AS FirstItem
+```
+Array length:
+```C#
+queryStream
+  .Select(_ => new[] {1, 2, 3}.Length)
+```
+Generates the following KSQL:
+```KSQL
+ARRAY_LENGTH(ARRAY[1, 2, 3])
 ```
 
 ### Where (v0.1.0)

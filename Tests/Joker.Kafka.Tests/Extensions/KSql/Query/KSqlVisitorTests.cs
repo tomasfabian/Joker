@@ -605,5 +605,49 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     #endregion
+
+    #region Constants
+
+    [TestMethod]
+    public void BooleanConstant_BuildKSql_PrintsTrue()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => new { Const = true };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("true Const");
+    }
+
+    [TestMethod]
+    public void BooleanConstant_BuildKSql_PrintsFalse()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => false;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("false");
+    }
+
+    [TestMethod]
+    public void NegateBooleanConstant_BuildKSql_PrintsFalse()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => !false;
+
+      //Act
+      var expression2 = Expression.Quote(expression);
+      var query = ClassUnderTest.BuildKSql(expression2);
+
+      //Assert
+      query.Should().BeEquivalentTo("NOT false");
+    }
+
+    #endregion
   }
 }

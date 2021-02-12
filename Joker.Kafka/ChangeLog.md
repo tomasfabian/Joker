@@ -91,3 +91,4 @@
 - EarliestByOffset - earliestN overload
 - LatestByOffset - latestN overload 
 - Aggregation functions: CollectSet, CollectList, CountDistinct
+- destructure arrays (indexer), arrays length, new array
