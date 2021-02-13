@@ -1,29 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnitTests;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 {
   [TestClass]
   [TestCategory("Integration")]
-  public class QbservableExtensionsTests : TestBase
+  public class QbservableExtensionsTests : IntegrationTests
   {
-    private KSqlDBContextOptions contextOptions;
     private static string streamName = "tweetsTest";
     private static string topicName = "tweetsTestTopic";
-
-    private static KSqlDbRestApiProvider restApiProvider;
 
     private static readonly Tweet Tweet1 = new()
     {
@@ -48,20 +44,20 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     {
       var uri = new Uri(KSqlDbRestApiProvider.KsqlDbUrl);
 
-      restApiProvider = new KSqlDbRestApiProvider(new HttpClientFactory(uri));
+      RestApiProvider = new KSqlDbRestApiProvider(new HttpClientFactory(uri));
 
       var ksql = $"CREATE STREAM {streamName}(id INT, message VARCHAR, isRobot BOOLEAN, amount DOUBLE, accountBalance DECIMAL(16,4))\r\n  WITH (kafka_topic='{topicName}', value_format='json', partitions=1);";
-      var result = await restApiProvider.ExecuteStatementAsync(ksql);
+      var result = await RestApiProvider.ExecuteStatementAsync(ksql);
       result.Should().BeTrue();
       
       var insert = CreateInsertTweetStatement(Tweet1);
 
-      result = await restApiProvider.ExecuteStatementAsync(insert);
+      result = await RestApiProvider.ExecuteStatementAsync(insert);
       result.Should().BeTrue();
 
       insert = CreateInsertTweetStatement(Tweet2);
 
-      result = await restApiProvider.ExecuteStatementAsync(insert);      
+      result = await RestApiProvider.ExecuteStatementAsync(insert);      
       result.Should().BeTrue();
     }
 
@@ -75,30 +71,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       return insert;
     }
 
-    private KSqlDBContext context;
-
-    [TestInitialize]
-    public override void TestInitialize()
-    {
-      base.TestInitialize();
-
-      contextOptions = new KSqlDBContextOptions(KSqlDbRestApiProvider.KsqlDbUrl);
-      
-      context = new KSqlDBContext(contextOptions);
-    }
-
-    [TestCleanup]
-    public override void TestCleanup()
-    {
-      context.DisposeAsync().GetAwaiter().GetResult();
-
-      base.TestCleanup();
-    }
-
     [ClassCleanup]
     public static async Task ClassCleanup()
     {
-      var result = await restApiProvider.DropStreamAndTopic(streamName);
+      var result = await RestApiProvider.DropStreamAndTopic(streamName);
     }
 
     [TestMethod]
@@ -107,7 +83,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
       
-      var source = context.CreateQueryStream<Tweet>(streamName)
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .ToAsyncEnumerable();
       
       //Act
@@ -129,7 +105,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 1;
       
-      var source = context.CreateQueryStream<Tweet>(streamName)
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .Take(expectedItemsCount)
         .ToAsyncEnumerable();
       
@@ -152,7 +128,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 1;
       
-      var source = context.CreateQueryStream<Tweet>(streamName)
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .Where(p => p.Message != "Hello world")
         .ToAsyncEnumerable();
       
@@ -173,7 +149,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
       int expectedItemsCount = 2;
       
-      var source = context.CreateQueryStream<Tweet>(streamName);
+      var source = Context.CreateQueryStream<Tweet>(streamName);
 
       //Act
       using var subscription = source.Take(expectedItemsCount).Subscribe(c => actualValues.Add(c), e => semaphore.Release(), () => semaphore.Release());
@@ -183,22 +159,48 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Assert.AreEqual(expectedItemsCount, actualValues.Count);
     }
 
-    private static async Task<List<Tweet>> CollectActualValues(IAsyncEnumerable<Tweet> source, int? expectedItemsCount = null)
+    [TestMethod]
+    public async Task ToObservable()
     {
+      //Arrange
+      var semaphore = new SemaphoreSlim(initialCount: 0, 1);
       var actualValues = new List<Tweet>();
 
-      var cts = new CancellationTokenSource();
-      cts.CancelAfter(TimeSpan.FromSeconds(1.5));
+      int expectedItemsCount = 2;
+      
+      var source = Context.CreateQueryStream<Tweet>(streamName)
+        .ToObservable();
 
-      if (expectedItemsCount.HasValue)
-        source = source.Take(expectedItemsCount.Value);
+      //Act
+      using var subscription = source.Take(expectedItemsCount).Subscribe(c => actualValues.Add(c), e => semaphore.Release(), () => semaphore.Release());
+      await semaphore.WaitAsync(TimeSpan.FromSeconds(4));
 
-      await foreach (var item in source.WithCancellation(cts.Token))
-      {
-        actualValues.Add(item);
-      }
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+    }
 
-      return actualValues;
+    [TestMethod]
+    public async Task GroupBy()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+
+      var source = Context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
+        .ToAsyncEnumerable();
+
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+
+      Assert.AreEqual(1, actualValues[0].Count);
+      Assert.AreEqual(Tweet1.Id, actualValues[0].Id);
+
+      Assert.AreEqual(1, actualValues[1].Count);
+      Assert.AreEqual(Tweet2.Id, actualValues[1].Id);
     }
   }
 }
