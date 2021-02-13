@@ -164,6 +164,25 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Assert.AreEqual(actualValues[0].Message, Tweet2.Message);
     }
 
+    [TestMethod]
+    public async Task Subscribe()
+    {
+      //Arrange
+      var semaphore = new SemaphoreSlim(initialCount: 0, 1);
+      var actualValues = new List<Tweet>();
+
+      int expectedItemsCount = 2;
+      
+      var source = context.CreateQueryStream<Tweet>(streamName);
+
+      //Act
+      using var subscription = source.Take(expectedItemsCount).Subscribe(c => actualValues.Add(c), e => semaphore.Release(), () => semaphore.Release());
+      await semaphore.WaitAsync(TimeSpan.FromSeconds(4));
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+    }
+
     private static async Task<List<Tweet>> CollectActualValues(IAsyncEnumerable<Tweet> source, int? expectedItemsCount = null)
     {
       var actualValues = new List<Tweet>();
