@@ -70,5 +70,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
 
       return ExecuteStatementAsync(statement);
     }
+
+    public Task<bool> DropTableAndTopic(string tableName)
+    {
+      var statement = $"DROP TABLE IF EXISTS {tableName} DELETE TOPIC;";
+
+      return ExecuteStatementAsync(statement);
+    }
   }
 }
