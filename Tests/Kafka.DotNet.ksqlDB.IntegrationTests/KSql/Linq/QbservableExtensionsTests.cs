@@ -202,5 +202,55 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Assert.AreEqual(1, actualValues[1].Count);
       Assert.AreEqual(Tweet2.Id, actualValues[1].Id);
     }
+
+    [TestMethod]
+    public async Task Having()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+
+      var source = Context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        .Having(c => c.Count(g => g.Message) == 1)
+        .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
+        .ToAsyncEnumerable();
+
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+
+      Assert.AreEqual(1, actualValues[0].Count);
+      Assert.AreEqual(Tweet1.Id, actualValues[0].Id);
+
+      Assert.AreEqual(1, actualValues[1].Count);
+      Assert.AreEqual(Tweet2.Id, actualValues[1].Id);
+    }
+
+    [TestMethod]
+    public async Task WindowedBy()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+
+      var source = Context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        .WindowedBy(new TimeWindows(Duration.OfMilliseconds(100)))
+        .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
+        .ToAsyncEnumerable();
+
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+
+      Assert.AreEqual(1, actualValues[0].Count);
+      Assert.AreEqual(Tweet1.Id, actualValues[0].Id);
+
+      Assert.AreEqual(1, actualValues[1].Count);
+      Assert.AreEqual(Tweet2.Id, actualValues[1].Id);
+    }
   }
 }

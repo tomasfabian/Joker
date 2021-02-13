@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
@@ -14,7 +13,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
   public class HttpClientFactoryTests : TestBase
   {
     [TestMethod]
-    public async Task CreateClient_BaseAddressWasSet()
+    public void CreateClient_BaseAddressWasSet()
     {
       //Arrange
       var httpClientFactory = new HttpClientFactory(new Uri(TestParameters.KsqlDBUrl));
