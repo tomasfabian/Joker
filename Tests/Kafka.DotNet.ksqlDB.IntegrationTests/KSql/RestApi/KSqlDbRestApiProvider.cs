@@ -63,5 +63,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
 
       return true;
     }
+
+    public Task<bool> DropStreamAndTopic(string streamName)
+    {
+      var statement = $"DROP STREAM IF EXISTS {streamName} DELETE TOPIC;";
+
+      return ExecuteStatementAsync(statement);
+    }
   }
 }

@@ -17,9 +17,6 @@
   <Import Project="..\..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
   <Import Project="..\..\NugetProjects\UnitTests\Moq.csprojimport" />
   <Import Project="..\..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
-  <ItemGroup>
-    <Compile Include="..\Joker.Kafka.Tests\Models\Tweet.cs" Link="Models\Tweet.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Joker\Joker.csproj" />
@@ -29,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="KSql\RestApi\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   
 </Project>
