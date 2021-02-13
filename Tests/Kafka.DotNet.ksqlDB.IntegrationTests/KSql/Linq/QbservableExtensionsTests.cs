@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -104,31 +105,74 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     public async Task Select()
     {
       //Arrange
-      int itemsCount = 2;
+      int expectedItemsCount = 2;
+      
+      var source = context.CreateQueryStream<Tweet>(streamName)
+        .ToAsyncEnumerable();
       
       //Act
-      var source = context.CreateQueryStream<Tweet>(streamName)
-        .Take(itemsCount)
-        .ToAsyncEnumerable();
-
-      var actualValues = await CollectActualValues(source);
-
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
       var expectedValues = new List<Tweet>
       {
         Tweet1, Tweet2
       };
-
-      //Assert
-      Assert.AreEqual(itemsCount, actualValues.Count);
+      
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
       CollectionAssert.AreEqual(expectedValues, actualValues);
     }
 
-    private static async Task<List<Tweet>> CollectActualValues(IAsyncEnumerable<Tweet> source)
+    [TestMethod]
+    public async Task Take()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      var source = context.CreateQueryStream<Tweet>(streamName)
+        .Take(expectedItemsCount)
+        .ToAsyncEnumerable();
+      
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      var expectedValues = new List<Tweet>
+      {
+        Tweet1
+      };
+
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      CollectionAssert.AreEqual(expectedValues, actualValues);
+    }
+
+    [TestMethod]
+    public async Task Where_MessageWasFiltered()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      var source = context.CreateQueryStream<Tweet>(streamName)
+        .Where(p => p.Message != "Hello world")
+        .ToAsyncEnumerable();
+      
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      Assert.AreEqual(actualValues[0].Message, Tweet2.Message);
+    }
+
+    private static async Task<List<Tweet>> CollectActualValues(IAsyncEnumerable<Tweet> source, int? expectedItemsCount = null)
     {
       var actualValues = new List<Tweet>();
 
       var cts = new CancellationTokenSource();
       cts.CancelAfter(TimeSpan.FromSeconds(1.5));
+
+      if (expectedItemsCount.HasValue)
+        source = source.Take(expectedItemsCount.Value);
 
       await foreach (var item in source.WithCancellation(cts.Token))
       {
@@ -136,25 +180,6 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       }
 
       return actualValues;
-    }
-
-    [TestMethod]
-    public async Task Where_MessageWasFiltered()
-    {
-      //Arrange
-      int itemsCount = 1;
-
-      //Act
-      var source = context.CreateQueryStream<Tweet>(streamName)
-        .Where(p => p.Message != "Hello world")
-        .Take(itemsCount)
-        .ToAsyncEnumerable();
-
-      var actualValues = await CollectActualValues(source);
-      
-      //Assert
-      Assert.AreEqual(itemsCount, actualValues.Count);
-      Assert.AreEqual(actualValues[0].Message, Tweet2.Message);
     }
   }
 }
