@@ -37,15 +37,18 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       moviesProvider = null;
     }
 
+    private string MoviesTableName => MoviesProvider.MoviesTableName;
+    private string ActorsTableName => MoviesProvider.ActorsTableName;
+
     [TestMethod]
     public async Task Join()
     {
       //Arrange
       int expectedItemsCount = 1;
 
-      var source = Context.CreateQueryStream<Movie>()
+      var source = Context.CreateQueryStream<Movie>(MoviesTableName)
         .Join(
-          Source.Of<Lead_Actor>(nameof(Lead_Actor)),
+          Source.Of<Lead_Actor>(ActorsTableName),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
@@ -77,9 +80,9 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Movie>()
+      var source = Context.CreateQueryStream<Movie>(MoviesTableName)
         .LeftJoin(
-          Source.Of<Lead_Actor>(nameof(Lead_Actor)),
+          Source.Of<Lead_Actor>(ActorsTableName),
           movie => movie.Title,
           actor => actor.Title,
           (movie, actor) => new
