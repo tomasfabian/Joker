@@ -106,9 +106,54 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.NewArrayInit:
           VisitNewArray((NewArrayExpression)expression);
           break;
+
+        case ExpressionType.ListInit:
+          VisitListInit((ListInitExpression)expression);
+          break;
       }
 
       return expression;
+    }
+
+    protected override Expression VisitListInit(ListInitExpression listInitExpression)
+    {
+      var isDictionary = IsDictionary(listInitExpression.Type);
+      
+      if (isDictionary)
+      {
+        //MAP('c' := 2, 'd' := 4)
+        Append("MAP(");
+
+        bool isFirst = true;
+        
+        foreach (var elementInit in listInitExpression.Initializers)
+        {
+          if (isFirst)
+            isFirst = false;
+          else
+            stringBuilder.Append(ColumnsSeparator);
+
+          Visit(elementInit.Arguments[0]);
+          
+          Append(" := ");
+          Visit(elementInit.Arguments[1]);
+
+        }
+
+        Append(")");
+      }
+
+      return listInitExpression;
+    }
+
+    private static bool IsDictionary(Type type)
+    {
+      if (!type.IsGenericType)
+        return false;
+
+      var isDictionary = type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+
+      return isDictionary;
     }
 
     protected override Expression VisitNewArray(NewArrayExpression node)
@@ -124,6 +169,17 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {      
       var methodInfo = methodCallExpression.Method;
 
+      if (methodCallExpression.Object != null && IsDictionary(methodCallExpression.Object.Type))
+      {
+        if (methodCallExpression.Method.Name == "get_Item")
+        {
+          Visit(methodCallExpression.Object);
+          Append("[");
+          Visit(methodCallExpression.Arguments[0]);
+          Append("]");
+        }
+      }
+      
       if (methodCallExpression.Object == null
           && methodInfo.DeclaringType.Name == nameof(KSqlFunctionsExtensions))
         new KSqlFunctionVisitor(stringBuilder, useTableAlias).Visit(methodCallExpression);
@@ -161,6 +217,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       Append(")");
     }
+
     protected void PrintCommaSeparated(IEnumerable<Expression> expressions)
     {
       bool isFirst = true;
@@ -263,17 +320,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           else
             Append(ColumnsSeparator);
 
-          if (memberWithArguments.Second.NodeType == ExpressionType.Call)
-          {
-            VisitMethodCall(memberWithArguments.Second as MethodCallExpression);
-            Append(" ");
-          }
-          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant))
+          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.ListInit, ExpressionType.Call))
           {
             Visit(memberWithArguments.Second);
             Append(" ");
           }
-          else if(memberWithArguments.Second is BinaryExpression)
+          if(memberWithArguments.Second is BinaryExpression)
           {
             Visit(memberWithArguments.Second);
             Append(" AS ");

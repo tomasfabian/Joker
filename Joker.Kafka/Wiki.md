@@ -1,7 +1,7 @@
 ﻿This package generates ksql queries from your .NET C# linq queries. You can filter, project, limit etc. your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.1.0
+Install-Package Kafka.DotNet.ksqlDB
 ```
 ```C#
 using System;
@@ -254,6 +254,27 @@ System.IObservable<Tweet> observable = queryStream.ToObservable();
 //The not obvious difference is that the processing is done client side, not server side (ksqldb) as in the case of IQbservable:
 observable.Throttle(TimeSpan.FromSeconds(3)).Subscribe();
 ```
+WPF client side batching example:
+```C#
+private static IDisposable ClientSideBatching(KSqlDBContext context)
+{
+  var disposable = context.CreateQueryStream<Tweet>()
+    //Client side execution
+    .ToObservable()
+    .Buffer(TimeSpan.FromMilliseconds(250), 100)
+    .Where(c => c.Count > 0)
+    .ObserveOn(System.Reactive.Concurrency.DispatcherScheduler.Current)
+    .Subscribe(tweets =>
+    {
+      foreach (var tweet in tweets)
+      {
+        Console.WriteLine(tweet.Message);
+      }
+    });
+
+  return disposable;
+}
+```
 
 ### ToQueryString (v0.1.0)
 ToQueryString is helpful for debugging purposes. Returns the generated ksql query without executing it.
@@ -370,7 +391,7 @@ UCASE(Latitude) != 'HI'
 Install-Package Kafka.DotNet.ksqlDB -Version 0.2.0-RC1
 ```
 
-### Having (v.0.2.0)
+### Having (v0.2.0)
 ```C#
 var query = context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
@@ -382,7 +403,7 @@ KSQL:
 SELECT Id, COUNT(*) Count FROM Tweets GROUP BY Id HAVING Count(*) > 2 EMIT CHANGES;
 ```
 
-### Session Window (v.0.2.0)
+### Session Window (v0.2.0)
 A [session window](https://docs.ksqldb.io/en/latest/concepts/time-and-windows-in-ksqldb-queries/#session-window) aggregates records into a session, which represents a period of activity separated by a specified gap of inactivity, or "idleness". 
 ```C#
 var query = context.CreateQueryStream<Transaction>()
@@ -399,6 +420,8 @@ SELECT CardNumber, COUNT(*) Count FROM Transactions
 ```
 Time units:
 ```C#
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
+
 public enum TimeUnits
 {
   MILLISECONDS, // v2.0.0
@@ -407,14 +430,13 @@ public enum TimeUnits
   HOURS,
   DAYS
 }
-using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
 Duration duration = Duration.OfHours(2);
 
 Console.WriteLine($"{duration.Value} {duration.TimeUnit}");
 ```
 
-### Inner Joins (v.0.2.0)
+### Inner Joins (v0.2.0)
 How to [join table and table](https://kafka-tutorials.confluent.io/join-a-table-to-a-table/ksql.html)
 ```C#
 public class Movie : Record
@@ -461,7 +483,7 @@ EMIT CHANGES;
 > ⚠ There is a known limitation in the early access versions (bellow 1.0). 
 The Key column, in this case movie.Title, has to be aliased Title = movie.Title, otherwise the deserialization won't be able to map the unknown column name M_TITLE. 
 
-### Avg (v.0.2.0)
+### Avg (v0.2.0)
 ```KSQL
 AVG(col1)
 ``` 
@@ -472,7 +494,7 @@ var query = CreateQbservable()
   .Select(g => g.Avg(c => c.Citizens));
 ```
 
-### Aggregation functions Min and Max (v.0.2.0)
+### Aggregation functions Min and Max (v0.2.0)
 ```KSQL
 MIN(col1)
 MAX(col1)
@@ -487,7 +509,7 @@ var queryMax = CreateQbservable()
   .Select(g => g.Max(c => c.Citizens));
 ```
 
-### Like (v.0.2.0)
+### Like (v0.2.0)
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
@@ -500,7 +522,7 @@ KSQL
 "LCASE(Message) LIKE LCASE('%santa%')"
 ```
 
-### Arithmetic operations on columns (v.0.2.0)
+### Arithmetic operations on columns (v0.2.0)
 The usual arithmetic operators (+,-,/,*,%) may be applied to numeric types, like INT, BIGINT, and DOUBLE:
 ```KSQL
 SELECT USERID, LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH FROM USERS EMIT CHANGES;
@@ -509,7 +531,7 @@ SELECT USERID, LEN(FIRST_NAME) + LEN(LAST_NAME) AS NAME_LENGTH FROM USERS EMIT C
 Expression<Func<Person, object>> expression = c => c.FirstName.Length * c.LastName.Length;
 ```
 
-### String function - Length (LEN) (v.0.2.0)
+### String function - Length (LEN) (v0.2.0)
 ```C#
 Expression<Func<Tweet, int>> lengthExpression = c => c.Message.Length;
 ```
@@ -518,7 +540,7 @@ KSQL
 LEN(Message)
 ```
 
-### LPad, RPad, Trim, Substring (v.0.2.0)
+### LPad, RPad, Trim, Substring (v0.2.0)
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
@@ -540,7 +562,7 @@ Substring(Message, 2, 3)
 Install-Package Kafka.DotNet.ksqlDB -Version 0.3.0
 ```
 ## Aggregation functions 
-### EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull (v.0.3.0)
+### EarliestByOffset, LatestByOffset, EarliestByOffsetAllowNulls, LatestByOffsetAllowNull (v0.3.0)
 [EarliestByOffset](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#earliest_by_offset),
 [LatestByOffset](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/#latest_by_offset)
 ```C#
@@ -576,7 +598,7 @@ SELECT Id, EARLIEST_BY_OFFSET(Amount, 2, True) EarliestByOffset
 FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
-### TopK, TopKDistinct, LongCount, Count(column) (v.0.3.0)
+### TopK, TopKDistinct, LongCount, Count(column) (v0.3.0)
 ```C#
 Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression1 = l => new { TopK = l.TopK(c => c.Amount, 2) };
 Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression2 = l => new { TopKDistinct = l.TopKDistinct(c => c.Amount, 2) };
@@ -601,7 +623,7 @@ new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Tweet>()
   }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 ```
 
-### LeftJoin - LEFT OUTER (v.0.3.0)
+### LeftJoin - LEFT OUTER (v0.3.0)
 
 ```C#
 var query = new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Movie>()
@@ -624,7 +646,7 @@ ON M.Title = L.Title
 EMIT CHANGES;
 ```
 
-### Having - aggregations with column (v.0.3.0)
+### Having - aggregations with column (v0.3.0)
 [Example](https://kafka-tutorials.confluent.io/finding-distinct-events/ksql.html) shows how to use Having with Count(column) and Group By compound key:
 ```C#
 public class Click
@@ -647,7 +669,7 @@ SELECT IP_ADDRESS, URL, TIMESTAMP FROM Clicks WINDOW TUMBLING (SIZE 2 MINUTES) G
 HAVING COUNT(IP_ADDRESS) = 1 EMIT CHANGES LIMIT 3;
 ```
 
-### Where IS NULL, IS NOT NULL (v.0.3.0)
+### Where IS NULL, IS NOT NULL (v0.3.0)
 ```C#
 using var subscription = new KSqlDBContext(@"http:\\localhost:8088")
   .CreateQueryStream<Click>()
@@ -663,7 +685,7 @@ WHERE IP_ADDRESS IS NOT NULL OR IP_ADDRESS IS NULL
 EMIT CHANGES;
 ```
 
-### Numeric functions - Abs, Ceil, Floor, Random, Sign, Round (v.0.3.0)
+### Numeric functions - Abs, Ceil, Floor, Random, Sign, Round (v0.3.0)
 ```C#
 Expression<Func<Tweet, double>> expression1 = c => K.Functions.Abs(c.Amount);
 Expression<Func<Tweet, double>> expression2 = c => K.Functions.Ceil(c.Amount);
@@ -763,7 +785,29 @@ SELECT Id, COUNT_DISTINCT(Message) Count
 FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
+# v0.4.0-preview (work in progress)
+### Maps
+```C#
+var dictionary = new Dictionary<string, int>()
+{
+  { "c", 2 },
+  { "d", 4 }
+};
+``` 
+```KSQL
+MAP('c' := 2, 'd' := 4)
+```
+
+Accessing map elements:
+```C#
+dictionary["c"]
+``` 
+```
+MAP('c' := 2, 'd' := 4)['d'] 
+```
+
 **TODO:**
+- map type
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
 - FULL OUTER join

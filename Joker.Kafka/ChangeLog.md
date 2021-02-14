@@ -87,6 +87,9 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-### v0.4.0 (TODO: not released):
+### v0.4.0-preview (not released):
+- Maps
+
+# TODO:
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
