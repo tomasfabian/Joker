@@ -4,7 +4,6 @@ using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Movies;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
-using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
@@ -17,12 +16,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
-      var uri = new Uri(KSqlDbRestApiProvider.KsqlDbUrl);
-
-      RestApiProvider = new KSqlDbRestApiProvider(new HttpClientFactory(uri));
+      RestApiProvider = KSqlDbRestApiProvider.Create();
       
       moviesProvider = new MoviesProvider(RestApiProvider);
-      await moviesProvider.DropTablesAsync();
+      
       await moviesProvider.CreateTablesAsync();
 
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);

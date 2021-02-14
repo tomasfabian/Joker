@@ -2,8 +2,7 @@
 
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework> 
-    <!--<TargetFramework>$(NetCoreVersion)</TargetFramework>--> 
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -23,9 +22,4 @@
     <ProjectReference Include="..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="KSql\RestApi\" />
-  </ItemGroup>
-  
 </Project>

@@ -9,7 +9,6 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
 {
-
   public class KSqlDbRestApiProvider
   {
     private readonly HttpClientFactory httpClientFactory;
@@ -20,6 +19,13 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
     }
 
     internal static string KsqlDbUrl { get; } = @"http:\\localhost:8088";
+
+    public static KSqlDbRestApiProvider Create(string ksqlDbUrl = null)
+    {
+      var uri = new Uri(ksqlDbUrl ?? KsqlDbUrl);
+
+      return new KSqlDbRestApiProvider(new HttpClientFactory(uri));
+    }
 
     public KSqlDbRestApiProvider(HttpClientFactory httpClientFactory)
     {

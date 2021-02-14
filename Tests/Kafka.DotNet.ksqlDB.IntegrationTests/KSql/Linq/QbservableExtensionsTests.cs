@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
-using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
@@ -21,54 +19,26 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     private static string streamName = "tweetsTest";
     private static string topicName = "tweetsTestTopic";
 
-    private static readonly Tweet Tweet1 = new()
-    {
-      Id = 1,
-      Message = "Hello world",
-      IsRobot = true,
-      Amount = 0.00042, 
-      AccountBalance = 1.2M,
-    };
+    private static Tweet Tweet1 => TweetsProvider.Tweet1;
 
-    private static readonly Tweet Tweet2 = new()
-    {
-      Id = 2,
-      Message = "Wall-e",
-      IsRobot = false,
-      Amount = 1, 
-      AccountBalance = -5.6M,
-    };
+    private static Tweet Tweet2 => TweetsProvider.Tweet2;
 
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
-      var uri = new Uri(KSqlDbRestApiProvider.KsqlDbUrl);
+      RestApiProvider = KSqlDbRestApiProvider.Create();
 
-      RestApiProvider = new KSqlDbRestApiProvider(new HttpClientFactory(uri));
-
-      var ksql = $"CREATE STREAM {streamName}(id INT, message VARCHAR, isRobot BOOLEAN, amount DOUBLE, accountBalance DECIMAL(16,4))\r\n  WITH (kafka_topic='{topicName}', value_format='json', partitions=1);";
-      var result = await RestApiProvider.ExecuteStatementAsync(ksql);
+      var tweetsProvider = new TweetsProvider(RestApiProvider);
+      var result = await tweetsProvider.CreateTweetsStream(streamName, topicName);
       result.Should().BeTrue();
       
-      var insert = CreateInsertTweetStatement(Tweet1);
+      result = await tweetsProvider.InsertTweetAsync(Tweet1, streamName);
 
-      result = await RestApiProvider.ExecuteStatementAsync(insert);
       result.Should().BeTrue();
-
-      insert = CreateInsertTweetStatement(Tweet2);
-
-      result = await RestApiProvider.ExecuteStatementAsync(insert);      
-      result.Should().BeTrue();
-    }
-
-    private static string CreateInsertTweetStatement(Tweet tweet)
-    {
-      var amount = tweet.Amount.ToString("E1", CultureInfo.InvariantCulture);
-
-      string insert =
-        $"INSERT INTO {streamName} (id, message, isRobot, amount, accountBalance) VALUES ({tweet.Id}, '{tweet.Message}', {tweet.IsRobot}, {amount}, {tweet.AccountBalance});";
       
-      return insert;
+      result = await tweetsProvider.InsertTweetAsync(Tweet2, streamName);    
+      
+      result.Should().BeTrue();
     }
 
     [ClassCleanup]
@@ -185,7 +155,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>()
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .GroupBy(c => c.Id)
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
         .ToAsyncEnumerable();
@@ -209,7 +179,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>()
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .GroupBy(c => c.Id)
         .Having(c => c.Count(g => g.Message) == 1)
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
@@ -234,7 +204,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>()
+      var source = Context.CreateQueryStream<Tweet>(streamName)
         .GroupBy(c => c.Id)
         .WindowedBy(new TimeWindows(Duration.OfMilliseconds(100)))
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
