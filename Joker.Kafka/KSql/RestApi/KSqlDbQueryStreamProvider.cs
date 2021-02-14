@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Parsers;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Responses;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi
@@ -68,7 +66,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         if (queryStreamHeader.ColumnTypes.Length == 1 && !typeof(T).IsAnonymousType())
           return new RowValue<T>(JsonSerializer.Deserialize<T>(result, jsonSerializerOptions));
 
-        var jsonRecord = CreateJson(result);
+        var jsonRecord = new JsonArrayParser().CreateJson(queryStreamHeader.ColumnNames, result);
 
         var record = JsonSerializer.Deserialize<T>(jsonRecord, jsonSerializerOptions);
 
@@ -78,36 +76,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       return default;
     }
 
-    // e.g. [1,[4.2E-4,4.2E-4]]
-    private readonly string commaSeparatedValuesAndArraysPattern = @",(?![^\[]*\])";
-
-    private string CreateJson(string row)
-    {
-      var stringBuilder = new StringBuilder();
-
-      stringBuilder.AppendLine("{");
-
-      var headerColumns = queryStreamHeader.ColumnNames;
-      bool isFirst = true;
-
-      var rowValues = Regex.Split(row, commaSeparatedValuesAndArraysPattern);
-
-      foreach (var column in headerColumns.Zip(rowValues.Select(c => c.Trim(' ')), (s, s1) => new { ColumnName = s, Value = s1 }))
-      {
-        if (!isFirst)
-        {
-          stringBuilder.Append(",");
-        }
-
-        stringBuilder.AppendLine($"\"{column.ColumnName}\": {column.Value}");
-
-        isFirst = false;
-      }
-
-      stringBuilder.AppendLine("}");
-
-      return stringBuilder.ToString();
-    }
 
     protected override HttpRequestMessage CreateQueryHttpRequestMessage(HttpClient httpClient, object parameters)
     {
