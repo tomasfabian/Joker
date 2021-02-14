@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
@@ -34,9 +35,9 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     private IQbservable<Location> CreateStreamSource(bool shouldPluralizeStreamName = true)
     {
       contextOptions.ShouldPluralizeStreamName = shouldPluralizeStreamName;
-      
+
       var context = new TestableDbProvider(contextOptions);
-      
+
       return context.CreateQueryStream<Location>();
     }
 
@@ -79,14 +80,14 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
 WHERE {nameof(Location.Latitude)} = '1' AND {nameof(Location.Longitude)} = 0.1 EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
-    }    
-    
+    }
+
     [TestMethod]
     public void SelectDynamicFunction_BuildKSql_PrintsFunctionCall()
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { c.Longitude, c.Latitude, Col = ksqlDB.KSql.Query.Functions.KSql.F.Dynamic("IFNULL(Latitude, 'n/a')") as string});
+        .Select(c => new { c.Longitude, c.Latitude, Col = ksqlDB.KSql.Query.Functions.KSql.F.Dynamic("IFNULL(Latitude, 'n/a')") as string });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -239,7 +240,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { new[] { 1, 2, 3 }.Length } );
+        .Select(c => new { new[] { 1, 2, 3 }.Length });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -256,7 +257,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { FirstItem = new[] { 1, 2, 3 }[1] } );
+        .Select(c => new { FirstItem = new[] { 1, 2, 3 }[1] });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -264,6 +265,100 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       string expectedKsql =
         @$"SELECT ARRAY[1, 2, 3][1] AS FirstItem FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
+
+    #region Maps
+
+    [TestMethod]
+    public void SelectDictionary_BuildKSql_PrintsMap()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new Dictionary<string, int>
+        {
+          { "c", 2 },
+          { "d", 4 }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('c' := 2, 'd' := 4) FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectDictionaryProjected_BuildKSql_PrintsMap()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Map = new Dictionary<string, int>
+          {
+            { "c", 2 },
+            { "d", 4 }
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('c' := 2, 'd' := 4) Map FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectDictionaryElement_BuildKSql_PrintsMapElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new Dictionary<string, int>
+        {
+          { "c", 2 },
+          { "d", 4 }
+        }["d"]);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('c' := 2, 'd' := 4)['d'] FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectDictionaryElementProjected_BuildKSql_PrintsMapElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Element = new Dictionary<string, int>
+          {
+            { "c", 2 },
+            { "d", 4 }
+          }["d"]
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('c' := 2, 'd' := 4)['d'] Element FROM {streamName} EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
