@@ -708,7 +708,7 @@ SIGN(Amount)
 ROUND(Amount, 3)
 ```
 
-### Dynamic - calling not supported ksqldb functions
+### Dynamic - calling not supported ksqldb functions (v0.3.0)
 Some of the ksqldb functions have not been implemented yet. This can be circumvented by calling K.Functions.Dynamic with the apropriate function call and its paramaters. The type of the column value is set with C# **as** operator.
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
@@ -744,7 +744,7 @@ context.CreateQueryStream<Tweet>()
     error => Console.WriteLine($"Exception: {error.Message}"));
 ```
 
-### Aggregation functions: CollectSet, CollectList, CountDistinct
+### Aggregation functions: CollectSet, CollectList, CountDistinct (v0.3.0)
 ```C#
 var subscription = context.CreateQueryStream<Tweet>()
   .GroupBy(c => c.Id)
@@ -786,7 +786,7 @@ FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
 # v0.4.0-preview (work in progress)
-### Maps
+### Maps (v0.4.0)
 ```C#
 var dictionary = new Dictionary<string, int>()
 {
@@ -804,6 +804,36 @@ dictionary["c"]
 ``` 
 ```
 MAP('c' := 2, 'd' := 4)['d'] 
+```
+Deeply nested types:
+```C#
+context.CreateQueryStream<Tweet>()
+  .Select(c => new
+  {
+    Map = new Dictionary<string, int[]>
+    {
+      { "a", new[] { 1, 2 } },
+      { "b", new[] { 3, 4 } },
+    }
+  });
+```
+Generated KSQL:
+```KSQL
+SELECT MAP('a' := ARRAY[1, 2], 'b' := ARRAY[3, 4]) Map 
+FROM Tweets EMIT CHANGES;
+```
+
+### Date and time functions
+#### DATETOSTRING (v0.4.0)
+```C#
+int epochDays = 18672;
+string format = "yyyy-MM-dd";
+
+Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.DateToString(epochDays, format);
+```
+Generated KSQL:
+```
+DATETOSTRING(18672, 'yyyy-MM-dd')
 ```
 
 **TODO:**

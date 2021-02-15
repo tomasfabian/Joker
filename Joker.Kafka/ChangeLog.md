@@ -89,6 +89,10 @@
 
 ### v0.4.0-preview (not released):
 - Maps
+- Deeply nested types (Maps, Arrays)
+
+### Date and time functions
+- DATETOSTRING
 
 # TODO:
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
