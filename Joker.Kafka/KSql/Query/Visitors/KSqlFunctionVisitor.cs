@@ -22,10 +22,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
         switch (methodInfo.Name)
         {          
           case nameof(KSqlFunctionsExtensions.Dynamic):
-            if(methodCallExpression.Arguments[1] is ConstantExpression constantExpression)
+            if (methodCallExpression.Arguments[1] is ConstantExpression constantExpression)
               Append($"{constantExpression.Value}");
             else
-              Visit(methodCallExpression.Arguments[1]);
+            {
+              var value = ExtractFieldValue((MemberExpression)methodCallExpression.Arguments[1]);
+              Append(value.ToString());
+            }
             break;
           case nameof(KSqlFunctionsExtensions.Like):
             Visit(methodCallExpression.Arguments[1]);
@@ -48,6 +51,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           case nameof(KSqlFunctionsExtensions.Round):
           case nameof(KSqlFunctionsExtensions.RPad):
           case nameof(KSqlFunctionsExtensions.Substring):
+          case nameof(KSqlFunctionsExtensions.DateToString):
             Append($"{methodInfo.Name.ToUpper()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;

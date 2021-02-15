@@ -320,7 +320,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           else
             Append(ColumnsSeparator);
 
-          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.ListInit, ExpressionType.Call))
+          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.NewArrayInit, ExpressionType.ListInit, ExpressionType.Call))
           {
             Visit(memberWithArguments.Second);
             Append(" ");
@@ -378,13 +378,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       else
       {
         var outerObj = ExtractFieldValue(memberExpression);
-        Append(outerObj.ToString());
+
+        Visit(Expression.Constant(outerObj));
       }
 
       return memberExpression;
     }
 
-    private static object ExtractFieldValue(MemberExpression memberExpression)
+    internal static object ExtractFieldValue(MemberExpression memberExpression)
     {
       var fieldInfo = (FieldInfo) memberExpression.Member;
       var innerMember = (ConstantExpression) memberExpression.Expression;

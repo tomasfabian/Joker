@@ -193,5 +193,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     }
 
     #endregion
+
+    #region Date and time functions
+    
+    public static string DateToString(this KSqlFunctions kSqlFunctions, int epochDays, string formatPattern)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
   }
 }
