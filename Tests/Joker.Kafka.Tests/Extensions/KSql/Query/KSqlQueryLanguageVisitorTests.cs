@@ -269,6 +269,23 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
 
+    [TestMethod]
+    public void ArrayProjected()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { Str = new[] { 1, 2, 3 } });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[1, 2, 3] Str FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
     #endregion
 
     #region Maps
@@ -359,6 +376,206 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       string expectedKsql =
         @$"SELECT MAP('c' := 2, 'd' := 4)['d'] Element FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
+
+    #region Deeply nested types
+
+    [TestMethod]
+    public void NestedArrayInMap()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Map = new Dictionary<string, int[]>
+          {
+            { "a", new[] { 1, 2 } },
+            { "b", new[] { 3, 4 } },
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('a' := ARRAY[1, 2], 'b' := ARRAY[3, 4]) Map FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void NestedMapInMap()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Map = new Dictionary<string, Dictionary<string, int>>
+          {
+            { "a", new Dictionary<string, int> { { "a", 1 }, { "b", 2 } } },
+            { "b", new Dictionary<string, int> { { "c", 3 }, { "d", 4 } } },
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('a' := MAP('a' := 1, 'b' := 2), 'b' := MAP('c' := 3, 'd' := 4)) Map FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void NestedMapInArray()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new Dictionary<string, int> { { "a", 1 }, { "b", 2 } },
+            new Dictionary<string, int> { { "c", 3 }, { "d", 4 } }
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[MAP('a' := 1, 'b' := 2), MAP('c' := 3, 'd' := 4)] Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void NestedArrayInArray()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new [] { 1, 2},
+            new [] { 3, 4},
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[ARRAY[1, 2], ARRAY[3, 4]] Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
+
+    #region Deeply nested types element destructure
+
+    [TestMethod]
+    public void NestedArrayInMap_ElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Map = new Dictionary<string, int[]>
+          {
+            { "a", new[] { 1, 2 } },
+            { "b", new[] { 3, 4 } },
+          }["a"][1]
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('a' := ARRAY[1, 2], 'b' := ARRAY[3, 4])['a'][1] AS Map FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void NestedMapInMap_ElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Map = new Dictionary<string, Dictionary<string, int>>
+          {
+            { "a", new Dictionary<string, int> { { "a", 1 }, { "b", 2 } } },
+            { "b", new Dictionary<string, int> { { "c", 3 }, { "d", 4 } } },
+          }["a"]["d"]
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('a' := MAP('a' := 1, 'b' := 2), 'b' := MAP('c' := 3, 'd' := 4))['a']['d'] Map FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void NestedMapInArray_ElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new Dictionary<string, int> { { "a", 1 }, { "b", 2 } },
+            new Dictionary<string, int> { { "c", 3 }, { "d", 4 } }
+          }[1]["d"]
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[MAP('a' := 1, 'b' := 2), MAP('c' := 3, 'd' := 4)][1]['d'] Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+    
+    [TestMethod]
+    public void NestedArrayInArray_ElementAccess()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new [] { 1, 2},
+            new [] { 3, 4},
+          }[0][1]
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[ARRAY[1, 2], ARRAY[3, 4]][0][1] AS Arr FROM {streamName} EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }

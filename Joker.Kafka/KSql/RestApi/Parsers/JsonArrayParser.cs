@@ -39,20 +39,20 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parsers
     private IEnumerable<string> Split(string row)
     {
       var stringBuilder = new StringBuilder();
-      bool isStructuredType = false;
+      var isStructuredType = 0;
 
       foreach(var ch in row)
       {
         if(structuredTypeStarted.Contains(ch))
-          isStructuredType = true;
+          isStructuredType++;
 		 
         if(structuredTypeEnded.Contains(ch))
-          isStructuredType = false;
+          isStructuredType--;
 					
-        if(ch != ',' || isStructuredType)
+        if(ch != ',' || isStructuredType > 0)
           stringBuilder.Append(ch);
 
-        if(ch == ',' && !isStructuredType)
+        if(ch == ',' && !(isStructuredType > 0))
         {
           yield return stringBuilder.ToString();
           stringBuilder.Clear();
