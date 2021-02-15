@@ -40,7 +40,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       var actualValues = new List<T>();
 
       var cts = new CancellationTokenSource();
-      cts.CancelAfter(TimeSpan.FromSeconds(10));
+      cts.CancelAfter(TimeSpan.FromSeconds(15));
 
       if (expectedItemsCount.HasValue)
         source = source.Take(expectedItemsCount.Value);

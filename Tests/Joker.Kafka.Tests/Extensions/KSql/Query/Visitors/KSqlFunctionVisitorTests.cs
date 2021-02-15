@@ -2,9 +2,7 @@
 using System.Linq.Expressions;
 using System.Text;
 using FluentAssertions;
-using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
-using Functions = Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -209,6 +207,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region String functions
+
     #region Trim
 
     [TestMethod]
@@ -306,6 +306,27 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     }
 
     #endregion    
+    
+    #endregion
+
+    #region Date and time functions
+
+    [TestMethod]
+    public void DateToString_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      int epochDays = 18672;
+      string format = "yyyy-MM-dd";
+      Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.DateToString(epochDays, format);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo($"DATETOSTRING({epochDays}, '{format}')");
+    }
+
+    #endregion
 
     #region Dynamic
 

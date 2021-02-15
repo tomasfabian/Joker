@@ -67,5 +67,21 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Functions
 
       //Assert
     }
+
+    #region Date and time
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void DateToString_ThrowsInvalidOperationException()
+    {
+      //Arrange
+
+      //Act
+      string kSqlFunctions = KSqlFunctions.Instance.DateToString(1, "");
+
+      //Assert
+    }
+
+    #endregion
   }
 }
