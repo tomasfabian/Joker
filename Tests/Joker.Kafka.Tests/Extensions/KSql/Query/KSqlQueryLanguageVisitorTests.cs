@@ -480,6 +480,33 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
 
+    [TestMethod]
+    [Ignore("TODO")]
+    public void NestedArrayInArray_OuterMemberAccess()
+    {
+      //Arrange
+      var nestedArrays = new[]
+      {
+        new[] {1, 2},
+        new[] {3, 4},
+      };
+
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = nestedArrays
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[ARRAY[1, 2], ARRAY[3, 4]] Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
     #endregion
 
     #region Deeply nested types element destructure
