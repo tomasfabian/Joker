@@ -6,6 +6,7 @@ using Kafka.DotNet.ksqlDB.Sample.Models;
 using Kafka.DotNet.ksqlDB.Sample.Models.Movies;
 using Kafka.DotNet.ksqlDB.Sample.Observers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
@@ -16,6 +17,7 @@ using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
+
   public static class Program
   {
     public static async Task Main(string[] args)
@@ -44,6 +46,24 @@ namespace Kafka.DotNet.ksqlDB.Sample
       Console.ReadKey();
 
       Console.WriteLine("Subscription completed");
+    }
+
+    private static IDisposable ClientSideBatching(KSqlDBContext context)
+    {
+      var disposable = context.CreateQueryStream<Tweet>()
+        .ToObservable()
+        .Buffer(TimeSpan.FromMilliseconds(250), 100)
+        .Where(c => c.Count > 0)
+        //.ObserveOn(System.Reactive.Concurrency.DispatcherScheduler.Current)
+        .Subscribe(tweets =>
+        {
+          foreach (var tweet in tweets)
+          {
+            Console.WriteLine(tweet.Message);
+          }
+        });
+
+      return disposable;
     }
 
     private static IDisposable JoinTables(KSqlDBContext context)
@@ -214,6 +234,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
     private static IDisposable Having(KSqlDBContext context)
     {
       return     
+        //https://kafka-tutorials.confluent.io/finding-distinct-events/ksql.html
         context.CreateQueryStream<Click>()
         .GroupBy(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP })
         .WindowedBy(new TimeWindows(Duration.OfMinutes(2)))
@@ -245,12 +266,28 @@ namespace Kafka.DotNet.ksqlDB.Sample
         }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
     }
 
+    private static void ScalarFunctions(KSqlDBContext context)
+    {
+      context.CreateQueryStream<Tweet>()
+        .Select(c => new
+        {
+          Abs = K.Functions.Abs(c.Amount), Ceil = K.Functions.Ceil(c.Amount), Floor = K.Functions.Floor(c.Amount),
+          Random = K.Functions.Random(), Sign = K.Functions.Sign(c.Amount)
+        })
+        .ToQueryString();
+    }
+
     private static IDisposable LatestByOffset(KSqlDBContext context)
     {
+      var query = context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => new {Id = g.Key, EarliestByOffset = g.EarliestByOffset(c => c.Amount, 2)})
+        .ToQueryString();
+
       return context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
         //.Select(g => new { Id = g.Key, Earliest = g.EarliestByOffset(c => c.Message) })
-        // .Select(g => new { Id = g.Key, Earliest = g.EarliestByOffsetAllowNulls(c => c.Message) })
+        //.Select(g => new { Id = g.Key, Earliest = g.EarliestByOffsetAllowNulls(c => c.Message) })
         //.Select(g => new { Id = g.Key, Earliest = g.LatestByOffset(c => c.Message) })
         .Select(g => new { Id = g.Key, Earliest = g.LatestByOffsetAllowNulls(c => c.Message) })
         .Take(2) // LIMIT 2    
@@ -259,6 +296,72 @@ namespace Kafka.DotNet.ksqlDB.Sample
           Console.WriteLine($"{nameof(Tweet)}: {tweetMessage}");
           Console.WriteLine();
         }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
+    }
+
+    private static IDisposable CollectSet(KSqlDBContext context)
+    {
+      var subscription = context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        .Select(g => new { Id = g.Key, Array = g.CollectSet(c => c.Message) })
+        //.Select(g => new { Id = g.Key, Array = g.CollectList(c => c.Message) })
+        .Subscribe(c =>
+        {
+          Console.WriteLine($"{c.Id}:");
+          foreach (var value in c.Array)
+          {
+            Console.WriteLine($"  {value}");
+          }
+        }, exception => { Console.WriteLine(exception.Message); });
+
+      return subscription;
+    }
+
+    private static IDisposable Arrays(KSqlDBContext context)
+    {
+      var subscription =
+        context.CreateQueryStream<Tweet>()
+          .Select(_ => new {FirstItem = new[] {1, 2, 3}[1]})
+          .Subscribe(onNext: c => { Console.WriteLine($"Array first value: {c}"); },
+            onError: error => { Console.WriteLine($"Exception: {error.Message}"); });
+
+      var arrayLengthQuery = context.CreateQueryStream<Tweet>()
+        .Select(_ => new[] {1, 2, 3}.Length)
+        .ToQueryString();
+
+      return subscription;
+    }
+
+    private static IDisposable CountDistinct(KSqlDBContext context)
+    {
+      var subscription = context.CreateQueryStream<Tweet>()
+        .GroupBy(c => c.Id)
+        // .Select(g => new { Id = g.Key, Count = g.CountDistinct(c => c.Message) })
+        .Select(g => new { Id = g.Key, Count = g.LongCountDistinct(c => c.Message) })
+        .Subscribe(c =>
+        {
+          Console.WriteLine($"{c.Id} - {c.Count}");
+        }, exception => { Console.WriteLine(exception.Message); });
+
+      return subscription;
+    }
+
+    private static IDisposable NestedTypes(KSqlDBContext context)
+    {
+      var disposable = 
+        context.CreateQueryStream<Tweet>()
+          .Select(c => new
+          {
+            MapValue = new Dictionary<string, Dictionary<string, int>>
+            {
+              { "a", new Dictionary<string, int> { { "a", 1 }, { "b", 2 } } },
+              { "b", new Dictionary<string, int> { { "c", 3 }, { "d", 4 } } },
+            }["a"]
+          })
+          .Subscribe(
+            message => Console.WriteLine($"{message.MapValue}"),
+            error => Console.WriteLine($"Exception: {error.Message}"));
+
+      return disposable;
     }
   }
 }
