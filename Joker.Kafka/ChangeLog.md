@@ -1,4 +1,11 @@
-### v0.3.0:
+# v0.4.0-rc.1:
+- Maps
+- Deeply nested types (Maps, Arrays)
+
+### Date and time functions
+- DATETOSTRING
+
+# v0.3.0:
 - functions member access (variables for method arguments)
 - Where is null, is not null
 - dynamic function call (support not supported functions)
@@ -87,12 +94,8 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-### v0.4.0-preview (not released):
-- Maps
-- Deeply nested types (Maps, Arrays)
+### v0.4.0 (not released):
 
-### Date and time functions
-- DATETOSTRING
 
 # TODO:
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
