@@ -44,6 +44,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     
     #region Ceil
     
+    public static int Ceil(this KSqlFunctions kSqlFunctions, int input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static long Ceil(this KSqlFunctions kSqlFunctions, long input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
     public static float Ceil(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -62,6 +72,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     #endregion
     
     #region Floor
+    
+    public static int Floor(this KSqlFunctions kSqlFunctions, int input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    public static long Floor(this KSqlFunctions kSqlFunctions, long input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
     
     public static float Floor(this KSqlFunctions kSqlFunctions, float input)
     {
@@ -82,6 +102,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     
     #region Round
     
+    //TODO:returns BIGINT
     public static float Round(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -113,11 +134,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     }
 
     #endregion
-    
+
+    #region Random
+
     public static double Random(this KSqlFunctions kSqlFunctions)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
+
+    #endregion
 
     #region Sign
 
@@ -197,6 +222,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     #region Date and time functions
     
     public static string DateToString(this KSqlFunctions kSqlFunctions, int epochDays, string formatPattern)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    public static string TimeStampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    public static string TimeStampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern, string timeZone)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }

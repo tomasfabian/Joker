@@ -95,7 +95,7 @@
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 ### v0.4.0 (not released):
-
+- TIMESTAMPTOSTRING
 
 # TODO:
 - https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time

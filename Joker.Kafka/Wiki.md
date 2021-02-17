@@ -134,6 +134,7 @@ Omitting select is equivalent to SELECT *
 | DOUBLE  | double |
 | BOOLEAN | bool   |
 | ```ARRAY<ElementType>``` | C#Type[]   |
+| ```MAP<ElementType, ElementType>``` | IDictionary<C#Type, C#Type>   |
 
 Array type mapping example (available from v0.3.0):
 ```
@@ -388,7 +389,7 @@ UCASE(Latitude) != 'HI'
 
 # v0.2.0
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.2.0-RC1
+Install-Package Kafka.DotNet.ksqlDB -Version 0.2.0
 ```
 
 ### Having (v0.2.0)
@@ -786,6 +787,9 @@ FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
 # v0.4.0-preview (work in progress)
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.4.0-rc.1
+```
 ### Maps (v0.4.0)
 ```C#
 var dictionary = new Dictionary<string, int>()
@@ -834,6 +838,18 @@ Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.DateToS
 Generated KSQL:
 ```
 DATETOSTRING(18672, 'yyyy-MM-dd')
+```
+
+#### TIMESTAMPTOSTRING (v0.4.0)
+```C#
+new KSqlDBContext(ksqlDbUrl).CreateQueryStream<Movie>()
+  .Select(c => K.Functions.TimeStampToString(c.RowTime, "yyyy-MM-dd''T''HH:mm:ssX"))
+```
+
+Generated KSQL:
+```
+SELECT DATETOSTRING(1613503749145, 'yyyy-MM-dd''T''HH:mm:ssX')
+FROM tweets EMIT CHANGES;
 ```
 
 **TODO:**

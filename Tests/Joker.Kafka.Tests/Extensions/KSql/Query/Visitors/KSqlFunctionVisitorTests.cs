@@ -326,6 +326,52 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       kSqlFunction.Should().BeEquivalentTo($"DATETOSTRING({epochDays}, '{format}')");
     }
 
+    [TestMethod]
+    public void TimeStampToString_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      long epochMilli = 1613503749145;
+      string format = "yyyy-MM-dd HH:mm:ss.SSS";
+      Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.TimeStampToString(epochMilli, format);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo($"TIMESTAMPTOSTRING({epochMilli}, '{format}')");
+    }
+
+    [TestMethod]
+    public void TimeStampToStringFormatWithBackTicks_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      long epochMilli = 1613503749145;
+      string format = "yyyy-MM-dd''T''HH:mm:ssX";
+      Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.TimeStampToString(epochMilli, format);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo($"TIMESTAMPTOSTRING({epochMilli}, '{format}')");
+    }
+
+    [TestMethod]
+    public void TimeStampToStringWithTimeZone_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      long epochMilli = 1613503749145;
+      string format = "yyyy-MM-dd''T''HH:mm:ssX";
+      string timeZone = "Europe/London";
+      Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.TimeStampToString(epochMilli, format, timeZone);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo($"TIMESTAMPTOSTRING({epochMilli}, '{format}', '{timeZone}')");
+    }
+
     #endregion
 
     #region Dynamic
