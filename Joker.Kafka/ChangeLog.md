@@ -95,8 +95,12 @@
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 ### v0.4.0 (not released):
-- TIMESTAMPTOSTRING
+- date and time scalar functions TIMESTAMPTOSTRING etc.
+- logical operator NOT on columns
 
 # TODO:
-- https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
+- missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
+- BETWEEN, CASE
+- FULL JOIN
+- struct type

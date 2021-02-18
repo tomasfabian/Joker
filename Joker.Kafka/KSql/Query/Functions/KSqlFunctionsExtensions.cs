@@ -221,17 +221,95 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Date and time functions
     
+    /// <summary>
+    /// Gets an integer representing days since epoch.
+    /// </summary>
+    /// <returns></returns>
+    public static int UnixDate(this KSqlFunctions kSqlFunctions)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Gets the Unix timestamp in milliseconds, represented as a long (BIGINT).
+    /// </summary>
+    /// <returns></returns>
+    public static long UnixTimestamp(this KSqlFunctions kSqlFunctions)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Converts an integer representing days since epoch to a date string using the given format pattern.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="epochDays">The Epoch Day to convert, based on the epoch 1970-01-01</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <returns></returns>
     public static string DateToString(this KSqlFunctions kSqlFunctions, int epochDays, string formatPattern)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
-    public static string TimeStampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern)
+    /// <summary>
+    /// Converts a string representation of a date into an integer representing days since epoch using the given format pattern.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="formattedDate">The string representation of a date</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <returns></returns>
+    public static int StringToDate(this KSqlFunctions kSqlFunctions, string formattedDate, string formatPattern)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// Converts a string representation of a date in the given format into the BIGINT value that represents the millisecond timestamp.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="formattedTimestamp">The string representation of a date.</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <returns></returns>
+    public static long StringToTimestamp(this KSqlFunctions kSqlFunctions, string formattedTimestamp, string formatPattern)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
-    public static string TimeStampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern, string timeZone)
+    //STRINGTOTIMESTAMP
+    /// <summary>
+    /// Converts a string representation of a date in the given format into the BIGINT value that represents the millisecond timestamp.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="formattedTimestamp">The string representation of a date.</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <param name="timeZone">timeZone is a java.util.TimeZone ID format, for example: "UTC", "America/Los_Angeles", "PST", "Europe/London"</param>
+    /// <returns></returns>
+    public static long StringToTimestamp(this KSqlFunctions kSqlFunctions, string formattedTimestamp, string formatPattern, string timeZone)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// Converts a BIGINT millisecond timestamp value into the string representation of the timestamp in the given format.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="epochMilli">Milliseconds since January 1, 1970, 00:00:00 GMT.</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <returns>String representation of the timestamp in the given format.</returns>
+    public static string TimestampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Converts a BIGINT millisecond timestamp value into the string representation of the timestamp in the given format.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="epochMilli">Milliseconds since January 1, 1970, 00:00:00 GMT.</param>
+    /// <param name="formatPattern">The format pattern should be in the format expected by java.time.format.DateTimeFormatter.</param>
+    /// <param name="timeZone">timeZone is a java.util.TimeZone ID format, for example: "UTC", "America/Los_Angeles", "PST", "Europe/London"</param>
+    /// <returns>String representation of the timestamp in the given format.</returns>
+    public static string TimestampToString(this KSqlFunctions kSqlFunctions, long epochMilli, string formatPattern, string timeZone)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }

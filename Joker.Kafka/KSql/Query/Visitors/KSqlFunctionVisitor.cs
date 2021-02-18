@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
@@ -29,6 +30,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
               var value = ExtractFieldValue((MemberExpression)methodCallExpression.Arguments[1]);
               Append(value.ToString());
             }
+            break;          
+          case nameof(KSqlFunctionsExtensions.Random):
+          case nameof(KSqlFunctionsExtensions.UnixDate):
+          case nameof(KSqlFunctionsExtensions.UnixTimestamp):
+            Append($"{methodInfo.Name.ToKSqlFunctionName()}()");
             break;
           case nameof(KSqlFunctionsExtensions.Like):
             Visit(methodCallExpression.Arguments[1]);
@@ -43,16 +49,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
             Append($"{methodInfo.Name.ToUpper()}(");
             Visit(methodCallExpression.Arguments[1]);
             Append(")");
-            break;          
-          case nameof(KSqlFunctionsExtensions.Random):
-            Append($"{methodInfo.Name.ToUpper()}()");
             break;
           case nameof(KSqlFunctionsExtensions.LPad):
           case nameof(KSqlFunctionsExtensions.Round):
           case nameof(KSqlFunctionsExtensions.RPad):
           case nameof(KSqlFunctionsExtensions.Substring):
+          case nameof(KSqlFunctionsExtensions.StringToDate):
           case nameof(KSqlFunctionsExtensions.DateToString):
-          case nameof(KSqlFunctionsExtensions.TimeStampToString):
+          case nameof(KSqlFunctionsExtensions.StringToTimestamp):
+          case nameof(KSqlFunctionsExtensions.TimestampToString):
             Append($"{methodInfo.Name.ToUpper()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;
