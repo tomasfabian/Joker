@@ -639,14 +639,26 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     public void NegateBooleanConstant_BuildKSql_PrintsFalse()
     {
       //Arrange
-      Expression<Func<IKSqlGrouping<int, Location>, object>> expression = l => !false;
+      Expression<Func<Tweet, bool>> expression = l => !true;
 
       //Act
-      var expression2 = Expression.Quote(expression);
-      var query = ClassUnderTest.BuildKSql(expression2);
+      var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo("NOT false");
+      query.Should().BeEquivalentTo("NOT true");
+    }
+
+    [TestMethod]
+    public void NegateBooleanColumn_BuildKSql_PrintsFalse()
+    {
+      //Arrange
+      Expression<Func<Tweet, bool>> expression = l => !l.IsRobot;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo("NOT IsRobot");
     }
 
     #endregion

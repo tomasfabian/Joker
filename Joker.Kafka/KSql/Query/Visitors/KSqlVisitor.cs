@@ -100,6 +100,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.Convert:
         case ExpressionType.ConvertChecked:
         case ExpressionType.ArrayLength:
+        case ExpressionType.Not:
           VisitUnary((UnaryExpression)expression);
           break;
 
@@ -320,7 +321,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           else
             Append(ColumnsSeparator);
 
-          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.NewArrayInit, ExpressionType.ListInit, ExpressionType.Call))
+          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.Not, ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.NewArrayInit, ExpressionType.ListInit, ExpressionType.Call))
           {
             Visit(memberWithArguments.Second);
             Append(" ");
@@ -407,6 +408,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           base.Visit(unaryExpression.Operand);
           Append(")");
           return unaryExpression;
+        case ExpressionType.Not:
+          Append("NOT ");
+
+          return base.VisitUnary(unaryExpression);
         case ExpressionType.Convert:
         case ExpressionType.ConvertChecked:
           return base.Visit(unaryExpression.Operand);

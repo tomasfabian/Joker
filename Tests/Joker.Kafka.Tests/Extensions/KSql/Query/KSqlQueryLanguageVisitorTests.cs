@@ -6,6 +6,7 @@ using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
+using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 using Location = Kafka.DotNet.ksqlDB.Tests.Models.Location;
@@ -39,6 +40,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       var context = new TestableDbProvider(contextOptions);
 
       return context.CreateQueryStream<Location>();
+    }
+
+    private IQbservable<Tweet> CreateTweetsStreamSource()
+    {
+      var context = new TestableDbProvider(contextOptions);
+
+      return context.CreateQueryStream<Tweet>();
     }
 
     #region Select
@@ -603,6 +611,44 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       string expectedKsql =
         @$"SELECT ARRAY[ARRAY[1, 2], ARRAY[3, 4]][0][1] AS Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
+
+    #region Operators
+
+    [TestMethod]
+    public void LogicalOperatorNot_BuildKSql_PrintsNot()
+    {
+      //Arrange
+      var query = CreateTweetsStreamSource()
+        .Select(l => !l.IsRobot);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT NOT {nameof(Tweet.IsRobot)} FROM {nameof(Tweet)}s EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void LogicalOperatorNotProjected_BuildKSql_PrintsNot()
+    {
+      //Arrange
+      var query = CreateTweetsStreamSource()
+        .Select(l => new { NotRobot = !l.IsRobot });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT NOT {nameof(Tweet.IsRobot)} NotRobot FROM {nameof(Tweet)}s EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
