@@ -23,7 +23,6 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       RestApiProvider = KSqlDbRestApiProvider.Create();
       
       moviesProvider = new MoviesProvider(RestApiProvider);
-      await moviesProvider.DropTablesAsync();
       await moviesProvider.CreateTablesAsync();
 
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
