@@ -287,5 +287,18 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"Key, TOPKDISTINCT({nameof(Transaction.Amount)}, {k}) TopKDistinct");
     }
+
+    [TestMethod]
+    public void Histogram_BuildKSql_PrintsAggregation()
+    {
+      //Arrange
+      Expression<Func<IKSqlGrouping<int, Transaction>, object>> expression = l => new { Key = l.Key, Histogram = l.Histogram(c => c.CardNumber) };
+      
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"Key, HISTOGRAM({nameof(Transaction.CardNumber)}) Histogram");
+    }
   }
 }

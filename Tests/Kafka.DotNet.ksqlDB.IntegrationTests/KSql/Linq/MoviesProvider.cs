@@ -55,6 +55,13 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Title = "Aliens"
     };
 
+    public static readonly Movie Movie2 = new()
+    {
+      Id = 2,
+      Release_Year = 1998,
+      Title = "Die Hard"
+    };
+
     public static readonly Lead_Actor LeadActor1 = new()
     {
       Actor_Name = "Sigourney Weaver",

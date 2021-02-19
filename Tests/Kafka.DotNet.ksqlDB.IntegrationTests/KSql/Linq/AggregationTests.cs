@@ -1,0 +1,60 @@
+﻿using System.Threading.Tasks;
+using FluentAssertions;
+using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Movies;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
+{
+  [TestClass]
+  public class AggregationTests : IntegrationTests
+  {
+    private static MoviesProvider moviesProvider;
+
+    [ClassInitialize]
+    public static async Task ClassInitialize(TestContext context)
+    {
+      RestApiProvider = KSqlDbRestApiProvider.Create();
+
+      moviesProvider = new MoviesProvider(RestApiProvider);
+
+      await moviesProvider.CreateTablesAsync();
+
+      await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
+      await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
+    }
+
+    [ClassCleanup]
+    public static async Task ClassCleanup()
+    {
+      await moviesProvider.DropTablesAsync();
+
+      moviesProvider = null;
+    }
+
+    [TestMethod]
+    public async Task Histogram()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+
+      var source = Context.CreateQueryStream<Movie>()
+        .GroupBy(c => c.Id)
+        .Select(l => new { Id = l.Key, Histogram = l.Histogram(c => c.Title) })
+        .ToAsyncEnumerable();
+      
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      var id1 = actualValues[0];
+      id1.Id.Should().Be(48);
+      id1.Histogram[MoviesProvider.Movie1.Title].Should().Be(1);
+
+      var id2 = actualValues[1];
+      id2.Id.Should().Be(294);
+      id2.Histogram[MoviesProvider.Movie2.Title].Should().Be(1);
+    }
+  }
+}
