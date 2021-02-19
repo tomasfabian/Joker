@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Linq
 {
@@ -10,17 +11,64 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
 
   public interface IAggregations<out TSource> : IAggregations
   {
+    #region Avg
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     int Avg(Func<TSource, int?> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     long Avg(Func<TSource, long?> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     decimal Avg(Func<TSource, decimal?> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     decimal Avg(Func<TSource, float?> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     decimal Avg(Func<TSource, double?> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
+    /// <returns>Computed average of column with type int</returns>
     int Avg(Func<TSource, int> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
+    /// <returns>Computed average of column with type long</returns>
     long Avg(Func<TSource, long> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     decimal Avg(Func<TSource, float> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
+    /// <returns>Computed average of column with type double</returns>
     decimal Avg(Func<TSource, double> selector);
+
+    /// <summary>
+    /// Returns the average value of the column computed as the sum divided by the count. Applicable only to numeric types.
+    /// </summary>
     decimal Avg(Func<TSource, decimal> selector);
-   
+    
+
+    #endregion
+    
     int Count(Func<TSource, object> selector);
     long LongCount(Func<TSource, object> selector);
    
@@ -64,6 +112,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     decimal Max(Func<TSource, float> selector);
     decimal Max(Func<TSource, double> selector);
     decimal Max(Func<TSource, decimal> selector);
+    
+    /// <summary>
+    /// Build a value-to-count histogram of input Strings.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>Returns a map of each distinct String from the input Stream or Table and how many times each occurs.
+    /// This version limits the size of the resultant Map to 1000 entries. Any entries added beyond this limit
+    /// will be ignored.</returns>
+    IDictionary<string, long> Histogram(Func<TSource, string> selector);
     
     int Sum(Func<TSource, int?> selector);
     long Sum(Func<TSource, long?> selector);
@@ -117,7 +174,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     float?[] EarliestByOffsetAllowNulls(Func<TSource, float?> selector, int earliestN);
     double?[] EarliestByOffsetAllowNulls(Func<TSource, double?> selector, int earliestN);
     decimal?[] EarliestByOffsetAllowNulls(Func<TSource, decimal?> selector, int earliestN);
-    
     string LatestByOffset(Func<TSource, string> selector);
     int LatestByOffset(Func<TSource, int> selector);
     long LatestByOffset(Func<TSource, long> selector);

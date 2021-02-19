@@ -44,6 +44,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           }
           break;
         case nameof(IAggregations<object>.Avg):
+        case nameof(IAggregations<object>.Histogram):
         case nameof(IAggregations<object>.Min):
         case nameof(IAggregations<object>.Max):
         case nameof(IAggregations<object>.Sum):
