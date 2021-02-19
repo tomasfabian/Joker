@@ -1,9 +1,11 @@
-# v0.4.0-rc.1:
+# v0.4.0:
 - Maps
 - Deeply nested types (Maps, Arrays)
+- logical operator NOT on columns
+- aggregation function - Histogram
 
 ### Date and time functions
-- DATETOSTRING
+- DATETOSTRING, TIMESTAMPTOSTRING etc.
 
 # v0.3.0:
 - functions member access (variables for method arguments)
@@ -94,9 +96,8 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-### v0.4.0 (not released):
-- date and time scalar functions TIMESTAMPTOSTRING etc.
-- logical operator NOT on columns
+### v0.5.0 (not released):
+
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time

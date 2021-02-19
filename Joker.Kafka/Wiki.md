@@ -185,6 +185,7 @@ Supported operators are:
 | >=       | is greater than or equal to | >=   |
 | AND      | logical AND                 | &&   |
 | OR       | logical OR                  | \|\| |
+| NOT      | logical NOT                 |  !   |
 
 ### Take (Limit) (v0.1.0)
 Returns a specified number of contiguous elements from the start of a stream. Depends on the 'auto.topic.offset' parameter.
@@ -843,7 +844,7 @@ DATETOSTRING(18672, 'yyyy-MM-dd')
 #### TIMESTAMPTOSTRING (v0.4.0)
 ```C#
 new KSqlDBContext(ksqlDbUrl).CreateQueryStream<Movie>()
-  .Select(c => K.Functions.TimeStampToString(c.RowTime, "yyyy-MM-dd''T''HH:mm:ssX"))
+  .Select(c => K.Functions.TimestampToString(c.RowTime, "yyyy-MM-dd''T''HH:mm:ssX"))
 ```
 
 Generated KSQL:
@@ -852,8 +853,11 @@ SELECT DATETOSTRING(1613503749145, 'yyyy-MM-dd''T''HH:mm:ssX')
 FROM tweets EMIT CHANGES;
 ```
 
+#### date and time scalar functions (v0.4.0)
+[Date and time](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time)
+
 **TODO:**
-- map type
+- struct type
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
 - FULL OUTER join
