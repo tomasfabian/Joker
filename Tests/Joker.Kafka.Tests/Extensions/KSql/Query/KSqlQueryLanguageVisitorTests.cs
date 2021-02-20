@@ -877,5 +877,30 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     }
 
     #endregion
+
+    #region Functions
+
+    [TestMethod]
+    public void EntriesFromDictionary_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      bool sorted = true;
+      var query = CreateStreamSource()
+        .Select(c => new { Col = KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+          {
+            { "a", "value" }
+          }, sorted)});
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ENTRIES(MAP('a' := 'value'), true) Col FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
   }
 }

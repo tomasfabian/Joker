@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using FluentAssertions;
@@ -82,6 +83,65 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"CEIL({nameof(Tweet.AccountBalance)})");
+    }
+
+    #endregion
+
+    #region Entries
+
+    private class Test
+    {
+      public IDictionary<string, string> Dictionary { get; set; }
+    }
+
+    [TestMethod]
+    public void Entries_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      bool sorted = true;
+      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(c.Dictionary, sorted);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo($"ENTRIES({nameof(Test.Dictionary)}, true)");
+    }
+
+    [TestMethod]
+    public void EntriesFromDictionary_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      bool sorted = true;
+      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+      {
+        { "a", "value" }
+      }, sorted);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo("ENTRIES(MAP('a' := 'value'), true)");
+    }
+
+    [TestMethod]
+    [Ignore("TODO")]
+    public void EntriesOuterMemberAccess_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      var map = new Dictionary<string, string>()
+      {
+        { "a", "value" }
+      };
+      bool sorted = true;
+      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(map, sorted);
+
+      //Act
+      var kSqlFunction = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      kSqlFunction.Should().BeEquivalentTo("ENTRIES(MAP('a' := 'value'), true)");
     }
 
     #endregion

@@ -59,5 +59,29 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       Assert.AreEqual(expectedItemsCount, actualValues.Count);
       actualValues[0].Should().BeEquivalentTo("2021-02-14");
     }
+
+    [TestMethod]
+    public async Task Entries()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      bool sorted = true;
+      
+      //Act
+      var source = Context.CreateQueryStream<Movie>(MoviesTableName)
+        .Select(c => new { Col = KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+        {
+          { "a", "value" }
+        }, sorted)})
+        .ToAsyncEnumerable();
+      
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      actualValues[0].Col[0].K.Should().BeEquivalentTo("a");
+      actualValues[0].Col[0].V.Should().BeEquivalentTo("value");
+    }
   }
 }
