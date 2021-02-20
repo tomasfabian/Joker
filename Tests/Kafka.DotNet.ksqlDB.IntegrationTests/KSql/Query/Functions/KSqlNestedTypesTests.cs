@@ -227,6 +227,42 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
     }
 
     [TestMethod]
+    public async Task ArrayWithNestedStruct()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      var expectedMovie = MoviesProvider.Movie1;
+
+      //Act
+      var source = MoviesStream
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new MovieStruct
+            {
+              Title = c.Title,
+              Id = c.Id,
+            }, 
+            new MovieStruct
+            {
+              Title = "test",
+              Id = 1,
+            }
+          }, c.Release_Year,
+        }).ToAsyncEnumerable();
+
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      var actualStr = actualValues.First().Arr;
+
+      actualStr[0].Title.Should().Be(expectedMovie.Title);
+      actualStr[0].Id.Should().Be(expectedMovie.Id);
+      actualValues.First().Release_Year.Should().Be(expectedMovie.Release_Year);
+    }
+
+    [TestMethod]
     public async Task Array_FromColumn()
     {
       //Arrange

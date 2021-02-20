@@ -404,7 +404,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new Point {X = 1, Y = 2});
+        .Select(c => new Point { X = 1, Y = 2 });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -421,7 +421,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { V = new Point {X = 1, Y = 2} });
+        .Select(c => new { V = new Point { X = 1, Y = 2 } });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -438,7 +438,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new Point {X = 1, Y = 2}.X);
+        .Select(c => new Point { X = 1, Y = 2 }.X);
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -455,7 +455,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { X = new Point {X = 1, Y = 2}.X });
+        .Select(c => new { X = new Point { X = 1, Y = 2 }.X });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -470,8 +470,9 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     private struct LocationStruct
     {
       public string X { get; set; }
-
       public double Y { get; set; }
+      public string[] Arr { get; set; }
+      public Dictionary<string, double> Map { get; set; }
     }
 
     [TestMethod]
@@ -479,7 +480,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     {
       //Arrange
       var query = CreateStreamSource()
-        .Select(c => new { LS = new LocationStruct {X = c.Latitude, Y = c.Longitude}, Text = "text" });
+        .Select(c => new { LS = new LocationStruct { X = c.Latitude, Y = c.Longitude }, Text = "text" });
 
       //Act
       var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
@@ -487,6 +488,62 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       string expectedKsql =
         @$"SELECT STRUCT(X := {nameof(Location.Latitude)}, Y := {nameof(Location.Longitude)}) LS, 'Text' Text FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectStructWithNestedArray_BuildKSql_PrintsStruct()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          LS = new LocationStruct
+          {
+            X = c.Latitude,
+            Arr = new[] { c.Latitude, c.Latitude },
+            Y = c.Longitude,
+          },
+          Text = "text"
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := {nameof(Location.Latitude)}, Arr := ARRAY[{nameof(Location.Latitude)}, {nameof(Location.Latitude)}], Y := {nameof(Location.Longitude)}) LS, 'Text' Text FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectStructWithNestedMap_BuildKSql_PrintsStruct()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          LS = new LocationStruct
+          {
+            X = c.Latitude,
+            Map = new Dictionary<string, double>
+          {
+            { "c", c.Longitude },
+            { "d", 4 }
+          },
+            Y = c.Longitude,
+          },
+          Text = "text"
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := {nameof(Location.Latitude)}, Map := MAP('c' := {nameof(Location.Longitude)}, 'd' := 4), Y := {nameof(Location.Longitude)}) LS, 'Text' Text FROM {streamName} EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
@@ -544,6 +601,38 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     }
 
     [TestMethod]
+    public void NestedStructInMap()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Str = new Dictionary<string, LocationStruct>
+          {
+            { "a", new LocationStruct
+            {
+              X = c.Latitude,
+              Y = c.Longitude,
+            } },
+            { "b", new LocationStruct
+            {
+              X = "test",
+              Y = 1,
+            } },
+          }
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT MAP('a' := STRUCT(X := {nameof(Location.Latitude)}, Y := {nameof(Location.Longitude)}), 'b' := STRUCT(X := 'test', Y := 1)) Str FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
     public void NestedMapInArray()
     {
       //Arrange
@@ -587,6 +676,37 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
       //Assert
       string expectedKsql =
         @$"SELECT ARRAY[ARRAY[1, 2], ARRAY[3, 4]] Arr FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+    
+    [TestMethod]
+    public void NestedStructInArray()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new
+        {
+          Arr = new[]
+          {
+            new LocationStruct
+            {
+              X = c.Latitude,
+              Y = c.Longitude,
+            }, new LocationStruct
+              {
+                X = "test",
+                Y = 1,
+              }
+            },
+        });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT ARRAY[STRUCT(X := {nameof(Location.Latitude)}, Y := {nameof(Location.Longitude)}), STRUCT(X := 'test', Y := 1)] Arr FROM {streamName} EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
@@ -693,7 +813,7 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
 
       ksql.Should().BeEquivalentTo(expectedKsql);
     }
-    
+
     [TestMethod]
     public void NestedArrayInArray_ElementAccess()
     {
