@@ -390,6 +390,109 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
 
     #endregion
 
+    #region Structs
+
+    private struct Point
+    {
+      public int X { get; set; }
+
+      public int Y { get; set; }
+    }
+
+    [TestMethod]
+    public void SelectStruct_BuildKSql_PrintsStruct()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new Point {X = 1, Y = 2});
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := 1, Y := 2) FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectStructProjected_BuildKSql_PrintsStruct()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { V = new Point {X = 1, Y = 2} });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := 1, Y := 2) V FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectStructElement_BuildKSql_PrintsElementAccessor()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new Point {X = 1, Y = 2}.X);
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := 1, Y := 2)->X FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
+    public void SelectStructElementProjected_BuildKSql_PrintsElementAccessor()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { X = new Point {X = 1, Y = 2}.X });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := 1, Y := 2)->X X FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    private struct LocationStruct
+    {
+      public string X { get; set; }
+
+      public double Y { get; set; }
+    }
+
+    [TestMethod]
+    public void SelectStructElementsFromColumns_BuildKSql_PrintsStruct()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { LS = new LocationStruct {X = c.Latitude, Y = c.Longitude}, Text = "text" });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT STRUCT(X := {nameof(Location.Latitude)}, Y := {nameof(Location.Longitude)}) LS, 'Text' Text FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    #endregion
+
     #region Deeply nested types
 
     [TestMethod]

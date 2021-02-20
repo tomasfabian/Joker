@@ -258,7 +258,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     [TestMethod]
-    public void NewReferenceType_BuildKSql_PrintsNothing()
+    public void NewReferenceType_BuildKSql_PrintsStruct()
     {
       //Arrange
       Expression<Func<Location, object>> expression = l => new Location();
@@ -271,7 +271,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     [TestMethod]
-    public void NewMemberInit_BuildKSql_PrintsNothing()
+    public void NewMemberInit_BuildKSql_PrintsStruct()
     {
       //Arrange
       Expression<Func<Location, object>> expression = l => new Location { Latitude = "t" };
@@ -280,7 +280,20 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEmpty();
+      query.Should().Be("STRUCT(Latitude := 't')");
+    }
+
+    [TestMethod]
+    public void NewMemberInitMemberAccess_BuildKSql_PrintsStructMemberAccess()
+    {
+      //Arrange
+      Expression<Func<Location, object>> expression = l => new Location { Latitude = "t" }.Latitude;
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().Be("STRUCT(Latitude := 't')->Latitude");
     }
 
     #endregion

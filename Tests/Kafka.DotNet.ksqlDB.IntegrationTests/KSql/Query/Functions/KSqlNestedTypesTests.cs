@@ -172,5 +172,84 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       actual["x"]["b"].Should().Be(expected["x"]["b"]);
       actual["y"]["d"].Should().Be(expected["y"]["d"]);
     }
+
+    private struct MovieStruct
+    {
+      public string Title { get; set; }
+
+      public int Id { get; set; }
+    }
+
+    [TestMethod]
+    public async Task Struct()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      var expected = new MovieStruct { Title = "ET", Id = 2};
+
+      //Act
+      var source = MoviesStream.Select(c => new
+      {
+        Str = new MovieStruct { Title = "ET", Id = 2}, c.Release_Year
+      }).ToAsyncEnumerable();
+
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      var actualStr = actualValues.First().Str;
+
+      actualStr.Title.Should().Be(expected.Title);
+      actualStr.Id.Should().Be(expected.Id);
+      actualValues.First().Release_Year.Should().Be(MoviesProvider.Movie1.Release_Year);
+    }
+
+    [TestMethod]
+    public async Task Struct_FromColumns()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      var expectedMovie = MoviesProvider.Movie1;
+
+      //Act
+      var source = MoviesStream.Select(c => new
+      {
+        Str = new MovieStruct { Title = c.Title, Id = c.Id}, c.Release_Year
+      }).ToAsyncEnumerable();
+
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      var actualStr = actualValues.First().Str;
+
+      actualStr.Title.Should().Be(expectedMovie.Title);
+      actualStr.Id.Should().Be(expectedMovie.Id);
+      actualValues.First().Release_Year.Should().Be(expectedMovie.Release_Year);
+    }
+
+    [TestMethod]
+    public async Task Array_FromColumn()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      var expectedMovie = MoviesProvider.Movie1;
+
+      //Act
+      var source = MoviesStream.Select(c => new
+      {
+        Arr = new[]
+        {
+          c.Id, c.Release_Year
+        }, c.Title
+      }).ToAsyncEnumerable();
+
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      var actualArr = actualValues.First().Arr;
+
+      actualArr[0].Should().Be(expectedMovie.Id);
+      actualArr[1].Should().Be(expectedMovie.Release_Year);
+      actualValues.First().Title.Should().Be(expectedMovie.Title);
+    }
   }
 }
