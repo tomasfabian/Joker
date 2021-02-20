@@ -52,6 +52,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
             break;
           case nameof(KSqlFunctionsExtensions.LPad):
           case nameof(KSqlFunctionsExtensions.Round):
+          case nameof(KSqlFunctionsExtensions.Entries):
           case nameof(KSqlFunctionsExtensions.RPad):
           case nameof(KSqlFunctionsExtensions.Substring):
           case nameof(KSqlFunctionsExtensions.StringToDate):

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 {
@@ -70,7 +71,28 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     }
 
     #endregion
-    
+
+    #region Entries
+
+    // Variation   : ENTRIES(map MAP<VARCHAR, VARCHAR>, sorted BOOLEAN)
+    // Returns     : ARRAY<STRUCT<K VARCHAR, V VARCHAR>>
+    // map         : The map to create entries from
+    // sorted      : If true then the resulting entries are sorted by key
+
+    /// <summary>
+    /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="map">The map to create entries from</param>
+    /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
+    /// <returns></returns>
+    public static Entry[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, string> map, bool sorted)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
     #region Floor
     
     public static int Floor(this KSqlFunctions kSqlFunctions, int input)

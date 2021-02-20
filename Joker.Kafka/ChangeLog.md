@@ -98,6 +98,7 @@
 
 ### v0.5.0 (not released):
 - Structs
+- Entries function
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
