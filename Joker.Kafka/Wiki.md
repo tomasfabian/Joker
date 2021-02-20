@@ -135,6 +135,7 @@ Omitting select is equivalent to SELECT *
 | BOOLEAN | bool   |
 | ```ARRAY<ElementType>``` | C#Type[]   |
 | ```MAP<ElementType, ElementType>``` | IDictionary<C#Type, C#Type>   |
+| ```STRUCT``` | struct   |
 
 Array type mapping example (available from v0.3.0):
 ```
@@ -158,6 +159,32 @@ queryStream
 Generates the following KSQL:
 ```KSQL
 ARRAY_LENGTH(ARRAY[1, 2, 3])
+```
+
+Struct type mapping example (available from v0.5.0):
+```C#
+struct Point
+{
+  public int X { get; set; }
+
+  public int Y { get; set; }
+}
+
+queryStream
+  .Select(c => new Point { X = c.X, Y = 2 });
+```
+Generates the following KSQL:
+```KSQL
+SELECT STRUCT(X := X, Y := 2) FROM SstreamName EMIT CHANGES;
+```
+
+Destructure a struct:
+```C#
+queryStream
+  .Select(c => new Point { X = c.X, Y = 2 }.X);
+```
+```KSQL
+SELECT STRUCT(X := X, Y := 2)->X FROM SstreamName EMIT CHANGES;
 ```
 
 ### Where (v0.1.0)
@@ -787,11 +814,13 @@ SELECT Id, COUNT_DISTINCT(Message) Count
 FROM Tweets GROUP BY Id EMIT CHANGES;
 ```
 
-# v0.4.0-preview (work in progress)
+# v0.4.0
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.4.0-rc.1
+Install-Package Kafka.DotNet.ksqlDB -Version 0.4.0
 ```
 ### Maps (v0.4.0)
+[Maps](https://docs.ksqldb.io/en/latest/how-to-guides/query-structured-data/#maps)
+are an associative data type that map keys of any type to values of any type. The types across all keys must be the same. The same rule holds for values. Destructure maps using bracket syntax ([]).
 ```C#
 var dictionary = new Dictionary<string, int>()
 {
@@ -856,8 +885,13 @@ FROM tweets EMIT CHANGES;
 #### date and time scalar functions (v0.4.0)
 [Date and time](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time)
 
+
+# v0.5.0-rc.1 (work in progress)
+### Structs (v0.5.0)
+[Structs](https://docs.ksqldb.io/en/latest/how-to-guides/query-structured-data/#structs)
+ are an associative data type that map VARCHAR keys to values of any type. Destructure structs by using arrow syntax (->).
+
 **TODO:**
-- struct type
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
 - FULL OUTER join
