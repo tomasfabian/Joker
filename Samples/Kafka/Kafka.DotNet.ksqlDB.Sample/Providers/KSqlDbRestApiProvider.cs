@@ -32,7 +32,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
       this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
 
-    public async Task<bool> ExecuteStatementAsync(string ksql)
+    public async Task<HttpResponseMessage> ExecuteStatementAsync(string ksql)
     {
       try
       {
@@ -60,24 +60,24 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
         var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
           HttpCompletionOption.ResponseHeadersRead,
           cancellationToken);
+
+        return httpResponseMessage;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
         throw;
       }
-
-      return true;
     }
 
-    public Task<bool> DropStreamAndTopic(string streamName)
+    public Task<HttpResponseMessage> DropStreamAndTopic(string streamName)
     {
       var statement = $"DROP STREAM IF EXISTS {streamName} DELETE TOPIC;";
 
       return ExecuteStatementAsync(statement);
     }
 
-    public Task<bool> DropTableAndTopic(string tableName)
+    public Task<HttpResponseMessage> DropTableAndTopic(string tableName)
     {
       var statement = $"DROP TABLE IF EXISTS {tableName} DELETE TOPIC;";
 

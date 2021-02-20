@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Sample.Models.Movies;
 
@@ -64,7 +65,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
       Title = "Aliens"
     };
 
-    public async Task<bool> InsertMovieAsync(Movie movie)
+    public async Task<HttpResponseMessage> InsertMovieAsync(Movie movie)
     {
       string insert =
         $"INSERT INTO {MoviesTableName} ({nameof(Movie.Id)}, {nameof(Movie.Title)}, {nameof(Movie.Release_Year)}) VALUES ({movie.Id}, '{movie.Title}', {movie.Release_Year});";
@@ -74,7 +75,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
       return result;
     }
 
-    public async Task<bool> InsertLeadAsync(Lead_Actor actor)
+    public async Task<HttpResponseMessage> InsertLeadAsync(Lead_Actor actor)
     {
       string insert =
         $"INSERT INTO {ActorsTableName} ({nameof(Lead_Actor.Title)}, {nameof(Lead_Actor.Actor_Name)}) VALUES ('{actor.Title}', '{actor.Actor_Name}');";
