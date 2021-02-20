@@ -27,5 +27,10 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
 
       return null;
     }
+    
+    internal static bool IsStruct(this Type source) 
+    {
+      return source.IsValueType && !source.IsEnum && !source.IsPrimitive;
+    }
   }
 }

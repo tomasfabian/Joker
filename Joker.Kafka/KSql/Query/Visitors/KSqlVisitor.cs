@@ -111,9 +111,35 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.ListInit:
           VisitListInit((ListInitExpression)expression);
           break;
+
+        case ExpressionType.MemberInit:
+          VisitMemberInit((MemberInitExpression)expression);
+          break;
       }
 
       return expression;
+    }
+
+    protected override Expression VisitMemberInit(MemberInitExpression node)
+    {
+      Append("STRUCT(");
+
+      bool isFirst = true;
+      foreach (var memberBinding in node.Bindings.Where(c => c.BindingType == MemberBindingType.Assignment).OfType<MemberAssignment>())
+      {        
+        if (isFirst)
+          isFirst = false;
+        else
+          Append(ColumnsSeparator);
+        
+        Append($"{memberBinding.Member.Name} := ");
+
+        Visit(memberBinding.Expression);
+      }
+
+      Append(")");
+
+      return node;
     }
 
     protected override Expression VisitListInit(ListInitExpression listInitExpression)
@@ -132,13 +158,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           if (isFirst)
             isFirst = false;
           else
-            stringBuilder.Append(ColumnsSeparator);
+            Append(ColumnsSeparator);
 
           Visit(elementInit.Arguments[0]);
           
           Append(" := ");
           Visit(elementInit.Arguments[1]);
-
         }
 
         Append(")");
@@ -321,11 +346,28 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           else
             Append(ColumnsSeparator);
 
-          if (memberWithArguments.Second.NodeType.IsOneOfFollowing(ExpressionType.Not, ExpressionType.TypeAs, ExpressionType.ArrayLength, ExpressionType.Constant, ExpressionType.NewArrayInit, ExpressionType.ListInit, ExpressionType.Call))
+          switch (memberWithArguments.Second.NodeType)
           {
-            Visit(memberWithArguments.Second);
-            Append(" ");
+            case ExpressionType.Not:
+            case ExpressionType.TypeAs:
+            case ExpressionType.ArrayLength:
+            case ExpressionType.Constant:
+            case ExpressionType.NewArrayInit:
+            case ExpressionType.ListInit:
+            case ExpressionType.MemberInit:
+            case ExpressionType.Call:
+              Visit(memberWithArguments.Second);
+              Append(" ");
+              break;
+            case ExpressionType.MemberAccess:
+              if (memberWithArguments.Second is MemberExpression {Expression: MemberInitExpression ne} && ne.Type.IsStruct())
+              {
+                Visit(memberWithArguments.Second);
+                Append(" ");
+              }
+              break;
           }
+
           if(memberWithArguments.Second is BinaryExpression)
           {
             Visit(memberWithArguments.Second);
@@ -360,9 +402,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       {
         if (useTableAlias)
         {
-          Append(((ParameterExpression)memberExpression.Expression).Name);
+          Append(((ParameterExpression) memberExpression.Expression).Name);
           Append(".");
         }
+
+        Append(memberExpression.Member.Name);
+      }
+      else if (memberExpression.Expression.NodeType == ExpressionType.MemberInit)
+      {
+        Visit(memberExpression.Expression);
+        Append("->");
         Append(memberExpression.Member.Name);
       }
       else if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
