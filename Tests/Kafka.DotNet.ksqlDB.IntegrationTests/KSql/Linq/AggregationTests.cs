@@ -49,11 +49,11 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
       //Assert
       var id1 = actualValues[0];
-      id1.Id.Should().Be(48);
+      id1.Id.Should().Be(MoviesProvider.Movie1.Id);
       id1.Histogram[MoviesProvider.Movie1.Title].Should().Be(1);
 
       var id2 = actualValues[1];
-      id2.Id.Should().Be(294);
+      id2.Id.Should().Be(MoviesProvider.Movie2.Id);
       id2.Histogram[MoviesProvider.Movie2.Title].Should().Be(1);
     }
   }

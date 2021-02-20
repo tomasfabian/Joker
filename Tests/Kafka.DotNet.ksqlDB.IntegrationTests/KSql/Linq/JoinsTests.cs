@@ -20,6 +20,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       
       moviesProvider = new MoviesProvider(RestApiProvider);
       
+      await moviesProvider.DropTablesAsync();
+      
+      await Task.Delay(TimeSpan.FromSeconds(1));
+
       await moviesProvider.CreateTablesAsync();
 
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
