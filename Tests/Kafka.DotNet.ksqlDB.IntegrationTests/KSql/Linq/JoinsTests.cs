@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.IntegrationTests.Models;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Movies;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
@@ -111,6 +113,48 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Assert.AreEqual("lien", actualValues[1].Substr);
       Assert.AreEqual(MoviesProvider.Movie1.Release_Year, actualValues[1].Release_Year);
       Assert.AreEqual(MoviesProvider.LeadActor1.Title, actualValues[1].ActorTitle);
+    }
+
+    public record Movie2 : Record
+    {
+      public string Title { get; set; }
+      public int? Id { get; set; }
+      public int? Release_Year { get; set; }
+    }
+
+    [TestMethod]
+    public async Task FullOuterJoin()
+    {
+      //Arrange
+      int expectedItemsCount = 3;
+        
+      await moviesProvider.InsertLeadAsync(MoviesProvider.LeadActor2);
+
+      var source = Context.CreateQueryStream<Movie2>(MoviesTableName)
+        .FullOuterJoin(
+          Source.Of<Lead_Actor>(ActorsTableName),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            movie.Id,
+            Title = movie.Title,
+            movie.Release_Year,
+            ActorTitle = actor.Title
+          }
+        )
+        .ToAsyncEnumerable();
+
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+        
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+
+      actualValues[2].Id.Should().BeNull();
+      actualValues[2].Release_Year.Should().BeNull();
+      actualValues[2].Title.Should().BeNull();
+      Assert.AreEqual(MoviesProvider.LeadActor2.Title, actualValues[2].ActorTitle);
     }
   }
 }

@@ -69,6 +69,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
       {
         nameof(QbservableExtensions.Join) => "INNER",
         nameof(QbservableExtensions.LeftJoin) => "LEFT",
+        nameof(QbservableExtensions.FullOuterJoin) => "FULL OUTER",
         _ => throw new ArgumentOutOfRangeException()
       };
 

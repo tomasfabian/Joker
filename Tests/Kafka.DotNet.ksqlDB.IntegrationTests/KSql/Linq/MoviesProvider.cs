@@ -68,6 +68,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       Title = "Aliens"
     };
 
+    public static readonly Lead_Actor LeadActor2 = new()
+    {
+      Actor_Name = "Al Pacino",
+      Title = "The Godfather"
+    };
+
     public async Task<bool> InsertMovieAsync(Movie movie)
     {
       string insert =

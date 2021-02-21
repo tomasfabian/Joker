@@ -230,6 +230,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       {
         case nameof(QbservableExtensions.Join):
         case nameof(QbservableExtensions.LeftJoin):
+        case nameof(QbservableExtensions.FullOuterJoin):
           var joinTable = methodCallExpression.Arguments.Skip(1);
         
           joinTables.Add((methodInfo, joinTable));

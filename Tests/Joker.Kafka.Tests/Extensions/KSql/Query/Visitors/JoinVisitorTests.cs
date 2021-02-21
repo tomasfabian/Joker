@@ -203,5 +203,36 @@ ON M.Title = A.Title
     }
 
     #endregion
+
+    #region FullOuterJoin
+
+    [TestMethod]
+    public void FullOuterJoinOverrideStreamName_BuildKSql_Prints()
+    {
+      //Arrange
+      var query = KSqlDBContext.CreateQueryStream<Movie>()
+        .FullOuterJoin(
+          Source.Of<Lead_Actor>("Actors"),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            Title = movie.Title,
+          }
+        );
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      var expectedQuery = @"SELECT M.Title Title FROM Movies M
+FULL OUTER JOIN Actors A
+ON M.Title = A.Title
+ EMIT CHANGES;";
+
+      ksql.Should().Be(expectedQuery);
+    }
+
+    #endregion
   }
 }
