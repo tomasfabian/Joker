@@ -653,7 +653,7 @@ new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Tweet>()
 ```
 
 ### LeftJoin - LEFT OUTER (v0.3.0)
-
+LEFT OUTER joins will contain leftRecord-NULL records in the result stream, which means that the join contains NULL values for fields selected from the right-hand stream where no match is made.
 ```C#
 var query = new KSqlDBContext(@"http:\\localhost:8088").CreateQueryStream<Movie>()
   .LeftJoin(
@@ -836,7 +836,7 @@ Accessing map elements:
 ```C#
 dictionary["c"]
 ``` 
-```
+```KSQL
 MAP('c' := 2, 'd' := 4)['d'] 
 ```
 Deeply nested types:
@@ -866,7 +866,7 @@ string format = "yyyy-MM-dd";
 Expression<Func<Tweet, string>> expression = _ => KSqlFunctions.Instance.DateToString(epochDays, format);
 ```
 Generated KSQL:
-```
+```KSQL
 DATETOSTRING(18672, 'yyyy-MM-dd')
 ```
 
@@ -877,7 +877,7 @@ new KSqlDBContext(ksqlDbUrl).CreateQueryStream<Movie>()
 ```
 
 Generated KSQL:
-```
+```KSQL
 SELECT DATETOSTRING(1613503749145, 'yyyy-MM-dd''T''HH:mm:ssX')
 FROM tweets EMIT CHANGES;
 ```
@@ -891,10 +891,85 @@ FROM tweets EMIT CHANGES;
 [Structs](https://docs.ksqldb.io/en/latest/how-to-guides/query-structured-data/#structs)
  are an associative data type that map VARCHAR keys to values of any type. Destructure structs by using arrow syntax (->).
 
+### Entries (v0.5.0)
+```C#
+bool sorted = true;
+      
+var subscription = new KSqlDBContext(@"http:\\localhost:8088")
+  .CreateQueryStream<Movie>()
+  .Select(c => new
+  {
+    Entries = KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+    {
+      {"a", "value"}
+    }, sorted)
+  })
+  .Subscribe(c =>
+  {
+    foreach (var entry in c.Entries)
+    {
+      var key = entry.K;
+
+      var value = entry.V;
+    }
+  }, error => {});
+```
+
+Generated KSQL:
+```KSQL
+SELECT ENTRIES(MAP('a' := 'value'), True) Entries 
+FROM movies_test EMIT CHANGES;
+```
+
+### Full Outer Join (v0.5.0)
+FULL OUTER joins will contain leftRecord-NULL or NULL-rightRecord records in the result stream, which means that the join contains NULL values for fields coming from a stream where no match is made.
+Define nullable primitive value types in POCOs:
+```C#
+public record Movie
+{
+  public long RowTime { get; set; }
+  public string Title { get; set; }
+  public int? Id { get; set; }
+  public int? Release_Year { get; set; }
+}
+
+public class Lead_Actor
+{
+  public string Title { get; set; }
+  public string Actor_Name { get; set; }
+}
+```
+
+```C#
+var source = new KSqlDBContext(@"http:\\localhost:8088")
+  .CreateQueryStream<Movie>()
+  .FullOuterJoin(
+    Source.Of<Lead_Actor>("Actors"),
+    movie => movie.Title,
+    actor => actor.Title,
+    (movie, actor) => new
+    {
+      movie.Id,
+      Title = movie.Title,
+      movie.Release_Year,
+      ActorTitle = actor.Title
+    }
+  );
+```
+
+Generated KSQL:
+```KSQL
+SELECT m.Id Id, m.Title Title, m.Release_Year Release_Year, l.Title ActorTitle FROM movies_test m
+FULL OUTER JOIN lead_actor_test l
+ON m.Title = l.Title
+EMIT CHANGES;
+```
+
+# Nuget
+https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
+
 **TODO:**
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
-- Left outer joins [joining streams and tables](https://docs.ksqldb.io/en/latest/developer-guide/joins/join-streams-and-tables/)
-- FULL OUTER join
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
 - backpressure support
 
