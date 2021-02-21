@@ -74,19 +74,87 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Entries
 
-    // Variation   : ENTRIES(map MAP<VARCHAR, VARCHAR>, sorted BOOLEAN)
-    // Returns     : ARRAY<STRUCT<K VARCHAR, V VARCHAR>>
-    // map         : The map to create entries from
-    // sorted      : If true then the resulting entries are sorted by key
-
+    //Variation   : ENTRIES(map MAP<VARCHAR, VARCHAR>, sorted BOOLEAN)
+    //Returns     : ARRAY<STRUCT<K VARCHAR, V VARCHAR>>
+    //map         : The map to create entries from
+    //sorted      : If true then the resulting entries are sorted by key
+    
     /// <summary>
     /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
     /// </summary>
     /// <param name="kSqlFunctions"></param>
-    /// <param name="map">The map to create entries from</param>
+    /// <param name="map">The map to create entries from.</param>
     /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
     /// <returns></returns>
-    public static Entry[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, string> map, bool sorted)
+    public static Entry<string>[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, string> map, bool sorted)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    //Variation   : ENTRIES(map MAP<VARCHAR, BIGINT>, sorted BOOLEAN)
+    //Returns     : ARRAY<STRUCT<K VARCHAR, V BIGINT>>
+    //map         : The map to create entries from
+    //sorted      : If true then the resulting entries are sorted by key
+    
+    /// <summary>
+    /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="map">The map to create entries from.</param>
+    /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
+    /// <returns></returns>
+    public static Entry<long>[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, long> map, bool sorted)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    //Variation   : ENTRIES(map MAP<VARCHAR, INT>, sorted BOOLEAN)
+    //Returns     : ARRAY<STRUCT<K VARCHAR, V INT>>
+    //map         : The map to create entries from
+    //sorted      : If true then the resulting entries are sorted by key
+        
+    /// <summary>
+    /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="map">The map to create entries from.</param>
+    /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
+    /// <returns></returns>
+    public static Entry<int>[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, int> map, bool sorted)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    //Variation   : ENTRIES(map MAP<VARCHAR, DOUBLE>, sorted BOOLEAN)
+    //Returns     : ARRAY<STRUCT<K VARCHAR, V DOUBLE>>
+    //map         : The map to create entries from
+    //sorted      : If true then the resulting entries are sorted by key
+        
+    /// <summary>
+    /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="map">The map to create entries from.</param>
+    /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
+    /// <returns></returns>
+    public static Entry<double>[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, double> map, bool sorted)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    //Variation   : ENTRIES(map MAP<VARCHAR, BOOLEAN>, sorted BOOLEAN)
+    //Returns     : ARRAY<STRUCT<K VARCHAR, V BOOLEAN>>
+    //map         : The map to create entries from
+    //sorted      : If true then the resulting entries are sorted by key
+    
+    /// <summary>
+    /// Constructs an array of Entry structs from the entries in a map. Each struct has a field named K containing the key, which is a string, and a field named V, which holds the value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="map">The map to create entries from.</param>
+    /// <param name="sorted">If true then the resulting entries are sorted by key.</param>
+    /// <returns></returns>
+    public static Entry<bool>[] Entries(this KSqlFunctions kSqlFunctions, IDictionary<string, bool> map, bool sorted)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }

@@ -99,7 +99,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     {
       //Arrange
       bool sorted = true;
-      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(c.Dictionary, sorted);
+      Expression<Func<Test, Entry<string>[]>> expression = c => KSqlFunctions.Instance.Entries(c.Dictionary, sorted);
 
       //Act
       var kSqlFunction = ClassUnderTest.BuildKSql(expression);
@@ -113,7 +113,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     {
       //Arrange
       bool sorted = true;
-      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+      Expression<Func<Test, Entry<string>[]>> expression = c => KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
       {
         { "a", "value" }
       }, sorted);
@@ -135,7 +135,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
         { "a", "value" }
       };
       bool sorted = true;
-      Expression<Func<Test, Entry[]>> expression = c => KSqlFunctions.Instance.Entries(map, sorted);
+      Expression<Func<Test, Entry<string>[]>> expression = c => KSqlFunctions.Instance.Entries(map, sorted);
 
       //Act
       var kSqlFunction = ClassUnderTest.BuildKSql(expression);

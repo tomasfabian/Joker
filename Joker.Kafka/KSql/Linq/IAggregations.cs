@@ -74,14 +74,68 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
    
     int CountDistinct(Func<TSource, object> selector);
     long LongCountDistinct(Func<TSource, object> selector);
+
+    #region CollectList
+
+    /// <summary>
+    /// Gather all of the values from an input grouping into a single Array field.
+    /// Although this aggregate works on both Stream and Table inputs, the order of entries in the result array is
+    /// not guaranteed when working on Table input data.
+    /// This version limits the size of the resultant Array to 1000 entries, beyond which any further values will
+    /// be silently ignored.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>collect values of a Boolean field into a single Array</returns>
+    bool[] CollectList(Func<TSource, bool> selector);
     
+    /// <summary>
+    /// Gather all of the values from an input grouping into a single Array field.
+    /// Although this aggregate works on both Stream and Table inputs, the order of entries in the result array is
+    /// not guaranteed when working on Table input data.
+    /// This version limits the size of the resultant Array to 1000 entries, beyond which any further values will
+    /// be silently ignored.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>collect values of a String/Varchar field into a single Array</returns>
     string[] CollectList(Func<TSource, string> selector);
-    short[] CollectList(Func<TSource, short> selector);
+
+    /// <summary>
+    /// Gather all of the values from an input grouping into a single Array field.
+    /// Although this aggregate works on both Stream and Table inputs, the order of entries in the result array is
+    /// not guaranteed when working on Table input data.
+    /// This version limits the size of the resultant Array to 1000 entries, beyond which any further values will
+    /// be silently ignored.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>collect values of a Int field into a single Array</returns>
     int[] CollectList(Func<TSource, int> selector);
+
+    /// <summary>
+    /// Gather all of the values from an input grouping into a single Array field.
+    /// Although this aggregate works on both Stream and Table inputs, the order of entries in the result array is
+    /// not guaranteed when working on Table input data.
+    /// This version limits the size of the resultant Array to 1000 entries, beyond which any further values will
+    /// be silently ignored.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>collect values of a BigInt field into a single Array</returns>int[] CollectList(Func<TSource, int> selector);
     long[] CollectList(Func<TSource, long> selector);
-    float[] CollectList(Func<TSource, float> selector);
+
+    /// <summary>
+    /// Gather all of the values from an input grouping into a single Array field.
+    /// Although this aggregate works on both Stream and Table inputs, the order of entries in the result array is
+    /// not guaranteed when working on Table input data.
+    /// This version limits the size of the resultant Array to 1000 entries, beyond which any further values will
+    /// be silently ignored.
+    /// </summary>
+    /// <param name="selector"></param>
+    /// <returns>collect values of a Double field into a single Array</returns>float[] CollectList(Func<TSource, float> selector);
     double[] CollectList(Func<TSource, double> selector);
+
+    [Obsolete]
     decimal[] CollectList(Func<TSource, decimal> selector);
+
+    #endregion
 
     string[] CollectSet(Func<TSource, string> selector);
     short[] CollectSet(Func<TSource, short> selector);

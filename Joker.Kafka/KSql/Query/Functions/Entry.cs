@@ -1,8 +1,8 @@
 ﻿namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 {
-  public struct Entry
+  public struct Entry<TValue>
   {
     public string K { get; set; }
-    public string V { get; set; }
+    public TValue V { get; set; }
   }
 }
