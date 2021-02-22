@@ -16,26 +16,61 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Abs
 
+    /// <summary>
+    /// Returns the absolute value of its argument. If the argument is not negative, the argument is returned. If
+    /// the argument is negative, the negation of the argument is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Absolute value of its argument</returns>
     public static int Abs(this KSqlFunctions kSqlFunctions, int input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
-    }  
-    
+    }
+
+    /// <summary>
+    /// Returns the absolute value of its argument. If the argument is not negative, the argument is returned. If
+    /// the argument is negative, the negation of the argument is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Absolute value of its argument</returns>
     public static long Abs(this KSqlFunctions kSqlFunctions, long input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the absolute value of its argument. If the argument is not negative, the argument is returned. If
+    /// the argument is negative, the negation of the argument is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Absolute value of its argument</returns>
     public static float Abs(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the absolute value of its argument. If the argument is not negative, the argument is returned. If
+    /// the argument is negative, the negation of the argument is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Absolute value of its argument</returns>
     public static double Abs(this KSqlFunctions kSqlFunctions, double input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the absolute value of its argument. If the argument is not negative, the argument is returned. If
+    /// the argument is negative, the negation of the argument is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Absolute value of its argument</returns>
     public static decimal Abs(this KSqlFunctions kSqlFunctions, decimal input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -45,26 +80,56 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     
     #region Ceil
     
+    /// <summary>
+    /// Returns the smallest integer greater than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The ceiling of a value.</returns>
     public static int Ceil(this KSqlFunctions kSqlFunctions, int input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the smallest integer greater than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The ceiling of a value.</returns>
     public static long Ceil(this KSqlFunctions kSqlFunctions, long input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the smallest integer greater than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The ceiling of a value.</returns>
     public static float Ceil(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the smallest integer greater than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The ceiling of a value.</returns>
     public static double Ceil(this KSqlFunctions kSqlFunctions, double input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the smallest integer greater than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The ceiling of a value.</returns>
     public static decimal Ceil(this KSqlFunctions kSqlFunctions, decimal input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -161,64 +226,224 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
 
+    #region Exp
+
+    /// <summary>
+    /// The exponential of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Euler's number e raised to the power of an DOUBLE value.</returns>
+    public static double Exp(this KSqlFunctions kSqlFunctions, double input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// The exponential of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Euler's number e raised to the power of an INT value.</returns>
+    public static int Exp(this KSqlFunctions kSqlFunctions, int input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// The exponential of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Euler's number e raised to the power of an BIGINT value.</returns>
+    public static long Exp(this KSqlFunctions kSqlFunctions, long input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
     #region Floor
     
+    /// <summary>
+    /// Returns the largest integer less than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The floor of a value.</returns>
     public static int Floor(this KSqlFunctions kSqlFunctions, int input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the largest integer less than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The floor of a value.</returns>
     public static long Floor(this KSqlFunctions kSqlFunctions, long input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the largest integer less than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The floor of a value.</returns>
     public static float Floor(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the largest integer less than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The floor of a value.</returns>
     public static double Floor(this KSqlFunctions kSqlFunctions, double input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
+    /// <summary>
+    /// Returns the largest integer less than or equal to the specified numeric expression.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>The floor of a value.</returns>
     public static decimal Floor(this KSqlFunctions kSqlFunctions, decimal input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
     #endregion
-    
-    #region Round
-    
-    //TODO:returns BIGINT
-    public static float Round(this KSqlFunctions kSqlFunctions, float input)
+
+    #region GenerateSeries
+
+    /// <summary>
+    /// Constructs an array of values between start and end (inclusive).
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="start">The beginning of the series</param>
+    /// <param name="end">Marks the end of the series (inclusive)</param>
+    /// <returns>Constructed array of values between start and end (inclusive)</returns>
+    public static int[] GenerateSeries(this KSqlFunctions kSqlFunctions, int start, int end)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Constructs an array of values between start and end (inclusive).
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="start">The beginning of the series</param>
+    /// <param name="end">Marks the end of the series (inclusive)</param>
+    /// <returns>Constructed array of values between start and end (inclusive)</returns>
+    public static long[] GenerateSeries(this KSqlFunctions kSqlFunctions, long start, long end)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
-    public static double Round(this KSqlFunctions kSqlFunctions, double input)
+    /// <summary>
+    /// Constructs an array of values between start and end (inclusive).
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="start">The beginning of the series</param>
+    /// <param name="step">Difference between each value in the series</param>
+    /// <returns>Constructed array of values between start and end (inclusive)</returns>
+    public static int[] GenerateSeries(this KSqlFunctions kSqlFunctions, int start, int end, int step)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
     
-    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input)
+    /// <summary>
+    /// Constructs an array of values between start and end (inclusive).
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="start">The beginning of the series</param>
+    /// <param name="step">Difference between each value in the series</param>
+    /// <returns>Constructed array of values between start and end (inclusive)</returns>
+    public static long[] GenerateSeries(this KSqlFunctions kSqlFunctions, long start, long end, int step)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
-    
-    public static float Round(this KSqlFunctions kSqlFunctions, float input, int scale)
+
+    #endregion
+
+    #region GeoDistance
+
+    /// <summary>
+    /// The 2 input points should be specified as (lat, lon) pairs, measured in decimal degrees.
+    /// Unit for the output measurement is KM.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="lat1">The latitude of the first point in decimal degrees.</param>
+    /// <param name="lon1">The longitude of the first point in decimal degrees.</param>
+    /// <param name="lat2">The latitude of the second point in decimal degrees.</param>
+    /// <param name="lon2">The longitude of the second point in decimal degrees.</param>
+    /// <returns>Computed distance between two points on the surface of the earth, according to the Haversine formula
+    /// for "great circle distance".</returns>
+    public static double GeoDistance(this KSqlFunctions kSqlFunctions, double lat1, double lon1, double lat2, double lon2)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
-    
-    public static double Round(this KSqlFunctions kSqlFunctions, double input, int scale)
+
+    /// <summary>
+    /// The 2 input points should be specified as (lat, lon) pairs, measured in decimal degrees. An optional
+    /// fifth parameter allows to specify either "MI" (miles) or "KM" (kilometers) as the desired unit for the
+    /// output measurement.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="lat1">The latitude of the first point in decimal degrees.</param>
+    /// <param name="lon1">The longitude of the first point in decimal degrees.</param>
+    /// <param name="lat2">The latitude of the second point in decimal degrees.</param>
+    /// <param name="lon2">The longitude of the second point in decimal degrees.</param>
+    /// <param name="units"></param>
+    /// <returns>Computed distance between two points on the surface of the earth, according to the Haversine formula
+    /// for "great circle distance".</returns>
+    public static double GeoDistance(this KSqlFunctions kSqlFunctions, double lat1, double lon1, double lat2, double lon2, string units)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
-    
-    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input, int scale)
+
+    #endregion
+
+    #region LN
+
+    /// <summary>
+    /// The natural logarithm of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value get the natural logarithm of.</param>
+    /// <returns>Returns the natural logarithm (base e) of a INT value.</returns>
+    public static double Ln(this KSqlFunctions kSqlFunctions, int value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+
+    /// <summary>
+    /// The natural logarithm of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value get the natural logarithm of.</param>
+    /// <returns>Returns the natural logarithm (base e) of a BIGINT value.</returns>
+    public static double Ln(this KSqlFunctions kSqlFunctions, long value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// The natural logarithm of a value..
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value get the natural logarithm of.</param>
+    /// <returns>Returns the natural logarithm (base e) of a DOUBLE value.</returns>
+    public static double Ln(this KSqlFunctions kSqlFunctions, double value)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -227,7 +452,82 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Random
 
+    /// <summary>
+    /// Returns a random number greater than or equal to 0.0 and less than 1.0.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <returns>A random DOUBLE value between 0.0 and 1.0.</returns>
     public static double Random(this KSqlFunctions kSqlFunctions)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
+    #region Round
+    
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static float Round(this KSqlFunctions kSqlFunctions, float input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static double Round(this KSqlFunctions kSqlFunctions, double input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static float Round(this KSqlFunctions kSqlFunctions, float input, int scale)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static double Round(this KSqlFunctions kSqlFunctions, double input, int scale)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Round a value to the number of decimal places as specified by scale to the right of the decimal point. If
+    /// scale is negative then value is rounded to the right of the decimal point. Numbers equidistant to the
+    /// nearest value are rounded up (in the positive direction). If the number of decimal places is not provided
+    /// it defaults to zero.
+    /// </summary>
+    public static decimal Round(this KSqlFunctions kSqlFunctions, decimal input, int scale)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -236,31 +536,81 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Sign
 
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Returns the sign of an INT value, denoted by 1, 0 or -1.</returns>
     public static int Sign(this KSqlFunctions kSqlFunctions, short input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
     public static int Sign(this KSqlFunctions kSqlFunctions, int input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
-
+    
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Returns the sign of an BIGINT value, denoted by 1, 0 or -1.</returns>
     public static int Sign(this KSqlFunctions kSqlFunctions, long input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
+    
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Returns the sign of an BIGINT value, denoted by 1, 0 or -1. null argument is null.</returns>
+    public static int Sign(this KSqlFunctions kSqlFunctions, long? input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
 
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
     public static int Sign(this KSqlFunctions kSqlFunctions, float input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Returns the sign of an DOUBLE value, denoted by 1, 0 or -1.</returns>
     public static int Sign(this KSqlFunctions kSqlFunctions, double input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input"></param>
+    /// <returns>Returns the sign of an DOUBLE value, denoted by 1, 0 or -1. null argument is null.</returns>
+    public static int Sign(this KSqlFunctions kSqlFunctions, double? input)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// The sign of a value.
+    /// </summary>
+    [Obsolete]
     public static int Sign(this KSqlFunctions kSqlFunctions, decimal input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -270,13 +620,46 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #region Sqrt
     
-    //int Sqrt(Func<TSource, int> selector);
-    //long Sqrt(Func<TSource, long> selector);
-    //decimal Sqrt(Func<TSource, decimal> selector);
-    //decimal Sqrt(Func<TSource, float> selector);
-    //decimal Sqrt(Func<TSource, double> selector);
+    /// <summary>
+    /// The square root of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value to get the square root of</param>
+    /// <returns>Returns the correctly rounded positive square root of a INT value</returns>
+    public static double Sqrt(this KSqlFunctions kSqlFunctions, int value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// The square root of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value to get the square root of</param>
+    /// <returns>Returns the correctly rounded positive square root of a DOUBLE value</returns>
+    public static double Sqrt(this KSqlFunctions kSqlFunctions, double value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+    
+    /// <summary>
+    /// The square root of a value.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="value">The value to get the square root of</param>
+    /// <returns>Returns the correctly rounded positive square root of a BIGINT value</returns>
+    public static double Sqrt(this KSqlFunctions kSqlFunctions, long value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
 
     #endregion
+
+    #endregion
+
+    #region Collections
+
+    //TODO:
 
     #endregion
 
@@ -287,22 +670,68 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
-    public static string Trim(this KSqlFunctions kSqlFunctions, string input)
-    {
-      throw new InvalidOperationException(ServerSideOperationErrorMessage);
-    }
-
+    /// <summary>
+    /// Pads the input string, beginning from the left, with the specified padding string until the target length
+    /// is reached. If the input string is longer than the specified target length it will be truncated. If the
+    /// padding string is empty or NULL, or the target length is negative, then NULL is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input">String to be padded</param>
+    /// <param name="length">Target length</param>
+    /// <param name="padding">Padding string</param>
+    /// <returns>Padded string</returns>
     public static string LPad(this KSqlFunctions kSqlFunctions, string input, int length, string padding)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
+    /// <summary>
+    /// Pads the input string, starting from the end, with the specified padding string until the target length is
+    /// reached. If the input string is longer than the specified target length it will be truncated. If the
+    /// padding string is empty or NULL, or the target length is negative, then NULL is returned.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input">String to be padded</param>
+    /// <param name="length">Target length</param>
+    /// <param name="padding">Padding string</param>
+    /// <returns>Padded string</returns>
     public static string RPad(this KSqlFunctions kSqlFunctions, string input, int length, string padding)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
+    /// <summary>
+    /// Returns a substring of str that starts at pos and is of length len
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input">The source string</param>
+    /// <param name="position">The base-one position to start from</param>
+    /// <param name="length">The length to extract</param>
+    /// <returns></returns>
     public static string Substring(this KSqlFunctions kSqlFunctions, string input, int position, int length)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns a substring of str from pos to the end of str
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input">The source string</param>
+    /// <param name="position">The base-one position to start from.</param>
+    /// <returns></returns>
+    public static string Substring(this KSqlFunctions kSqlFunctions, string input, int position)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Remove whitespace from the beginning and end of a string.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="input">The string to trim</param>
+    /// <returns>Trimmed string</returns>
+    public static string Trim(this KSqlFunctions kSqlFunctions, string input)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -365,7 +794,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
 
-    //STRINGTOTIMESTAMP
     /// <summary>
     /// Converts a string representation of a date in the given format into the BIGINT value that represents the millisecond timestamp.
     /// </summary>

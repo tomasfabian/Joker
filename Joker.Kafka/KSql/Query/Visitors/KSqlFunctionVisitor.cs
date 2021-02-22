@@ -44,6 +44,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           case nameof(KSqlFunctionsExtensions.Trim):
           case nameof(KSqlFunctionsExtensions.Abs):
           case nameof(KSqlFunctionsExtensions.Ceil):
+          case nameof(KSqlFunctionsExtensions.Ln):
+          case nameof(KSqlFunctionsExtensions.Exp):
           case nameof(KSqlFunctionsExtensions.Floor):
           case nameof(KSqlFunctionsExtensions.Sign):
             Append($"{methodInfo.Name.ToUpper()}(");
@@ -60,6 +62,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           case nameof(KSqlFunctionsExtensions.StringToTimestamp):
           case nameof(KSqlFunctionsExtensions.TimestampToString):
             Append($"{methodInfo.Name.ToUpper()}");
+            PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
+            break;
+          case nameof(KSqlFunctionsExtensions.GenerateSeries):
+          case nameof(KSqlFunctionsExtensions.GeoDistance):
+            Append($"{methodInfo.Name.ToKSqlFunctionName()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;
         }

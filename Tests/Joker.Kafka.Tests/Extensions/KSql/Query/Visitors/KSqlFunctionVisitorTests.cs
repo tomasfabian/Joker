@@ -5,6 +5,7 @@ using System.Text;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
+using Kafka.DotNet.ksqlDB.Tests.Models;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
@@ -146,6 +147,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region Exp
+
+    [TestMethod]
+    public void Exp_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, double>> expression = c => K.Functions.Exp(c.Amount);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"EXP({nameof(Tweet.Amount)})");
+    }
+
+    #endregion
+
     #region Floor
 
     [TestMethod]
@@ -172,6 +190,70 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
       //Assert
       query.Should().BeEquivalentTo($"FLOOR({nameof(Tweet.AccountBalance)})");
+    }
+
+    #endregion
+
+    #region GenerateSeries
+
+    [TestMethod]
+    public void GenerateSeries_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Transaction, long[]>> expression = c => K.Functions.GenerateSeries(c.RowTime, 1, 5);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"GENERATE_SERIES({nameof(Transaction.RowTime)}, 1, 5)");
+    }
+
+    #endregion
+
+    #region GeoDistance
+
+    [TestMethod]
+    public void GeoDistance_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Location, double>> expression = c => K.Functions.GeoDistance(c.Longitude, 1.1, 2, 3);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"GEO_DISTANCE({nameof(Location.Longitude)}, 1.1, 2, 3)");
+    }
+
+    [TestMethod]
+    public void GeoDistanceWithUnit_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Location, double>> expression = c => K.Functions.GeoDistance(c.Longitude, 1.1, 2, 3, "MI");
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"GEO_DISTANCE({nameof(Location.Longitude)}, 1.1, 2, 3, 'MI')");
+    }
+
+    #endregion
+
+    #region Ln
+
+    [TestMethod]
+    public void Ln_BuildKSql_PrintsFloorFunction()
+    {
+      //Arrange
+      Expression<Func<Tweet, double>> expression = c => K.Functions.Ln(c.Amount);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"LN({nameof(Tweet.Amount)})");
     }
 
     #endregion
