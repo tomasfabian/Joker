@@ -19,7 +19,6 @@ using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
-
   public static class Program
   {
     public static async Task Main(string[] args)
@@ -29,7 +28,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       var httpClientFactory = new HttpClientFactory(new Uri(ksqlDbUrl));
       var restApiProvider = new KSqlDbRestApiProvider(httpClientFactory);
       var moviesProvider = new MoviesProvider(restApiProvider);
-      
+
       await moviesProvider.CreateTablesAsync();
 
       var contextOptions = new KSqlDBContextOptions(ksqlDbUrl);
@@ -49,7 +48,6 @@ namespace Kafka.DotNet.ksqlDB.Sample
           Console.WriteLine($"{nameof(Movie)}: {movie.Id} - {movie.Title}");
           Console.WriteLine();
         }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
-
 
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
@@ -84,7 +82,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
     {
       var query = context.CreateQueryStream<Movie>()
         .Join(
-        //.LeftJoin(
+          //.LeftJoin(
           Source.Of<Lead_Actor>(nameof(Lead_Actor)),
           movie => movie.Title,
           actor => actor.Title,
@@ -103,6 +101,35 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
       return query
         .Subscribe(c => { Console.WriteLine($"{c.Id}: {c.ActorName} - {c.Title} - {c.ActorTitle}"); }, exception => { Console.WriteLine(exception.Message); });
+    }
+
+    private static IDisposable FullOuterJoinTables(KSqlDBContext context)
+    {
+      var query = context.CreateQueryStream<MovieNullableFields>("Movies")
+        .FullOuterJoin(
+          Source.Of<Lead_Actor>(nameof(Lead_Actor)),
+          movie => movie.Title,
+          actor => actor.Title,
+          (movie, actor) => new
+          {
+            movie.Id,
+            Title = movie.Title,
+            movie.Release_Year,
+            ActorTitle = actor.Title,
+            ActorName = actor.Actor_Name
+          }
+        );
+
+      var joinQueryString = query.ToQueryString();
+
+      return query
+        .Subscribe(c =>
+        {
+          if (c.Id.HasValue)
+            Console.WriteLine($"{c.Id}: {c.ActorName} - {c.Title} - {c.ActorTitle}");
+          else
+            Console.WriteLine($"No movie id: {c.ActorName} - {c.Title} - {c.ActorTitle}");
+        }, exception => { Console.WriteLine(exception.Message); });
     }
 
     private static IDisposable Window(KSqlDBContext context)
@@ -247,7 +274,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
     private static IDisposable Having(KSqlDBContext context)
     {
-      return     
+      return
         //https://kafka-tutorials.confluent.io/finding-distinct-events/ksql.html
         context.CreateQueryStream<Click>()
         .GroupBy(c => new { c.IP_ADDRESS, c.URL, c.TIMESTAMP })
@@ -285,8 +312,11 @@ namespace Kafka.DotNet.ksqlDB.Sample
       context.CreateQueryStream<Tweet>()
         .Select(c => new
         {
-          Abs = K.Functions.Abs(c.Amount), Ceil = K.Functions.Ceil(c.Amount), Floor = K.Functions.Floor(c.Amount),
-          Random = K.Functions.Random(), Sign = K.Functions.Sign(c.Amount)
+          Abs = K.Functions.Abs(c.Amount),
+          Ceil = K.Functions.Ceil(c.Amount),
+          Floor = K.Functions.Floor(c.Amount),
+          Random = K.Functions.Random(),
+          Sign = K.Functions.Sign(c.Amount)
         })
         .ToQueryString();
     }
@@ -295,7 +325,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
     {
       var query = context.CreateQueryStream<Tweet>()
         .GroupBy(c => c.Id)
-        .Select(g => new {Id = g.Key, EarliestByOffset = g.EarliestByOffset(c => c.Amount, 2)})
+        .Select(g => new { Id = g.Key, EarliestByOffset = g.EarliestByOffset(c => c.Amount, 2) })
         .ToQueryString();
 
       return context.CreateQueryStream<Tweet>()
@@ -334,12 +364,12 @@ namespace Kafka.DotNet.ksqlDB.Sample
     {
       var subscription =
         context.CreateQueryStream<Tweet>()
-          .Select(_ => new {FirstItem = new[] {1, 2, 3}[1]})
+          .Select(_ => new { FirstItem = new[] { 1, 2, 3 }[1] })
           .Subscribe(onNext: c => { Console.WriteLine($"Array first value: {c}"); },
             onError: error => { Console.WriteLine($"Exception: {error.Message}"); });
 
       var arrayLengthQuery = context.CreateQueryStream<Tweet>()
-        .Select(_ => new[] {1, 2, 3}.Length)
+        .Select(_ => new[] { 1, 2, 3 }.Length)
         .ToQueryString();
 
       return subscription;
@@ -361,7 +391,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
     private static IDisposable NestedTypes(KSqlDBContext context)
     {
-      var disposable = 
+      var disposable =
         context.CreateQueryStream<Tweet>()
           .Select(c => new
           {
@@ -376,6 +406,57 @@ namespace Kafka.DotNet.ksqlDB.Sample
             error => Console.WriteLine($"Exception: {error.Message}"));
 
       return disposable;
+    }
+    private struct MovieStruct
+    {
+      public string Title { get; set; }
+
+      public int Id { get; set; }
+    }
+
+    private static async Task StructType(KSqlDBContext context)
+    {
+      var moviesStream = context.CreateQueryStream<Movie>();
+
+      var source = moviesStream.Select(c => new
+      {
+        Str = new MovieStruct { Title = c.Title, Id = c.Id },
+        c.Release_Year
+      }).ToAsyncEnumerable();
+
+      await foreach (var movie in source)
+      {
+        Console.WriteLine($"{movie.Str.Title}");
+      }
+    }
+
+    private static IDisposable Entries(KSqlDBContext context)
+    {
+      bool sorted = true;
+
+      var subscription = context.CreateQueryStream<Movie>()
+        .Select(c => new
+        {
+          Entries = KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
+          {
+            {"a", "value"}
+          }, sorted)
+        })
+        .Subscribe(c =>
+        {
+          Console.WriteLine("Entries:");
+
+          foreach (var entry in c.Entries)
+          {
+            var key = entry.K;
+
+            var value = entry.V;
+
+            Console.WriteLine($"{key} - {value}");
+          }
+        }, error => { });
+
+      return subscription;
     }
   }
 }
