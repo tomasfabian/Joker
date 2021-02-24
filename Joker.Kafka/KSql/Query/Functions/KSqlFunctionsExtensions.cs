@@ -661,6 +661,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     //TODO:
 
+    #region ArrayContains
+
     /// <summary>
     /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
     /// </summary>
@@ -720,6 +722,146 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
+
+    #endregion
+
+    #region ArrayDistinct
+
+    /// <summary>
+    /// Returns an array of all the distinct values, including NULL if present, from the input array. The output
+    /// array elements will be in order of their first occurrence in the input. Returns NULL if the input array is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values to distinct</param>
+    /// <returns></returns>
+    public static string[] ArrayDistinct(this KSqlFunctions kSqlFunctions, string[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct values, including NULL if present, from the input array. The output
+    /// array elements will be in order of their first occurrence in the input. Returns NULL if the input array is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values to distinct</param>
+    /// <returns></returns>
+    public static int[] ArrayDistinct(this KSqlFunctions kSqlFunctions, int[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct values, including NULL if present, from the input array. The output
+    /// array elements will be in order of their first occurrence in the input. Returns NULL if the input array is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values to distinct</param>
+    /// <returns></returns>
+    public static long[] ArrayDistinct(this KSqlFunctions kSqlFunctions, long[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct values, including NULL if present, from the input array. The output
+    /// array elements will be in order of their first occurrence in the input. Returns NULL if the input array is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values to distinct</param>
+    /// <returns></returns>
+    public static double[] ArrayDistinct(this KSqlFunctions kSqlFunctions, double[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct values, including NULL if present, from the input array. The output
+    /// array elements will be in order of their first occurrence in the input. Returns NULL if the input array is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values to distinct</param>
+    /// <returns></returns>
+    public static decimal[] ArrayDistinct(this KSqlFunctions kSqlFunctions, decimal[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
+    #region ArrayExcept
+
+    /// <summary>
+    /// Returns an array of all the elements in an array except for those also present in a second array. The
+    /// order of entries in the first array is preserved although any duplicates are removed. Returns NULL if
+    /// either input is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">Array of values</param>
+    /// <param name="right">Array of exceptions</param>
+    /// <returns></returns>
+    public static string[] ArrayExcept(this KSqlFunctions kSqlFunctions, string[] left, string[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the elements in an array except for those also present in a second array. The
+    /// order of entries in the first array is preserved although any duplicates are removed. Returns NULL if
+    /// either input is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">Array of values</param>
+    /// <param name="right">Array of exceptions</param>
+    /// <returns></returns>
+    public static int[] ArrayExcept(this KSqlFunctions kSqlFunctions, int[] left, int[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the elements in an array except for those also present in a second array. The
+    /// order of entries in the first array is preserved although any duplicates are removed. Returns NULL if
+    /// either input is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">Array of values</param>
+    /// <param name="right">Array of exceptions</param>
+    /// <returns></returns>
+    public static long[] ArrayExcept(this KSqlFunctions kSqlFunctions, long[] left, long[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the elements in an array except for those also present in a second array. The
+    /// order of entries in the first array is preserved although any duplicates are removed. Returns NULL if
+    /// either input is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">Array of values</param>
+    /// <param name="right">Array of exceptions</param>
+    /// <returns></returns>
+    public static double[] ArrayExcept(this KSqlFunctions kSqlFunctions, double[] left, double[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the elements in an array except for those also present in a second array. The
+    /// order of entries in the first array is preserved although any duplicates are removed. Returns NULL if
+    /// either input is NULL.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">Array of values</param>
+    /// <param name="right">Array of exceptions</param>
+    /// <returns></returns>
+    public static decimal[] ArrayExcept(this KSqlFunctions kSqlFunctions, decimal[] left, decimal[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
 
     #endregion
 

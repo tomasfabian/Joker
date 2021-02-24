@@ -67,6 +67,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           case nameof(KSqlFunctionsExtensions.GenerateSeries):
           case nameof(KSqlFunctionsExtensions.GeoDistance):
           case nameof(KSqlFunctionsExtensions.ArrayContains):
+          case nameof(KSqlFunctionsExtensions.ArrayDistinct):
+          case nameof(KSqlFunctionsExtensions.ArrayExcept):
             Append($"{methodInfo.Name.ToKSqlFunctionName()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;

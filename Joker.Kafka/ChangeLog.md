@@ -1,9 +1,8 @@
 # v0.5.0-rc.1:
 - Struct type
-- Entries function
 - Full Outer Join
-- numeric scalar functions - Exp, GenerateSeries, GeoDistance, Ln, Sqrt
-- 
+- Numeric scalar functions - Entries Exp, GenerateSeries, GeoDistance, Ln, Sqrt
+
 # v0.4.0:
 - Maps
 - Deeply nested types (Maps, Arrays)
@@ -103,7 +102,10 @@
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 # v0.5.0 (not released):
-- Collection functions: ArrayContains
+- Collection functions: ArrayContains, ArrayDistinct, ArrayExcept
+
+# v0.6.0 (WIP/not released):
+- Collection functions: 
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
