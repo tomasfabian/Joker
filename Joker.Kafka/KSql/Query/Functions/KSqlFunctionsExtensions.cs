@@ -661,10 +661,71 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     //TODO:
 
+    /// <summary>
+    /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Given an array, checks if a search value is contained in the array.</param>
+    /// <param name="value">Value to find</param>
+    /// <returns>Returns true if the array is non-null and contains the supplied value.</returns>
+    public static bool ArrayContains(this KSqlFunctions kSqlFunctions, string[] array, string value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Given an array, checks if a search value is contained in the array.</param>
+    /// <param name="value">Value to find</param>
+    /// <returns>Returns true if the array is non-null and contains the supplied value.</returns>
+    public static bool ArrayContains(this KSqlFunctions kSqlFunctions, int[] array, int value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Given an array, checks if a search value is contained in the array.</param>
+    /// <param name="value">Value to find</param>
+    /// <returns>Returns true if the array is non-null and contains the supplied value.</returns>
+    public static bool ArrayContains(this KSqlFunctions kSqlFunctions, double[] array, double value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Given an array, checks if a search value is contained in the array.</param>
+    /// <param name="value">Value to find</param>
+    /// <returns>Returns true if the array is non-null and contains the supplied value.</returns>
+    public static bool ArrayContains(this KSqlFunctions kSqlFunctions, long[] array, long value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Accepts any ARRAY type. The type of the second param must match the element type of the ARRAY
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Given an array, checks if a search value is contained in the array.</param>
+    /// <param name="value">Value to find</param>
+    /// <returns>Returns true if the array is non-null and contains the supplied value.</returns>
+    public static bool ArrayContains(this KSqlFunctions kSqlFunctions, decimal[] array, decimal value)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
     #endregion
 
     #region String functions
 
+    //TODO: move to query functions
     public static bool Like(this KSqlFunctions kSqlFunctions, string condition, string patternString)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);

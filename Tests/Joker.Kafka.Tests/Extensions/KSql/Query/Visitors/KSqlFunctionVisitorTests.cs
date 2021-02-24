@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using FluentAssertions;
+using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
 using Kafka.DotNet.ksqlDB.Tests.Models;
@@ -346,6 +347,45 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"SIGN({nameof(Tweet.AccountBalance)})");
     }
+
+    #endregion
+
+    #region Collection functions
+
+    #region ArrayContains
+
+    private class Collection
+    {
+      public int[] Items { get; set; }
+    }
+
+    [TestMethod]
+    public void ArrayContains_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, bool>> expression = c => K.Functions.ArrayContains(c.Items, 2);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_CONTAINS({nameof(Collection.Items)}, 2)");
+    }
+
+    [TestMethod]
+    public void Array_BuildKSql_PrintsArrayFromProperties()
+    {
+      //Arrange
+      Expression<Func<Tweet, int[]>> expression = c => new[] { c.Id, c.Id };
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY[{nameof(Tweet.Id)}, {nameof(Tweet.Id)}]");
+    }
+
+    #endregion
 
     #endregion
 
