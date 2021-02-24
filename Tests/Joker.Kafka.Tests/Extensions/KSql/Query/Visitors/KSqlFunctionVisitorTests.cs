@@ -351,13 +351,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     #endregion
 
     #region Collection functions
-
-    #region ArrayContains
-
+    
     private class Collection
     {
       public int[] Items { get; set; }
     }
+
+    #region ArrayContains
 
     [TestMethod]
     public void ArrayContains_BuildKSql_PrintsFunction()
@@ -384,6 +384,42 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       //Assert
       query.Should().BeEquivalentTo($"ARRAY[{nameof(Tweet.Id)}, {nameof(Tweet.Id)}]");
     }
+
+    #endregion
+
+    #region ArrayDistinct
+    
+    [TestMethod]
+    public void ArrayDistinct_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayDistinct(c.Items);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_DISTINCT({nameof(Collection.Items)})");
+    }
+    
+
+    #endregion
+
+    #region ArrayExcept
+    
+    [TestMethod]
+    public void ArrayExcept_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayExcept(c.Items, c.Items);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_EXCEPT({nameof(Collection.Items)}, {nameof(Collection.Items)})");
+    }
+    
 
     #endregion
 
