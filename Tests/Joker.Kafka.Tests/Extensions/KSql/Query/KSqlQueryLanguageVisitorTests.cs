@@ -902,5 +902,59 @@ WHERE {nameof(Location.Latitude)} = '1' EMIT CHANGES;";
     }
 
     #endregion
+
+    #region Case
+
+    [TestMethod]
+    public void Switch_BuildKSql_PrintsCaseWhen()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+         .Select(c =>
+           new
+           {
+             case_result =
+             (c.Longitude < 2.0) ? "small" :
+             (c.Longitude < 4.1) ? "medium" : "large"
+           }
+         );
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT CASE WHEN {nameof(Location.Longitude)} < 2 THEN 'small' WHEN {nameof(Location.Longitude)} < 4.1 THEN 'medium' ELSE 'large' END AS case_result FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    //TODO:SwitchExpressions
+    private static string SwitchExpressionProvider()
+    {
+      var location = new Location();
+
+      var case_result = location.Longitude switch
+      {
+        var value when value < 2.0  => "small",
+        var value when (value <= 4.0) => "medium", 
+        _ => "large"
+      };
+
+      return case_result;
+    }
+    
+    //TODO:IfElse
+    private static string IfElseProvider(double value)
+    {
+      if (value < 2.0)
+      { return "small"; }
+      if (value <= 4.0)
+      { return "medium"; }
+      else
+      { return "large"; }
+    }
+
+    #endregion
   }
 }
