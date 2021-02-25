@@ -138,6 +138,7 @@ Omitting select is equivalent to SELECT *
 | ```STRUCT``` | struct   |
 
 Array type mapping example (available from v0.3.0):
+All of the elements in the array must be of the same type. The element type can be any valid SQL type.
 ```
 ksql: ARRAY<INTEGER>
 C#  : int[]
@@ -162,6 +163,7 @@ ARRAY_LENGTH(ARRAY[1, 2, 3])
 ```
 
 Struct type mapping example (available from v0.5.0):
+A struct represents strongly typed structured data. A struct is an ordered collection of named fields that have a specific type. The field types can be any valid SQL type.
 ```C#
 struct Point
 {
@@ -968,6 +970,34 @@ FULL OUTER JOIN lead_actor_test l
 ON m.Title = l.Title
 EMIT CHANGES;
 ```
+
+# v0.6.0 (WIP/not released):
+### CASE (v0.6.0)
+- Select a condition from one or more expressions.
+```C#
+var query = new KSqlDBContext(@"http:\\localhost:8088")
+  .CreateQueryStream<Tweet>()
+  .Select(c =>
+    new
+    {
+      case_result =
+        (c.Amount < 2.0) ? "small" :
+        (c.Amount < 4.1) ? "medium" : "large"
+    }
+  );
+```
+
+```KSQL
+SELECT 
+  CASE 
+    WHEN Amount < 2 THEN 'small' 
+    WHEN Amount < 4.1 THEN 'medium' 
+    ELSE 'large' 
+  END AS case_result 
+FROM Tweets EMIT CHANGES;
+```
+
+**NOTE:** Switch expressions and if-elseif-else statements are not supported at current versions
 
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/

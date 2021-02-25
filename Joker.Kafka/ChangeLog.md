@@ -105,9 +105,10 @@
 - Collection functions: ArrayContains, ArrayDistinct, ArrayExcept
 
 # v0.6.0 (WIP/not released):
+- CASE - Select a condition from one or more expressions.
 - Collection functions: 
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
-- BETWEEN, CASE
+- BETWEEN
