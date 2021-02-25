@@ -115,9 +115,29 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         case ExpressionType.MemberInit:
           VisitMemberInit((MemberInitExpression)expression);
           break;
+        
+        case ExpressionType.Conditional:
+          VisitConditional((ConditionalExpression) expression);
+          break;
       }
 
       return expression;
+    }
+
+    protected override Expression VisitConditional(ConditionalExpression node)
+    {
+      Append(" WHEN ");
+      Visit(node.Test);
+      
+      Append(" THEN ");
+      Visit(node.IfTrue);
+      
+      if(node.IfFalse.NodeType != ExpressionType.Conditional)
+        Append(" ELSE ");
+      
+      Visit(node.IfFalse);
+
+      return node;
     }
 
     protected override Expression VisitMemberInit(MemberInitExpression node)
@@ -365,6 +385,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
                 Visit(memberWithArguments.Second);
                 Append(" ");
               }
+              break;
+            
+            case ExpressionType.Conditional:
+              Append("CASE");
+              Visit(memberWithArguments.Second);
+              Append(" END AS ");
               break;
           }
 
