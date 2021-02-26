@@ -1,7 +1,8 @@
-# v0.5.0-rc.1:
+# v0.5.0:
 - Struct type
 - Full Outer Join
 - Numeric scalar functions - Entries Exp, GenerateSeries, GeoDistance, Ln, Sqrt
+- Collection functions: ArrayContains, ArrayDistinct, ArrayExcept
 
 # v0.4.0:
 - Maps
@@ -100,9 +101,6 @@
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
-
-# v0.5.0 (not released):
-- Collection functions: ArrayContains, ArrayDistinct, ArrayExcept
 
 # v0.6.0 (WIP/not released):
 - CASE - Select a condition from one or more expressions.

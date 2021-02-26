@@ -888,9 +888,9 @@ FROM tweets EMIT CHANGES;
 [Date and time](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time)
 
 
-# v0.5.0-rc.1 (work in progress
+# v0.5.0
 ```
-Install-Package Kafka.DotNet.ksqlDB -Version 0.5.0-rc.1
+Install-Package Kafka.DotNet.ksqlDB -Version 0.5.0
 ```
 
 ### Structs (v0.5.0)
