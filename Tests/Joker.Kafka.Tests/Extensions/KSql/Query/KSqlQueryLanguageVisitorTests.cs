@@ -52,6 +52,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     #region Select
 
     [TestMethod]
+    public void SelectAlias_BuildKSql_PrintsProjection()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(l => new { Lngt = l.Longitude, l.Latitude });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT {nameof(Location.Longitude)} AS Lngt, {nameof(Location.Latitude)} FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
     public void SelectWhere_BuildKSql_PrintsSelectFromWhere()
     {
       //Arrange

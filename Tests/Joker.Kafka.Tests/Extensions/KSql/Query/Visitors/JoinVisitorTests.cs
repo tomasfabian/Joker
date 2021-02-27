@@ -49,7 +49,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
       var ksql = query.ToQueryString();
 
       //Assert
-      var expectedQuery = @"SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, TRIM(L.Actor_Name) ActorName, UCASE(L.Actor_Name) UpperActorName, L.Title ActorTitle FROM Movies M
+      var expectedQuery = @"SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, TRIM(L.Actor_Name) ActorName, UCASE(L.Actor_Name) UpperActorName, L.Title AS ActorTitle FROM Movies M
 INNER JOIN Lead_Actors L
 ON M.Title = L.Title
  EMIT CHANGES;";
@@ -167,7 +167,7 @@ ON M.Title = A.Title
       var ksql = query.ToQueryString();
 
       //Assert
-      var expectedQuery = @"SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, TRIM(L.Actor_Name) ActorName, UCASE(L.Actor_Name) UpperActorName, L.Title ActorTitle FROM Movies M
+      var expectedQuery = @"SELECT M.Id Id, M.Title Title, M.Release_Year Release_Year, TRIM(L.Actor_Name) ActorName, UCASE(L.Actor_Name) UpperActorName, L.Title AS ActorTitle FROM Movies M
 LEFT JOIN Lead_Actors L
 ON M.Title = L.Title
  EMIT CHANGES;";

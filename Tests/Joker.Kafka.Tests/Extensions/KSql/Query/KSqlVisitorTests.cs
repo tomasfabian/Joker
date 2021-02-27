@@ -254,7 +254,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"{nameof(Location.Longitude)}, La");
+      query.Should().BeEquivalentTo($"{nameof(Location.Longitude)}, {nameof(Location.Latitude)} AS La");
     }
 
     [TestMethod]

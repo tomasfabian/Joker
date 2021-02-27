@@ -380,7 +380,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
               Append(" ");
               break;
             case ExpressionType.MemberAccess:
-              if (memberWithArguments.Second is MemberExpression {Expression: MemberInitExpression ne} && ne.Type.IsStruct())
+              if (memberWithArguments.Second is MemberExpression {Expression: MemberInitExpression memberInitExpression} && memberInitExpression.Type.IsStruct())
               {
                 Visit(memberWithArguments.Second);
                 Append(" ");
@@ -396,18 +396,35 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
           if(memberWithArguments.Second is BinaryExpression)
           {
-            Visit(memberWithArguments.Second);
-            Append(" AS ");
-            Append(memberWithArguments.First.Name);
+            PrintColumnWithAlias(memberWithArguments);
 
             return newExpression;
           }
 
-          ProcessVisitNewMember(memberWithArguments);
+          if (ShouldAppendAlias(memberWithArguments.First, memberWithArguments.Second)) 
+            PrintColumnWithAlias(memberWithArguments);
+          else
+            ProcessVisitNewMember(memberWithArguments);
         }
       }
 
       return newExpression;
+    }
+
+    private bool ShouldAppendAlias(MemberInfo memberInfo, Expression expression)
+    {
+      if (expression is MemberExpression me2 && me2.Member.DeclaringType.IsGenericType && me2.Member.DeclaringType.GetGenericTypeDefinition() == typeof(IKSqlGrouping<,>))
+        return false;
+
+      return expression.NodeType == ExpressionType.MemberAccess && expression is MemberExpression me &&
+             me.Member.Name != memberInfo.Name ;
+    }
+
+    private void PrintColumnWithAlias((MemberInfo First, Expression Second) memberWithArguments)
+    {
+      Visit(memberWithArguments.Second);
+      Append(" AS ");
+      Append(memberWithArguments.First.Name);
     }
 
     protected virtual void ProcessVisitNewMember((MemberInfo memberInfo, Expression expresion) v)
