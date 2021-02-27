@@ -7,6 +7,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
   {
     IKSqlDbProvider KsqlDBProvider { get; }
     IKSqlQueryGenerator KSqlQueryGenerator { get; }
-    QueryStreamParameters QueryStreamParameters { get; }
+    IQueryParameters QueryStreamParameters { get; }
   }
 }

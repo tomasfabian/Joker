@@ -7,7 +7,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal class KStreamSetDependencies : IKStreamSetDependencies
   {
-    public KStreamSetDependencies(IKSqlQbservableProvider provider, IKSqlDbProvider ksqlDBProvider, IKSqlQueryGenerator queryGenerator, QueryStreamParameters queryStreamParameters)
+    public KStreamSetDependencies(IKSqlQbservableProvider provider, IKSqlDbProvider ksqlDBProvider, IKSqlQueryGenerator queryGenerator, IQueryParameters queryStreamParameters)
     {
       Provider = provider;
       KsqlDBProvider = ksqlDBProvider;
@@ -23,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
     public IKSqlQueryGenerator KSqlQueryGenerator { get; }
 
-    public QueryStreamParameters QueryStreamParameters { get; }
+    public IQueryParameters QueryStreamParameters { get; }
 
     public QueryContext QueryContext { get; }
   }
