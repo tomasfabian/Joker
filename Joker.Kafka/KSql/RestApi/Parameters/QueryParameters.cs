@@ -1,22 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters
 {
-  public sealed class QueryParameters
+  public sealed class QueryParameters : IQueryParameters
   {
     [JsonPropertyName("ksql")]
-    public string KSql { get; set; }
+    public string Sql { get; set; }
 
     [JsonPropertyName("streamsProperties")]
-    public Dictionary<string, string> StreamsProperties { get; } = new();
+    public Dictionary<string, string> Properties { get; } = new();
 
     public static readonly string AutoOffsetResetPropertyName = "ksql.streams.auto.offset.reset";
 
     public string this[string key]
     {
-      get => StreamsProperties[key];
-      set => StreamsProperties[key] = value;
+      get => Properties[key];
+      set => Properties[key] = value;
     }
+
+    internal QueryType QueryType { get; } = QueryType.Query;
   }
 }
