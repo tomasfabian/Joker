@@ -13,30 +13,35 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
   [TestClass]
   public class KSqlNestedTypesTests : Linq.IntegrationTests
   {
-    private static MoviesProvider moviesProvider;
+    protected static MoviesProvider MoviesProvider;
 
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
-      RestApiProvider = KSqlDbRestApiProvider.Create();
-      
-      moviesProvider = new MoviesProvider(RestApiProvider);
-      await moviesProvider.CreateTablesAsync();
+      await InitializeDatabase();
+    }
 
-      await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
+    protected static async Task InitializeDatabase()
+    {
+      RestApiProvider = KSqlDbRestApiProvider.Create();
+
+      MoviesProvider = new MoviesProvider(RestApiProvider);
+      await MoviesProvider.CreateTablesAsync();
+
+      await MoviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
     }
 
     [ClassCleanup]
     public static async Task ClassCleanup()
     {
-      await moviesProvider.DropTablesAsync();
+      await MoviesProvider.DropTablesAsync();
 
-      moviesProvider = null;
+      MoviesProvider = null;
     }
 
-    private string MoviesTableName => MoviesProvider.MoviesTableName;
+    protected string MoviesTableName => MoviesProvider.MoviesTableName;
 
-    private IQbservable<Movie> MoviesStream => Context.CreateQueryStream<Movie>(MoviesTableName);
+    protected virtual IQbservable<Movie> MoviesStream => Context.CreateQueryStream<Movie>(MoviesTableName);
 
     [TestMethod]
     public async Task ArrayInArray()

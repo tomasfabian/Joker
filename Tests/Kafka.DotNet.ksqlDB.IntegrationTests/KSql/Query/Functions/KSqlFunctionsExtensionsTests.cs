@@ -41,6 +41,17 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
     [TestMethod]
     public async Task DateToString()
     {
+      await DateToStringTest(Context.CreateQueryStream<Movie>(MoviesTableName));
+    }
+
+    [TestMethod]
+    public async Task DateToString_QueryEndPoint()
+    {
+      await DateToStringTest(Context.CreateQuery<Movie>(MoviesTableName));
+    }
+
+    public async Task DateToStringTest(IQbservable<Movie> querySource)
+    {
       //Arrange
       int expectedItemsCount = 1;
       
@@ -49,7 +60,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       Expression<Func<Movie, string>> expression = _ => KSqlFunctions.Instance.DateToString(epochDays, format);
       
       //Act
-      var source = Context.CreateQueryStream<Movie>(MoviesTableName)
+      var source = querySource
         .Select(expression)
         //.Select(c => new { DTS = KSqlFunctions.Instance.DateToString(epochDays, format) })
         .ToAsyncEnumerable();
@@ -63,13 +74,24 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
     [TestMethod]
     public async Task Entries()
     {
+      await EntriesTest(Context.CreateQueryStream<Movie>(MoviesTableName));
+    }
+
+    [TestMethod]
+    public async Task Entries_QueryEndPoint()
+    {
+      await EntriesTest(Context.CreateQuery<Movie>(MoviesTableName));
+    }
+    
+    public async Task EntriesTest(IQbservable<Movie> querySource)
+    {
       //Arrange
       int expectedItemsCount = 1;
       
       bool sorted = true;
       
       //Act
-      var source = Context.CreateQueryStream<Movie>(MoviesTableName)
+      var source = querySource
         .Select(c => new { Col = KSqlFunctions.Instance.Entries(new Dictionary<string, string>()
         {
           { "a", "value" }
