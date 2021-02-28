@@ -36,14 +36,19 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [TestMethod]
     public async Task Histogram()
     {
+      await TestHistogram(Context.CreateQueryStream<Movie>());
+    }
+
+    private async Task TestHistogram(IQbservable<Movie> querySource)
+    {
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Movie>()
+      var source = querySource
         .GroupBy(c => c.Id)
-        .Select(l => new { Id = l.Key, Histogram = l.Histogram(c => c.Title) })
+        .Select(l => new {Id = l.Key, Histogram = l.Histogram(c => c.Title)})
         .ToAsyncEnumerable();
-      
+
       //Act
       var actualValues = await CollectActualValues(source, expectedItemsCount);
 
@@ -55,6 +60,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       var id2 = actualValues[1];
       id2.Id.Should().Be(MoviesProvider.Movie2.Id);
       id2.Histogram[MoviesProvider.Movie2.Title].Should().Be(1);
+    }
+
+    [TestMethod]
+    public async Task Histogram_QueryEndPoint()
+    {
+      await TestHistogram(Context.CreateQuery<Movie>());
     }
   }
 }

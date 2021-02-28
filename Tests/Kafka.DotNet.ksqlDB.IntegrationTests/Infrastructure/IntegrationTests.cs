@@ -11,7 +11,7 @@ using UnitTests;
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 {
   [TestClass]
-  public class IntegrationTests : TestBase
+  public abstract class IntegrationTests : TestBase
   {
     protected static KSqlDbRestApiProvider RestApiProvider;  
     protected KSqlDBContextOptions ContextOptions;

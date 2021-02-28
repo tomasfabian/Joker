@@ -125,12 +125,23 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [TestMethod]
     public async Task FullOuterJoin()
     {
+      await FullOuterJoinTest(Context.CreateQueryStream<Movie2>(MoviesTableName));
+    }
+
+    [TestMethod]
+    public async Task FullOuterJoin_QueryEndPoint()
+    {
+      await FullOuterJoinTest(Context.CreateQuery<Movie2>(MoviesTableName));
+    }
+
+    public async Task FullOuterJoinTest(IQbservable<Movie2> querySource)
+    {
       //Arrange
       int expectedItemsCount = 3;
         
       await moviesProvider.InsertLeadAsync(MoviesProvider.LeadActor2);
 
-      var source = Context.CreateQueryStream<Movie2>(MoviesTableName)
+      var source = querySource
         .FullOuterJoin(
           Source.Of<Lead_Actor>(ActorsTableName),
           movie => movie.Title,

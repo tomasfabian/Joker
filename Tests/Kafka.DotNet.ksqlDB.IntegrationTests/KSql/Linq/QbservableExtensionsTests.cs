@@ -16,7 +16,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
   [TestCategory("Integration")]
   public class QbservableExtensionsTests : IntegrationTests
   {
-    private static string streamName = "tweetsTest";
+    protected static string StreamName = "tweetsTest";
     private static string topicName = "tweetsTestTopic";
 
     private static Tweet Tweet1 => TweetsProvider.Tweet1;
@@ -26,26 +26,34 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
+      await InitializeDatabase();
+    }
+
+    protected static async Task InitializeDatabase()
+    {
       RestApiProvider = KSqlDbRestApiProvider.Create();
 
       var tweetsProvider = new TweetsProvider(RestApiProvider);
-      var result = await tweetsProvider.CreateTweetsStream(streamName, topicName);
+      var result = await tweetsProvider.CreateTweetsStream(StreamName, topicName);
       result.Should().BeTrue();
-      
-      result = await tweetsProvider.InsertTweetAsync(Tweet1, streamName);
+
+      result = await tweetsProvider.InsertTweetAsync(Tweet1, StreamName);
 
       result.Should().BeTrue();
-      
-      result = await tweetsProvider.InsertTweetAsync(Tweet2, streamName);    
-      
+
+      result = await tweetsProvider.InsertTweetAsync(Tweet2, StreamName);
+
       result.Should().BeTrue();
     }
 
     [ClassCleanup]
     public static async Task ClassCleanup()
     {
-      var result = await RestApiProvider.DropStreamAndTopic(streamName);
+      var result = await RestApiProvider.DropStreamAndTopic(StreamName);
     }
+
+    protected virtual ksqlDB.KSql.Linq.IQbservable<Tweet> QuerySource =>
+      Context.CreateQueryStream<Tweet>(StreamName);
 
     [TestMethod]
     public async Task Select()
@@ -53,7 +61,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
       
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .ToAsyncEnumerable();
       
       //Act
@@ -75,7 +83,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 1;
       
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .Take(expectedItemsCount)
         .ToAsyncEnumerable();
       
@@ -98,7 +106,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 1;
       
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .Where(p => p.Message != "Hello world")
         .ToAsyncEnumerable();
       
@@ -119,7 +127,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
       int expectedItemsCount = 2;
       
-      var source = Context.CreateQueryStream<Tweet>(streamName);
+      var source = QuerySource;
 
       //Act
       using var subscription = source.Take(expectedItemsCount).Subscribe(c => actualValues.Add(c), e => semaphore.Release(), () => semaphore.Release());
@@ -138,7 +146,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
       int expectedItemsCount = 2;
       
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .ToObservable();
 
       //Act
@@ -155,7 +163,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .GroupBy(c => c.Id)
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
         .ToAsyncEnumerable();
@@ -179,7 +187,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .GroupBy(c => c.Id)
         .Having(c => c.Count(g => g.Message) == 1)
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
@@ -204,7 +212,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       //Arrange
       int expectedItemsCount = 2;
 
-      var source = Context.CreateQueryStream<Tweet>(streamName)
+      var source = QuerySource
         .GroupBy(c => c.Id)
         .WindowedBy(new TimeWindows(Duration.OfMilliseconds(100)))
         .Select(g => new {Id = g.Key, Count = g.Count(c => c.Message)})
