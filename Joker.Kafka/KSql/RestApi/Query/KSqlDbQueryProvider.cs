@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json;
+using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Exceptions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parsers;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Responses.Query;
@@ -16,8 +17,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Query
     }
 
     public override string ContentType => "application/vnd.ksql.v1+json";
-    // public override string ContentType => "application/vnd.ksqlapi.delimited.v1";
-    // public override string ContentType => "application/json";
 
     protected override string QueryEndPointName => "query";
 
@@ -66,11 +65,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Query
         var schema = headerResponse.Header.Schema;
         headerColumns = new HeaderColumnExtractor().GetColumnsFromSchema(schema).ToArray();
       }
+      
+      var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
 
       var columnValues = HeaderColumnExtractor.ExtractColumnValues(rawJson);
 
+      if (headerColumns.Length == 1 && !typeof(T).IsAnonymousType())
+        return new RowValue<T>(JsonSerializer.Deserialize<T>(columnValues, jsonSerializerOptions));
+
       var jsonRecord = new JsonArrayParser().CreateJson(headerColumns, columnValues);
-      var jsonSerializerOptions = GetOrCreateJsonSerializerOptions();
       var record = JsonSerializer.Deserialize<T>(jsonRecord, jsonSerializerOptions);
 
       return new RowValue<T>(record);
