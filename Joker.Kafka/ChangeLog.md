@@ -102,9 +102,17 @@
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
-# v0.6.0 (WIP/not released):
+# v0.6.0-rc.1 (WIP/not released):
 - CASE - Select a condition from one or more expressions.
-- Collection functions: 
+- /Query endpoint (http 1.1)
+- Collection functions: None
+
+Added implementations:
+- QueryParameters, KSqlDbContextOptionsBuilder
+- KSqlDBContext.CreateQuery
+
+Fixes:
+- column alias in projections was not generated
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
