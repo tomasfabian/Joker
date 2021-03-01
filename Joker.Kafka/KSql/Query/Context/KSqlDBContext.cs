@@ -5,7 +5,9 @@ using Kafka.DotNet.ksqlDB.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
+#if !NETSTANDARD
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
+#endif
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Query;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -50,14 +52,56 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
           serviceCollection.TryAddSingleton(contextOptions.QueryParameters);
           break;
         case QueryType.QueryStream:
+          
+#if !NETSTANDARD
           serviceCollection.TryAddScoped<IKSqlDbProvider, KSqlDbQueryStreamProvider>();
           serviceCollection.TryAddSingleton<IQueryParameters>(contextOptions.QueryStreamParameters);
           break;
+#else
+          throw new NotSupportedException();
+#endif
       }
 
       serviceCollection.TryAddSingleton(contextOptions);
       serviceCollection.TryAddScoped<IKStreamSetDependencies, KStreamSetDependencies>();
     }
+    
+#if !NETSTANDARD
+    private ServiceProvider ServiceProvider { get; set; }
+
+    private bool wasConfigured;
+
+    public IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null)
+    {
+      var serviceScopeFactory = Initialize();
+
+      if (streamName == String.Empty)
+        streamName = null;
+
+      var queryStreamContext = new QueryContext
+      {
+        StreamName = streamName
+      };
+
+      return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
+    }
+
+    internal IServiceScopeFactory Initialize()
+    {
+      if (!wasConfigured)
+      {
+        wasConfigured = true;
+
+        RegisterDependencies(QueryType.QueryStream);
+
+        ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
+      }
+
+      var serviceScopeFactory = ServiceProvider.GetService<IServiceScopeFactory>();
+
+      return serviceScopeFactory;
+    }
+#endif
 
     protected virtual void OnConfigureServices(IServiceCollection serviceCollection)
     {
@@ -94,25 +138,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
     }
-    
-    private ServiceProvider ServiceProvider { get; set; }
-
-    private bool wasConfigured;
-
-    public IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null)
-    {
-      var serviceScopeFactory = Initialize();
-
-      if (streamName == String.Empty)
-        streamName = null;
-
-      var queryStreamContext = new QueryContext
-      {
-        StreamName = streamName
-      };
-
-      return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
-    }
 
     internal IServiceScopeFactory InitializeQueriesServiceProvider()
     {
@@ -130,27 +155,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       return serviceScopeFactory;
     }
 
-    internal IServiceScopeFactory Initialize()
-    {
-      if (!wasConfigured)
-      {
-        wasConfigured = true;
-
-        RegisterDependencies(QueryType.QueryStream);
-
-        ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
-      }
-
-      var serviceScopeFactory = ServiceProvider.GetService<IServiceScopeFactory>();
-
-      return serviceScopeFactory;
-    }
-
     protected override async ValueTask OnDisposeAsync()
     {
+#if !NETSTANDARD
       if(ServiceProvider != null)
         await ServiceProvider.DisposeAsync();
-
+#endif
       if(QueriesServiceProvider != null)
         await QueriesServiceProvider.DisposeAsync();
     }

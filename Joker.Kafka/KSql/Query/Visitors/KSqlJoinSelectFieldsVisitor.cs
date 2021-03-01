@@ -12,17 +12,17 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
     {
     }
 
-    protected override void ProcessVisitNewMember((MemberInfo memberInfo, Expression expresion) v)
+    protected override void ProcessVisitNewMember(MemberInfo memberInfo, Expression expression)
     {
-      if (v.expresion.NodeType == ExpressionType.MemberAccess)
+      if (expression.NodeType == ExpressionType.MemberAccess)
       {
-        Visit(v.expresion);
+        Visit(expression);
               
-        Append(" " + v.memberInfo.Name);
+        Append(" " + memberInfo.Name);
       }
       else
       {
-        base.ProcessVisitNewMember(v);
+        base.ProcessVisitNewMember(memberInfo, expression);
       }
     }
 

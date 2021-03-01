@@ -9,6 +9,7 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
     {      
       var words = 
         Regex.Matches(functionName, @"([A-Z][a-z]+)")
+          .Cast<Match>()
           .Select(m => m.Value);
 
       var ksqlFunctionName = string.Join("_", words).ToUpper();

@@ -359,7 +359,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       {
         bool isFirst = true;
 
-        foreach (var memberWithArguments in newExpression.Members.Zip(newExpression.Arguments))
+        foreach (var memberWithArguments in newExpression.Members.Zip(newExpression.Arguments, (x, y) => new {First = x, Second = y }))
         {
           if (isFirst)
             isFirst = false;
@@ -396,15 +396,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
           if(memberWithArguments.Second is BinaryExpression)
           {
-            PrintColumnWithAlias(memberWithArguments);
+            PrintColumnWithAlias(memberWithArguments.First, memberWithArguments.Second);
 
             return newExpression;
           }
 
           if (ShouldAppendAlias(memberWithArguments.First, memberWithArguments.Second)) 
-            PrintColumnWithAlias(memberWithArguments);
+            PrintColumnWithAlias(memberWithArguments.First, memberWithArguments.Second);
           else
-            ProcessVisitNewMember(memberWithArguments);
+            ProcessVisitNewMember(memberWithArguments.First, memberWithArguments.Second);
         }
       }
 
@@ -420,16 +420,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
              me.Member.Name != memberInfo.Name ;
     }
 
-    private void PrintColumnWithAlias((MemberInfo First, Expression Second) memberWithArguments)
+    private void PrintColumnWithAlias(MemberInfo memberInfo, Expression expression)
     {
-      Visit(memberWithArguments.Second);
+      Visit(expression);
       Append(" AS ");
-      Append(memberWithArguments.First.Name);
+      Append(memberInfo.Name);
     }
 
-    protected virtual void ProcessVisitNewMember((MemberInfo memberInfo, Expression expresion) v)
+    protected virtual void ProcessVisitNewMember(MemberInfo memberInfo, Expression expression)
     {
-      Append(v.memberInfo.Name);
+      Append(memberInfo.Name);
     }
 
     protected override Expression VisitMember(MemberExpression memberExpression)

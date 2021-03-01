@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETSTANDARD
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -29,9 +30,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     {
       var httpClient = base.OnCreateHttpClient();
 
-#if !NETSTANDARD2_1
       httpClient.DefaultRequestVersion = new Version(2, 0);
-#endif
 
       return httpClient;
     }
@@ -80,3 +79,4 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     }
   }
 }
+#endif
