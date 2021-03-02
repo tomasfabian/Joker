@@ -18,6 +18,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context.Options
 
     private string Url { get; set; }
 
+#if !NETSTANDARD
     public ISetupParameters SetupQueryStream(Action<IQueryOptions> configure)
     {
       var queryStreamParameters = CreateQueryStreamParameters();
@@ -35,6 +36,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context.Options
         [QueryStreamParameters.AutoOffsetResetPropertyName] = AutoOffsetReset.Earliest.ToString().ToLower()
       };
     }
+#endif
 
     public ISetupParameters SetupQuery(Action<IQueryOptions> configure)
     {
