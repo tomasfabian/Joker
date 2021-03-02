@@ -103,6 +103,7 @@
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 # v0.6.0-rc.1 (WIP/not released):
+- netstandard 2.0 (.Net Framework etc)
 - CASE - Select a condition from one or more expressions.
 - /Query endpoint (http 1.1)
 - Collection functions: None
@@ -118,3 +119,4 @@ Fixes:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
 - BETWEEN
+- netstandard
