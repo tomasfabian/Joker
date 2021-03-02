@@ -36,32 +36,33 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
     {
       try
       {
-        using var httpClient = httpClientFactory.CreateClient();
+        using (var httpClient = httpClientFactory.CreateClient())
+        {        
+          var statement = new KSqlStatement
+          {
+            ksql = ksql
+          };
 
-        var statement = new KSqlStatement
-        {
-          ksql = ksql
-        };
+          var json = JsonSerializer.Serialize(statement);
 
-        var json = JsonSerializer.Serialize(statement);
+          var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
+          httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/vnd.ksql.v1+json"));
 
-        httpClient.DefaultRequestHeaders.Accept.Add(
-          new MediaTypeWithQualityHeaderValue("application/vnd.ksql.v1+json"));
+          var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/ksql")
+          {
+            Content = data
+          };
 
-        var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/ksql")
-        {
-          Content = data
-        };
+          var cancellationToken = new CancellationToken();
 
-        var cancellationToken = new CancellationToken();
+          var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
 
-        var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
-          HttpCompletionOption.ResponseHeadersRead,
-          cancellationToken);
-
-        return httpResponseMessage;
+          return httpResponseMessage;
+        }
       }
       catch (Exception e)
       {
