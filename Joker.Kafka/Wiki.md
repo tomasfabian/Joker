@@ -177,7 +177,7 @@ queryStream
 ```
 Generates the following KSQL:
 ```KSQL
-SELECT STRUCT(X := X, Y := 2) FROM SstreamName EMIT CHANGES;
+SELECT STRUCT(X := X, Y := 2) FROM StreamName EMIT CHANGES;
 ```
 
 Destructure a struct:
@@ -186,7 +186,7 @@ queryStream
   .Select(c => new Point { X = c.X, Y = 2 }.X);
 ```
 ```KSQL
-SELECT STRUCT(X := X, Y := 2)->X FROM SstreamName EMIT CHANGES;
+SELECT STRUCT(X := X, Y := 2)->X FROM StreamName EMIT CHANGES;
 ```
 
 ### Where (v0.1.0)
@@ -740,7 +740,7 @@ ROUND(Amount, 3)
 ```
 
 ### Dynamic - calling not supported ksqldb functions (v0.3.0)
-Some of the ksqldb functions have not been implemented yet. This can be circumvented by calling K.Functions.Dynamic with the apropriate function call and its paramaters. The type of the column value is set with C# **as** operator.
+Some of the ksqldb functions have not been implemented yet. This can be circumvented by calling K.Functions.Dynamic with the appropriate function call and its paramaters. The type of the column value is set with C# **as** operator.
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
@@ -971,7 +971,7 @@ ON m.Title = l.Title
 EMIT CHANGES;
 ```
 
-# v0.6.0 (WIP/not released):
+# v0.6.0-rc1:
 ### CASE (v0.6.0)
 - Select a condition from one or more expressions.
 ```C#
