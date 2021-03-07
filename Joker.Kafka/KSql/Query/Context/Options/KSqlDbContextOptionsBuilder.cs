@@ -19,7 +19,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context.Options
     private string Url { get; set; }
 
 #if !NETSTANDARD
-    public ISetupParameters SetupQueryStream(Action<IQueryOptions> configure)
+    ISetupParameters ISetupParameters.SetupQueryStream(Action<IQueryOptions> configure)
     {
       var queryStreamParameters = CreateQueryStreamParameters();
       InternalOptions.QueryStreamParameters = queryStreamParameters;
@@ -38,7 +38,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context.Options
     }
 #endif
 
-    public ISetupParameters SetupQuery(Action<IQueryOptions> configure)
+    ISetupParameters ISetupParameters.SetupQuery(Action<IQueryOptions> configure)
     {
       var queryParameters = CreateQueryParameters();
 
@@ -57,12 +57,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context.Options
       };
     }
 
-    public ICreateOptions SetupQuery()
-    {
-
-      return this;
-    }
-      
     private KSqlDBContextOptions contextOptions;
 
     KSqlDBContextOptions ICreateOptions.Options => InternalOptions;
