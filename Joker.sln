@@ -87,8 +87,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{4F92FFA4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.IntegrationTests", "Tests\Kafka.DotNet.ksqlDB.IntegrationTests\Kafka.DotNet.ksqlDB.IntegrationTests.csproj", "{55211E56-989A-462E-95B0-A8FB9159CD4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kafka.DotNetFramework.ksqlDB.Sample", "Samples\Kafka\Kafka.DotNetFramework.ksqlDB.Sample\Kafka.DotNetFramework.ksqlDB.Sample.csproj", "{AA6509F4-6D6B-4858-80F6-F4219EC5C43A}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
@@ -220,10 +218,6 @@ Global
 		{55211E56-989A-462E-95B0-A8FB9159CD4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55211E56-989A-462E-95B0-A8FB9159CD4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55211E56-989A-462E-95B0-A8FB9159CD4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA6509F4-6D6B-4858-80F6-F4219EC5C43A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA6509F4-6D6B-4858-80F6-F4219EC5C43A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA6509F4-6D6B-4858-80F6-F4219EC5C43A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA6509F4-6D6B-4858-80F6-F4219EC5C43A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -266,7 +260,6 @@ Global
 		{F8D2B905-A377-42FD-921A-B36E98B67CF7} = {F7869AB7-6548-43D7-91BD-B7E0B267D9DA}
 		{4F92FFA4-509D-476D-BE01-18E25D9B1896} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
 		{55211E56-989A-462E-95B0-A8FB9159CD4C} = {4F92FFA4-509D-476D-BE01-18E25D9B1896}
-		{AA6509F4-6D6B-4858-80F6-F4219EC5C43A} = {F7869AB7-6548-43D7-91BD-B7E0B267D9DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
