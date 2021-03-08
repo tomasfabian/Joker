@@ -863,6 +863,75 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
 
+    #region ArrayIntersect 
+    
+    /// <summary>
+    /// Returns an array of all the distinct elements from the intersection of both input arrays, or NULL if
+    /// either input array is NULL. The order of entries in the output is the same as in the first input array.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">First array of values</param>
+    /// <param name="right">Second array of values</param>
+    /// <returns></returns>
+    public static string[] ArrayIntersect(this KSqlFunctions kSqlFunctions, string[] left, string[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct elements from the intersection of both input arrays, or NULL if
+    /// either input array is NULL. The order of entries in the output is the same as in the first input array.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">First array of values</param>
+    /// <param name="right">Second array of values</param>
+    /// <returns></returns>
+    public static int[] ArrayIntersect(this KSqlFunctions kSqlFunctions, int[] left, int[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct elements from the intersection of both input arrays, or NULL if
+    /// either input array is NULL. The order of entries in the output is the same as in the first input array.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">First array of values</param>
+    /// <param name="right">Second array of values</param>
+    /// <returns></returns>
+    public static long[] ArrayIntersect(this KSqlFunctions kSqlFunctions, long[] left, long[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct elements from the intersection of both input arrays, or NULL if
+    /// either input array is NULL. The order of entries in the output is the same as in the first input array.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">First array of values</param>
+    /// <param name="right">Second array of values</param>
+    /// <returns></returns>
+    public static double[] ArrayIntersect(this KSqlFunctions kSqlFunctions, double[] left, double[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Returns an array of all the distinct elements from the intersection of both input arrays, or NULL if
+    /// either input array is NULL. The order of entries in the output is the same as in the first input array.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="left">First array of values</param>
+    /// <param name="right">Second array of values</param>
+    /// <returns></returns>
+    public static decimal[] ArrayIntersect(this KSqlFunctions kSqlFunctions, decimal[] left, decimal[] right)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
     #endregion
 
     #region String functions

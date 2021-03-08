@@ -354,7 +354,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     
     private class Collection
     {
-      public int[] Items { get; set; }
+      public int[] Items1 { get; set; }
+      public int[] Items2 { get; set; }
     }
 
     #region ArrayContains
@@ -363,13 +364,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     public void ArrayContains_BuildKSql_PrintsFunction()
     {
       //Arrange
-      Expression<Func<Collection, bool>> expression = c => K.Functions.ArrayContains(c.Items, 2);
+      Expression<Func<Collection, bool>> expression = c => K.Functions.ArrayContains(c.Items1, 2);
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"ARRAY_CONTAINS({nameof(Collection.Items)}, 2)");
+      query.Should().BeEquivalentTo($"ARRAY_CONTAINS({nameof(Collection.Items1)}, 2)");
     }
 
     [TestMethod]
@@ -393,13 +394,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     public void ArrayDistinct_BuildKSql_PrintsFunction()
     {
       //Arrange
-      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayDistinct(c.Items);
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayDistinct(c.Items1);
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"ARRAY_DISTINCT({nameof(Collection.Items)})");
+      query.Should().BeEquivalentTo($"ARRAY_DISTINCT({nameof(Collection.Items1)})");
     }
     
 
@@ -411,15 +412,31 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
     public void ArrayExcept_BuildKSql_PrintsFunction()
     {
       //Arrange
-      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayExcept(c.Items, c.Items);
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayExcept(c.Items1, c.Items2);
 
       //Act
       var query = ClassUnderTest.BuildKSql(expression);
 
       //Assert
-      query.Should().BeEquivalentTo($"ARRAY_EXCEPT({nameof(Collection.Items)}, {nameof(Collection.Items)})");
+      query.Should().BeEquivalentTo($"ARRAY_EXCEPT({nameof(Collection.Items1)}, {nameof(Collection.Items2)})");
     }
-    
+
+    #endregion
+
+    #region ArrayIntersect
+
+    [TestMethod]
+    public void ArrayIntersect_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayIntersect(c.Items1, c.Items2);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_INTERSECT({nameof(Collection.Items1)}, {nameof(Collection.Items2)})");
+    }    
 
     #endregion
 

@@ -105,5 +105,24 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       actualValues[0].Col[0].K.Should().BeEquivalentTo("a");
       actualValues[0].Col[0].V.Should().BeEquivalentTo("value");
     }
+
+    [TestMethod]
+    public async Task ArrayIntersect()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      //Act
+      var source = Context.CreateQuery<Movie>(MoviesTableName)
+        .Select(c => new { Col = KSqlFunctions.Instance.ArrayIntersect(new [] { 1, 2 }, new []{ 1 } )})
+        .ToAsyncEnumerable();
+      
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      actualValues[0].Col.Length.Should().Be(1);
+      actualValues[0].Col[0].Should().Be(1);
+    }
   }
 }

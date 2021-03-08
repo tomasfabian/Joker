@@ -971,7 +971,7 @@ ON m.Title = l.Title
 EMIT CHANGES;
 ```
 
-# v0.6.0-rc1:
+# v0.6.0:
 ### CASE (v0.6.0)
 - Select a condition from one or more expressions.
 ```C#
@@ -1088,12 +1088,16 @@ using var disposable = context.CreateQuery<Movie>()
   }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 ```
 
+# v0.7.0 (WIP):
+- scalar collection functions: ArrayIntersect
+
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
 
 **TODO:**
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
+- parenthesis for controlling the order of evaluation
 - backpressure support
 
 # ksqldb links
