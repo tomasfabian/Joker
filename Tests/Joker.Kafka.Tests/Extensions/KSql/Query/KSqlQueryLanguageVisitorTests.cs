@@ -69,6 +69,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query
     }
 
     [TestMethod]
+    public void SelectTwoAliasesWithBinaryOperations_BuildKSql_PrintsProjection()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(l => new { Lngt = l.Longitude / 2, Lat = l.Latitude + "" });
+
+      //Act
+      var ksql = ClassUnderTest.BuildKSql(query.Expression, queryContext);
+
+      //Assert
+      string expectedKsql =
+        @$"SELECT {nameof(Location.Longitude)} / 2 AS Lngt, {nameof(Location.Latitude)} + '' AS Lat FROM {streamName} EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+
+    [TestMethod]
     public void SelectWhere_BuildKSql_PrintsSelectFromWhere()
     {
       //Arrange

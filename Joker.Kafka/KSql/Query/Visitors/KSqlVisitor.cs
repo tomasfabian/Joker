@@ -398,7 +398,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           {
             PrintColumnWithAlias(memberWithArguments.First, memberWithArguments.Second);
 
-            return newExpression;
+            continue;
           }
 
           if (ShouldAppendAlias(memberWithArguments.First, memberWithArguments.Second)) 
