@@ -939,7 +939,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array to join using the specified delimiter</param>
-    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <param name="delimiter">The string to be used as element delimiter</param>
     /// <returns></returns>
     public static string ArrayJoin(this KSqlFunctions kSqlFunctions, string[] array, string delimiter)
     {
@@ -951,7 +951,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array to join using the specified delimiter</param>
-    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <param name="delimiter">The string to be used as element delimiter</param>
     /// <returns></returns>
     public static string ArrayJoin(this KSqlFunctions kSqlFunctions, int[] array, string delimiter)
     {
@@ -963,7 +963,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array to join using the specified delimiter</param>
-    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <param name="delimiter">The string to be used as element delimiter</param>
     /// <returns></returns>
     public static string ArrayJoin(this KSqlFunctions kSqlFunctions, long[] array, string delimiter)
     {
@@ -975,7 +975,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array to join using the specified delimiter</param>
-    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <param name="delimiter">The string to be used as element delimiter</param>
     /// <returns></returns>
     public static string ArrayJoin(this KSqlFunctions kSqlFunctions, double[] array, string delimiter)
     {
@@ -987,12 +987,18 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array to join using the specified delimiter</param>
-    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <param name="delimiter">The string to be used as element delimiter</param>
     /// <returns></returns>
     public static string ArrayJoin(this KSqlFunctions kSqlFunctions, decimal[] array, string delimiter)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
+
+    #endregion
+
+    #region ArrayLength
+
+    
 
     #endregion
 
