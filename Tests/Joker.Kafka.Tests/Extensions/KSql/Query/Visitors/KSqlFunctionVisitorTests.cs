@@ -440,6 +440,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region ArrayJoin
+
+    [TestMethod]
+    public void ArrayJoin_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, string>> expression = c => K.Functions.ArrayJoin(c.Items1, ";;");
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_JOIN({nameof(Collection.Items1)}, ';;')");
+    }    
+
+    #endregion
+
     #endregion
 
     #region String functions
