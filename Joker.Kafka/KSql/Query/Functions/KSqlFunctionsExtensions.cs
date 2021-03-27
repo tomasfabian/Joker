@@ -932,6 +932,70 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
 
+    #region ArrayJoin
+
+    /// <summary>
+    /// Creates a flat string representation of all the elements contained in the given array. The elements in the resulting string are separated by the chosen delimiter.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array to join using the specified delimiter</param>
+    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <returns></returns>
+    public static string ArrayJoin(this KSqlFunctions kSqlFunctions, string[] array, string delimiter)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Creates a flat string representation of all the elements contained in the given array. The elements in the resulting string are separated by the chosen delimiter.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array to join using the specified delimiter</param>
+    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <returns></returns>
+    public static string ArrayJoin(this KSqlFunctions kSqlFunctions, int[] array, string delimiter)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Creates a flat string representation of all the elements contained in the given array. The elements in the resulting string are separated by the chosen delimiter.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array to join using the specified delimiter</param>
+    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <returns></returns>
+    public static string ArrayJoin(this KSqlFunctions kSqlFunctions, long[] array, string delimiter)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Creates a flat string representation of all the elements contained in the given array. The elements in the resulting string are separated by the chosen delimiter.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array to join using the specified delimiter</param>
+    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <returns></returns>
+    public static string ArrayJoin(this KSqlFunctions kSqlFunctions, double[] array, string delimiter)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Creates a flat string representation of all the elements contained in the given array. The elements in the resulting string are separated by the chosen delimiter.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array to join using the specified delimiter</param>
+    /// <param name="delimeter">The string to be used as element delimiter</param>
+    /// <returns></returns>
+    public static string ArrayJoin(this KSqlFunctions kSqlFunctions, decimal[] array, string delimiter)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
     #endregion
 
     #region String functions

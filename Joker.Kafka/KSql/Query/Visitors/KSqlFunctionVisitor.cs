@@ -70,6 +70,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Visitors
           case nameof(KSqlFunctionsExtensions.ArrayDistinct):
           case nameof(KSqlFunctionsExtensions.ArrayExcept):
           case nameof(KSqlFunctionsExtensions.ArrayIntersect):
+          case nameof(KSqlFunctionsExtensions.ArrayJoin):
             Append($"{methodInfo.Name.ToKSqlFunctionName()}");
             PrintFunctionArguments(methodCallExpression.Arguments.Skip(1));
             break;

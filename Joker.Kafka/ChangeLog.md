@@ -115,7 +115,7 @@ Fixes:
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 # v0.7.0 (WIP):
-- scalar collection functions: ArrayIntersect
+- scalar collection functions: ArrayIntersect, ArrayJoin
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time

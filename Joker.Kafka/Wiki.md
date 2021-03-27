@@ -14,7 +14,7 @@ var ksqlDbUrl = @"http:\\localhost:8088";
 await using var context = new KSqlDBContext(ksqlDbUrl);
 
 using var disposable = context.CreateQueryStream<Tweet>()
-  .Where(p => p.Message != "Spoiler" || p.Id == 1)
+  .Where(p => p.Message != "Hello world" || p.Id == 1)
   .Select(l => new { l.Message, l.Id })
   .Take(2)
   .Subscribe(tweetMessage =>
@@ -1089,7 +1089,7 @@ using var disposable = context.CreateQuery<Movie>()
 ```
 
 # v0.7.0 (WIP):
-- scalar collection functions: ArrayIntersect
+- scalar collection functions: ArrayIntersect, ArrayJoin
 
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
