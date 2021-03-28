@@ -134,7 +134,6 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       //Act
       var source = Context.CreateQuery<Movie>(MoviesTableName)
         .Select(c => new { Col = KSqlFunctions.Instance.ArrayJoin(new [] { 1, 2 }, ";" )})
-        //.Take(1)
         .ToAsyncEnumerable();
       
       var actualValues = await CollectActualValues(source, expectedItemsCount);

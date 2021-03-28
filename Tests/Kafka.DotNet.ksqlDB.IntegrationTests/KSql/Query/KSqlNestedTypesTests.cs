@@ -8,7 +8,7 @@ using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Movies;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
+namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query
 {
   [TestClass]
   public class KSqlNestedTypesTests : Linq.IntegrationTests
