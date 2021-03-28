@@ -116,9 +116,10 @@ Fixes:
 
 # v0.7.0 (WIP):
 - scalar collection functions: ArrayIntersect, ArrayJoin
+- operator precedence
+- fixed VisitNew with several binary expressions, all except the first were skipped
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
 - BETWEEN
-- netstandard

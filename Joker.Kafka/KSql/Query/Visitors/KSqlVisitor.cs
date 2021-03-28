@@ -305,11 +305,38 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
     private const string OperatorAnd = "AND";
 
+    private static readonly ISet<ExpressionType> SupportedBinaryOperators = new HashSet<ExpressionType>
+    {
+      ExpressionType.Add,
+      ExpressionType.Subtract, 
+      ExpressionType.Divide, 
+      ExpressionType.Multiply, 
+      ExpressionType.Modulo, 
+      ExpressionType.AndAlso,
+      ExpressionType.OrElse,
+      ExpressionType.NotEqual,
+      ExpressionType.Equal,
+      ExpressionType.GreaterThan,
+      ExpressionType.GreaterThanOrEqual,
+      ExpressionType.LessThan,
+      ExpressionType.LessThanOrEqual,
+    };
+
     protected override Expression VisitBinary(BinaryExpression binaryExpression)
     {
       if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
 
+      Func<ExpressionType, bool> isBinaryOperation = expressionType => SupportedBinaryOperators.Contains(expressionType);
+
+      bool shouldAddParentheses = isBinaryOperation(binaryExpression.Left.NodeType);
+
+      if(shouldAddParentheses)
+        Append("(");
+
       Visit(binaryExpression.Left);
+
+      if(shouldAddParentheses)
+        Append(")");
 
       if (binaryExpression.NodeType == ExpressionType.ArrayIndex)
       {
@@ -345,8 +372,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       @operator = $" {@operator} ";
 
       Append(@operator);
+      
+      shouldAddParentheses = isBinaryOperation(binaryExpression.Right.NodeType);
+
+      if(shouldAddParentheses)
+        Append("(");
 
       Visit(binaryExpression.Right);
+
+      if(shouldAddParentheses)
+        Append(")");
 
       return binaryExpression;
     }
@@ -511,6 +546,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
           return base.VisitUnary(unaryExpression);
       }
     }
+
     protected static Expression StripQuotes(Expression expression)
     {
       while (expression.NodeType == ExpressionType.Quote)

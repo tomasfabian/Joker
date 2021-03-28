@@ -308,7 +308,7 @@ private static IDisposable ClientSideBatching(KSqlDBContext context)
 ```
 
 ### ToQueryString (v0.1.0)
-ToQueryString is helpful for debugging purposes. Returns the generated ksql query without executing it.
+ToQueryString is helpful for debugging purposes. It returns the generated ksql query without executing it.
 ```C#
 var ksql = context.CreateQueryStream<Tweet>().ToQueryString();
 
@@ -535,6 +535,7 @@ Return the minimum/maximum value for a given column and window. Rows that have c
 var queryMin = CreateQbservable()
   .GroupBy(c => c.RegionCode)
   .Select(g => g.Min(c => c.Citizens));
+
 var queryMax = CreateQbservable()
   .GroupBy(c => c.RegionCode)
   .Select(g => g.Max(c => c.Citizens));
@@ -1018,7 +1019,7 @@ public static KSqlDBContextOptions CreateQueryStreamOptions(string ksqlDbUrl)
 }
 ```
 
-# TFM netstandard 2.0 (.Net Framework, Xamarin etc.) (v0.6.0)
+# TFM netstandard 2.0 (.Net Framework, NetCoreApp 2.0 etc.) (v0.6.0)
 netstandard 2.0 does not support Http 2.0. Due to this ```IKSqlDBContext.CreateQueryStream<TEntity>``` is not exposed at the current version. 
 For these reasons ```IKSqlDBContext.CreateQuery<TEntity>``` was introduced to provide the same functionality via Http 1.1. 
 
@@ -1088,8 +1089,40 @@ using var disposable = context.CreateQuery<Movie>()
   }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 ```
 
-# v0.7.0 (WIP):
+# v0.7.0-rc.1 (WIP):
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.7.0-rc.1
+```
+
 - scalar collection functions: ArrayIntersect, ArrayJoin
+
+### Lexical precedence (v0.7.0)
+You can use parentheses to change the order of evaluation:
+```C#
+await using var context = new KSqlDBContext(@"http:\\localhost:8088");
+
+var query = context.CreateQueryStream<Location>()
+  .Select(c => (c.Longitude + c.Longitude) * c.Longitude);
+```
+
+```KSQL
+SELECT (Longitude + Longitude) * Longitude FROM Locations EMIT CHANGES;
+```
+
+In Where clauses:
+```C#
+await using var context = new KSqlDBContext(@"http:\\localhost:8088");
+
+var query = context.CreateQueryStream<Location>()
+  .Where(c => (c.Latitude == "1" || c.Latitude != "2") && c.Latitude == "3");
+```
+
+```KSQL
+SELECT * FROM Locations
+WHERE ((Latitude = '1') OR (Latitude != '2')) AND (Latitude = '3') EMIT CHANGES;
+```
+
+Redundant brackets are not reduced in the current version
 
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
@@ -1097,7 +1130,6 @@ https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
 **TODO:**
 - missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
-- parenthesis for controlling the order of evaluation
 - backpressure support
 
 # ksqldb links
