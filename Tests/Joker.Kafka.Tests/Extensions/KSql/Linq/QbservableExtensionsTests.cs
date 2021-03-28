@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -34,6 +35,90 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
       //Assert
       ksql.Should().BeEquivalentTo(@$"SELECT 'Hello world' FROM Locations EMIT CHANGES;");
     }
+
+    #region OperatorPrecedence
+
+    [TestMethod]
+    public void PlusOperatorPrecedence_BuildKSql_PrintsParentheses()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => (c.Longitude + c.Longitude) * c.Longitude);
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT ({nameof(Location.Longitude)} + {nameof(Location.Longitude)}) * {nameof(Location.Longitude)} FROM Locations EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void OperatorPrecedence_BuildKSql_PrintsParentheses()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => c.Longitude + c.Longitude * c.Longitude);
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      ksql.Should().BeEquivalentTo(@$"SELECT {nameof(Location.Longitude)} + ({nameof(Location.Longitude)} * {nameof(Location.Longitude)}) FROM Locations EMIT CHANGES;");
+    }
+
+    [TestMethod]
+    public void OperatorPrecedenceTwoAliases_BuildKSql_PrintsParentheses()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Select(c => new { First = c.Longitude / (c.Longitude / 4), Second = c.Longitude / c.Longitude / 5 });
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      var expectedKsql = $@"SELECT {nameof(Location.Longitude)} / ({nameof(Location.Longitude)} / 4) AS First, ({nameof(Location.Longitude)} / {nameof(Location.Longitude)}) / 5 AS Second FROM Locations EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expectedKsql);
+    }
+    
+    [TestMethod]
+    public void OperatorPrecedenceInWhereClause_NoOrder_BuildKSql_PrintsParentheses()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Where(c => c.Latitude == "1" || c.Latitude != "2" && c.Latitude == "3");
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      string columnName = nameof(Location.Latitude);
+
+      string expected = @$"SELECT * FROM Locations
+WHERE ({columnName} = '1') OR (({columnName} != '2') AND ({columnName} = '3')) EMIT CHANGES;";
+
+      ksql.Should().BeEquivalentTo(expected);
+    }    
+
+    [TestMethod]
+    public void OperatorPrecedenceInWhereClause_BuildKSql_PrintsParentheses()
+    {
+      //Arrange
+      var query = CreateStreamSource()
+        .Where(c => (c.Latitude == "1" || c.Latitude != "2") && c.Latitude == "3");
+
+      //Act
+      var ksql = query.ToQueryString();
+
+      //Assert
+      string columnName = nameof(Location.Latitude);
+
+      ksql.Should().BeEquivalentTo(@$"SELECT * FROM Locations
+WHERE (({columnName} = '1') OR ({columnName} != '2')) AND ({columnName} = '3') EMIT CHANGES;");
+    }
+
+    #endregion
 
     [TestMethod]
     [Ignore("TODO")]
