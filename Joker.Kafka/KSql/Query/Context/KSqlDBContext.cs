@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 #if !NETSTANDARD
+using System.Collections.Generic;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 #endif
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Query;
@@ -69,7 +74,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 #if !NETSTANDARD
     private ServiceProvider ServiceProvider { get; set; }
 
-    private bool wasConfigured;
+    public IAsyncEnumerable<TEntity> CreateQueryStream<TEntity>(QueryStreamParameters queryStreamParameters, CancellationToken cancellationToken = default)
+    {
+      var serviceScopeFactory = Initialize();
+
+      var ksqlDBProvider = serviceScopeFactory.CreateScope().ServiceProvider.GetService<IKSqlDbProvider>();
+
+      return ksqlDBProvider.Run<TEntity>(queryStreamParameters, cancellationToken);
+    }
 
     public IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null)
     {
@@ -85,6 +97,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
     }
+
+    private bool wasConfigured;
 
     internal IServiceScopeFactory Initialize()
     {
@@ -121,8 +135,15 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
     }
         
     private ServiceProvider QueriesServiceProvider { get; set; }
+    
+    public IAsyncEnumerable<TEntity> CreateQuery<TEntity>(QueryParameters queryParameters, CancellationToken cancellationToken = default)
+    {
+      var serviceScopeFactory = InitializeQueriesServiceProvider();
 
-    private bool wereQueriesConfigured;
+      var ksqlDBProvider = serviceScopeFactory.CreateScope().ServiceProvider.GetService<IKSqlDbProvider>();
+
+      return ksqlDBProvider.Run<TEntity>(queryParameters, cancellationToken);
+    }
 
     public IQbservable<TEntity> CreateQuery<TEntity>(string streamName = null)
     {
@@ -138,6 +159,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
     }
+    
+    private bool wereQueriesConfigured;
 
     internal IServiceScopeFactory InitializeQueriesServiceProvider()
     {
