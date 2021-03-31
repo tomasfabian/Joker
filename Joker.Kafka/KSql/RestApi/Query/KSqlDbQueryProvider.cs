@@ -23,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Query
     private HeaderResponse headerResponse;
     private string[] headerColumns;
 
-    protected override RowValue<T> OnLineRed<T>(string rawJson)
+    protected override RowValue<T> OnLineRead<T>(string rawJson)
     {
       if (rawJson == String.Empty)
         return default;

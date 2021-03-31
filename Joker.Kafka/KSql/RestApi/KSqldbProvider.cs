@@ -49,13 +49,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
         var rawJson = await streamReader.ReadLineAsync();
 
-        var record = OnLineRed<T>(rawJson);
+        var record = OnLineRead<T>(rawJson);
 
         if (record != null) yield return record.Value;
       }
     }
 
-    protected abstract RowValue<T> OnLineRed<T>(string rawJson);
+    protected abstract RowValue<T> OnLineRead<T>(string rawJson);
 
     private JsonSerializerOptions jsonSerializerOptions;
 

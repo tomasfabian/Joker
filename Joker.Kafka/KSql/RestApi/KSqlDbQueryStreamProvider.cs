@@ -37,7 +37,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
     private RowValueJsonSerializer serializer;
 
-    protected override RowValue<T> OnLineRed<T>(string rawJson)
+    protected override RowValue<T> OnLineRead<T>(string rawJson)
     {
       //Console.WriteLine(rawJson);
       if (rawJson.Contains("queryId"))
