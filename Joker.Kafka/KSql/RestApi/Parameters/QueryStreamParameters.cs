@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Kafka.DotNet.ksqlDB.KSql.Query;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters
