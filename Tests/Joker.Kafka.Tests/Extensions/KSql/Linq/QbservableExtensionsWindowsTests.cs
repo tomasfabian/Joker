@@ -3,6 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
@@ -188,13 +189,9 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
     class TransactionsDbProvider : TestableDbProvider<Transaction>
     {
-      protected override void OnConfigureServices(IServiceCollection serviceCollection)
-      {
-        serviceCollection.AddSingleton(KSqldbProviderMock.Object);
-      }
-
       public TransactionsDbProvider(string ksqlDbUrl) : base(ksqlDbUrl)
       {
+        RegisterKSqlQueryGenerator = false;
       }
     }
   }

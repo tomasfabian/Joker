@@ -35,10 +35,16 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
     public readonly Mock<IKSqlDbProvider> KSqldbProviderMock = new Mock<IKSqlDbProvider>();
     public readonly Mock<IKSqlQueryGenerator> KSqlQueryGenerator = new Mock<IKSqlQueryGenerator>();
 
-    protected override void OnConfigureServices(IServiceCollection serviceCollection)
+    protected bool RegisterKSqlQueryGenerator { get; set; } = true;
+
+    protected override void OnConfigureServices(IServiceCollection serviceCollection, KSqlDBContextOptions options)
     {
       serviceCollection.AddSingleton(KSqldbProviderMock.Object);
-      serviceCollection.AddSingleton(KSqlQueryGenerator.Object);
+
+      if(RegisterKSqlQueryGenerator)
+        serviceCollection.AddSingleton(KSqlQueryGenerator.Object);
+
+      base.OnConfigureServices(serviceCollection, options);
     }
   }
 }

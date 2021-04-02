@@ -176,13 +176,18 @@ WHERE (({columnName} = '1') OR ({columnName} != '2')) AND ({columnName} = '3') E
 
     internal class TestableDbProviderExt : TestableDbProvider<Tweet>
     {
+      private readonly string ksqlDbUrl;
+
       public TestableDbProviderExt(string ksqlDbUrl) : base(ksqlDbUrl)
       {
+        this.ksqlDbUrl = ksqlDbUrl;
+
+        RegisterKSqlQueryGenerator = false;
       }
 
       public IQbservable<Tweet> CreateTweetsStreamSet(string streamName = null)
       {
-        var serviceScopeFactory = Initialize();
+        var serviceScopeFactory = Initialize(new KSqlDBContextOptions(ksqlDbUrl));
 
         var queryStreamContext = new QueryContext
         {
@@ -191,11 +196,6 @@ WHERE (({columnName} = '1') OR ({columnName} != '2')) AND ({columnName} = '3') E
 
         return new TweetsKQueryStreamSet(serviceScopeFactory, queryStreamContext);
       }    
-      
-      protected override void OnConfigureServices(IServiceCollection serviceCollection)
-      {
-        serviceCollection.AddSingleton(KSqldbProviderMock.Object);
-      }
     }
 
     [TestMethod]
