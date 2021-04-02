@@ -3,14 +3,13 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
-using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
-  internal abstract class KSqlDBContextDependenciesProvider : AsyncDisposableObject
+  public abstract class KSqlDBContextDependenciesProvider : AsyncDisposableObject
   {
     private readonly IServiceCollection serviceCollection;
 
@@ -29,7 +28,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       {
         wasConfigured = true;
 
-        RegisterDependencies(QueryType.QueryStream, contextOptions);
+        RegisterDependencies(contextOptions);
 
         ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions {ValidateScopes = true});
       }
@@ -39,7 +38,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       return serviceScopeFactory;
     }
 
-    private void RegisterDependencies(QueryType queryType, KSqlDBContextOptions contextOptions)
+    private void RegisterDependencies(KSqlDBContextOptions contextOptions)
     {
       OnConfigureServices(serviceCollection, contextOptions);
     }
