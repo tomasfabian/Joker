@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
@@ -229,6 +231,52 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
       Assert.AreEqual(1, actualValues[1].Count);
       Assert.AreEqual(Tweet2.Id, actualValues[1].Id);
+    }
+    
+    [TestMethod]
+    public async Task QueryRawKSql()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+      
+      string ksql = @"SELECT * FROM tweetsTest EMIT CHANGES LIMIT 2;";
+
+      QueryParameters queryParameters = new QueryParameters
+      {
+        Sql = ksql,
+        [QueryParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var source = Context.CreateQuery<Tweet>(queryParameters);
+      
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+    }
+    
+    [TestMethod]
+    public async Task QueryStreamRawKSql()
+    {
+      //Arrange
+      int expectedItemsCount = 2;
+      
+      string ksql = @"SELECT * FROM tweetsTest EMIT CHANGES LIMIT 2;";
+
+      QueryStreamParameters queryStreamParameters = new QueryStreamParameters
+      {
+        Sql = ksql,
+        [QueryStreamParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var source = Context.CreateQueryStream<Tweet>(queryStreamParameters);
+      
+      //Act
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
     }
   }
 }
