@@ -100,5 +100,47 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context
       //Assert
       context.IsDisposed.Should().BeTrue();
     }
+
+    [TestMethod]
+    public async Task CreateQueryStream_RawKSQL_ReturnAsyncEnumerable()
+    {
+      //Arrange
+      string ksql = @"SELECT * FROM tweetsTest EMIT CHANGES LIMIT 2;";
+
+      QueryStreamParameters queryStreamParameters = new QueryStreamParameters
+      {
+        Sql = ksql,
+        [QueryStreamParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
+
+      //Act
+      var source = context.CreateQueryStream<string>(queryStreamParameters);
+
+      //Assert
+      source.Should().NotBeNull();
+    }
+
+    [TestMethod]
+    public async Task CreateQuery_RawKSQL_ReturnAsyncEnumerable()
+    {
+      //Arrange
+      string ksql = @"SELECT * FROM tweetsTest EMIT CHANGES LIMIT 2;";
+
+      QueryParameters queryParameters = new QueryParameters
+      {
+        Sql = ksql,
+        [QueryParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var context = new TestableDbProvider<string>(TestParameters.KsqlDBUrl);
+
+      //Act
+      var source = context.CreateQuery<string>(queryParameters);
+
+      //Assert
+      source.Should().NotBeNull();
+    }
   }
 }
