@@ -1124,6 +1124,41 @@ WHERE ((Latitude = '1') OR (Latitude != '2')) AND (Latitude = '3') EMIT CHANGES;
 
 Redundant brackets are not reduced in the current version
 
+### Raw string KSQL query execution (v0.7.0)
+The following examples show how to execute ksql queries from strings:
+```C#
+string ksql = @"SELECT * FROM Movies
+WHERE Title != 'E.T.' EMIT CHANGES LIMIT 2;";
+
+QueryParameters queryParameters = new QueryParameters
+{
+  Sql = ksql,
+  [QueryParameters.AutoOffsetResetPropertyName] = "earliest",
+};
+
+await using var context = new KSqlDBContext(@"http:\\localhost:8088");
+
+var moviesSource = context.CreateQuery<Movie>(queryParameters)
+  .ToObservable();
+```
+
+Query stream:
+```C#
+string ksql = @"SELECT * FROM Movies
+WHERE Title != 'E.T.' EMIT CHANGES LIMIT 2;";
+
+QueryStreamParameters queryStreamParameters = new QueryStreamParameters
+{
+  Sql = ksql,
+  [QueryStreamParameters.AutoOffsetResetPropertyName] = "earliest",
+};
+
+await using var context = new KSqlDBContext(@"http:\\localhost:8088");
+
+var source = context.CreateQueryStream<Movie>(queryStreamParameters)
+  .ToObservable();
+```
+
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
 
