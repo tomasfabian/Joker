@@ -22,7 +22,6 @@ using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
-
   public static class Program
   {
     public static KSqlDBContextOptions CreateQueryStreamOptions(string ksqlDbUrl)
@@ -60,13 +59,13 @@ namespace Kafka.DotNet.ksqlDB.Sample
         .Where(p => p.Title != "E.T.")
         .Where(c => K.Functions.Like(c.Title.ToLower(), "%hard%".ToLower()) || c.Id == 1)
         .Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
-        .Select(l => new { Id2 = l.Id, l.Title, l.Release_Year, l.RowTime })
+        .Select(l => new { Id = l.Id, l.Title, l.Release_Year, l.RowTime })
         .Take(2) // LIMIT 2    
         .ToObservable() // client side processing starts here lazily after subscription. Switches to Rx.NET
         .ObserveOn(TaskPoolScheduler.Default)
         .Subscribe(onNext: movie =>
         {
-          Console.WriteLine($"{nameof(Movie)}: {movie.Id2} - {movie.Title} - {movie.RowTime}");
+          Console.WriteLine($"{nameof(Movie)}: {movie.Id} - {movie.Title} - {movie.RowTime}");
           Console.WriteLine();
         }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 
@@ -528,6 +527,53 @@ namespace Kafka.DotNet.ksqlDB.Sample
         }, error => { });
 
       return subscription;
+    }
+
+    private static IDisposable QueryStreamRawKSql(KSqlDBContext context)
+    {
+      string ksql = context.CreateQueryStream<Movie>()
+        .Where(p => p.Title != "E.T.").Take(2)
+        .ToQueryString();
+      
+      QueryStreamParameters queryStreamParameters = new QueryStreamParameters
+      {
+        Sql = ksql,
+        [QueryStreamParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var disposable = context.CreateQueryStream<Movie>(queryStreamParameters)
+        .ToObservable()
+        .Subscribe(onNext: movie =>
+          {
+            Console.WriteLine($"{nameof(Movie)}: {movie.Id} - {movie.Title} - {movie.RowTime}");
+            Console.WriteLine();
+          }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); },
+          onCompleted: () => Console.WriteLine("Completed"));
+
+      return disposable;
+    }
+
+    private static IDisposable QueryRawKSql(KSqlDBContext context)
+    {
+      string ksql = @"SELECT * FROM Movies
+WHERE Title != 'E.T.' EMIT CHANGES LIMIT 2;";
+
+      QueryParameters queryParameters = new QueryParameters
+      {
+        Sql = ksql,
+        [QueryParameters.AutoOffsetResetPropertyName] = "earliest",
+      };
+
+      var disposable = context.CreateQuery<Movie>(queryParameters)
+        .ToObservable()
+        .Subscribe(onNext: movie =>
+          {
+            Console.WriteLine($"{nameof(Movie)}: {movie.Id} - {movie.Title} - {movie.RowTime}");
+            Console.WriteLine();
+          }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); },
+          onCompleted: () => Console.WriteLine("Completed"));
+
+      return disposable;
     }
   }
 }
