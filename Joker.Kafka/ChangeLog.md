@@ -1,3 +1,9 @@
+# v0.7.0-rc.2:
+- [operator precedence](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#lexical-precedence-v070)
+- fixed VisitNew with several binary expressions, all except the first were skipped
+- [raw string KSQL query execution](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#raw-string-ksql-query-execution-v070)
+- scalar collection functions: ArrayIntersect, ArrayJoin, ArrayLength
+
 # v0.6.0:
 - netstandard 2.0 (.Net Framework etc)
 - /Query endpoint (http 1.1)
@@ -113,12 +119,6 @@ Fixes:
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
-
-# v0.7.0 (WIP):
-- operator precedence
-- fixed VisitNew with several binary expressions, all except the first were skipped
-- raw string KSQL query execution
-- scalar collection functions: ArrayIntersect, ArrayJoin
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
