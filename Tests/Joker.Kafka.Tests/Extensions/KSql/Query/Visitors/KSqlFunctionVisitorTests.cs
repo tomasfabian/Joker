@@ -457,6 +457,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region ArrayLength
+
+    [TestMethod]
+    public void ArrayLength_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int?>> expression = c => K.Functions.ArrayLength(c.Items1);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_LENGTH({nameof(Collection.Items1)})");
+    }    
+
+    #endregion
+
     #endregion
 
     #region String functions
