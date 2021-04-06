@@ -1,4 +1,4 @@
-# v0.7.0:
+# v0.7.0-rc.2:
 - [operator precedence](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#lexical-precedence-v070)
 - fixed VisitNew with several binary expressions, all except the first were skipped
 - [raw string KSQL query execution](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#raw-string-ksql-query-execution-v070)

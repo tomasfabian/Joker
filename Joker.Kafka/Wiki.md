@@ -1089,7 +1089,11 @@ using var disposable = context.CreateQuery<Movie>()
   }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
 ```
 
-# v0.7.0:
+# v0.7.0-rc.2 (WIP):
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.7.0-rc.1
+```
+
 - scalar collection functions: ArrayIntersect, ArrayJoin
 
 ### Lexical precedence (v0.7.0)
