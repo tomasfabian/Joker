@@ -14,8 +14,8 @@ jobs:
       Kafka_DotNet_ksqlDB_Test_Project_Path: Tests\Joker.Kafka.Tests\Kafka.DotNet.ksqlDB.Tests.csproj
 
     steps:
-    - task: NuGetToolInstaller@1
-      inputs:
+    - name: NuGetToolInstaller@1
+      with:
         versionSpec: 5.9
 
     - uses: actions/checkout@v2
