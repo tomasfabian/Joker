@@ -1003,7 +1003,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
-    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    /// <returns>Number of elements in the array. If the array field is NULL, or contains only NULLs, then NULL is returned.</returns>
     public static int? ArrayLength(this KSqlFunctions kSqlFunctions, string[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -1014,7 +1014,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
-    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    /// <returns>Number of elements in the array. If the array field is NULL, or contains only NULLs, then NULL is returned.</returns>
     public static int? ArrayLength(this KSqlFunctions kSqlFunctions, int[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -1025,7 +1025,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
-    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    /// <returns>Number of elements in the array. If the array field is NULL, or contains only NULLs, then NULL is returned.</returns>
     public static int? ArrayLength(this KSqlFunctions kSqlFunctions, long[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -1036,7 +1036,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
-    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    /// <returns>Number of elements in the array. If the array field is NULL, or contains only NULLs, then NULL is returned.</returns>
     public static int? ArrayLength(this KSqlFunctions kSqlFunctions, double[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -1047,7 +1047,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// </summary>
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
-    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    /// <returns>Number of elements in the array. If the array field is NULL, or contains only NULLs, then NULL is returned.</returns>
     public static int? ArrayLength(this KSqlFunctions kSqlFunctions, decimal[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
@@ -1056,6 +1056,124 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     #endregion
 
     #region ARRAY_MAX
+
+    /// <summary>
+    /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, string[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, int[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, long[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, double[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, decimal[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
+    #region ArrayMin
+    
+    /// <summary>
+    /// Given an array, return the minimum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, string[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the minimum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, int[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the minimum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, long[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the minimum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, double[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Given an array, return the minimum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">The array</param>
+    /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
+    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, decimal[] array)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
+    #region ARRAY_REMOVE
 
     
 
