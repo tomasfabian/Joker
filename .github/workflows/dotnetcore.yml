@@ -14,6 +14,10 @@ jobs:
       Kafka_DotNet_ksqlDB_Test_Project_Path: Tests\Joker.Kafka.Tests\Kafka.DotNet.ksqlDB.Tests.csproj
 
     steps:
+    - task: NuGetToolInstaller@0
+      inputs:
+        versionSpec: 5.9
+
     - uses: actions/checkout@v2
 
     - name: Setup DotNet Core 3.1
