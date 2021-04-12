@@ -474,6 +474,40 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region ArrayMin
+
+    [TestMethod]
+    public void ArrayMin_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int?>> expression = c => K.Functions.ArrayMin(c.Items1);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_MIN({nameof(Collection.Items1)})");
+    }    
+
+    #endregion
+    
+    #region ArrayMax
+
+    [TestMethod]
+    public void ArrayMax_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int?>> expression = c => K.Functions.ArrayMax(c.Items1);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_Max({nameof(Collection.Items1)})");
+    }    
+
+    #endregion
+
     #endregion
 
     #region String functions

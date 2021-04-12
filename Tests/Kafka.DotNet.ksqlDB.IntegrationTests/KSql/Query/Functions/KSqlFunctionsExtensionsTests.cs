@@ -162,6 +162,45 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       actualValues.Count.Should().Be(1);
       actualValues[0].Col.Should().Be(2);
     }
+    
+    [TestMethod]
+    public async Task ArrayMin()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      //Act
+      var source = Context.CreateQuery<Movie>(MoviesTableName)
+        .Select(c => new { Col = KSqlFunctions.Instance.ArrayMin(new [] { 1, 2 } )})
+        .ToAsyncEnumerable();
+      
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      actualValues.Count.Should().Be(1);
+      actualValues[0].Col.Should().Be(1);
+    }
+
+    [TestMethod]
+    [Ignore("Cannot construct an array with all NULL elements")]
+    public async Task ArrayMin_Null()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      //Act
+      var source = Context.CreateQuery<Movie>(MoviesTableName)
+        .Select(c => new { Col = KSqlFunctions.Instance.ArrayMin(new string [] { null })})
+        .ToAsyncEnumerable();
+
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      actualValues.Count.Should().Be(1);
+      actualValues[0].Col.Should().BeNull();
+    }
 
     [TestMethod]
     public async Task ArrayLength_NullValue()
