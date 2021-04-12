@@ -1055,7 +1055,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
 
-    #region ARRAY_MAX
+    #region ArrayMax
 
     /// <summary>
     /// Given an array, return the maximum value. Array entries are compared according to their natural sort order, which sorts the various data-types.
@@ -1063,7 +1063,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, string[] array)
+    public static string? ArrayMax(this KSqlFunctions kSqlFunctions, string[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1085,7 +1085,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, long[] array)
+    public static long? ArrayMax(this KSqlFunctions kSqlFunctions, long[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1096,7 +1096,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, double[] array)
+    public static double? ArrayMax(this KSqlFunctions kSqlFunctions, double[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1107,7 +1107,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the maximum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMax(this KSqlFunctions kSqlFunctions, decimal[] array)
+    public static decimal? ArrayMax(this KSqlFunctions kSqlFunctions, decimal[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1122,7 +1122,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, string[] array)
+    public static string? ArrayMin(this KSqlFunctions kSqlFunctions, string[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1144,7 +1144,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, long[] array)
+    public static long? ArrayMin(this KSqlFunctions kSqlFunctions, long[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1155,7 +1155,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, double[] array)
+    public static double? ArrayMin(this KSqlFunctions kSqlFunctions, double[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
@@ -1166,7 +1166,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
     /// <param name="kSqlFunctions"></param>
     /// <param name="array">The array</param>
     /// <returns>Returns the minimum value from within a given array of primitive elements (not arrays of other arrays, or maps, or structs, or combinations thereof).</returns>
-    public static int? ArrayMin(this KSqlFunctions kSqlFunctions, decimal[] array)
+    public static decimal? ArrayMin(this KSqlFunctions kSqlFunctions, decimal[] array)
     {
       throw new InvalidOperationException(ServerSideOperationErrorMessage);
     }
