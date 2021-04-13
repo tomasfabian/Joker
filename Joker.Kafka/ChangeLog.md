@@ -121,9 +121,10 @@ Fixes:
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
 
 # v0.8.0-preview (WIP) - not released yet
-- scalar collection functions: ArrayMax, ArrayMin
+- scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
 - BETWEEN
+- CAST

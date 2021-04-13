@@ -1173,7 +1173,71 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Functions
 
     #endregion
 
-    #region ARRAY_REMOVE
+    #region ArrayRemove
+
+    /// <summary>
+    /// Removes all elements from the input array equal to element.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values</param>
+    /// <param name="element">Value to remove</param>
+    /// <returns>If the array field is NULL then NULL is returned.</returns>
+    public static string[] ArrayRemove(this KSqlFunctions kSqlFunctions, string[] array, string element)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Removes all elements from the input array equal to element.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values</param>
+    /// <param name="element">Value to remove</param>
+    /// <returns>If the array field is NULL then NULL is returned.</returns>
+    public static int[] ArrayRemove(this KSqlFunctions kSqlFunctions, int[] array, int element)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Removes all elements from the input array equal to element.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values</param>
+    /// <param name="element">Value to remove</param>
+    /// <returns>If the array field is NULL then NULL is returned.</returns>
+    public static long[] ArrayRemove(this KSqlFunctions kSqlFunctions, long[] array, long element)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Removes all elements from the input array equal to element.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values</param>
+    /// <param name="element">Value to remove</param>
+    /// <returns>If the array field is NULL then NULL is returned.</returns>
+    public static double[] ArrayRemove(this KSqlFunctions kSqlFunctions, double[] array, double element)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    /// <summary>
+    /// Removes all elements from the input array equal to element.
+    /// </summary>
+    /// <param name="kSqlFunctions"></param>
+    /// <param name="array">Array of values</param>
+    /// <param name="element">Value to remove</param>
+    /// <returns>If the array field is NULL then NULL is returned.</returns>
+    public static decimal[] ArrayRemove(this KSqlFunctions kSqlFunctions, decimal[] array, decimal element)
+    {
+      throw new InvalidOperationException(ServerSideOperationErrorMessage);
+    }
+
+    #endregion
+
+    #region ARRAY_SORT
 
     
 
