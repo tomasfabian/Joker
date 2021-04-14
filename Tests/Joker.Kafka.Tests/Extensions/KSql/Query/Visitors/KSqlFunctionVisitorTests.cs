@@ -457,6 +457,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Visitors
 
     #endregion
 
+    #region ArrayRemove
+
+    [TestMethod]
+    public void ArrayRemoveArrayJoin_BuildKSql_PrintsFunction()
+    {
+      //Arrange
+      Expression<Func<Collection, int[]>> expression = c => K.Functions.ArrayRemove(c.Items1, 1);
+
+      //Act
+      var query = ClassUnderTest.BuildKSql(expression);
+
+      //Assert
+      query.Should().BeEquivalentTo($"ARRAY_REMOVE({nameof(Collection.Items1)}, 1)");
+    }    
+
+    #endregion
+
     #region ArrayLength
 
     [TestMethod]

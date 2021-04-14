@@ -220,5 +220,24 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Query.Functions
       actualValues.Count.Should().Be(1);
       actualValues[0].Col.Should().BeNull();
     }
+    
+    [TestMethod]
+    public async Task ArrayRemove()
+    {
+      //Arrange
+      int expectedItemsCount = 1;
+      
+      //Act
+      var source = Context.CreateQuery<Movie>(MoviesTableName)
+        .Select(c => new { Col = KSqlFunctions.Instance.ArrayRemove(new [] { 1, 2 }, 2)})
+        .ToAsyncEnumerable();
+      
+      var actualValues = await CollectActualValues(source, expectedItemsCount);
+      
+      //Assert
+      Assert.AreEqual(expectedItemsCount, actualValues.Count);
+      actualValues.Count.Should().Be(1);
+      actualValues[0].Col.Length.Should().Be(1);
+    }
   }
 }
