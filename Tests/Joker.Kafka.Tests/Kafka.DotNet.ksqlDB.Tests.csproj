@@ -22,4 +22,9 @@
     <ProjectReference Include="..\..\Joker.Kafka\Kafka.DotNet.ksqlDB.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+  </ItemGroup>
 </Project>
