@@ -1,13 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.KSql.RestApi;
+﻿using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Query;
-using Kafka.DotNet.ksqlDB.Tests.Helpers;
-using Moq;
-using Moq.Protected;
+using Kafka.DotNet.ksqlDB.Tests.Fakes.Http;
+using System.Net.Http;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {
@@ -22,26 +16,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 
     protected override HttpClient OnCreateHttpClient()
     {     
-      var handlerMock = new Mock<HttpMessageHandler>();
-
-      handlerMock
-        .Protected()
-        .Setup<Task<HttpResponseMessage>>(
-          nameof(HttpClient.SendAsync),
-          ItExpr.IsAny<HttpRequestMessage>(),
-          ItExpr.IsAny<CancellationToken>()
-        )
-        .ReturnsAsync(new HttpResponseMessage()
-        {
-          StatusCode = HttpStatusCode.OK,
-          Content = new StringContent(QueryResponse),
-        })
-        .Verifiable();
-
-      return new HttpClient(handlerMock.Object)
-      {
-        BaseAddress = new Uri(TestParameters.KsqlDBUrl)
-      };
+      return FakeHttpClient.CreateWithResponse(QueryResponse);;
     }
   }
 }

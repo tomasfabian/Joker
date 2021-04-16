@@ -17,7 +17,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
 
-    private readonly string mediaType = "application/vnd.ksql.v1+json";
+    internal static readonly string MediaType = "application/vnd.ksql.v1+json";
 
     public async Task<HttpResponseMessage> ExecuteStatementAsync(KSqlDbStatement ksqlDbStatement, CancellationToken cancellationToken = default)
     {
@@ -26,7 +26,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       var httpRequestMessage = CreateHttpRequestMessage(ksqlDbStatement);
       
       httpClient.DefaultRequestHeaders.Accept.Add(
-        new MediaTypeWithQualityHeaderValue(mediaType));
+        new MediaTypeWithQualityHeaderValue(MediaType));
 
       var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
         HttpCompletionOption.ResponseHeadersRead,
@@ -35,7 +35,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       return httpResponseMessage;
     }
 
-    private HttpRequestMessage CreateHttpRequestMessage(KSqlDbStatement ksqlDbStatement)
+    internal HttpRequestMessage CreateHttpRequestMessage(KSqlDbStatement ksqlDbStatement)
     {
       var data = CreateContent(ksqlDbStatement);
 
@@ -49,7 +49,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       return httpRequestMessage;
     }
 
-    private StringContent CreateContent(KSqlDbStatement ksqlDbStatement)
+    internal StringContent CreateContent(KSqlDbStatement ksqlDbStatement)
     {
       var statement = new KSqlStatement
       {
@@ -58,12 +58,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
       var json = JsonSerializer.Serialize(statement);
 
-      var data = new StringContent(json, ksqlDbStatement.ContentEncoding, mediaType);
+      var data = new StringContent(json, ksqlDbStatement.ContentEncoding, MediaType);
 
       return data;
     }
 
-    private static string GetEndpoint(KSqlDbStatement ksqlDbStatement)
+    internal static string GetEndpoint(KSqlDbStatement ksqlDbStatement)
     {
       var endpoint = ksqlDbStatement.EndpointType switch
       {
