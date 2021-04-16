@@ -1155,6 +1155,73 @@ var source = context.CreateQueryStream<Movie>(queryStreamParameters)
   .ToObservable();
 ```
 
+# v0.8.0 (WIP - preview):
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.8.0-rc.1
+```
+
+# KSqlDbRestApiClient
+### ExecuteStatementAsync (v0.8.0)
+*ExecuteStatementAsync* - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
+
+```C#
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
+
+public async Task ExecuteStatementAsync()
+{
+  var ksqlDbUrl = @"http:\\localhost:8088";
+
+  var httpClientFactory = new HttpClientFactory(new Uri(ksqlDbUrl));
+
+  IKSqlDbRestApiClient restApiClient = new KSqlDbRestApiClient(httpClientFactory);
+
+  var statement = $@"CREATE OR REPLACE TABLE {nameof(Movies)} (
+        title VARCHAR PRIMARY KEY,
+        id INT,
+        release_year INT
+      ) WITH (
+        KAFKA_TOPIC='{nameof(Movies)}',
+        PARTITIONS=1,
+        VALUE_FORMAT = 'JSON'
+      );";
+
+  KSqlDbStatement ksqlDbStatement = new(statement);
+  var httpResponseMessage = await restApiClient.ExecuteStatementAsync(ksqlDbStatement);
+
+  string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+}
+
+public record Movies
+{
+  public int Id { get; set; }
+
+  public string Title { get; set; }
+
+  public int Release_Year { get; set; }
+}
+```
+
+### KSqlDbStatement (v0.8.0)
+KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
+
+EndpointType.Query use => /query
+EndpointType.KSql use => /ksql
+
+```C#
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
+
+public KSqlDbStatement CreateStatement(string statement)
+{
+  KSqlDbStatement ksqlDbStatement = new(statement) {
+    ContentEncoding = Encoding.Unicode,
+    EndpointType = EndpointType.Query
+  };
+	
+  return ksqlDbStatement;
+}
+```
+
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
 

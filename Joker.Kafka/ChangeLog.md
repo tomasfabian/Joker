@@ -123,6 +123,13 @@ Fixes:
 # v0.8.0-preview (WIP) - not released yet
 - scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
 
+Implementations:
+### KSqlDbRestApiClient: 
+- ExecuteStatementAsync - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
+
+### KSqlDbStatement
+- KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
+
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
