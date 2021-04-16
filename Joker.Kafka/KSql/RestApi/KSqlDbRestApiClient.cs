@@ -8,11 +8,11 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 {
-  public class KSqlDbRestApiProvider
+  public class KSqlDbRestApiClient : IKSqlDbRestApiClient
   {
     private readonly IHttpClientFactory httpClientFactory;
 
-    public KSqlDbRestApiProvider(IHttpClientFactory httpClientFactory)
+    public KSqlDbRestApiClient(IHttpClientFactory httpClientFactory)
     {
       this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
