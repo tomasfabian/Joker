@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Kafka.DotNet.ksqlDB.KSql.Query.Options;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters
 {
-  public sealed class QueryParameters : IQueryParameters
+  public class QueryParameters : IQueryParameters
   {
     [JsonPropertyName("ksql")]
     public string Sql { get; set; }
@@ -20,6 +20,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters
       set => Properties[key] = value;
     }
 
-    internal QueryType QueryType { get; } = QueryType.Query;
+    internal EndpointType EndpointType { get; set; } = EndpointType.Query;
   }
 }

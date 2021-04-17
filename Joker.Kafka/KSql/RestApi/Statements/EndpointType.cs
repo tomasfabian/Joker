@@ -2,7 +2,8 @@
 {
   public enum EndpointType
   {
-    KSql,
-    Query
+    Query,
+    QueryStream,
+    KSql
   }
 }

@@ -30,7 +30,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
       var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
         HttpCompletionOption.ResponseHeadersRead,
-        cancellationToken);
+        cancellationToken).ConfigureAwait(false);
 			
       return httpResponseMessage;
     }
@@ -51,12 +51,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
     internal StringContent CreateContent(KSqlDbStatement ksqlDbStatement)
     {
-      var statement = new KSqlStatement
-      {
-        ksql = ksqlDbStatement.StatementText
-      };
-
-      var json = JsonSerializer.Serialize(statement);
+      var json = JsonSerializer.Serialize(ksqlDbStatement);
 
       var data = new StringContent(json, ksqlDbStatement.ContentEncoding, MediaType);
 
