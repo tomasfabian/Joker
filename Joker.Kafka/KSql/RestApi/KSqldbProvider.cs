@@ -37,7 +37,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
       //https://docs.ksqldb.io/en/latest/developer-guide/api/
       var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
         HttpCompletionOption.ResponseHeadersRead,
-        cancellationToken);
+        cancellationToken)
+        .ConfigureAwait(false);
 
       var stream = await httpResponseMessage.Content.ReadAsStreamAsync();
       using var streamReader = new StreamReader(stream);
@@ -47,7 +48,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         if (cancellationToken.IsCancellationRequested)
           yield break;
 
-        var rawJson = await streamReader.ReadLineAsync();
+        var rawJson = await streamReader.ReadLineAsync()
+          .ConfigureAwait(false);
 
         var record = OnLineRead<T>(rawJson);
 
