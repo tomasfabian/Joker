@@ -19,7 +19,9 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
         {
           var responseObject = JsonSerializer.Deserialize<KSqlDbRestApiClientTests.StatementResponse[]>(responseContent);
 
-          return responseObject != null && responseObject.All(c => c.CommandStatus.Status == "SUCCESS");
+          var isSuccess = responseObject != null && responseObject.All(c => c.CommandStatus.Status == "SUCCESS");
+
+          return isSuccess;
         }
       }
       catch (Exception e)

@@ -44,7 +44,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       var ksqlDbStatement = new KSqlDbStatement(Statement);
 
       //Act
-      var statementText = ksqlDbStatement.StatementText;
+      var statementText = ksqlDbStatement.Sql;
 
       //Assert
       statementText.Should().Be(Statement);

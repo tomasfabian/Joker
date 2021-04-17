@@ -75,7 +75,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 
       //Assert
       var content = await httpRequestMessage.Content.ReadAsStringAsync();
-      content.Should().Be(@$"{{""ksql"":""{statement}""}}");
+      content.Should().Be(@$"{{""ksql"":""{statement}"",""streamsProperties"":{{}}}}");
     }
 
     [TestMethod]
@@ -122,7 +122,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       //Assert
       var content = await GetContent(stringContent);
       
-      content.Should().Be(@$"{{""ksql"":""{statement}""}}");
+      content.Should().Be(@$"{{""ksql"":""{statement}"",""streamsProperties"":{{}}}}");
     }
 
     [TestMethod]
@@ -141,7 +141,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       //Assert
       var content = await GetContent(stringContent);
 
-      content.Should().Be(@$"{{""ksql"":""{statement}"",""commandSequenceNumber"":{commandSequenceNumber}}}");
+      content.Should().Be(@$"{{""commandSequenceNumber"":{commandSequenceNumber},""ksql"":""{statement}"",""streamsProperties"":{{}}}}");
     }
 
     private static async Task<string> GetContent(StringContent stringContent)
