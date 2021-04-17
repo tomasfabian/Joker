@@ -1162,7 +1162,7 @@ Install-Package Kafka.DotNet.ksqlDB -Version 0.8.0-rc.1
 
 # KSqlDbRestApiClient
 ### ExecuteStatementAsync (v0.8.0)
-*ExecuteStatementAsync* - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
+[Execute a statement](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/ksql-endpoint/) - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
 
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
@@ -1203,10 +1203,7 @@ public record Movies
 ```
 
 ### KSqlDbStatement (v0.8.0)
-KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
-
-EndpointType.Query use => /query
-EndpointType.KSql use => /ksql
+KSqlDbStatement allows you to set the statement, content encoding and [CommandSequenceNumber](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/ksql-endpoint/#coordinate-multiple-requests). 
 
 ```C#
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
@@ -1215,7 +1212,8 @@ public KSqlDbStatement CreateStatement(string statement)
 {
   KSqlDbStatement ksqlDbStatement = new(statement) {
     ContentEncoding = Encoding.Unicode,
-    EndpointType = EndpointType.Query
+    CommandSequenceNumber = 10,
+    [QueryStreamParameters.AutoOffsetResetPropertyName] = "earliest",
   };
 	
   return ksqlDbStatement;
@@ -1226,7 +1224,10 @@ public KSqlDbStatement CreateStatement(string statement)
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/
 
 **TODO:**
-- missing [aggregation functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/aggregate-functions/) and [scalar functions](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/)
+- [CREATE STREAM](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-stream/)
+- [CREATE TABLE](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-table/)
+- [CREATE STREAM AS SELECT](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-stream-as-select/)
+- [CREATE TABLE AS SELECT](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-table-as-select/)
 - rest of the [ksql query syntax](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-push-query/) (supported operators etc)
 - backpressure support
 
