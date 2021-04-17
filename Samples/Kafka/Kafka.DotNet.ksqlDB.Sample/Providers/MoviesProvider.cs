@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Kafka.DotNet.ksqlDB.Sample.Models.Movies;
 
 namespace Kafka.DotNet.ksqlDB.Sample.Providers
@@ -28,8 +29,10 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
         PARTITIONS=1,
         VALUE_FORMAT = 'JSON'
       );";
+      
+      KSqlDbStatement ksqlDbStatement = new(createMoviesTable);
 
-      var result = await restApiProvider.ExecuteStatementAsync(createMoviesTable);
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
 
       var createActorsTable = $@"CREATE TABLE {ActorsTableName} (
         title VARCHAR PRIMARY KEY,
@@ -39,27 +42,29 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
         PARTITIONS=1,
         VALUE_FORMAT='JSON'
       );";
+      
+      ksqlDbStatement = new(createActorsTable);
 
-      result = await restApiProvider.ExecuteStatementAsync(createActorsTable);
+      result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
 
       return true;
     }
 
-    public static readonly Movie Movie1 = new Movie()
+    public static readonly Movie Movie1 = new()
     {
       Id = 1,
       Release_Year = 1986,
       Title = "Aliens"
     };
 
-    public static readonly Movie Movie2 = new Movie()
+    public static readonly Movie Movie2 = new()
     {
       Id = 2,
       Release_Year = 1998,
       Title = "Die Hard"
     };
 
-    public static readonly Lead_Actor LeadActor1 = new Lead_Actor()
+    public static readonly Lead_Actor LeadActor1 = new()
     {
       Actor_Name = "Sigourney Weaver",
       Title = "Aliens"
@@ -69,8 +74,10 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
     {
       string insert =
         $"INSERT INTO {MoviesTableName} ({nameof(Movie.Id)}, {nameof(Movie.Title)}, {nameof(Movie.Release_Year)}) VALUES ({movie.Id}, '{movie.Title}', {movie.Release_Year});";
+      
+      KSqlDbStatement ksqlDbStatement = new(insert);
 
-      var result = await restApiProvider.ExecuteStatementAsync(insert);      
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);      
 
       return result;
     }
@@ -79,8 +86,10 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
     {
       string insert =
         $"INSERT INTO {ActorsTableName} ({nameof(Lead_Actor.Title)}, {nameof(Lead_Actor.Actor_Name)}) VALUES ('{actor.Title}', '{actor.Actor_Name}');";
+      
+      KSqlDbStatement ksqlDbStatement = new(insert);
 
-      var result = await restApiProvider.ExecuteStatementAsync(insert);      
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);      
 
       return result;
     }

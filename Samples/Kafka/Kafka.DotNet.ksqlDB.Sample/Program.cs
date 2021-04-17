@@ -43,13 +43,13 @@ namespace Kafka.DotNet.ksqlDB.Sample
     public static async Task Main(string[] args)
     {
       var ksqlDbUrl = @"http:\\localhost:8088";
-      
+
       var httpClientFactory = new HttpClientFactory(new Uri(ksqlDbUrl));
       var restApiProvider = new KSqlDbRestApiProvider(httpClientFactory);
       var moviesProvider = new MoviesProvider(restApiProvider);
 
       await moviesProvider.CreateTablesAsync();
-      
+
       var contextOptions = CreateQueryStreamOptions(ksqlDbUrl);
 
       await using var context = new KSqlDBContext(contextOptions);
@@ -76,6 +76,8 @@ namespace Kafka.DotNet.ksqlDB.Sample
       Console.WriteLine("Press any key to stop the subscription");
 
       Console.ReadKey();
+
+      await moviesProvider.DropTablesAsync();
 
       Console.WriteLine("Subscription completed");
     }
@@ -455,7 +457,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
           {
             Title = c.Title,
             Id = c.Id,
-          }, 
+          },
           new MovieStruct
           {
             Title = "test",
@@ -534,7 +536,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       string ksql = context.CreateQueryStream<Movie>()
         .Where(p => p.Title != "E.T.").Take(2)
         .ToQueryString();
-      
+
       QueryStreamParameters queryStreamParameters = new QueryStreamParameters
       {
         Sql = ksql,
