@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Movies;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 {
@@ -20,7 +25,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 
     public async Task<bool> CreateTablesAsync()
     {
-      var createMoviesTable = $@"CREATE TABLE {MoviesTableName} (
+      var createMoviesTable = $@"CREATE OR REPLACE TABLE {MoviesTableName} (
         title VARCHAR PRIMARY KEY,
         id INT,
         release_year INT
@@ -29,9 +34,11 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
         PARTITIONS=1,
         VALUE_FORMAT = 'JSON'
       );";
+      
+      KSqlDbStatement ksqlDbStatement = new(createMoviesTable);
 
-      var result = await restApiProvider.ExecuteStatementAsync(createMoviesTable);
-      result.Should().BeTrue();
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
+      result.IsSuccess().Should().BeTrue();
 
       var createActorsTable = $@"CREATE TABLE {ActorsTableName} (
         title VARCHAR PRIMARY KEY,
@@ -42,8 +49,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
         VALUE_FORMAT='JSON'
       );";
 
-      result = await restApiProvider.ExecuteStatementAsync(createActorsTable);
-      result.Should().BeTrue();
+      ksqlDbStatement = new KSqlDbStatement(createActorsTable);
+
+      result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
+      result.IsSuccess().Should().BeTrue();
 
       return true;
     }
@@ -78,8 +87,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     {
       string insert =
         $"INSERT INTO {MoviesTableName} ({nameof(Movie.Id)}, {nameof(Movie.Title)}, {nameof(Movie.Release_Year)}) VALUES ({movie.Id}, '{movie.Title}', {movie.Release_Year});";
+      
+      KSqlDbStatement ksqlDbStatement = new(insert);
 
-      var result = await restApiProvider.ExecuteStatementAsync(insert);      
+      var result = (await restApiProvider.ExecuteStatementAsync(ksqlDbStatement)).IsSuccess();      
       result.Should().BeTrue();
 
       return result;
@@ -89,8 +100,10 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     {
       string insert =
         $"INSERT INTO {ActorsTableName} ({nameof(Lead_Actor.Title)}, {nameof(Lead_Actor.Actor_Name)}) VALUES ('{actor.Title}', '{actor.Actor_Name}');";
+      
+      KSqlDbStatement ksqlDbStatement = new(insert);
 
-      var result = await restApiProvider.ExecuteStatementAsync(insert);      
+      var result = (await restApiProvider.ExecuteStatementAsync(ksqlDbStatement)).IsSuccess();      
       result.Should().BeTrue();
 
       return result;
@@ -100,6 +113,30 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     {
       await restApiProvider.DropTableAndTopic(ActorsTableName);
       await restApiProvider.DropTableAndTopic(MoviesTableName);
+    }
+  }
+
+  public static class Extensions
+  {
+    public static bool IsSuccess(this HttpResponseMessage httpResponseMessage)
+    {
+      try
+      {
+        string responseContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+      
+        var responseObject = JsonSerializer.Deserialize<KSqlDbRestApiClientTests.StatementResponse[]>(responseContent);
+
+        if (responseObject == null || !responseObject.Any())
+          return httpResponseMessage.StatusCode == HttpStatusCode.OK;
+
+        return responseObject?[0].CommandStatus.Status == "SUCCESS";
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+
+        return false;
+      }
     }
   }
 }

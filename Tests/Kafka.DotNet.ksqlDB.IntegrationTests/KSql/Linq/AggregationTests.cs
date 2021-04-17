@@ -36,7 +36,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [TestMethod]
     public async Task Histogram()
     {
-      await TestHistogram(Context.CreateQueryStream<Movie>());
+      await TestHistogram(Context.CreateQueryStream<Movie>(MoviesProvider.MoviesTableName));
     }
 
     private async Task TestHistogram(IQbservable<Movie> querySource)
@@ -65,7 +65,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     [TestMethod]
     public async Task Histogram_QueryEndPoint()
     {
-      await TestHistogram(Context.CreateQuery<Movie>());
+      await TestHistogram(Context.CreateQuery<Movie>(MoviesProvider.MoviesTableName));
     }
   }
 }

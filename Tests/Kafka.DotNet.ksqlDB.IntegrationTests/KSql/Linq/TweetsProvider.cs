@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 {
@@ -36,9 +37,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     public async Task<bool> CreateTweetsStream(string streamName, string topicName)
     {
       var ksql = $"CREATE STREAM {streamName}(id INT, message VARCHAR, isRobot BOOLEAN, amount DOUBLE, accountBalance DECIMAL(16,4))\r\n  WITH (kafka_topic='{topicName}', value_format='json', partitions=1);";
-      var result = await restApiProvider.ExecuteStatementAsync(ksql);
+      
+      KSqlDbStatement ksqlDbStatement = new(ksql);
 
-      return result;
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
+
+      return result.IsSuccess();
     }
 
     public string CreateInsertTweetStatement(Tweet tweet, string streamName)
@@ -54,10 +58,12 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     public async Task<bool> InsertTweetAsync(Tweet tweet, string streamName)
     {
       var insert = CreateInsertTweetStatement(tweet, streamName);
+      
+      KSqlDbStatement ksqlDbStatement = new(insert);
 
-      var result = await restApiProvider.ExecuteStatementAsync(insert);
+      var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
 
-      return result;
+      return result.IsSuccess();
     }
   }
 }
