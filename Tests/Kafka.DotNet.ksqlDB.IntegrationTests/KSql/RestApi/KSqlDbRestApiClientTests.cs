@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
@@ -13,29 +15,23 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
   [TestClass]
   public class KSqlDbRestApiClientTests
   {
-    [TestMethod]
-    public async Task ExecuteStatementAsync()
+    private IKSqlDbRestApiClient restApiClient;
+
+    [TestInitialize]
+    public void Initialize()
     {
-      //Arrange
       var ksqlDbUrl = @"http:\\localhost:8088";
 
       var httpClientFactory = new HttpClientFactory(new Uri(ksqlDbUrl));
 
-      IKSqlDbRestApiClient restApiClient = new KSqlDbRestApiClient(httpClientFactory);
+      restApiClient = new KSqlDbRestApiClient(httpClientFactory);
+    }
 
-      string tableName = "TestTable";
-
-      var statement = $@"CREATE OR REPLACE TABLE {tableName} (
-        title VARCHAR PRIMARY KEY,
-        id INT,
-        release_year INT
-      ) WITH (
-        KAFKA_TOPIC='{tableName}',
-        PARTITIONS=1,
-        VALUE_FORMAT = 'JSON'
-      );";
-
-      KSqlDbStatement ksqlDbStatement = new(statement);
+    [TestMethod]
+    public async Task ExecuteStatementAsync()
+    {
+      //Arrange
+      KSqlDbStatement ksqlDbStatement = new(CreateTableStatement());
 
       //Act
       var httpResponseMessage = await restApiClient.ExecuteStatementAsync(ksqlDbStatement);
@@ -49,7 +45,35 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
       responseObject?[0].CommandStatus.Status.Should().Be("SUCCESS");
       responseObject?[0].CommandStatus.Message.Should().Be("Table created");
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(TaskCanceledException))]
+    public async Task ExecuteStatementAsync_Cancelled_ThrowsTaskCanceledException()
+    {
+      //Arrange
+      KSqlDbStatement ksqlDbStatement = new(CreateTableStatement());
+      var cts = new CancellationTokenSource();
+
+      //Act
+      var httpResponseMessageTask = restApiClient.ExecuteStatementAsync(ksqlDbStatement, cts.Token);
+      cts.Cancel();
+
+      HttpResponseMessage httpResponseMessage = await httpResponseMessageTask;
+    }
     
+    private string CreateTableStatement(string tableName = "TestTable")
+    {
+      return $@"CREATE OR REPLACE TABLE {tableName} (
+        title VARCHAR PRIMARY KEY,
+        id INT,
+        release_year INT
+      ) WITH (
+        KAFKA_TOPIC='{tableName}',
+        PARTITIONS=1,
+        VALUE_FORMAT = 'JSON'
+      );";
+    }
+
     public class StatementResponse
     {
       [JsonPropertyName("commandStatus")]

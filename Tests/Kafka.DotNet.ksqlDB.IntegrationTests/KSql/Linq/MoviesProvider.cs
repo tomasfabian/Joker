@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
@@ -38,9 +34,11 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       KSqlDbStatement ksqlDbStatement = new(createMoviesTable);
 
       var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
-      result.IsSuccess().Should().BeTrue();
+      var isSuccess = result.IsSuccess();
+      
+      isSuccess.Should().BeTrue();
 
-      var createActorsTable = $@"CREATE TABLE {ActorsTableName} (
+      var createActorsTable = $@"CREATE OR REPLACE TABLE {ActorsTableName} (
         title VARCHAR PRIMARY KEY,
         actor_name VARCHAR
       ) WITH (
@@ -52,7 +50,9 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
       ksqlDbStatement = new KSqlDbStatement(createActorsTable);
 
       result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
-      result.IsSuccess().Should().BeTrue();
+      isSuccess = result.IsSuccess();
+      
+      isSuccess.Should().BeTrue();
 
       return true;
     }
@@ -113,30 +113,6 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
     {
       await restApiProvider.DropTableAndTopic(ActorsTableName);
       await restApiProvider.DropTableAndTopic(MoviesTableName);
-    }
-  }
-
-  public static class Extensions
-  {
-    public static bool IsSuccess(this HttpResponseMessage httpResponseMessage)
-    {
-      try
-      {
-        string responseContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-      
-        var responseObject = JsonSerializer.Deserialize<KSqlDbRestApiClientTests.StatementResponse[]>(responseContent);
-
-        if (responseObject == null || !responseObject.Any())
-          return httpResponseMessage.StatusCode == HttpStatusCode.OK;
-
-        return responseObject?[0].CommandStatus.Status == "SUCCESS";
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-
-        return false;
-      }
     }
   }
 }
