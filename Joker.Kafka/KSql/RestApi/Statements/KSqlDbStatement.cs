@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
-  public record KSqlDbStatement
+  public sealed record KSqlDbStatement
   {
     public KSqlDbStatement(string statement)
     {
@@ -18,5 +18,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
     public EndpointType EndpointType { get; set; } = EndpointType.KSql;
 
     public Encoding ContentEncoding { get; set; } = Encoding.UTF8;
+
+    public long? CommandSequenceNumber  { get; set; }
   }
 }

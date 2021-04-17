@@ -120,10 +120,37 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       var stringContent = ClassUnderTest.CreateContent(ksqlDbStatement);
 
       //Assert
+      var content = await GetContent(stringContent);
+      
+      content.Should().Be(@$"{{""ksql"":""{statement}""}}");
+    }
+
+    [TestMethod]
+    public async Task CreateContent_CommandSequenceNumber()
+    {
+      //Arrange
+      long commandSequenceNumber = 1000;
+      var ksqlDbStatement = new KSqlDbStatement(statement)
+      {
+        CommandSequenceNumber = commandSequenceNumber
+      };
+
+      //Act
+      var stringContent = ClassUnderTest.CreateContent(ksqlDbStatement);
+
+      //Assert
+      var content = await GetContent(stringContent);
+
+      content.Should().Be(@$"{{""ksql"":""{statement}"",""commandSequenceNumber"":{commandSequenceNumber}}}");
+    }
+
+    private static async Task<string> GetContent(StringContent stringContent)
+    {
       var byteArray = await stringContent.ReadAsByteArrayAsync();
+
       var content = Encoding.Default.GetString(byteArray);
 
-      content.Should().Be(@$"{{""ksql"":""{statement}""}}");
+      return content;
     }
 
     [TestMethod]
