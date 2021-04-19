@@ -1,3 +1,15 @@
+# v0.8.0
+- scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
+
+Extensions:
+- HttpResponseMessageExtensions - ToStatementResponse
+
+### KSqlDbRestApiClient: 
+- ExecuteStatementAsync - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
+
+### KSqlDbStatement
+- KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
+
 # v0.7.0:
 - [operator precedence](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#lexical-precedence-v070)
 - fixed VisitNew with several binary expressions, all except the first were skipped
@@ -119,16 +131,6 @@ Fixes:
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
-
-# v0.8.0-preview (WIP) - not released yet
-- scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
-
-Implementations:
-### KSqlDbRestApiClient: 
-- ExecuteStatementAsync - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
-
-### KSqlDbStatement
-- KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time

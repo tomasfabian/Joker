@@ -1160,7 +1160,7 @@ var source = context.CreateQueryStream<Movie>(queryStreamParameters)
 Install-Package Kafka.DotNet.ksqlDB -Version 0.8.0-rc.1
 ```
 
-# KSqlDbRestApiClient
+# KSqlDbRestApiClient (v0.8.0)
 ### ExecuteStatementAsync (v0.8.0)
 [Execute a statement](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/ksql-endpoint/) - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
 
@@ -1217,6 +1217,21 @@ public KSqlDbStatement CreateStatement(string statement)
   };
 	
   return ksqlDbStatement;
+}
+```
+
+### HttpResponseMessage ToStatementResponses extension (v0.8.0)
+```C#
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
+
+var httpResponseMessage = await restApiClient.ExecuteStatementAsync(ksqlDbStatement);
+
+var responses = httpResponseMessage.ToStatementResponses();
+
+foreach (var response in responses)
+{
+	Console.WriteLine(response.CommandStatus);
+	Console.WriteLine(response.CommandId);
 }
 ```
 
