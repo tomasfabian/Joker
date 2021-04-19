@@ -20,7 +20,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
 
     public async Task<bool> CreateTablesAsync()
     {
-      var createMoviesTable = $@"CREATE TABLE {MoviesTableName} (
+      var createMoviesTable = $@"CREATE OR REPLACE TABLE {MoviesTableName} (
         title VARCHAR PRIMARY KEY,
         id INT,
         release_year INT
