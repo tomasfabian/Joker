@@ -2,13 +2,13 @@
 - scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
 
 Extensions:
-- HttpResponseMessageExtensions - ToStatementResponse
+- HttpResponseMessageExtensions - [ToStatementResponse](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#httpresponsemessage-tostatementresponses-extension-v080)
 
 ### KSqlDbRestApiClient: 
 - ExecuteStatementAsync - The /ksql resource runs a sequence of SQL statements. All statements, except those starting with SELECT, can be run on this endpoint. To run SELECT statements use the /query endpoint.
 
 ### KSqlDbStatement
-- KSqlDbStatement allows you to set the statement, content encoding and the endpoint. 
+- [KSqlDbStatement](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#ksqldbstatement-v080) allows you to set the statement, content encoding and the CommandSequenceNumber. 
 
 # v0.7.0:
 - [operator precedence](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#lexical-precedence-v070)
