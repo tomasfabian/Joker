@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
 
 namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
 {
@@ -11,15 +11,13 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq
   {
     public static bool IsSuccess(this HttpResponseMessage httpResponseMessage)
     {
-      string responseContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-      
       try
       {
         if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
         {
-          var responseObject = JsonSerializer.Deserialize<KSqlDbRestApiClientTests.StatementResponse[]>(responseContent);
+          var responsesObject = httpResponseMessage.ToStatementResponses();
 
-          var isSuccess = responseObject != null && responseObject.All(c => c.CommandStatus.Status == "SUCCESS");
+          var isSuccess = responsesObject != null && responsesObject.All(c => c.CommandStatus.Status == "SUCCESS");
 
           return isSuccess;
         }

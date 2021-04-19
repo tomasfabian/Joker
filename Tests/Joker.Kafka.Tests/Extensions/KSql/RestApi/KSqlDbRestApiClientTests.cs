@@ -1,35 +1,25 @@
 ﻿using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
-using Kafka.DotNet.ksqlDB.Tests.Fakes.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using UnitTests;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
 {
   [TestClass]
-  public class KSqlDbRestApiClientTests : TestBase
+  public class KSqlDbRestApiClientTests : KSqlDbRestApiClientTestsBase
   {
     private KSqlDbRestApiClient ClassUnderTest { get; set; }
-
-    private IHttpClientFactory httpClientFactory;
-    private HttpClient httpClient;
 
     [TestInitialize]
     public override void TestInitialize()
     {
       base.TestInitialize();
 
-      httpClientFactory = Mock.Of<IHttpClientFactory>();
-      httpClient = FakeHttpClient.CreateWithResponse(StatementResponse);
-      
-      Mock.Get(httpClientFactory).Setup(c => c.CreateClient()).Returns(httpClient);
-
-      ClassUnderTest = new KSqlDbRestApiClient(httpClientFactory);
+      ClassUnderTest = new KSqlDbRestApiClient(HttpClientFactory);
     }
     
     string statement = "CREATE OR REPLACE TABLE movies";
@@ -46,7 +36,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       //Assert
       httpResponseMessage.Should().NotBeNull();
 
-      Mock.Get(httpClientFactory).Verify(c => c.CreateClient(), Times.Once);
+      Mock.Get(HttpClientFactory).Verify(c => c.CreateClient(), Times.Once);
     }
     
     [TestMethod]
@@ -182,7 +172,7 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi
       endpoint.Should().Be("/query");
     }
 
-    private string StatementResponse = @"[{""@type"":""currentStatus"",""statementText"":""CREATE OR REPLACE TABLE MOVIES (TITLE STRING PRIMARY KEY, ID INTEGER, RELEASE_YEAR INTEGER) WITH (KAFKA_TOPIC='Movies', KEY_FORMAT='KAFKA', PARTITIONS=1, VALUE_FORMAT='JSON');"",""commandId"":""table/`MOVIES`/create"",""commandStatus"":{""status"":""SUCCESS"",""message"":""Table created"",""queryId"":null},""commandSequenceNumber"":328,""warnings"":[]}]
+    protected override string StatementResponse { get; set; } = @"[{""@type"":""currentStatus"",""statementText"":""CREATE OR REPLACE TABLE MOVIES (TITLE STRING PRIMARY KEY, ID INTEGER, RELEASE_YEAR INTEGER) WITH (KAFKA_TOPIC='Movies', KEY_FORMAT='KAFKA', PARTITIONS=1, VALUE_FORMAT='JSON');"",""commandId"":""table/`MOVIES`/create"",""commandStatus"":{""status"":""SUCCESS"",""message"":""Table created"",""queryId"":null},""commandSequenceNumber"":328,""warnings"":[]}]
 ";
   }
 }

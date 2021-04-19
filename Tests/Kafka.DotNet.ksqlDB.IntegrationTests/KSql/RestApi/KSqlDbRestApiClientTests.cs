@@ -74,19 +74,19 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
       );";
     }
 
-    public class StatementResponse
-    {
-      [JsonPropertyName("commandStatus")]
-      public CommandStatus CommandStatus { get; set; }
-    }
+    //public class StatementResponse
+    //{
+    //  [JsonPropertyName("commandStatus")]
+    //  public CommandStatus CommandStatus { get; set; }
+    //}
 
-    public class CommandStatus
-    {
-      [JsonPropertyName("status")]
-      public string Status { get; set; }
+    //public class CommandStatus
+    //{
+    //  [JsonPropertyName("status")]
+    //  public string Status { get; set; }
 
-      [JsonPropertyName("message")]
-      public string Message { get; set; }
-    }
+    //  [JsonPropertyName("message")]
+    //  public string Message { get; set; }
+    //}
   }
 }
