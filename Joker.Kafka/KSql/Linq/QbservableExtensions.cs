@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
@@ -18,8 +20,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo selectTSourceTResult;
 
     private static MethodInfo SelectTSourceTResult(Type TSource, Type TResult) =>
-      (selectTSourceTResult ??
-       (selectTSourceTResult = new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<object>>(Select).GetMethodInfo().GetGenericMethodDefinition()))
+      (selectTSourceTResult ??= new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<object>>(Select).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource, TResult);
 
     public static IQbservable<TResult> Select<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
@@ -45,8 +46,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo whereTSource;
 
     private static MethodInfo WhereTSource(Type TSource) =>
-      (whereTSource ??
-       (whereTSource = new Func<IQbservable<object>, Expression<Func<object, bool>>, IQbservable<object>>(Where).GetMethodInfo().GetGenericMethodDefinition()))
+      (whereTSource ??= new Func<IQbservable<object>, Expression<Func<object, bool>>, IQbservable<object>>(Where).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource);
 
     public static IQbservable<TSource> Where<TSource>(this IQbservable<TSource> source, Expression<Func<TSource, bool>> predicate)
@@ -72,8 +72,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo takeTSource;
 
     private static MethodInfo TakeTSource(Type TSource) =>
-      (takeTSource ??
-       (takeTSource = new Func<IQbservable<object>, int, IQbservable<object>>(Take).GetMethodInfo().GetGenericMethodDefinition()))
+      (takeTSource ??= new Func<IQbservable<object>, int, IQbservable<object>>(Take).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource);
 
     public static IQbservable<TSource> Take<TSource>(this IQbservable<TSource> source, int count)
@@ -99,6 +98,19 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
       var ksqlQuery = kStreamSet?.BuildKsql();
 
       return ksqlQuery;
+    }
+
+    #endregion
+
+    #region ExecuteStatement
+
+    public static Task<HttpResponseMessage> ExecuteStatementAsync<TSource>(this IQbservable<TSource> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      var kStreamSet = source as KStreamSet<TSource>;
+
+      return kStreamSet?.ExecuteAsync();
     }
 
     #endregion
@@ -245,8 +257,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo havingTSource;
 
     private static MethodInfo HavingTSource(Type TSource, Type TKey) =>
-      (havingTSource ??
-       (havingTSource = new Func<IQbservable<IKSqlGrouping<object, object>>, Expression<Func<IKSqlGrouping<object, object>, bool>>, IQbservable<IKSqlGrouping<object, object>>>(Having).GetMethodInfo().GetGenericMethodDefinition()))
+      (havingTSource ??= new Func<IQbservable<IKSqlGrouping<object, object>>, Expression<Func<IKSqlGrouping<object, object>, bool>>, IQbservable<IKSqlGrouping<object, object>>>(Having).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource, TKey);
 
     public static IQbservable<IKSqlGrouping<TKey, TSource>> Having<TSource, TKey>(this IQbservable<IKSqlGrouping<TKey, TSource>> source, Expression<Func<IKSqlGrouping<TKey, TSource>, bool>> predicate)
@@ -272,8 +283,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo? windowedByTSourceTKey;
 
     private static MethodInfo WindowedByTSourceTKey(Type TSource, Type TKey)  =>
-      (windowedByTSourceTKey ??
-       (windowedByTSourceTKey = new Func<IQbservable<IKSqlGrouping<object, object>>, TimeWindows, IQbservable<IWindowedKSql<object, object>>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition()))
+      (windowedByTSourceTKey ??= new Func<IQbservable<IKSqlGrouping<object, object>>, TimeWindows, IQbservable<IWindowedKSql<object, object>>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource, TKey);
 
     public static IQbservable<IWindowedKSql<TKey, TSource>> WindowedBy<TSource, TKey>(this IQbservable<IKSqlGrouping<TKey, TSource>> source, TimeWindows timeWindows)
@@ -357,6 +367,32 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
         Expression.Call(
           null,
           FullOuterJoinTOuterTInnerTKeyTResult(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)), outer.Expression, inner.Expression, outerKeySelector, innerKeySelector, resultSelector));
+    }
+
+    #endregion
+
+    #region PartitionBy
+
+    private static MethodInfo partitionByTSourceTResult;
+
+    private static MethodInfo PartitionByTSourceTResult(Type source, Type result) =>
+      (partitionByTSourceTResult ??= new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<object>>(PartitionBy).GetMethodInfo().GetGenericMethodDefinition())
+      .MakeGenericMethod(source, result);
+
+    public static IQbservable<TResult> PartitionBy<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
+    {
+      if (source == null)
+        throw new ArgumentNullException(nameof(source));
+
+      if (selector == null)
+        throw new ArgumentNullException(nameof(selector));
+
+      return source.Provider.CreateQuery<TResult>(
+        Expression.Call(
+          null,
+          PartitionByTSourceTResult(typeof(TSource), typeof(TResult)),
+          source.Expression, Expression.Quote(selector)
+        ));
     }
 
     #endregion
