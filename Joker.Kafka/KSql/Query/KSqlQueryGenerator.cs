@@ -88,6 +88,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         kSqlVisitor.Visit(having.Body);
       }
 
+      if (partitionBy != null)
+      {
+        kSqlVisitor.Append(" PARTITION BY ");
+        kSqlVisitor.Visit(partitionBy.Body);
+      }
+
       if (ShouldEmitChanges)
         kSqlVisitor.Append(" EMIT CHANGES");
 
@@ -188,6 +194,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
+      if (methodInfo.Name == nameof(QbservableExtensions.PartitionBy))
+      {
+        LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
+
+        if (partitionBy == null)
+          partitionBy = lambda;
+
+        VisitChained(methodCallExpression);
+      }
+
       if (methodInfo.Name == nameof(QbservableExtensions.Where))
       {
         VisitChained(methodCallExpression);
@@ -252,6 +268,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
     private Queue<Expression> whereClauses;
     private LambdaExpression select;
+    private LambdaExpression partitionBy;
     private TimeWindows windowedBy;
     private LambdaExpression groupBy;
     private LambdaExpression having;
