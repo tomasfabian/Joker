@@ -40,7 +40,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         cancellationToken)
         .ConfigureAwait(false);
 
-      var stream = await httpResponseMessage.Content.ReadAsStreamAsync();
+      var stream = await httpResponseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
       using var streamReader = new StreamReader(stream);
 
       while (!streamReader.EndOfStream)
