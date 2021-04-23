@@ -1,3 +1,9 @@
+# v0.9.0-rc.1
+- IKSqlDBStatementsContext
+- QbservableExtensions.PartitionBy
+- WithOrAsClause
+- ICreateStatement, CreateStatementsExtensions.ExecuteStatementAsync
+
 # v0.8.0
 - scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
 
