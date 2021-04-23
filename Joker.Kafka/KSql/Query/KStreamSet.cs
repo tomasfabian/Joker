@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Reactive.Disposables;
 using System.Threading;
+using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query
@@ -102,6 +106,26 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       serviceScope.Dispose();
 
       return ksqlQuery;
+    }
+
+    internal Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken = default)
+    {
+      serviceScope = serviceScopeFactory.CreateScope();
+      
+      cancellationToken.Register(() => serviceScope?.Dispose());
+      
+      var restApiClient = serviceScope.ServiceProvider.GetService<IKSqlDbRestApiClient>();
+      
+      serviceScope.Dispose();
+
+      var ksqlQuery = BuildKsql();
+
+      string statement = @$"{QueryContext.PropertyBag["statement"]}
+AS {ksqlQuery}";
+
+      var dBStatement = new KSqlDbStatement(statement);
+
+      return restApiClient?.ExecuteStatementAsync(dBStatement, cancellationToken);
     }
   }
 }
