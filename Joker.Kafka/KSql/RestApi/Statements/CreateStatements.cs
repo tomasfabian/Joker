@@ -4,9 +4,9 @@ using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
-  internal sealed class CreateStatements
+  internal static class CreateStatements
   {
-    internal string GenerateWith(CreationMetadata metadata) {
+    internal static string GenerateWithClause(CreationMetadata metadata) {
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
 
       var properties = new List<string>();

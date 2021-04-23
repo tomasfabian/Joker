@@ -57,6 +57,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       serviceCollection.TryAddSingleton(contextOptions);
       serviceCollection.TryAddScoped<IKStreamSetDependencies, KStreamSetDependencies>();
+      serviceCollection.TryAddScoped<IKSqlDbRestApiClient, KSqlDbRestApiClient>();
     }
 
     private void RegisterHttpClientFactory<TFactory>()

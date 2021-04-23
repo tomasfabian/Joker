@@ -6,7 +6,7 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
-  public interface IKSqlDBContext : IAsyncDisposable
+  public interface IKSqlDBContext : IKSqlDBStatementsContext, IAsyncDisposable
   {
 #if !NETSTANDARD
     IQbservable<TEntity> CreateQueryStream<TEntity>(string streamName = null);

@@ -5,9 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses;
 using Microsoft.Extensions.DependencyInjection;
+#if !NETSTANDARD
 using Microsoft.Extensions.DependencyInjection.Extensions;
+#endif
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 {
@@ -87,6 +91,61 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       return new KQueryStreamSet<TEntity>(serviceScopeFactory, queryStreamContext);
     }
+
+    #region CreateStatements
+
+    public IWithOrAsClause CreateStreamStatement(string streamName)
+    {
+      return CreateStatement(streamName, CreationType.Create, KSqlEntityType.Stream);
+    }
+
+    public IWithOrAsClause CreateOrReplaceStreamStatement(string streamName)
+    {
+      return CreateStatement(streamName, CreationType.CreateOrReplace, KSqlEntityType.Stream);
+    }
+
+    public IWithOrAsClause CreateTableStatement(string tableName)
+    {
+      return CreateStatement(tableName, CreationType.Create, KSqlEntityType.Table);
+    }
+
+    public IWithOrAsClause CreateOrReplaceTableStatement(string tableName)
+    {
+      return CreateStatement(tableName, CreationType.CreateOrReplace, KSqlEntityType.Table);
+    }
+
+    private IWithOrAsClause CreateStatement(string tableName, CreationType creationType, KSqlEntityType entityType)
+    {
+      var serviceScopeFactory = KSqlDBQueryContext.Initialize(contextOptions);
+
+      if (tableName == String.Empty)
+        tableName = null;
+
+      string creationTypeText = creationType switch
+      {
+        CreationType.Create => "CREATE",
+        CreationType.CreateOrReplace => "CREATE OR REPLACE",
+        _ => throw new ArgumentOutOfRangeException(nameof(creationType), creationType, null)
+      };
+
+      string entityTypeText = entityType switch
+      {
+        KSqlEntityType.Table => KSqlEntityType.Table.ToString().ToUpper(),
+        KSqlEntityType.Stream => KSqlEntityType.Stream.ToString().ToUpper(),
+        _ => throw new ArgumentOutOfRangeException(nameof(creationType), creationType, null)
+      };
+
+      string statement = @$"{creationTypeText} {entityTypeText} {tableName}";
+
+      var queryContext = new QueryContext
+      {
+        PropertyBag = {["statement"] = statement}
+      };
+
+      return new WithOrAsClause(serviceScopeFactory, queryContext);
+    }
+
+    #endregion
 
     protected override async ValueTask OnDisposeAsync()
     {
