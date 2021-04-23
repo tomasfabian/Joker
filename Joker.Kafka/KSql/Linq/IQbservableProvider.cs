@@ -11,5 +11,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     /// <param name="expression">Expression tree representing the query.</param>
     /// <returns>IQbservable object that can evaluate the given query expression.</returns>
     IQbservable<TResult> CreateQuery<TResult>(Expression expression);
+
+    ICreateStatement<TResult> CreateStatement<TResult>(Expression expression);
   }
 }

@@ -23,7 +23,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     internal QueryContext QueryContext { get; set; }
   }
 
-  internal abstract class KStreamSet<TEntity> : KStreamSet, IQbservable<TEntity>
+  internal abstract class KStreamSet<TEntity> : KStreamSet, IQbservable<TEntity>, ICreateStatement<TEntity>
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
     private IServiceScope serviceScope;

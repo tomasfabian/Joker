@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
@@ -98,19 +96,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
       var ksqlQuery = kStreamSet?.BuildKsql();
 
       return ksqlQuery;
-    }
-
-    #endregion
-
-    #region ExecuteStatement
-
-    public static Task<HttpResponseMessage> ExecuteStatementAsync<TSource>(this IQbservable<TSource> source)
-    {
-      if (source == null) throw new ArgumentNullException(nameof(source));
-
-      var kStreamSet = source as KStreamSet<TSource>;
-
-      return kStreamSet?.ExecuteAsync();
     }
 
     #endregion
@@ -376,10 +361,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     private static MethodInfo partitionByTSourceTResult;
 
     private static MethodInfo PartitionByTSourceTResult(Type source, Type result) =>
-      (partitionByTSourceTResult ??= new Func<IQbservable<object>, Expression<Func<object, object>>, IQbservable<object>>(PartitionBy).GetMethodInfo().GetGenericMethodDefinition())
+      (partitionByTSourceTResult ??= new Func<IQbservable<object>, Expression<Func<object, object>>, ICreateStatement<object>>(PartitionBy).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(source, result);
 
-    public static IQbservable<TResult> PartitionBy<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
+    public static ICreateStatement<TResult> PartitionBy<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
     {
       if (source == null)
         throw new ArgumentNullException(nameof(source));
@@ -387,7 +372,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
       if (selector == null)
         throw new ArgumentNullException(nameof(selector));
 
-      return source.Provider.CreateQuery<TResult>(
+      return source.Provider.CreateStatement<TResult>(
         Expression.Call(
           null,
           PartitionByTSourceTResult(typeof(TSource), typeof(TResult)),
