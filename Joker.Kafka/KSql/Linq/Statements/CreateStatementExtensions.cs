@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
@@ -79,23 +80,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
 
     #endregion
 
-    #region ToStatementString
-
-    //public static string ToQueryString<TSource>(this ICreateStatement<TSource> source)
-    //{
-    //  if (source == null) throw new ArgumentNullException(nameof(source));
-
-    //  var kStreamSet = source as KStreamSet<TSource>;
-
-    //  var ksqlQuery = kStreamSet?.BuildKsql();
-
-    //  return ksqlQuery;
-    //}
-
-    #endregion
-
     #region GroupBy
-    
+
     private static MethodInfo? groupByTSourceTKey;
 
     private static MethodInfo GroupByTSourceTKey(Type TSource, Type TKey) =>
@@ -147,7 +133,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
 
     private static MethodInfo? windowedByTSourceTKey;
 
-    private static MethodInfo WindowedByTSourceTKey(Type TSource, Type TKey)  =>
+    private static MethodInfo WindowedByTSourceTKey(Type TSource, Type TKey) =>
       (windowedByTSourceTKey ??= new Func<ICreateStatement<IKSqlGrouping<object, object>>, TimeWindows, ICreateStatement<IWindowedKSql<object, object>>>(WindowedBy).GetMethodInfo().GetGenericMethodDefinition())
       .MakeGenericMethod(TSource, TKey);
 
@@ -157,7 +143,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
       if (timeWindows == null) throw new ArgumentNullException(nameof(timeWindows));
 
       return source.Provider.CreateStatement<IWindowedKSql<TKey, TSource>>(
-        Expression.Call(null, 
+        Expression.Call(null,
           WindowedByTSourceTKey(typeof(TSource), typeof(TKey)),
           source.Expression, Expression.Constant(timeWindows)));
     }
@@ -266,6 +252,21 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
           PartitionByTSourceTResult(typeof(TSource), typeof(TResult)),
           source.Expression, Expression.Quote(selector)
         ));
+    }
+
+    #endregion
+
+    #region ToStatementString
+
+    public static string ToStatementString<TSource>(this ICreateStatement<TSource> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      var createStatement = source as CreateStatement<TSource>;
+
+      var ksqlQuery = createStatement?.BuildKsql();
+
+      return ksqlQuery;
     }
 
     #endregion

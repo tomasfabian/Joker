@@ -54,6 +54,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       var ksqlQuery = dependencies.KSqlQueryGenerator?.BuildKSql(Expression, QueryContext);
       
+      ksqlQuery = @$"{QueryContext.PropertyBag["statement"]}
+AS {ksqlQuery}";
+
       serviceScope.Dispose();
 
       return ksqlQuery;
@@ -71,10 +74,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       var ksqlQuery = BuildKsql();
 
-      string statement = @$"{QueryContext.PropertyBag["statement"]}
-AS {ksqlQuery}";
-
-      var dBStatement = new KSqlDbStatement(statement);
+      var dBStatement = new KSqlDbStatement(ksqlQuery);
 
       return restApiClient?.ExecuteStatementAsync(dBStatement, cancellationToken);
     }
