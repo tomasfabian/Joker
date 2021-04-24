@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,11 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
+using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using UnitTests;
 
@@ -291,12 +294,29 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Linq
 
   class TestableDbProvider : TestableDbProvider<QbservableGroupByExtensionsTests.City>
   {
-    public TestableDbProvider(string ksqlDbUrl) : base(ksqlDbUrl)
+    private readonly IHttpClientFactory httpClientFactory;
+
+    public TestableDbProvider(string ksqlDbUrl) 
+      : base(ksqlDbUrl)
     {
       RegisterKSqlQueryGenerator = false;
     }
 
-    public TestableDbProvider(KSqlDBContextOptions contextOptions) : base(contextOptions)
+    public TestableDbProvider(string ksqlDbUrl, IHttpClientFactory httpClientFactory) 
+      : base(ksqlDbUrl)
+    {
+      this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+
+      RegisterKSqlQueryGenerator = false;    
+      
+      KSqlDBQueryContext.Configure(sc =>
+      {
+        sc.AddSingleton(httpClientFactory);
+      });
+    }
+
+    public TestableDbProvider(KSqlDBContextOptions contextOptions) 
+      : base(contextOptions)
     {
       RegisterKSqlQueryGenerator = false;
     }
