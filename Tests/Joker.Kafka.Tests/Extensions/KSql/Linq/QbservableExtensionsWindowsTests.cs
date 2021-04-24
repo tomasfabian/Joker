@@ -2,13 +2,10 @@
 using System.Linq;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
-using Kafka.DotNet.ksqlDB.KSql.Query;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests;
 

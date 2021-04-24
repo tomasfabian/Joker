@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
-using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.Tests.Helpers;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using UnitTests;
 
