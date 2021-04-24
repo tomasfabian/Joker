@@ -1,5 +1,5 @@
 ﻿using System;
-using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,11 +27,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses
       return this;
     }
 
-    public IQbservable<T> As<T>(string entityName = null)
+    public ICreateStatement<T> As<T>(string entityName = null)
     {
+      if (entityName == String.Empty)
+        entityName = null;
+
       queryContext.StreamName = entityName;
 
-      return new KQueryStreamSet<T>(serviceScopeFactory, queryContext);
+      return new CreateStatement<T>(serviceScopeFactory, queryContext);
     }
   }
 }

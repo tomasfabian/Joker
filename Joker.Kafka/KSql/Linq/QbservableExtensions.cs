@@ -355,31 +355,5 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq
     }
 
     #endregion
-
-    #region PartitionBy
-
-    private static MethodInfo partitionByTSourceTResult;
-
-    private static MethodInfo PartitionByTSourceTResult(Type source, Type result) =>
-      (partitionByTSourceTResult ??= new Func<IQbservable<object>, Expression<Func<object, object>>, ICreateStatement<object>>(PartitionBy).GetMethodInfo().GetGenericMethodDefinition())
-      .MakeGenericMethod(source, result);
-
-    public static ICreateStatement<TResult> PartitionBy<TSource, TResult>(this IQbservable<TSource> source, Expression<Func<TSource, TResult>> selector)
-    {
-      if (source == null)
-        throw new ArgumentNullException(nameof(source));
-
-      if (selector == null)
-        throw new ArgumentNullException(nameof(selector));
-
-      return source.Provider.CreateStatement<TResult>(
-        Expression.Call(
-          null,
-          PartitionByTSourceTResult(typeof(TSource), typeof(TResult)),
-          source.Expression, Expression.Quote(selector)
-        ));
-    }
-
-    #endregion
   }
 }

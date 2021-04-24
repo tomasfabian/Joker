@@ -11,18 +11,16 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
          && type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), inherit: false).Length > 0
          && type.Name.Contains("AnonymousType");
 
-    internal static Type TryFindKStreamSetAncestor(this Type type)
+    internal static Type TryFindProviderAncestor(this Type type)
     {
-      Type baseType = type.BaseType;
-
-      while (baseType != null)
+      while (type != null)
       {
-        if (baseType.Name == typeof(KStreamSet<>).Name)
+        if (type.Name.IsOneOfFollowing(typeof(KStreamSet<>).Name, typeof(CreateStatement<>).Name))
         {
-          return baseType;
+          return type;
         }
 
-        baseType = baseType.BaseType;
+        type = type.BaseType;
       }
 
       return null;
