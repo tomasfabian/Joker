@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
@@ -169,10 +170,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       var type = constantExpression.Type;
 
-      var kStreamSetType = type.TryFindKStreamSetAncestor();
+      var kStreamSetType = type.TryFindProviderAncestor();
 
-      if (kStreamSetType?.Name == typeof(KStreamSet<>).Name)
-        streamName = constantExpression.Type.BaseType?.GenericTypeArguments[0].Name;
+      if (kStreamSetType != null && kStreamSetType.Name.IsOneOfFollowing(typeof(KStreamSet<>).Name, typeof(CreateStatement<>).Name))
+        streamName = kStreamSetType?.GenericTypeArguments[0].Name;
 
       return constantExpression;
     }
@@ -181,10 +182,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       var methodInfo = methodCallExpression.Method;
 
-      if(methodInfo.DeclaringType != typeof(QbservableExtensions))
+      if(methodInfo.DeclaringType != typeof(QbservableExtensions) && methodInfo.DeclaringType != typeof(CreateStatementExtensions))
         return methodCallExpression;
 
-      if (methodInfo.Name == nameof(QbservableExtensions.Select))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Select), nameof(CreateStatementExtensions.Select)))
       {
         LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
@@ -194,7 +195,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.PartitionBy))
+      if (methodInfo.Name == nameof(CreateStatementExtensions.PartitionBy))
       {
         LambdaExpression lambda = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
@@ -204,7 +205,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.Where))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Where), nameof(CreateStatementExtensions.Where)))
       {
         VisitChained(methodCallExpression);
 
@@ -212,7 +213,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         whereClauses.Enqueue(lambda.Body);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.Take))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Take), nameof(CreateStatementExtensions.Take)))
       {
         var arg = (ConstantExpression)methodCallExpression.Arguments[1];
         Limit = (int)arg.Value;
@@ -220,7 +221,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.WindowedBy))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.WindowedBy), nameof(CreateStatementExtensions.WindowedBy)))
       {
         var arg = (ConstantExpression)StripQuotes(methodCallExpression.Arguments[1]);
         windowedBy = (TimeWindows)arg.Value;
@@ -228,14 +229,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.GroupBy))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.GroupBy), nameof(CreateStatementExtensions.GroupBy)))
       {
         groupBy = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name == nameof(QbservableExtensions.Having))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Having), nameof(CreateStatementExtensions.Having)))
       {
         having = (LambdaExpression)StripQuotes(methodCallExpression.Arguments[1]);
 

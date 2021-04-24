@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Disposables;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -46,6 +47,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
     protected virtual void OnConfigureServices(IServiceCollection serviceCollection, KSqlDBContextOptions contextOptions)
     {
       serviceCollection.TryAddScoped<IKSqlQbservableProvider, QbservableProvider>();
+      serviceCollection.TryAddScoped<ICreateStatementProvider, CreateStatementProvider>();
 
       var uri = new Uri(contextOptions.Url);
 
