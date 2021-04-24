@@ -21,10 +21,5 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       return new KQueryStreamSet<TResult>(serviceScopeFactory, queryContext, expression);
     }
-    
-    ICreateStatement<TResult> IQbservableProvider.CreateStatement<TResult>(Expression expression)
-    {
-      return new KQueryStreamSet<TResult>(serviceScopeFactory, queryContext, expression);
-    }
   }
 }
