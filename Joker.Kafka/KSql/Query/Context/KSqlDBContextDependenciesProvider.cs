@@ -44,6 +44,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       OnConfigureServices(serviceCollection, contextOptions);
     }
 
+    internal void Configure(Action<IServiceCollection> receive)
+    {
+      receive?.Invoke(serviceCollection);
+    }
+
     protected virtual void OnConfigureServices(IServiceCollection serviceCollection, KSqlDBContextOptions contextOptions)
     {
       serviceCollection.TryAddScoped<IKSqlQbservableProvider, QbservableProvider>();

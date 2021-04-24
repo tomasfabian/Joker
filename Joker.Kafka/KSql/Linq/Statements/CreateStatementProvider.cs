@@ -9,17 +9,17 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements
   internal class CreateStatementProvider : ICreateStatementProvider
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
-    private readonly QueryContext queryContext;
+    private readonly StatementContext statementContext;
 
-    public CreateStatementProvider(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
+    public CreateStatementProvider(IServiceScopeFactory serviceScopeFactory, StatementContext statementContext = null)
     {
       this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-      this.queryContext = queryContext;
+      this.statementContext = statementContext;
     }
     
     ICreateStatement<TResult> ICreateStatementProvider.CreateStatement<TResult>(Expression expression)
     {
-      return new CreateStatement<TResult>(serviceScopeFactory, expression, queryContext);
+      return new CreateStatement<TResult>(serviceScopeFactory, expression, statementContext);
     }
   }
 }

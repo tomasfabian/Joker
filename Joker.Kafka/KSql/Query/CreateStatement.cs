@@ -16,26 +16,26 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     private readonly IServiceScopeFactory serviceScopeFactory;
     private IServiceScope serviceScope;
     
-    internal QueryContext QueryContext { get; set; }
+    internal StatementContext StatementContext { get; set; }
 
-    internal CreateStatement(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
+    internal CreateStatement(IServiceScopeFactory serviceScopeFactory, StatementContext statementContext = null)
     {
       this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
       
-      QueryContext = queryContext;
+      StatementContext = statementContext;
 
-      Provider = new CreateStatementProvider(serviceScopeFactory, queryContext);
+      Provider = new CreateStatementProvider(serviceScopeFactory, statementContext);
       
       Expression = Expression.Constant(this);
     }
 
-    internal CreateStatement(IServiceScopeFactory serviceScopeFactory, Expression expression, QueryContext queryContext = null)
+    internal CreateStatement(IServiceScopeFactory serviceScopeFactory, Expression expression, StatementContext statementContext = null)
     {
       this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
       
-      QueryContext = queryContext;
+      StatementContext = statementContext;
 
-      Provider = new CreateStatementProvider(serviceScopeFactory, queryContext);
+      Provider = new CreateStatementProvider(serviceScopeFactory, statementContext);
 
       Expression = expression ?? throw new ArgumentNullException(nameof(expression));
     }
@@ -52,9 +52,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       
       var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
 
-      var ksqlQuery = dependencies.KSqlQueryGenerator?.BuildKSql(Expression, QueryContext);
+      var ksqlQuery = dependencies.KSqlQueryGenerator?.BuildKSql(Expression, StatementContext);
       
-      ksqlQuery = @$"{QueryContext.PropertyBag["statement"]}
+      ksqlQuery = @$"{StatementContext.Statement}
 AS {ksqlQuery}";
 
       serviceScope.Dispose();

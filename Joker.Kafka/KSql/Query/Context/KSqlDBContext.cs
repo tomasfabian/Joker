@@ -29,7 +29,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       this.contextOptions = contextOptions ?? throw new ArgumentNullException(nameof(contextOptions));
     }
     
-    private readonly KSqlDBContextQueryDependenciesProvider KSqlDBQueryContext = new();
+    internal readonly KSqlDBContextQueryDependenciesProvider KSqlDBQueryContext = new();
     
 #if !NETSTANDARD
 
@@ -121,28 +121,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       if (tableName == String.Empty)
         tableName = null;
 
-      string creationTypeText = creationType switch
+      var statementContext = new StatementContext
       {
-        CreationType.Create => "CREATE",
-        CreationType.CreateOrReplace => "CREATE OR REPLACE",
-        _ => throw new ArgumentOutOfRangeException(nameof(creationType), creationType, null)
+        TableName = tableName, 
+        CreationType = creationType, 
+        KSqlEntityType = entityType
       };
 
-      string entityTypeText = entityType switch
-      {
-        KSqlEntityType.Table => KSqlEntityType.Table.ToString().ToUpper(),
-        KSqlEntityType.Stream => KSqlEntityType.Stream.ToString().ToUpper(),
-        _ => throw new ArgumentOutOfRangeException(nameof(creationType), creationType, null)
-      };
-
-      string statement = @$"{creationTypeText} {entityTypeText} {tableName}";
-
-      var queryContext = new QueryContext
-      {
-        PropertyBag = {["statement"] = statement}
-      };
-
-      return new WithOrAsClause(serviceScopeFactory, queryContext);
+      return new WithOrAsClause(serviceScopeFactory, statementContext);
     }
 
     #endregion

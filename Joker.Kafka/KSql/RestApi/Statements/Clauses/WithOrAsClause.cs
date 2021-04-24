@@ -2,6 +2,7 @@
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses
@@ -9,19 +10,34 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses
   internal sealed class WithOrAsClause : IWithOrAsClause
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
-    private readonly QueryContext queryContext;
+    private readonly StatementContext statementContext;
 
-    public WithOrAsClause(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext)
+    public WithOrAsClause(IServiceScopeFactory serviceScopeFactory, StatementContext statementContext)
     {
       this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-      this.queryContext = queryContext ?? throw new ArgumentNullException(nameof(queryContext));
+      this.statementContext = statementContext ?? throw new ArgumentNullException(nameof(statementContext));
+
+      
+      string creationTypeText = statementContext.CreationType switch
+      {
+        CreationType.Create => "CREATE",
+        CreationType.CreateOrReplace => "CREATE OR REPLACE",
+      };
+
+      string entityTypeText = statementContext.KSqlEntityType switch
+      {
+        KSqlEntityType.Table => KSqlEntityType.Table.ToString().ToUpper(),
+        KSqlEntityType.Stream => KSqlEntityType.Stream.ToString().ToUpper(),
+      };
+
+      statementContext.Statement = @$"{creationTypeText} {entityTypeText} {statementContext.TableName}";
     }
 
     public IAsClause With(CreationMetadata creationMetadata)
     {
       string withClause = CreateStatements.GenerateWithClause(creationMetadata);
 
-      queryContext.PropertyBag["statement"] = @$"{queryContext.PropertyBag["statement"]}
+      statementContext.Statement = @$"{statementContext.Statement}
 {withClause}";
 
       return this;
@@ -32,9 +48,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses
       if (entityName == String.Empty)
         entityName = null;
 
-      queryContext.StreamName = entityName;
+      statementContext.StreamName = entityName;
 
-      return new CreateStatement<T>(serviceScopeFactory, queryContext);
+      return new CreateStatement<T>(serviceScopeFactory, statementContext);
     }
   }
 }
