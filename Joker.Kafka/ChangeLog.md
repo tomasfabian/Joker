@@ -1,8 +1,9 @@
 # v0.9.0-rc.1
-- IKSqlDBStatementsContext
-- QbservableExtensions.PartitionBy
-- WithOrAsClause
-- ICreateStatement, CreateStatementsExtensions.ExecuteStatementAsync
+[Create or replace stream/table as select](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#v090-wip---preview):
+- IKSqlDBStatementsContext - CreateStreamStatement, CreateOrReplaceStreamStatement, CreateTableStatement, CreateOrReplaceTableStatement   
+- CreateStatementExtensions - PartitionBy, ToStatementString
+- WithOrAsClause, CreationMetadata
+- ICreateStatement, CreateStatementExtensions
 
 # v0.8.0
 - scalar collection functions: ArrayMax, ArrayMin, ArrayRemove
