@@ -34,7 +34,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.Providers
 
       var result = await restApiProvider.ExecuteStatementAsync(ksqlDbStatement);
 
-      var createActorsTable = $@"CREATE TABLE {ActorsTableName} (
+      var createActorsTable = $@"CREATE OR REPLACE TABLE {ActorsTableName} (
         title VARCHAR PRIMARY KEY,
         actor_name VARCHAR
       ) WITH (

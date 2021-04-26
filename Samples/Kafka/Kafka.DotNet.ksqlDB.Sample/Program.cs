@@ -16,8 +16,12 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context.Options;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Kafka.DotNet.ksqlDB.Sample.Providers;
+//using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
@@ -54,7 +58,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
       await using var context = new KSqlDBContext(contextOptions);
 
-      using var disposable = context.CreateQueryStream<Movie>()
+      using var disposable = context.CreateQueryStream<Movie>("Movies")
       // using var disposable = context.CreateQuery<Movie>()
         .Where(p => p.Title != "E.T.")
         .Where(c => K.Functions.Like(c.Title.ToLower(), "%hard%".ToLower()) || c.Id == 1)
@@ -68,6 +72,8 @@ namespace Kafka.DotNet.ksqlDB.Sample
           Console.WriteLine($"{nameof(Movie)}: {movie.Id} - {movie.Title} - {movie.RowTime}");
           Console.WriteLine();
         }, onError: error => { Console.WriteLine($"Exception: {error.Message}"); }, onCompleted: () => Console.WriteLine("Completed"));
+      
+      await CreateOrReplaceTableStatement(context);
 
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
@@ -80,6 +86,37 @@ namespace Kafka.DotNet.ksqlDB.Sample
       await moviesProvider.DropTablesAsync();
 
       Console.WriteLine("Subscription completed");
+    }
+
+    private static async Task CreateOrReplaceTableStatement(IKSqlDBStatementsContext context)
+    {
+      var creationMetadata = new CreationMetadata
+      {
+        KafkaTopic = "tweetsByTitle",		
+        KeyFormat = SerializationFormats.Json,
+        ValueFormat = SerializationFormats.Json,
+        Replicas = 1,
+        Partitions = 1
+      };
+
+      var httpResponseMessage = await context.CreateOrReplaceTableStatement(tableName: "TweetsByTitle")
+        .With(creationMetadata)
+        .As<Movie>()
+        .Where(c => c.Id < 3)
+        .Select(c => new {c.Title, ReleaseYear = c.Release_Year})
+        .PartitionBy(c => c.Title)
+        .ExecuteStatementAsync();
+
+      /*
+CREATE OR REPLACE TABLE TweetsByTitle
+ WITH ( KAFKA_TOPIC='tweetsByTitle', KEY_FORMAT='Json', VALUE_FORMAT='Json', PARTITIONS = '1', REPLICAS='1' )
+AS SELECT Title, Release_Year AS ReleaseYear FROM Movies
+WHERE Id < 3 PARTITION BY Title EMIT CHANGES;
+       */
+      
+      string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+
+      var statementResponse = httpResponseMessage.ToStatementResponses();
     }
 
     private static IDisposable ClientSideBatching(KSqlDBContext context)
@@ -555,7 +592,7 @@ namespace Kafka.DotNet.ksqlDB.Sample
       return disposable;
     }
 
-    private static IDisposable QueryRawKSql(KSqlDBContext context)
+    private static IDisposable QueryRawKSql(IKSqlDBContext context)
     {
       string ksql = @"SELECT * FROM Movies
 WHERE Title != 'E.T.' EMIT CHANGES LIMIT 2;";
