@@ -1,4 +1,4 @@
-# v0.9.0-rc.1
+# v0.9.0
 [Create or replace stream/table as select](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#v090-wip---preview):
 - IKSqlDBStatementsContext - CreateStreamStatement, CreateOrReplaceStreamStatement, CreateTableStatement, CreateOrReplaceTableStatement   
 - CreateStatementExtensions - PartitionBy, ToStatementString
