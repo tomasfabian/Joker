@@ -1230,7 +1230,7 @@ foreach (var response in responses)
 }
 ```
 
-# v0.9.0 (WIP - preview):
+# v0.9.0:
 ```
 Install-Package Kafka.DotNet.ksqlDB -Version 0.9.0-rc.1
 ```
@@ -1285,12 +1285,12 @@ AS SELECT Title, Release_Year AS ReleaseYear FROM Movies
 WHERE Id < 3 PARTITION BY Title EMIT CHANGES;
 ```
 
-# PartitionBy extension method (v0.9.0)
+### PartitionBy extension method (v0.9.0)
 [Repartition a stream.](https://docs.ksqldb.io/en/0.15.0-ksqldb/developer-guide/joins/partition-data/)
 
-# ExecuteStatementAsync extension method (v0.9.0)
+### ExecuteStatementAsync extension method (v0.9.0)
 
-# ToStatementString extension method (v0.9.0)
+### ToStatementString extension method (v0.9.0)
 
 # LinqPad sample
 [kafka.dotnet.ksqldb.linq](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.linq)
