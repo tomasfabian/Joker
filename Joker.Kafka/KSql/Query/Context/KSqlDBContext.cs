@@ -123,7 +123,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
       var statementContext = new StatementContext
       {
-        TableName = tableName, 
+        EntityName = tableName, 
         CreationType = creationType, 
         KSqlEntityType = entityType
       };

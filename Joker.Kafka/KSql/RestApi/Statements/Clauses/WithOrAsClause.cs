@@ -30,7 +30,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Clauses
         KSqlEntityType.Stream => KSqlEntityType.Stream.ToString().ToUpper(),
       };
 
-      statementContext.Statement = @$"{creationTypeText} {entityTypeText} {statementContext.TableName}";
+      statementContext.Statement = @$"{creationTypeText} {entityTypeText} {statementContext.EntityName}";
     }
 
     public IAsClause With(CreationMetadata creationMetadata)
