@@ -7,6 +7,8 @@ using Kafka.DotNet.ksqlDB.Tests.Models;
 using Kafka.DotNet.ksqlDB.Tests.Pocos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.Tests.Fakes.Http;
 using Moq;
@@ -99,6 +101,139 @@ WHERE Id < 3 PARTITION BY Title EMIT CHANGES;");
         //Assert
         string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
         responseContent.Should().BeEquivalentTo(StatementResponse);
+      }
+
+      [TestMethod]
+      public void GroupByHaving()
+      {
+        //Arrange
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()
+          .GroupBy(c => c.Title)
+          .Having(c => c.Count() > 2);
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT * FROM Movies GROUP BY Title HAVING Count(*) > 2 EMIT CHANGES;");
+      }
+
+      [TestMethod]
+      public void Take()
+      {
+        //Arrange
+        int limit = 3;
+
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()
+          .Take(limit);
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT * FROM Movies EMIT CHANGES LIMIT {limit};");
+      }
+
+      [TestMethod]
+      public void WindowedBy()
+      {
+        //Arrange
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()
+          .GroupBy(c => new { c.Title })
+          .WindowedBy(new TimeWindows(Duration.OfMinutes(2)));
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT * FROM Movies WINDOW TUMBLING (SIZE 2 MINUTES) GROUP BY Title EMIT CHANGES;");
+      }
+
+      [TestMethod]
+      public void Join()
+      {
+        //Arrange
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()        
+          .Join(
+            Source.Of<Lead_Actor>("Actors"),
+            movie => movie.Title,
+            actor => actor.Title,
+            (movie, actor) => new
+            {
+              Title = movie.Title, ActorName = actor.Actor_Name
+            }
+          );
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT M.Title Title, A.Actor_Name AS ActorName FROM Movies M
+INNER JOIN Actors A
+ON M.Title = A.Title
+ EMIT CHANGES;");
+      }
+
+      [TestMethod]
+      public void FullOuterJoin()
+      {
+        //Arrange
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()        
+          .FullOuterJoin(
+            Source.Of<Lead_Actor>("Actors"),
+            movie => movie.Title,
+            actor => actor.Title,
+            (movie, actor) => new
+            {
+              Title = movie.Title, ActorName = actor.Actor_Name
+            }
+          );
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT M.Title Title, A.Actor_Name AS ActorName FROM Movies M
+FULL OUTER JOIN Actors A
+ON M.Title = A.Title
+ EMIT CHANGES;");
+      }
+
+      [TestMethod]
+      public void LeftJoin()
+      {
+        //Arrange
+        var query = DbProvider.CreateOrReplaceStreamStatement(StreamName)
+          .As<Movie>()        
+          .LeftJoin(
+            Source.Of<Lead_Actor>("Actors"),
+            movie => movie.Title,
+            actor => actor.Title,
+            (movie, actor) => new
+            {
+              Title = movie.Title, ActorName = actor.Actor_Name
+            }
+          );
+
+        //Act
+        var ksql = query.ToStatementString();
+
+        //Assert
+        ksql.Should().BeEquivalentTo(@$"CREATE OR REPLACE STREAM {StreamName}
+AS SELECT M.Title Title, A.Actor_Name AS ActorName FROM Movies M
+LEFT JOIN Actors A
+ON M.Title = A.Title
+ EMIT CHANGES;");
       }
     }
 }

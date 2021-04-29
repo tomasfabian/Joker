@@ -77,5 +77,23 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements.Clauses
       //Assert
       statementContext.Statement.Should().Be("CREATE OR REPLACE STREAM ");
     }
+
+    private static readonly string TestTableName = "";
+
+    [Test]
+    public void Ctor_EntityName_CreateTableWithName()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        EntityName = TestTableName
+      };
+
+      //Act
+      var withOrAsClause = new WithOrAsClause(Mock.Of<IServiceScopeFactory>(), statementContext);
+
+      //Assert
+      statementContext.Statement.Should().Be($"CREATE TABLE {TestTableName}");
+    }
   }
 }
