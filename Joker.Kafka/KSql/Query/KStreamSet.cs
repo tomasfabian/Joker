@@ -10,10 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
-  internal abstract class KStreamSet : IQbservable
+  internal abstract class KStreamSet : KSet, IQbservable
   {
-    public abstract Type ElementType { get; }
-    public Expression Expression { get; internal set; }
+
     public IKSqlQbservableProvider Provider { get; internal set; }
     
     internal QueryContext QueryContext { get; set; }
