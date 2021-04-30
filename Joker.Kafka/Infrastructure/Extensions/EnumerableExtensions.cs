@@ -8,5 +8,10 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
     {
       return allowedValues.Any(c => c.Equals(item));
     }
+
+    public static bool IsNotOneOfFollowing<TItem>(this TItem item, params TItem[] allowedValues)
+    {
+      return !item.IsOneOfFollowing(allowedValues);
+    }
   }
 }

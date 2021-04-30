@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
@@ -15,5 +17,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
 
     IQbservable<TEntity> CreateQuery<TEntity>(string streamName = null);
     IAsyncEnumerable<TEntity> CreateQuery<TEntity>(QueryParameters queryParameters, CancellationToken cancellationToken = default);
+    
+    IPullable<TEntity> CreatePullQuery<TEntity>(string tableName = null);
+    ValueTask<TEntity> ExecutePullQuery<TEntity>(string ksql, CancellationToken cancellationToken = default);
   }
 }

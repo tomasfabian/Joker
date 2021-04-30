@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
@@ -172,8 +173,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       var kStreamSetType = type.TryFindProviderAncestor();
 
-      if (kStreamSetType != null && kStreamSetType.Name.IsOneOfFollowing(typeof(KStreamSet<>).Name, typeof(CreateStatement<>).Name))
-        streamName = kStreamSetType?.GenericTypeArguments[0].Name;
+      if (kStreamSetType != null)
+        streamName = ((KSet) constantExpression.Value).ElementType.Name;
 
       return constantExpression;
     }
@@ -182,7 +183,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       var methodInfo = methodCallExpression.Method;
 
-      if(methodInfo.DeclaringType != typeof(QbservableExtensions) && methodInfo.DeclaringType != typeof(CreateStatementExtensions))
+      if(methodInfo.DeclaringType.IsNotOneOfFollowing(typeof(QbservableExtensions), typeof(CreateStatementExtensions), typeof(PullQueryExtensions)))
         return methodCallExpression;
 
       if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Select), nameof(CreateStatementExtensions.Select)))
@@ -205,7 +206,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
         VisitChained(methodCallExpression);
       }
 
-      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Where), nameof(CreateStatementExtensions.Where)))
+      if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.Where), nameof(CreateStatementExtensions.Where), nameof(PullQueryExtensions.Where)))
       {
         VisitChained(methodCallExpression);
 

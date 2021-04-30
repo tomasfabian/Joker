@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
+using Kafka.DotNet.ksqlDB.KSql.Query.PullQueries;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
@@ -129,6 +131,44 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.Context
       };
 
       return new WithOrAsClause(serviceScopeFactory, statementContext);
+    }
+
+    #endregion
+
+    #region Pull queries
+
+    public IPullable<TEntity> CreatePullQuery<TEntity>(string tableName = null)
+    {      
+      var serviceScopeFactory = KSqlDBQueryContext.Initialize(contextOptions);
+
+      if (tableName == String.Empty)
+        tableName = null;
+
+      var queryContext = new QueryContext
+      {
+        StreamName = tableName
+      };
+
+      return new KPullSet<TEntity>(serviceScopeFactory, queryContext);
+    }
+
+    public ValueTask<TEntity> ExecutePullQuery<TEntity>(string ksql, CancellationToken cancellationToken = default)
+    {
+      if (string.IsNullOrEmpty(ksql))
+        throw new ArgumentException(nameof(ksql));
+
+      var serviceScopeFactory = KSqlDBQueryContext.Initialize(contextOptions);
+
+      using var scope = serviceScopeFactory.CreateScope();
+
+      var dependencies = scope.ServiceProvider.GetRequiredService<IKStreamSetDependencies>();
+
+      var queryParameters = dependencies.QueryStreamParameters;
+      queryParameters.Sql = ksql;
+
+      return dependencies.KsqlDBProvider
+        .Run<TEntity>(queryParameters, cancellationToken)
+        .FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     #endregion
