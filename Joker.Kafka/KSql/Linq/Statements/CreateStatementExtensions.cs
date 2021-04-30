@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.Query.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements

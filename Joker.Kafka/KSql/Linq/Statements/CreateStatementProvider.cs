@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Statements;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Linq.Statements

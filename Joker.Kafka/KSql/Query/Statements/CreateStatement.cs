@@ -9,9 +9,9 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kafka.DotNet.ksqlDB.KSql.Query
+namespace Kafka.DotNet.ksqlDB.KSql.Query.Statements
 {
-  internal class CreateStatement<TEntity> : ICreateStatement<TEntity>
+  internal class CreateStatement<TEntity> : KSet, ICreateStatement<TEntity>
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
     private IServiceScope serviceScope;
@@ -40,9 +40,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       Expression = expression ?? throw new ArgumentNullException(nameof(expression));
     }
 
-    public Type ElementType => typeof(TEntity);
-
-    public Expression Expression { get; internal set; }
+    public override Type ElementType => typeof(TEntity);
 
     public ICreateStatementProvider Provider { get; internal set; }
     

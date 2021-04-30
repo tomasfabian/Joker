@@ -1,7 +1,7 @@
 ﻿using System;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
-using Kafka.DotNet.ksqlDB.KSql.Query;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Statements;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Microsoft.Extensions.DependencyInjection;
 
