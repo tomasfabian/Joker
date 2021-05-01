@@ -13,6 +13,8 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
+using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context.Options;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
@@ -21,11 +23,16 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Kafka.DotNet.ksqlDB.Sample.Providers;
-//using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
+using Kafka.DotNet.ksqlDB.Sample.PullQuery;
 using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
+  public record AvgReadings
+  {
+    public string Sensor { get; set; }
+    public double Avg { get; set; }
+  }
   public static class Program
   {
     public static KSqlDBContextOptions CreateQueryStreamOptions(string ksqlDbUrl)
