@@ -55,6 +55,12 @@
     <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\Models\Movies\Movie.cs">
       <Link>Movies\Movie.cs</Link>
     </Compile>
+    <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\Models\Sensors\IoTSensor.cs">
+      <Link>Models\Sensors\IoTSensor.cs</Link>
+    </Compile>
+    <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\Models\Sensors\IoTSensorStats.cs">
+      <Link>Models\Sensors\IoTSensorStats.cs</Link>
+    </Compile>
     <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\Models\Tweet.cs">
       <Link>Models\Tweet.cs</Link>
     </Compile>
@@ -66,6 +72,9 @@
     </Compile>
     <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\Providers\MoviesProvider.cs">
       <Link>Providers\MoviesProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Kafka.DotNet.ksqlDB.Sample\PullQuery\PullQueryExample.cs">
+      <Link>PullQueryExample.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +104,9 @@
     <PackageReference Include="System.Text.Json">
       <Version>5.0.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PullQuery\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
