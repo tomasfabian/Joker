@@ -22,15 +22,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     public async Task<HttpResponseMessage> ExecuteStatementAsync(KSqlDbStatement ksqlDbStatement, CancellationToken cancellationToken = default)
     {
       using var httpClient = httpClientFactory.CreateClient();
-      
+
       var httpRequestMessage = CreateHttpRequestMessage(ksqlDbStatement);
-      
+
       httpClient.DefaultRequestHeaders.Accept.Add(
         new MediaTypeWithQualityHeaderValue(MediaType));
 
-      var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage,
-        HttpCompletionOption.ResponseHeadersRead,
-        cancellationToken).ConfigureAwait(false);
+      var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage, cancellationToken)
+        .ConfigureAwait(false);
 			
       return httpResponseMessage;
     }

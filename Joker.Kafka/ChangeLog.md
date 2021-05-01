@@ -142,6 +142,9 @@ Fixes:
 # v0.10-rc.1
 - IPullQueryProvider, IPullable, PullQueryExtensions
 
+Fixes:
+- fixed KSqlDbRestApiClient SendAsync set to defaultCompletionOption
+
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
 - CreateQueryStream options parameter
