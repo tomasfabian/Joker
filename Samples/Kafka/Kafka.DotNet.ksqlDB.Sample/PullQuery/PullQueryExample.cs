@@ -38,7 +38,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
             .Where(c => c.SensorId == "sensor-1")
             .GetAsync();
 
-      Console.WriteLine($"{result?.SensorId} - {result?.AvgValue}");
+      Console.WriteLine($"Id: {result?.SensorId} - Avg Value: {result?.AvgValue} - Window Start {result?.WindowStart}");
 
       string ksql = "SELECT * FROM avg_sensor_values WHERE SensorId = 'sensor-1';";
       result = await context.ExecutePullQuery<IoTSensorStats>(ksql);

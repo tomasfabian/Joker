@@ -13,7 +13,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context.Options;
 using Kafka.DotNet.ksqlDB.KSql.Query.Options;
@@ -28,11 +27,6 @@ using K = Kafka.DotNet.ksqlDB.KSql.Query.Functions.KSql;
 
 namespace Kafka.DotNet.ksqlDB.Sample
 {
-  public record AvgReadings
-  {
-    public string Sensor { get; set; }
-    public double Avg { get; set; }
-  }
   public static class Program
   {
     public static KSqlDBContextOptions CreateQueryStreamOptions(string ksqlDbUrl)
@@ -65,8 +59,8 @@ namespace Kafka.DotNet.ksqlDB.Sample
 
       await using var context = new KSqlDBContext(contextOptions);
 
-      using var disposable = context.CreateQueryStream<Movie>("Movies")
-      // using var disposable = context.CreateQuery<Movie>()
+      using var disposable = context.CreateQueryStream<Movie>() // Http 2.0
+      // using var disposable = context.CreateQuery<Movie>() // Http 1.0
         .Where(p => p.Title != "E.T.")
         .Where(c => K.Functions.Like(c.Title.ToLower(), "%hard%".ToLower()) || c.Id == 1)
         .Where(p => p.RowTime >= 1510923225000) //AND RowTime >= 1510923225000
@@ -85,6 +79,8 @@ namespace Kafka.DotNet.ksqlDB.Sample
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie1);
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
       await moviesProvider.InsertLeadAsync(MoviesProvider.LeadActor1);
+
+      await new PullQueryExample().ExecuteAsync();
 
       Console.WriteLine("Press any key to stop the subscription");
 
@@ -223,11 +219,11 @@ WHERE Id < 3 PARTITION BY Title EMIT CHANGES;
     private static async Task AsyncEnumerable(KSqlDBContext context)
     {
       var cts = new CancellationTokenSource();
-      var asyncTweetsEnumerable = context.CreateQueryStream<Tweet>().ToAsyncEnumerable();
+      var asyncTweetsEnumerable = context.CreateQueryStream<Movie>().ToAsyncEnumerable();
 
-      await foreach (var tweet in asyncTweetsEnumerable.WithCancellation(cts.Token))
+      await foreach (var movie in asyncTweetsEnumerable.WithCancellation(cts.Token))
       {
-        Console.WriteLine(tweet.Message);
+        Console.WriteLine(movie.Title);
         cts.Cancel();
       }
     }

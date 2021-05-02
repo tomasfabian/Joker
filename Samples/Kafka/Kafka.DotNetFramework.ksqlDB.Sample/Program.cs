@@ -14,6 +14,7 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi.Parameters;
 using Kafka.DotNet.ksqlDB.Sample.Models;
 using Kafka.DotNet.ksqlDB.Sample.Models.Movies;
 using Kafka.DotNet.ksqlDB.Sample.Providers;
+using Kafka.DotNet.ksqlDB.Sample.PullQuery;
 
 namespace Kafka.DotNetFramework.ksqlDB.Sample
 {
@@ -64,6 +65,8 @@ namespace Kafka.DotNetFramework.ksqlDB.Sample
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
       await moviesProvider.InsertLeadAsync(MoviesProvider.LeadActor1);
 
+      await new PullQueryExample().ExecuteAsync();
+
       Console.WriteLine("Press any key to stop the subscription");
 
       Console.ReadKey();
@@ -75,6 +78,7 @@ namespace Kafka.DotNetFramework.ksqlDB.Sample
 
       Console.WriteLine("Subscription completed");
     }
+
     private static IDisposable CountDistinct(KSqlDBContext context)
     {
       var subscription = context.CreateQuery<Tweet>()
