@@ -1321,12 +1321,12 @@ AS SELECT Title, Release_Year AS ReleaseYear FROM Movies
 WHERE Id < 3 PARTITION BY Title EMIT CHANGES;
 ```
 
-# v0.10.0 (WIP):
+# v0.10.0:
 ```
 Install-Package Kafka.DotNet.ksqlDB -Version 0.10.0-rc.1
 ```
 
-# Pull queries (v.0.10.0)
+# Pull queries - `CreatePullQuery<TEntity>` (v.0.10.0)
 [A pull query](https://docs.ksqldb.io/en/latest/concepts/queries/#pull) is a form of query issued by a client that retrieves a result as of "now", like a query against a traditional RDBS.
 
 ```C#
@@ -1342,35 +1342,34 @@ IKSqlDbRestApiClient restApiClient;
 
 async Task Main()
 {
-	string url = @"http:\\localhost:8088";
-	await using var context = new KSqlDBContext(url);
+  string url = @"http:\\localhost:8088";
+  await using var context = new KSqlDBContext(url);
 
-	var http = new HttpClientFactory(new Uri(url));
-	restApiClient = new KSqlDbRestApiClient(http);
+  var http = new HttpClientFactory(new Uri(url));
+  restApiClient = new KSqlDbRestApiClient(http);
 	
-	await CreateOrReplaceStreamAsync();
+  await CreateOrReplaceStreamAsync();
 	
-	var statement = context.CreateTableStatement("avg_sensor_values")
-		.As<IoTSensor>("sensor_values")
-		.GroupBy(c => c.SensorId)
-		.Select(c => new { SensorId = c.Key, AvgValue = c.Avg(g => g.Value) });
+  var statement = context.CreateTableStatement("avg_sensor_values")
+    .As<IoTSensor>("sensor_values")
+    .GroupBy(c => c.SensorId)
+    .Select(c => new { SensorId = c.Key, AvgValue = c.Avg(g => g.Value) });
 
-	var response = await statement.ExecuteStatementAsync();
+  var response = await statement.ExecuteStatementAsync();
 
-	response = await InsertAsync(new IoTSensor { SensorId = "sensor-1", Value = 11 });
-
+  response = await InsertAsync(new IoTSensor { SensorId = "sensor-1", Value = 11 });
 	
-	var result = await context.CreatePullQuery<IoTSensorStats>("avg_sensor_values")
-				.Where(c => c.SensorId == "sensor-1")
-				.GetAsync();
+  var result = await context.CreatePullQuery<IoTSensorStats>("avg_sensor_values")
+    .Where(c => c.SensorId == "sensor-1")
+    .GetAsync();
 
-	Console.WriteLine($"{result?.SensorId} - {result?.AvgValue}");
+  Console.WriteLine($"{result?.SensorId} - {result?.AvgValue}");
 }
 
 async Task<HttpResponseMessage> CreateOrReplaceStreamAsync()
 {
-	const string createOrReplaceStream = 
-@"CREATE STREAM sensor_values (
+  const string createOrReplaceStream = 
+    @"CREATE STREAM sensor_values (
     SensorId VARCHAR KEY,
     Value INT
 ) WITH (
@@ -1379,50 +1378,54 @@ async Task<HttpResponseMessage> CreateOrReplaceStreamAsync()
     value_format = 'json'
 );";
 
-	return await ExecuteAsync(createOrReplaceStream);
+  return await ExecuteAsync(createOrReplaceStream);
 }
 
 async Task<HttpResponseMessage> InsertAsync(IoTSensor sensor)
 {
-	string insert =
-		$"INSERT INTO sensor_values (SensorId, Value) VALUES ('{sensor.SensorId}', {sensor.Value});";
+  string insert =
+    $"INSERT INTO sensor_values (SensorId, Value) VALUES ('{sensor.SensorId}', {sensor.Value});";
 
-	return await ExecuteAsync(insert);
+  return await ExecuteAsync(insert);
 }
 
 async Task<HttpResponseMessage> ExecuteAsync(string statement)
 {
-	KSqlDbStatement ksqlDbStatement = new(statement);
+  KSqlDbStatement ksqlDbStatement = new(statement);
 
-	var httpResponseMessage = await restApiClient.ExecuteStatementAsync(ksqlDbStatement)
-		.ConfigureAwait(false);
+  var httpResponseMessage = await restApiClient.ExecuteStatementAsync(ksqlDbStatement)
+    .ConfigureAwait(false);
 
-	string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+  string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
 
-	return httpResponseMessage;
+  return httpResponseMessage;
 }
 
 public record IoTSensor
 {
-	public string SensorId { get; init; }
-	public int Value { get; init; }
+  public string SensorId { get; init; }
+  public int Value { get; init; }
 }
 
 public record IoTSensorStats
 {
-	public string SensorId { get; init; }
-	public double AvgValue { get; init; }
+  public string SensorId { get; init; }
+  public double AvgValue { get; init; }
 }
 ```
 
-Execute pull query with plain string query:
+# Pull queries - `ExecutePullQuery` (v.0.10.0)
+
+Execute [pull query](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-pull-query/) with plain string query:
 ```C#
-  string ksql = "SELECT * FROM avg_sensor_values WHERE SensorId = 'sensor-1';";
-  var result = await context.ExecutePullQuery<IoTSensorStats>(ksql);
+string ksql = "SELECT * FROM avg_sensor_values WHERE SensorId = 'sensor-1';";
+var result = await context.ExecutePullQuery<IoTSensorStats>(ksql);
 ```
 
-# LinqPad sample
-[kafka.dotnet.ksqldb.linq](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.linq)
+# LinqPad samples
+[Push Query](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.linq)
+
+[Pull Query](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.pull-query.linq)
 
 # Nuget
 https://www.nuget.org/packages/Kafka.DotNet.ksqlDB/

@@ -1,3 +1,9 @@
+# v0.10
+- [Pull queries](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#pull-queries---createpullquerytentity-v0100) - IPullQueryProvider, IPullable, PullQueryExtensions
+
+Fixes:
+- fixed KSqlDbRestApiClient SendAsync set to defaultCompletionOption
+
 # v0.9.0
 [Create or replace stream/table as select](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#v090-wip---preview):
 - IKSqlDBStatementsContext - CreateStreamStatement, CreateOrReplaceStreamStatement, CreateTableStatement, CreateOrReplaceTableStatement   
@@ -138,12 +144,6 @@ Fixes:
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
-
-# v0.10-rc.1
-- IPullQueryProvider, IPullable, PullQueryExtensions
-
-Fixes:
-- fixed KSqlDbRestApiClient SendAsync set to defaultCompletionOption
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time
