@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Kafka.DotNet.ksqlDB.KSql.Query.PullQueries;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries
 {
@@ -28,6 +29,21 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries
           WhereTSource(typeof(TSource)),
           source.Expression, Expression.Quote(predicate)
         ));
+    }
+
+    #endregion
+
+    #region ToQueryString
+
+    public static string ToQueryString<TSource>(this IPullable<TSource> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+
+      var pullSet = source as KPullSet<TSource>;
+
+      var dependencies = pullSet?.GetFilledQueryParameters();
+
+      return dependencies?.QueryStreamParameters.Sql;
     }
 
     #endregion
