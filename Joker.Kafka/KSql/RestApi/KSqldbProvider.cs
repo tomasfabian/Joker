@@ -27,7 +27,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     {
       return httpClientFactory.CreateClient();
     }
-
+    
+    /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     public async IAsyncEnumerable<T> Run<T>(object parameters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
       using var httpClient = OnCreateHttpClient();
@@ -40,7 +41,12 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         cancellationToken)
         .ConfigureAwait(false);
 
+#if NET
+      var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
       var stream = await httpResponseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
+      
       using var streamReader = new StreamReader(stream);
 
       while (!streamReader.EndOfStream)

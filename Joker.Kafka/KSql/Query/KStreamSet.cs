@@ -63,28 +63,22 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       return compositeDisposable;
     }
 
-    internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationTokenSource cancellationTokenSource)
+    internal IAsyncEnumerable<TEntity> RunStreamAsAsyncEnumerable(CancellationToken cancellationToken = default)
     {
-      var cancellationToken = cancellationTokenSource.Token;
-      
-      serviceScope = serviceScopeFactory.CreateScope();
-      var dependencies = serviceScope.ServiceProvider.GetService<IKStreamSetDependencies>();
+      using var scope = serviceScopeFactory.CreateScope();
 
-      cancellationToken.Register(() => serviceScope?.Dispose());
-
-      var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, QueryContext);
-
-      var ksqlDBProvider = dependencies.KsqlDBProvider;
+      var dependencies = scope.ServiceProvider.GetRequiredService<IKStreamSetDependencies>();
 
       var queryParameters = dependencies.QueryStreamParameters;
-      queryParameters.Sql = ksqlQuery;
+      queryParameters.Sql = dependencies.KSqlQueryGenerator.BuildKSql(Expression, QueryContext);
 
-      return ksqlDBProvider.Run<TEntity>(queryParameters, cancellationToken);
+      return dependencies.KsqlDBProvider
+        .Run<TEntity>(queryParameters, cancellationToken);
     }
 
     internal IObservable<TEntity> RunStreamAsObservable(CancellationTokenSource cancellationTokenSource)
     {
-      var observableStream = RunStreamAsAsyncEnumerable(cancellationTokenSource)
+      var observableStream = RunStreamAsAsyncEnumerable(cancellationTokenSource.Token)
         .ToObservable();
 
       return observableStream;
