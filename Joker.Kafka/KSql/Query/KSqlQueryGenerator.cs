@@ -9,7 +9,6 @@ using Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.Query.Visitors;
-using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.KSql.Query
@@ -112,27 +111,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       if (windowedBy == null)
         return;
 
-      var windowType = windowedBy switch
-      {
-        HoppingWindows _ => "HOPPING",
-        SessionWindow _ => "SESSION",
-        _ => "TUMBLING"
-      };
-
-      string size = windowType == "SESSION" ? String.Empty : "SIZE ";
-
-      kSqlVisitor.Append($" WINDOW {windowType} ({size}{windowedBy.Duration.Value} {windowedBy.Duration.TimeUnit}");
-
-      if(windowedBy is HoppingWindows {AdvanceBy: { }} hoppingWindows)
-        kSqlVisitor.Append($", ADVANCE BY {hoppingWindows.AdvanceBy.Value} {hoppingWindows.AdvanceBy.TimeUnit}");
-
-      if(windowedBy is HoppingWindows {Retention: { }} hoppingWindows2)
-        kSqlVisitor.Append($", RETENTION {hoppingWindows2.Retention.Value} {hoppingWindows2.Retention.TimeUnit}");
-      
-      if (windowedBy.GracePeriod != null)
-        kSqlVisitor.Append($", GRACE PERIOD {windowedBy.GracePeriod.Value} {windowedBy.GracePeriod.TimeUnit}");
-
-      kSqlVisitor.Append(")");
+      new KSqlWindowsVisitor(kSqlVisitor.StringBuilder).Visit(windowedBy);
     }
 
     protected virtual string InterceptStreamName(string value)
@@ -224,8 +203,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       if (methodInfo.Name.IsOneOfFollowing(nameof(QbservableExtensions.WindowedBy), nameof(CreateStatementExtensions.WindowedBy)))
       {
-        var arg = (ConstantExpression)StripQuotes(methodCallExpression.Arguments[1]);
-        windowedBy = (TimeWindows)arg.Value;
+        windowedBy = (ConstantExpression)StripQuotes(methodCallExpression.Arguments[1]);
 
         VisitChained(methodCallExpression);
       }
@@ -271,7 +249,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     private Queue<Expression> whereClauses;
     private LambdaExpression select;
     private LambdaExpression partitionBy;
-    private TimeWindows windowedBy;
+    private ConstantExpression windowedBy;
     private LambdaExpression groupBy;
     private LambdaExpression having;
     private List<(MethodInfo, IEnumerable<Expression>)> joinTables;
