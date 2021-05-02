@@ -12,7 +12,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 {
   internal abstract class KStreamSet : KSet, IQbservable
   {
-
     public IKSqlQbservableProvider Provider { get; internal set; }
     
     internal QueryContext QueryContext { get; set; }

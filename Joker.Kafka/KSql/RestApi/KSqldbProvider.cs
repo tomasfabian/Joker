@@ -27,7 +27,8 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     {
       return httpClientFactory.CreateClient();
     }
-    
+
+    /// <param name="parameters">Query parameters</param>
     /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     public async IAsyncEnumerable<T> Run<T>(object parameters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

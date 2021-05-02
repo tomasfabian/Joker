@@ -19,7 +19,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.PullQueries
   internal sealed class KPullSet<TEntity> : KPullSet, IPullable<TEntity>
   {
     private readonly IServiceScopeFactory serviceScopeFactory;
-    private IServiceScope serviceScope;
 
     internal KPullSet(IServiceScopeFactory serviceScopeFactory, QueryContext queryContext = null)
     {
@@ -47,24 +46,26 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query.PullQueries
 
     public ValueTask<TEntity> GetAsync(CancellationToken cancellationToken = default)
     {
-      serviceScope = serviceScopeFactory.CreateScope();
-      var dependencies = serviceScope.ServiceProvider.GetRequiredService<IKStreamSetDependencies>();
+      var dependencies = GetDependencies();
 
-      cancellationToken.Register(() => serviceScope?.Dispose());
+      return dependencies.KsqlDBProvider.Run<TEntity>(dependencies.QueryStreamParameters, cancellationToken)
+        .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    internal IKStreamSetDependencies GetDependencies()
+    {
+      using var serviceScope = serviceScopeFactory.CreateScope();
+
+      var dependencies = serviceScope.ServiceProvider.GetRequiredService<IKStreamSetDependencies>();
 
       dependencies.KSqlQueryGenerator.ShouldEmitChanges = false;
 
       var ksqlQuery = dependencies.KSqlQueryGenerator.BuildKSql(Expression, QueryContext);
 
-      var ksqlDbProvider = dependencies.KsqlDBProvider;
-
       var queryParameters = dependencies.QueryStreamParameters;
       queryParameters.Sql = ksqlQuery;
-      
-      serviceScope.Dispose();
 
-      return ksqlDbProvider.Run<TEntity>(queryParameters, cancellationToken)
-        .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+      return dependencies;
     }
   }
 }

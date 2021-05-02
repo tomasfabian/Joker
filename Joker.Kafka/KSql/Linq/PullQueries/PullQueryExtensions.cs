@@ -41,7 +41,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Linq.PullQueries
 
       var pullSet = source as KPullSet<TSource>;
 
-      var dependencies = pullSet?.GetFilledQueryParameters();
+      var dependencies = pullSet?.GetDependencies();
 
       return dependencies?.QueryStreamParameters.Sql;
     }
