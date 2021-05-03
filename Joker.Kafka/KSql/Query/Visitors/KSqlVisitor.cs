@@ -326,9 +326,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {
       if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
 
-      Func<ExpressionType, bool> isBinaryOperation = expressionType => SupportedBinaryOperators.Contains(expressionType);
+      bool IsBinaryOperation(ExpressionType expressionType) => SupportedBinaryOperators.Contains(expressionType);
 
-      bool shouldAddParentheses = isBinaryOperation(binaryExpression.Left.NodeType);
+      bool shouldAddParentheses = IsBinaryOperation(binaryExpression.Left.NodeType);
 
       if(shouldAddParentheses)
         Append("(");
@@ -373,7 +373,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
       Append(@operator);
       
-      shouldAddParentheses = isBinaryOperation(binaryExpression.Right.NodeType);
+      shouldAddParentheses = IsBinaryOperation(binaryExpression.Right.NodeType);
 
       if(shouldAddParentheses)
         Append("(");
@@ -472,7 +472,11 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       if (memberExpression == null) throw new ArgumentNullException(nameof(memberExpression));
 
       if (memberExpression.Expression == null)
+      {
+        new KSqlWindowBoundsVisitor(StringBuilder).Visit(memberExpression);
+
         return memberExpression;
+      }
       
       var memberName = memberExpression.Member.Name;
 
