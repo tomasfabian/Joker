@@ -65,7 +65,14 @@ namespace Kafka.DotNetFramework.ksqlDB.Sample
       await moviesProvider.InsertMovieAsync(MoviesProvider.Movie2);
       await moviesProvider.InsertLeadAsync(MoviesProvider.LeadActor1);
 
-      await new PullQueryExample().ExecuteAsync();
+      try
+      {
+        await new PullQueryExample().ExecuteAsync();
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
 
       Console.WriteLine("Press any key to stop the subscription");
 
