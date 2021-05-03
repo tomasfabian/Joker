@@ -7,12 +7,14 @@ using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Kafka.DotNet.ksqlDB.Sample.Models.Sensors;
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
 
 namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
 {
   public class PullQueryExample
   {
     IKSqlDbRestApiClient restApiClient;
+
     public async Task ExecuteAsync()
     {
       string url = @"http:\\localhost:8088";
@@ -33,14 +35,24 @@ namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
       var response = await statement.ExecuteStatementAsync();
 
       response = await InsertAsync(new IoTSensor { SensorId = "sensor-1", Value = 11 });
+      
+      await PullSensor(context);
+    }
+
+    private static async Task PullSensor(KSqlDBContext context)
+    {
+      string windowStart = "2019-10-03T21:31:16";
+      string windowEnd = "2025-10-03T21:31:16";
 
       var result = await context.CreatePullQuery<IoTSensorStats>(MaterializedViewName)
-            .Where(c => c.SensorId == "sensor-1")
-            .GetAsync();
+        .Where(c => c.SensorId == "sensor-1")
+        //.Where(c => Bounds.WindowStart > windowStart && Bounds.WindowEnd <= windowEnd)
+        .GetAsync();
 
       Console.WriteLine($"Id: {result?.SensorId} - Avg Value: {result?.AvgValue} - Window Start {result?.WindowStart}");
 
       string ksql = "SELECT * FROM avg_sensor_values WHERE SensorId = 'sensor-1';";
+
       result = await context.ExecutePullQuery<IoTSensorStats>(ksql);
     }
 
