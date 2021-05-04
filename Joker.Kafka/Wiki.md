@@ -134,7 +134,7 @@ Omitting select is equivalent to SELECT *
 | DOUBLE  | double |
 | BOOLEAN | bool   |
 | ```ARRAY<ElementType>``` | C#Type[]   |
-| ```MAP<ElementType, ElementType>``` | IDictionary<C#Type, C#Type>   |
+| ```MAP<KeyType, ValueType>``` | IDictionary<C#Type, C#Type>   |
 | ```STRUCT``` | struct   |
 
 Array type mapping example (available from v0.3.0):
