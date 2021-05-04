@@ -128,7 +128,7 @@ Omitting select is equivalent to SELECT *
 ### Supported data types mapping
 |   ksql  |   c#   |
 |:-------:|:------:|
-| STRING  | string |
+| VARCHAR | string |
 | INTEGER | int    |
 | BIGINT  | long   |
 | DOUBLE  | double |
@@ -1412,6 +1412,26 @@ public record IoTSensorStats
   public string SensorId { get; init; }
   public double AvgValue { get; init; }
 }
+```
+
+### Window Bounds (v0.10.0)
+The WHERE clause must contain a value for each primary-key column to retrieve and may optionally include bounds on WINDOWSTART and WINDOWEND if the materialized table is windowed.
+```C#
+using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+
+string windowStart = "2019-10-03T21:31:16";
+string windowEnd = "2025-10-03T21:31:16";
+
+var result = await context.CreatePullQuery<IoTSensorStats>(MaterializedViewName)
+  .Where(c => c.SensorId == "sensor-1")
+  .Where(c => Bounds.WindowStart > windowStart && Bounds.WindowEnd <= windowEnd)
+  .GetAsync();
+```
+
+Generated KSQL:
+```KSQL
+SELECT * FROM avg_sensor_values
+WHERE SensorId = 'sensor-1' AND (WINDOWSTART > '2019-10-03T21:31:16') AND (WINDOWEND <= '2020-10-03T21:31:16');
 ```
 
 # Pull queries - `ExecutePullQuery` (v.0.10.0)

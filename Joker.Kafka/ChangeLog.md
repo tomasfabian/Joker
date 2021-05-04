@@ -1,6 +1,6 @@
-# v0.10
+# v0.10.0
 - [Pull queries](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#pull-queries---createpullquerytentity-v0100) - IPullQueryProvider, IPullable, PullQueryExtensions
-
+- Pull query [window bounds](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-pull-query/#example)
 Fixes:
 - fixed KSqlDbRestApiClient SendAsync set to defaultCompletionOption
 
