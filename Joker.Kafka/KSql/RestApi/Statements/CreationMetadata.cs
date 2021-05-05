@@ -2,7 +2,7 @@
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
-  public sealed record CreationMetadata
+  public record CreationMetadata
   {
     /// <summary>The name of the Kafka topic that backs this stream/table. If this property is not set, then the name of the stream/table in upper case will be used as default.</summary>
     public string KafkaTopic { get; set; }
