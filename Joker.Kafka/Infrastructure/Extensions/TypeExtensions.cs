@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Kafka.DotNet.ksqlDB.KSql.Query;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations;
 
 namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
 {
@@ -40,6 +43,11 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
       var isDictionary = type.GetGenericTypeDefinition() == typeof(IDictionary<,>) || type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
       return isDictionary;
+    }
+
+    internal static bool HasKey(this PropertyInfo typeInfo)
+    {
+      return typeInfo.GetCustomAttributes().OfType<KeyAttribute>().Any();
     }
   }
 }
