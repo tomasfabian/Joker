@@ -6,10 +6,25 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
   internal static class CreateStatements
   {
-    internal static string GenerateWithClause(CreationMetadata metadata) {
+    internal static string GenerateWithClause(EntityCreationMetadata metadata)
+    {
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-
+		
       var properties = new List<string>();
+
+      if (metadata.WindowType.HasValue)
+        properties.Add(@$"WINDOW_TYPE='{metadata.WindowType}'");
+
+      if (metadata.WindowSize.IsNotNullOrEmpty())
+        properties.Add(@$"WINDOW_SIZE='{metadata.WindowSize}'");
+			
+      return GenerateWithClause(metadata, properties);
+    }
+
+    internal static string GenerateWithClause(CreationMetadata metadata, IList<string> properties) {
+      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+      
+      properties ??= new List<string>();
 
       if (metadata.KafkaTopic.IsNotNullOrEmpty())
         properties.Add(@$"KAFKA_TOPIC='{metadata.KafkaTopic}'");

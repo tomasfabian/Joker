@@ -1,9 +1,15 @@
 ﻿using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
   public record EntityCreationMetadata : CreationMetadata
   {
+    public EntityCreationMetadata()
+    {
+      ValueFormat = SerializationFormats.Json;
+    }
+
     /// <summary>
     /// By default, the topic is assumed to contain non-windowed data. If the data is windowed, i.e., was created using ksqlDB using a query that contains a WINDOW clause, then the WINDOW_TYPE property can be used to provide the window type. Valid values are SESSION, HOPPING, and TUMBLING.
     /// </summary>
