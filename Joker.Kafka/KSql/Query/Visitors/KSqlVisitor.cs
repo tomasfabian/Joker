@@ -164,7 +164,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
 
     protected override Expression VisitListInit(ListInitExpression listInitExpression)
     {
-      var isDictionary = IsDictionary(listInitExpression.Type);
+      var isDictionary = listInitExpression.Type.IsDictionary();
       
       if (isDictionary)
       {
@@ -192,16 +192,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
       return listInitExpression;
     }
 
-    private static bool IsDictionary(Type type)
-    {
-      if (!type.IsGenericType)
-        return false;
-
-      var isDictionary = type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
-
-      return isDictionary;
-    }
-
     protected override Expression VisitNewArray(NewArrayExpression node)
     {
       Append("ARRAY[");
@@ -215,7 +205,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.Query
     {      
       var methodInfo = methodCallExpression.Method;
 
-      if (methodCallExpression.Object != null && IsDictionary(methodCallExpression.Object.Type))
+      if (methodCallExpression.Object != null && methodCallExpression.Object.Type.IsDictionary())
       {
         if (methodCallExpression.Method.Name == "get_Item")
         {

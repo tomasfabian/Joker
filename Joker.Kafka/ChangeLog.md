@@ -1,6 +1,7 @@
 # v0.10.0
 - [Pull queries](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider#pull-queries---createpullquerytentity-v0100) - IPullQueryProvider, IPullable, PullQueryExtensions
 - Pull query [window bounds](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/select-pull-query/#example)
+
 Fixes:
 - fixed KSqlDbRestApiClient SendAsync set to defaultCompletionOption
 
@@ -144,6 +145,10 @@ Fixes:
 - KStreamSet, KQuerySet, KQueryStreamSet
 - QbservableProvider
 - ```KSqldbProvider<T>``` - ksqldb REST api provider for push queries (```KSqlDbQueryProvider<T>```, ```KSqlDbQueryStreamProvider<T>```)
+
+### v0.11.0-rc.1
+- EntityCreationMetadata, WindowType
+
 
 # TODO:
 - missing scalar functions https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/scalar-functions/#date-and-time

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Kafka.DotNet.ksqlDB.KSql.Query;
 
@@ -29,6 +30,16 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
     internal static bool IsStruct(this Type source) 
     {
       return source.IsValueType && !source.IsEnum && !source.IsPrimitive;
+    }
+
+    internal static bool IsDictionary(this Type type)
+    {
+      if (!type.IsGenericType)
+        return false;
+
+      var isDictionary = type.GetGenericTypeDefinition() == typeof(IDictionary<,>) || type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+
+      return isDictionary;
     }
   }
 }
