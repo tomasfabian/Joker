@@ -21,7 +21,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       return GenerateWithClause(metadata, properties);
     }
 
-    internal static string GenerateWithClause(CreationMetadata metadata, IList<string> properties) {
+    internal static string GenerateWithClause(CreationMetadata metadata, IList<string> properties = null) {
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
       
       properties ??= new List<string>();
