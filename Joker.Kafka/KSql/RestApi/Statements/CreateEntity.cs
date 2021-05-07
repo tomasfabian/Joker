@@ -17,13 +17,13 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 
       if (type == typeof(string))
         ksqlType = "VARCHAR";
-      if (type == typeof(int))
+      if (type.IsOneOfFollowing(typeof(int), typeof(int?), typeof(short), typeof(short?)))
         ksqlType = "INT";
-      if (type == typeof(long))
+      if (type.IsOneOfFollowing(typeof(long), typeof(long?)))
         ksqlType = "BIGINT";
-      if (type == typeof(double))
+      if (type.IsOneOfFollowing(typeof(double), typeof(double?)))
         ksqlType = "DOUBLE";
-      if (type == typeof(bool))
+      if (type.IsOneOfFollowing(typeof(bool), typeof(bool?)))
         ksqlType = "BOOLEAN";
 
       if (type.IsArray)

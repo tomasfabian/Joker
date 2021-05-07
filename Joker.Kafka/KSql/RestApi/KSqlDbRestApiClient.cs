@@ -73,7 +73,18 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 
     #region Creation
     
-    public Task<HttpResponseMessage> CreateOrReplaceStream<T>(EntityCreationMetadata creationMetadata, bool ifNotExists = false, CancellationToken cancellationToken = default)
+    public Task<HttpResponseMessage> CreateStream<T>(EntityCreationMetadata creationMetadata, bool ifNotExists = false, CancellationToken cancellationToken = default)
+    {
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      return CreateOrReplace<T>(statementContext, creationMetadata, ifNotExists, cancellationToken);
+    }
+
+    public Task<HttpResponseMessage> CreateOrReplaceStream<T>(EntityCreationMetadata creationMetadata, CancellationToken cancellationToken = default)
     {
       var statementContext = new StatementContext
       {
@@ -81,36 +92,25 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
         KSqlEntityType = KSqlEntityType.Stream
       };
 
-      return CreateOrReplace<T>(statementContext, creationMetadata, ifNotExists, cancellationToken);
+      return CreateOrReplace<T>(statementContext, creationMetadata, ifNotExists: null, cancellationToken);
     }
-
-    public Task<HttpResponseMessage> CreateOrReplaceTable<T>(EntityCreationMetadata creationMetadata, bool ifNotExists = false, CancellationToken cancellationToken = default)
+    
+    public Task<HttpResponseMessage> CreateTable<T>(EntityCreationMetadata creationMetadata, bool ifNotExists = false, CancellationToken cancellationToken = default)
     {
       var statementContext = new StatementContext
       {
-        CreationType = CreationType.CreateOrReplace,
+        CreationType = CreationType.Create,
         KSqlEntityType = KSqlEntityType.Table
       };
 
       return CreateOrReplace<T>(statementContext, creationMetadata, ifNotExists, cancellationToken);
     }
 
-    public Task<HttpResponseMessage> CreateStream<T>(EntityCreationMetadata creationMetadata, CancellationToken cancellationToken = default)
+    public Task<HttpResponseMessage> CreateOrReplaceTable<T>(EntityCreationMetadata creationMetadata, CancellationToken cancellationToken = default)
     {
       var statementContext = new StatementContext
       {
-        CreationType = CreationType.Create,
-        KSqlEntityType = KSqlEntityType.Stream
-      };
-
-      return CreateOrReplace<T>(statementContext, creationMetadata, ifNotExists: null, cancellationToken);
-    }
-
-    public Task<HttpResponseMessage> CreateTable<T>(EntityCreationMetadata creationMetadata, CancellationToken cancellationToken = default)
-    {
-      var statementContext = new StatementContext
-      {
-        CreationType = CreationType.Create,
+        CreationType = CreationType.CreateOrReplace,
         KSqlEntityType = KSqlEntityType.Table
       };
 
