@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.IntegrationTests.Models.Sensors;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 
@@ -26,6 +27,7 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.Linq.PullQueries
       var statement = context.CreateOrReplaceTableStatement(MaterializedViewName)
         .As<IoTSensor>(StreamName)
         .GroupBy(c => c.SensorId)
+        .WindowedBy(new TimeWindows(Duration.OfSeconds(5)).WithGracePeriod(Duration.OfHours(2)))
         .Select(c => new { SensorId = c.Key, AvgValue = c.Avg(g => g.Value) });
 
       var response = await statement.ExecuteStatementAsync();

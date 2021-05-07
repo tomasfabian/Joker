@@ -8,6 +8,7 @@ using Kafka.DotNet.ksqlDB.KSql.RestApi;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Kafka.DotNet.ksqlDB.Sample.Models.Sensors;
 using Kafka.DotNet.ksqlDB.KSql.Query.Functions;
+using Kafka.DotNet.ksqlDB.KSql.Query.Windows;
 
 namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
 {
@@ -28,6 +29,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
       var statement = context.CreateTableStatement(MaterializedViewName)
         .As<IoTSensor>("sensor_values")
         .GroupBy(c => c.SensorId)
+        .WindowedBy(new TimeWindows(Duration.OfSeconds(5)).WithGracePeriod(Duration.OfHours(2)))
         .Select(c => new { SensorId = c.Key, AvgValue = c.Avg(g => g.Value) });
 
       var query = statement.ToStatementString();
@@ -46,7 +48,7 @@ namespace Kafka.DotNet.ksqlDB.Sample.PullQuery
 
       var result = await context.CreatePullQuery<IoTSensorStats>(MaterializedViewName)
         .Where(c => c.SensorId == "sensor-1")
-        //.Where(c => Bounds.WindowStart > windowStart && Bounds.WindowEnd <= windowEnd)
+        .Where(c => Bounds.WindowStart > windowStart && Bounds.WindowEnd <= windowEnd)
         .GetAsync();
 
       Console.WriteLine($"Id: {result?.SensorId} - Avg Value: {result?.AvgValue} - Window Start {result?.WindowStart}");

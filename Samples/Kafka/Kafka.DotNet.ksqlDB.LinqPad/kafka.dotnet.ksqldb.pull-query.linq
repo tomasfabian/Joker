@@ -7,6 +7,8 @@
   <Namespace>Kafka.DotNet.ksqlDB.KSql.RestApi.Statements</Namespace>
   <Namespace>System.Net.Http</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
+  <Namespace>Kafka.DotNet.ksqlDB.KSql.Query.Functions</Namespace>
+  <Namespace>Kafka.DotNet.ksqlDB.KSql.Query.Windows</Namespace>
 </Query>
 
 IKSqlDbRestApiClient restApiClient;
@@ -24,6 +26,7 @@ async Task Main()
 	var statement = context.CreateTableStatement(MaterializedViewName)
 		.As<IoTSensor>("sensor_values")
 		.GroupBy(c => c.SensorId)
+		.WindowedBy(new TimeWindows(Duration.OfSeconds(5)).WithGracePeriod(Duration.OfHours(2)))
 		.Select(c => new { SensorId = c.Key, AvgValue = c.Avg(g => g.Value) });
 
 	var query = statement.ToStatementString();
@@ -35,9 +38,12 @@ async Task Main()
 	response = await InsertAsync(new IoTSensor { SensorId = "sensor-1", Value = 11 });
 
 	//await Task.Delay(10000);
+	string windowStart = "2019-10-03T21:31:16";
+	string windowEnd = "2025-10-03T21:31:16";
 	
 	var result = await context.CreatePullQuery<IoTSensorStats>(MaterializedViewName)
 				.Where(c => c.SensorId == "sensor-1")
+				.Where(c => Bounds.WindowStart > windowStart && Bounds.WindowEnd <= windowEnd)
 				.GetAsync();
 
 	Console.WriteLine($"{result?.SensorId} - {result?.AvgValue}");
