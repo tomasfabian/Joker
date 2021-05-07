@@ -624,5 +624,27 @@ WHERE Title != 'E.T.' EMIT CHANGES LIMIT 2;";
 
       return disposable;
     }
+
+    private static async Task CreateStreamAsync()
+    {
+      EntityCreationMetadata metadata = new()
+      {
+        KafkaTopic = nameof(Movie),
+        Partitions = 1,
+        Replicas = 1
+      };
+
+      string url = @"http:\\localhost:8088";
+
+      var http = new HttpClientFactory(new Uri(url));
+      var restApiClient = new KSqlDbRestApiClient(http);
+      
+      var httpResponseMessage = await restApiClient.CreateStream<MovieNullableFields>(metadata, ifNotExists: true);
+
+      //OR
+      //httpResponseMessage = await restApiClient.CreateOrReplaceStream<MovieNullableFields>(metadata);
+      
+      string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+    }
   }
 }
