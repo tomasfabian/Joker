@@ -6,11 +6,14 @@ using System.Text;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
+using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
   internal class CreateEntity
   {
+    private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
+
     internal string KSqlTypeTranslator(Type type)
     {
       var ksqlType = string.Empty;
@@ -52,7 +55,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
     {
       stringBuilder.Clear();
 
-      PrintCreateOrReplace<T>(statementContext);
+      PrintCreateOrReplace<T>(statementContext, metadata);
 
       if (ifNotExists.HasValue && ifNotExists.Value)
         stringBuilder.Append(" IF NOT EXISTS");
@@ -90,7 +93,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       stringBuilder.AppendLine(string.Join($",{Environment.NewLine}", ksqlProperties));
     }
 
-    private void PrintCreateOrReplace<T>(StatementContext statementContext)
+    private void PrintCreateOrReplace<T>(StatementContext statementContext, EntityCreationMetadata metadata)
     {
       string creationTypeText = statementContext.CreationType switch
       {
@@ -104,9 +107,22 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
         KSqlEntityType.Stream => KSqlEntityType.Stream.ToString().ToUpper(),
       };
 
-      statementContext.EntityName = typeof(T).Name; // TODO: Pluralize
+      statementContext.EntityName = GetEntityName<T>(metadata);
 
       stringBuilder.Append($"{creationTypeText} {entityTypeText}");
+    }
+
+    protected virtual string GetEntityName<T>(EntityCreationMetadata metadata)
+    {
+      string entityName = metadata.EntityName; // TODO: Pluralize
+
+      if(string.IsNullOrEmpty(entityName))
+        entityName = typeof(T).Name; // TODO: Pluralize
+
+      if (metadata.ShouldPluralizeEntityName)
+        entityName = EnglishPluralizationService.Pluralize(entityName);
+
+      return entityName;
     }
 
     private string TryAttachKey(KSqlEntityType entityType, PropertyInfo propertyInfo)
