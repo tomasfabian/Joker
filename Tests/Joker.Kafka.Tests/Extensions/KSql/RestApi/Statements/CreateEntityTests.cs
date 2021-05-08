@@ -1,29 +1,49 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
+using Joker.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using NUnit.Framework;
+using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
 {
   public class CreateEntityTests
   {
-    readonly EntityCreationMetadata creationMetadata = new EntityCreationMetadata()
-    {
-      KafkaTopic = nameof(MyMovies),
-      Partitions = 1,
-      Replicas = 1
-    };
+    private EntityCreationMetadata creationMetadata;
 
-    private string expectedStatementTemplate = @"{0} MyMovies (
-	Id INT {1}KEY,
+    [SetUp]
+    public void Init()
+    {
+      creationMetadata = new EntityCreationMetadata()
+      {
+        KafkaTopic = nameof(MyMovie),
+        Partitions = 1,
+        Replicas = 1
+      };
+    }
+    
+    private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
+
+    private string CreateExpectedStatement(string creationClause, bool hasPrimaryKey, string entityName = null)
+    {
+      string key = hasPrimaryKey ? "PRIMARY KEY" : "KEY";
+
+      if (entityName.IsNullOrEmpty())
+        entityName = EnglishPluralizationService.Pluralize(nameof(MyMovie));
+
+      string expectedStatementTemplate = @$"{creationClause} {entityName} (
+	Id INT {key},
 	Title VARCHAR,
 	Release_Year INT,
 	NumberOfDays ARRAY<INT>,
 	Dictionary MAP<VARCHAR, INT>,
 	Dictionary2 MAP<VARCHAR, INT>
-) WITH ( KAFKA_TOPIC='MyMovies', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );";
+) WITH ( KAFKA_TOPIC='{creationMetadata.KafkaTopic}', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );";
+
+      return expectedStatementTemplate;
+    }
 
     [Test]
     public void Print_CreateStream()
@@ -36,10 +56,66 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE STREAM", string.Empty));
+      statement.Should().Be(CreateExpectedStatement("CREATE STREAM", hasPrimaryKey: false));
+    }
+    
+    [Test]
+    public void Print_CreateStream_OverrideEntityName()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      creationMetadata.EntityName = "TestName";
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(CreateExpectedStatement("CREATE STREAM", hasPrimaryKey: false, entityName: EnglishPluralizationService.Pluralize(creationMetadata.EntityName)));
+    }    
+
+    [Test]
+    public void Print_CreateStream_OverrideEntityName_DonNotPluralize()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      creationMetadata.ShouldPluralizeEntityName = false;
+      creationMetadata.EntityName = "TestName";
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(CreateExpectedStatement("CREATE STREAM", hasPrimaryKey: false, entityName: creationMetadata.EntityName));
+    }
+    
+    [Test]
+    public void Print_CreateStream_DoNotPluralize()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(CreateExpectedStatement("CREATE STREAM", hasPrimaryKey: false));
     }
 
     [Test]
@@ -53,10 +129,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, ifNotExists: true);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, ifNotExists: true);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE STREAM IF NOT EXISTS", string.Empty));
+      statement.Should().Be(CreateExpectedStatement("CREATE STREAM IF NOT EXISTS", hasPrimaryKey: false));
     }
 
     [Test]
@@ -70,10 +146,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE OR REPLACE STREAM", string.Empty));
+      statement.Should().Be(CreateExpectedStatement("CREATE OR REPLACE STREAM", hasPrimaryKey: false));
     }
 
     [Test]
@@ -87,10 +163,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE TABLE", "PRIMARY "));
+      statement.Should().Be(CreateExpectedStatement("CREATE TABLE", hasPrimaryKey: true));
     }
 
     [Test]
@@ -104,10 +180,10 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, ifNotExists: true);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, ifNotExists: true);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE TABLE IF NOT EXISTS", "PRIMARY "));
+      statement.Should().Be(CreateExpectedStatement("CREATE TABLE IF NOT EXISTS", hasPrimaryKey: true));
     }
 
     [Test]
@@ -121,13 +197,13 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       };
 
       //Act
-      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+      string statement = new CreateEntity().Print<MyMovie>(statementContext, creationMetadata, null);
 
       //Assert
-      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE OR REPLACE TABLE", "PRIMARY "));
+      statement.Should().Be(CreateExpectedStatement("CREATE OR REPLACE TABLE", hasPrimaryKey: true));
     }
 
-    internal class MyMovies
+    internal class MyMovie
     {
       [Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations.Key]
       public int Id { get; set; }
