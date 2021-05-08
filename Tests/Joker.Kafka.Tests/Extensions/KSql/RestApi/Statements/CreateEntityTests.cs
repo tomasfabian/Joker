@@ -9,17 +9,26 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
 {
   public class CreateEntityTests
   {
+    readonly EntityCreationMetadata creationMetadata = new EntityCreationMetadata()
+    {
+      KafkaTopic = nameof(MyMovies),
+      Partitions = 1,
+      Replicas = 1
+    };
+
+    private string expectedStatementTemplate = @"{0} MyMovies (
+	Id INT {1}KEY,
+	Title VARCHAR,
+	Release_Year INT,
+	NumberOfDays ARRAY<INT>,
+	Dictionary MAP<VARCHAR, INT>,
+	Dictionary2 MAP<VARCHAR, INT>
+) WITH ( KAFKA_TOPIC='MyMovies', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );";
+
     [Test]
-    public void Print()
+    public void Print_CreateStream()
     {
       //Arrange
-      var creationMetadata = new EntityCreationMetadata()
-      {
-        KafkaTopic = nameof(MyMovies),
-        Partitions = 1,
-        Replicas = 1
-      };
-
       var statementContext = new StatementContext
       {
         CreationType = CreationType.Create,
@@ -30,17 +39,95 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
 
       //Assert
-      statement.Should().Be(@"CREATE STREAM MyMovies (
-	Id INT KEY,
-	Title VARCHAR,
-	Release_Year INT,
-	NumberOfDays ARRAY<INT>,
-	Dictionary MAP<VARCHAR, INT>,
-	Dictionary2 MAP<VARCHAR, INT>
-) WITH ( KAFKA_TOPIC='MyMovies', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );");
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE STREAM", string.Empty));
     }
 
-    public class MyMovies
+    [Test]
+    public void Print_CreateStream_WithIfNotExists()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, ifNotExists: true);
+
+      //Assert
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE STREAM IF NOT EXISTS", string.Empty));
+    }
+
+    [Test]
+    public void Print_CreateOrReplaceStream()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.CreateOrReplace,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE OR REPLACE STREAM", string.Empty));
+    }
+
+    [Test]
+    public void Print_CreateTable()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Table
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE TABLE", "PRIMARY "));
+    }
+
+    [Test]
+    public void Print_CreateTable_WithIfNotExists()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Table
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, ifNotExists: true);
+
+      //Assert
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE TABLE IF NOT EXISTS", "PRIMARY "));
+    }
+
+    [Test]
+    public void Print_CreateOrReplaceTable()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.CreateOrReplace,
+        KSqlEntityType = KSqlEntityType.Table
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<MyMovies>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(string.Format(expectedStatementTemplate, "CREATE OR REPLACE TABLE", "PRIMARY "));
+    }
+
+    internal class MyMovies
     {
       [Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations.Key]
       public int Id { get; set; }
