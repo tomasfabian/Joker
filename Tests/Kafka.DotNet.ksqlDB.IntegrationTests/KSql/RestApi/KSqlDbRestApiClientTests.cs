@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Kafka.DotNet.ksqlDB.KSql.RestApi;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -74,19 +76,82 @@ namespace Kafka.DotNet.ksqlDB.IntegrationTests.KSql.RestApi
       );";
     }
 
-    //public class StatementResponse
-    //{
-    //  [JsonPropertyName("commandStatus")]
-    //  public CommandStatus CommandStatus { get; set; }
-    //}
+    [TestMethod]
+    public async Task CreateTable()
+    {
+      //Arrange
+      var metadata = GetEntityCreationMetadata(nameof(MyMoviesTable));
 
-    //public class CommandStatus
-    //{
-    //  [JsonPropertyName("status")]
-    //  public string Status { get; set; }
+      //Act
+      var httpResponseMessage = await restApiClient.CreateTable<MyMoviesTable>(metadata, ifNotExists: true);
 
-    //  [JsonPropertyName("message")]
-    //  public string Message { get; set; }
-    //}
+      //Assert
+      httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+      string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+      var responseObject = JsonSerializer.Deserialize<StatementResponse[]>(responseContent);
+    }
+
+    private static EntityCreationMetadata GetEntityCreationMetadata(string topicName)
+    {
+      EntityCreationMetadata metadata = new()
+      {
+        KeyFormat = SerializationFormats.Json,
+        KafkaTopic = topicName,
+        Partitions = 1,
+        Replicas = 1,
+        WindowType = WindowType.Tumbling,
+        WindowSize = "10 SECONDS",
+        Timestamp = nameof(MyMoviesTable.Timestamp),
+        TimestampFormat = "yyyy-MM-dd''T''HH:mm:ssX"
+      };
+
+      return metadata;
+    }
+
+    [TestMethod]
+    public async Task CreateOrReplaceStream()
+    {
+      //Arrange
+      var metadata = GetEntityCreationMetadata(nameof(MyMoviesStreamTest));
+
+      //Act
+      var httpResponseMessage = await restApiClient.CreateOrReplaceStream<MyMoviesStreamTest>(metadata);
+
+      //Assert
+      httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+      string responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+      var responseObject = JsonSerializer.Deserialize<StatementResponse[]>(responseContent);
+
+      responseObject?[0].CommandStatus.Status.Should().Be("SUCCESS");
+      responseObject?[0].CommandStatus.Message.Should().Be("Stream created");
+    }
+
+    internal record MyMoviesTable : MyMoviesStreamTest
+    {
+
+    }
+
+    internal record MyMoviesStreamTest
+    {
+      [ksqlDB.KSql.RestApi.Statements.Annotations.Key]
+      public int Id { get; set; }
+
+      public string Title { get; set; }
+
+      public string Timestamp { get; set; }
+
+      public int Release_Year { get; set; }
+
+      public int[] NumberOfDays { get; set; }
+
+      public IDictionary<string, int> Dictionary { get; set; }
+      public Dictionary<string, int> Dictionary2 { get; set; }
+
+      public int DontFindMe;
+
+      public int DontFindMe2 { get; }
+    }
   }
 }

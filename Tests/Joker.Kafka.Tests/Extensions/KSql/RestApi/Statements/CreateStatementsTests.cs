@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -151,6 +152,38 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
 
       //Assert
       withClause.Should().BeEquivalentTo(@$" WITH ( WRAP_SINGLE_VALUE='{metadata.WrapSingleValue}' )");
+    }
+
+    [TestMethod]
+    public void GenerateWithClause_WindowType()
+    {
+      //Arrange
+      var metadata = new EntityCreationMetadata
+      {
+        WindowType = WindowType.Hopping
+      };
+
+      //Act
+      var withClause = CreateStatements.GenerateWithClause(metadata);
+
+      //Assert
+      withClause.Should().BeEquivalentTo(@$" WITH ( WINDOW_TYPE='{metadata.WindowType}', VALUE_FORMAT='Json' )");
+    }
+
+    [TestMethod]
+    public void GenerateWithClause_WindowSize()
+    {
+      //Arrange
+      var metadata = new EntityCreationMetadata
+      {
+        WindowSize = "10 MINUTES"
+      };
+
+      //Act
+      var withClause = CreateStatements.GenerateWithClause(metadata);
+
+      //Assert
+      withClause.Should().BeEquivalentTo(@$" WITH ( WINDOW_SIZE='{metadata.WindowSize}', VALUE_FORMAT='Json' )");
     }
 
     [TestMethod]
