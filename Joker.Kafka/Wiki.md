@@ -1517,6 +1517,18 @@ CREATE TABLE MyMovies (
 ) WITH ( KAFKA_TOPIC='MyMovies', VALUE_FORMAT='Json', PARTITIONS='2', REPLICAS='3' );
 ```
 
+### Decimal precision
+```C#
+class Transaction
+{
+	[Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations.Decimal(2, 3)]
+	public decimal Amount { get; set; }
+}
+```
+```KSQL
+Amount DECIMAL(2,3)
+```
+
 # LinqPad samples
 [Push Query](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.linq)
 

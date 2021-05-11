@@ -6,6 +6,7 @@ using System.Text;
 using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations;
 using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
@@ -29,7 +30,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       if (type.IsOneOfFollowing(typeof(bool), typeof(bool?)))
         ksqlType = "BOOLEAN";
 
-      if (type.IsArray)
+      if (type == typeof(decimal))
+        ksqlType = "DECIMAL";
+
+        if (type.IsArray)
       {
         var elementType = KSqlTypeTranslator(type.GetElementType());
 
@@ -75,17 +79,36 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       return stringBuilder.ToString();
     }
 
+    private string ExploreAttributes(MemberInfo memberInfo, Type type)
+    {
+      if (type == typeof(decimal))
+      {
+        var decimalMember = memberInfo.GetCustomAttributes().OfType<DecimalAttribute>().FirstOrDefault();
+
+        if(decimalMember != null)
+          return $"({decimalMember.Precision},{decimalMember.Scale})";
+      }
+
+      return string.Empty;
+    }
+
     private void PrintProperties<T>(StatementContext statementContext)
     {
       var ksqlProperties = new List<string>();
 
-      foreach (var propertyInfo in Properties<T>())
+      foreach (var memberInfo in Members<T>())
       {
-        var ksqlType = KSqlTypeTranslator(propertyInfo.PropertyType);
+        var type = memberInfo.MemberType switch
+        {
+          MemberTypes.Field => ((FieldInfo)memberInfo).FieldType,
+          MemberTypes.Property => ((PropertyInfo)memberInfo).PropertyType,
+        };
 
-        string columnDefinition = $"\t{propertyInfo.Name} {ksqlType}";
+        var ksqlType = KSqlTypeTranslator(type);
 
-        columnDefinition += TryAttachKey(statementContext.KSqlEntityType, propertyInfo);
+        string columnDefinition = $"\t{memberInfo.Name} {ksqlType}{ExploreAttributes(memberInfo, type)}";
+
+        columnDefinition += TryAttachKey(statementContext.KSqlEntityType, memberInfo);
 
         ksqlProperties.Add(columnDefinition);
       }
@@ -114,10 +137,10 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 
     protected virtual string GetEntityName<T>(EntityCreationMetadata metadata)
     {
-      string entityName = metadata.EntityName; // TODO: Pluralize
+      string entityName = metadata.EntityName;
 
       if(string.IsNullOrEmpty(entityName))
-        entityName = typeof(T).Name; // TODO: Pluralize
+        entityName = typeof(T).Name;
 
       if (metadata.ShouldPluralizeEntityName)
         entityName = EnglishPluralizationService.Pluralize(entityName);
@@ -125,9 +148,9 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       return entityName;
     }
 
-    private string TryAttachKey(KSqlEntityType entityType, PropertyInfo propertyInfo)
+    private string TryAttachKey(KSqlEntityType entityType, MemberInfo memberInfo)
     {
-      if (!propertyInfo.HasKey())
+      if (!memberInfo.HasKey())
         return string.Empty;
 
       string key = entityType switch
@@ -140,11 +163,14 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       return $" {key}";
     }
 
-    private IEnumerable<PropertyInfo> Properties<T>()
+    private static IEnumerable<MemberInfo> Members<T>()
     {
+      var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Instance);
+
       var properties = typeof(T)
         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(c => c.CanWrite);
+        .Where(c => c.CanWrite).OfType<MemberInfo>()
+        .Concat(fields);
 
       return properties;
     }

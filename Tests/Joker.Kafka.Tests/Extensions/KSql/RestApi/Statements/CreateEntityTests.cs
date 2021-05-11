@@ -4,6 +4,7 @@ using Joker.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations;
 using NUnit.Framework;
 using Pluralize.NET;
 
@@ -39,7 +40,8 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
 	Release_Year INT,
 	NumberOfDays ARRAY<INT>,
 	Dictionary MAP<VARCHAR, INT>,
-	Dictionary2 MAP<VARCHAR, INT>
+	Dictionary2 MAP<VARCHAR, INT>,
+	Field DOUBLE
 ) WITH ( KAFKA_TOPIC='{creationMetadata.KafkaTopic}', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );";
 
       return expectedStatementTemplate;
@@ -60,6 +62,31 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
 
       //Assert
       statement.Should().Be(CreateExpectedStatement("CREATE STREAM", hasPrimaryKey: false));
+    }
+
+    private class Transaction
+    {
+      [Decimal(2,3)]
+      public decimal Amount { get; set; }
+    }
+
+    [Test]
+    public void DecimalWithPrecision()
+    {
+      //Arrange
+      var statementContext = new StatementContext
+      {
+        CreationType = CreationType.Create,
+        KSqlEntityType = KSqlEntityType.Stream
+      };
+
+      //Act
+      string statement = new CreateEntity().Print<Transaction>(statementContext, creationMetadata, null);
+
+      //Assert
+      statement.Should().Be(@"CREATE STREAM Transactions (
+	Amount DECIMAL(2,3)
+) WITH ( KAFKA_TOPIC='MyMovie', VALUE_FORMAT='Json', PARTITIONS='1', REPLICAS='1' );");
     }
     
     [Test]
@@ -217,9 +244,9 @@ namespace Kafka.DotNet.ksqlDB.Tests.Extensions.KSql.RestApi.Statements
       public IDictionary<string, int> Dictionary { get; set; }
       public Dictionary<string, int> Dictionary2 { get; set; }
 
-      public int DontFindMe;
+      public double Field;
 
-      public int DontFindMe2 { get; }
+      public int DontFindMe { get; }
     }
   }
 }

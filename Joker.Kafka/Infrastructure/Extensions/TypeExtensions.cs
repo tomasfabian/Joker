@@ -45,7 +45,7 @@ namespace Kafka.DotNet.ksqlDB.Infrastructure.Extensions
       return isDictionary;
     }
 
-    internal static bool HasKey(this PropertyInfo typeInfo)
+    internal static bool HasKey(this MemberInfo typeInfo)
     {
       return typeInfo.GetCustomAttributes().OfType<KeyAttribute>().Any();
     }
