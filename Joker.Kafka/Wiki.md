@@ -1529,6 +1529,28 @@ class Transaction
 Amount DECIMAL(2,3)
 ```
 
+# v0.12.0:
+```
+Install-Package Kafka.DotNet.ksqlDB -Version 0.12.0-rc.1
+```
+### Insert Into (v0.12.0)
+[Insert values](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/insert-values/) - Produce a row into an existing stream or table and its underlying topic based on explicitly specified values.
+```C#
+string url = @"http:\\localhost:8088";
+
+var http = new HttpClientFactory(new Uri(url));
+var restApiClient = new KSqlDbRestApiClient(http);
+
+var movie = new Movie() { Id = 1, Release_Year = 1988, Title = "Title" };
+
+var response = await restApiClient.InsertIntoAsync(movie);
+```
+
+Generated KSQL:
+```KSQL
+INSERT INTO Movies (Title, Id, Release_Year) VALUES ('Title', 1, 1988);
+```
+
 # LinqPad samples
 [Push Query](https://github.com/tomasfabian/Joker/blob/master/Samples/Kafka/Kafka.DotNet.ksqlDB.LinqPad/kafka.dotnet.ksqldb.linq)
 

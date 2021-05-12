@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Generators;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Properties;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi
 {
@@ -108,5 +109,16 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi
     }
 
     #endregion
+
+    public Task<HttpResponseMessage> InsertIntoAsync<T>(T entity, InsertProperties insertProperties = null, CancellationToken cancellationToken = default)
+    {
+      var insert = new CreateInsert().Generate<T>(entity, insertProperties);
+	
+      KSqlDbStatement ksqlDbStatement = new(insert);
+
+      var httpResponseMessage = ExecuteStatementAsync(ksqlDbStatement, cancellationToken);
+
+      return httpResponseMessage;
+    }
   }
 }
