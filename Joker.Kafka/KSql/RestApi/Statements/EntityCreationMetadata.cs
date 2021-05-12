@@ -1,9 +1,10 @@
 ﻿using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Serialization;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Properties;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
-  public record EntityCreationMetadata : CreationMetadata
+  public record EntityCreationMetadata : CreationMetadata, IEntityCreationProperties
   {
     public EntityCreationMetadata()
     {
