@@ -7,14 +7,11 @@ using Kafka.DotNet.ksqlDB.Infrastructure.Extensions;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Enums;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Statements.Annotations;
-using Pluralize.NET;
 
 namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 {
-  internal class CreateEntity
+  internal sealed class CreateEntity : CreateEntityStatement
   {
-    private static readonly IPluralize EnglishPluralizationService = new Pluralizer();
-
     internal string KSqlTypeTranslator(Type type)
     {
       var ksqlType = string.Empty;
@@ -98,11 +95,7 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
 
       foreach (var memberInfo in Members<T>())
       {
-        var type = memberInfo.MemberType switch
-        {
-          MemberTypes.Field => ((FieldInfo)memberInfo).FieldType,
-          MemberTypes.Property => ((PropertyInfo)memberInfo).PropertyType,
-        };
+        var type = GetMemberType<T>(memberInfo);
 
         var ksqlType = KSqlTypeTranslator(type);
 
@@ -135,19 +128,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       stringBuilder.Append($"{creationTypeText} {entityTypeText}");
     }
 
-    protected virtual string GetEntityName<T>(EntityCreationMetadata metadata)
-    {
-      string entityName = metadata.EntityName;
-
-      if(string.IsNullOrEmpty(entityName))
-        entityName = typeof(T).Name;
-
-      if (metadata.ShouldPluralizeEntityName)
-        entityName = EnglishPluralizationService.Pluralize(entityName);
-
-      return entityName;
-    }
-
     private string TryAttachKey(KSqlEntityType entityType, MemberInfo memberInfo)
     {
       if (!memberInfo.HasKey())
@@ -161,18 +141,6 @@ namespace Kafka.DotNet.ksqlDB.KSql.RestApi.Statements
       };
 
       return $" {key}";
-    }
-
-    private static IEnumerable<MemberInfo> Members<T>()
-    {
-      var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Instance);
-
-      var properties = typeof(T)
-        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(c => c.CanWrite).OfType<MemberInfo>()
-        .Concat(fields);
-
-      return properties;
     }
   }
 }
