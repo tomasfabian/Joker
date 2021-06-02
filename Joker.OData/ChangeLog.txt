@@ -1,4 +1,7 @@
-﻿2.1.0
+﻿2.2.0
+- added UseODataBatching middleware into ODataStartup OnRegisterMiddleWares
+
+2.1.0
 - ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
 - StartupBase UseCors
 - StartupBase AddDefaultCorsPolicy
