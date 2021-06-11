@@ -36,8 +36,6 @@ Install-Package Kafka.DotNet.ksqlDB
 ```C#
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Blazor.Sample.Data.Sensors;
-using Blazor.Sample.Kafka;
 using Confluent.Kafka;
 using Kafka.DotNet.InsideOut.Consumer;
 
@@ -56,11 +54,17 @@ var subscription = kafkaConsumer.ConnectToTopicAsync()
   .Take(100)
   .Subscribe(c => Console.WriteLine($"Value: {c.Value}"));
 ```
+```C#
+public record IoTSensorStats
+{
+  public string SensorId { get; set; }
+  public double AvgValue { get; set; }
 
+  public int Count { get; set; }
+}
+```
 ```C#
 using System.Threading.Tasks;
-using Blazor.Sample.Data.Sensors;
-using Blazor.Sample.Kafka;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
 using Kafka.DotNet.ksqlDB.KSql.Query.Context;
 using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
@@ -69,23 +73,25 @@ private string KsqlDbUrl => "http://localhost:8088";
 
 private async Task CreateOrReplaceMaterializedTableAsync()
 {
-  await using var context = new KSqlDBContext(KsqlDbUrl);
+  string ksqlDbUrl = Configuration[ConfigKeys.KSqlDb_Url];
+
+  await using var context = new KSqlDBContext(ksqlDbUrl);
 
   var statement = context.CreateOrReplaceTableStatement(tableName: "SensorsTable")
-    .As<IoTSensor>("IotSensors")
+    .As<IoTSensor>(TopicNames.IotSensors)
     .Where(c => c.SensorId != "Sensor-5")
     .GroupBy(c => c.SensorId)
-    .Select(c => new { SensorId = c.Key, Count = c.Count(), AvgValue = c.Avg(a => a.Value) });
+    .Select(c => new {SensorId = c.Key, Count = c.Count(), AvgValue = c.Avg(a => a.Value) });
 
   var httpResponseMessage = await statement.ExecuteStatementAsync();
 
-  if (!httpResponseMessage.IsSuccessStatusCode)
+  if (httpResponseMessage.IsSuccessStatusCode)
   {
-    var statementResponse = httpResponseMessage.ToStatementResponse();
+    var statementResponses = httpResponseMessage.ToStatementResponses();
   }
   else
   {
-    var statementResponses = httpResponseMessage.ToStatementResponses();
+    var statementResponse = httpResponseMessage.ToStatementResponse();
   }
 }
 ```
