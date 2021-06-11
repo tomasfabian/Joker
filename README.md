@@ -5,6 +5,7 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 # Kafka.DotNet.ksqlDB push queries LINQ provider
 Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project, limit etc your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
 
+This project was moved to a separate (repository Kafka.DotNet.ksqlDB)[https://github.com/tomasfabian/Kafka.DotNet.ksqlDB]
 ```
 Install-Package Kafka.DotNet.ksqlDB
 ```
@@ -25,6 +26,71 @@ using var disposable = context.CreateQueryStream<Tweet>()
     Console.WriteLine();
   }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
 ```
+
+# Kafka stream processing
+[Kafka.DotNet.InsideOut](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/blob/main/Kafka.DotNet.InsideOut/Wiki.md) is a client API for producing and consuming kafka topics and ksqlDB push queries and views generated with Kafka.DotNet.ksqlDB
+```
+Install-Package Kafka.DotNet.InsideOut -Version 0.1.0-rc.3
+Install-Package Kafka.DotNet.ksqlDB
+```
+```C#
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Blazor.Sample.Data.Sensors;
+using Blazor.Sample.Kafka;
+using Confluent.Kafka;
+using Kafka.DotNet.InsideOut.Consumer;
+
+const string bootstrapServers = "localhost:29092";
+
+var consumerConfig = new ConsumerConfig
+{
+  BootstrapServers = bootstrapServers,
+  GroupId = System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+  AutoOffsetReset = AutoOffsetReset.Latest
+};
+
+var kafkaConsumer = new SensorsTableConsumer(consumerConfig);
+
+var subscription = kafkaConsumer.ConnectToTopicAsync()
+  .Take(100)
+  .Subscribe(c => Console.WriteLine($"Value: {c.Value}"));
+```
+
+```C#
+using System.Threading.Tasks;
+using Blazor.Sample.Data.Sensors;
+using Blazor.Sample.Kafka;
+using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
+
+private string KsqlDbUrl => "http://localhost:8088";
+
+private async Task CreateOrReplaceMaterializedTableAsync()
+{
+  await using var context = new KSqlDBContext(KsqlDbUrl);
+
+  var statement = context.CreateOrReplaceTableStatement(tableName: "SensorsTable")
+    .As<IoTSensor>("IotSensors")
+    .Where(c => c.SensorId != "Sensor-5")
+    .GroupBy(c => c.SensorId)
+    .Select(c => new { SensorId = c.Key, Count = c.Count(), AvgValue = c.Avg(a => a.Value) });
+
+  var httpResponseMessage = await statement.ExecuteStatementAsync();
+
+  if (!httpResponseMessage.IsSuccessStatusCode)
+  {
+    var statementResponse = httpResponseMessage.ToStatementResponse();
+  }
+  else
+  {
+    var statementResponses = httpResponseMessage.ToStatementResponses();
+  }
+}
+```
+
+[Blazor server side example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB) - Kafka.DotNet.ksqlDb.Experimental.sln
 
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
