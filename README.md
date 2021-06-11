@@ -33,36 +33,7 @@ using var disposable = context.CreateQueryStream<Tweet>()
 Install-Package Kafka.DotNet.InsideOut -Version 0.1.0-rc.3
 Install-Package Kafka.DotNet.ksqlDB
 ```
-```C#
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Confluent.Kafka;
-using Kafka.DotNet.InsideOut.Consumer;
 
-const string bootstrapServers = "localhost:29092";
-
-var consumerConfig = new ConsumerConfig
-{
-  BootstrapServers = bootstrapServers,
-  GroupId = System.Diagnostics.Process.GetCurrentProcess().ProcessName,
-  AutoOffsetReset = AutoOffsetReset.Latest
-};
-
-var kafkaConsumer = new SensorsTableConsumer(consumerConfig);
-
-var subscription = kafkaConsumer.ConnectToTopicAsync()
-  .Take(100)
-  .Subscribe(c => Console.WriteLine($"Value: {c.Value}"));
-```
-```C#
-public record IoTSensorStats
-{
-  public string SensorId { get; set; }
-  public double AvgValue { get; set; }
-
-  public int Count { get; set; }
-}
-```
 ```C#
 using System.Threading.Tasks;
 using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
@@ -94,6 +65,43 @@ private async Task CreateOrReplaceMaterializedTableAsync()
     var statementResponse = httpResponseMessage.ToStatementResponse();
   }
 }
+```
+```C#
+public class SensorsTableConsumer : KafkaConsumer<string, IoTSensorStats>
+{
+  public SensorsTableConsumer(ConsumerConfig consumerConfig)
+    : base("SENSORSTABLE", consumerConfig)
+  {
+  }
+}
+
+public record IoTSensorStats
+{
+  public string SensorId { get; set; }
+  public double AvgValue { get; set; }
+  public int Count { get; set; }
+}
+```
+```C#
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Confluent.Kafka;
+using Kafka.DotNet.InsideOut.Consumer;
+
+const string bootstrapServers = "localhost:29092";
+
+var consumerConfig = new ConsumerConfig
+{
+  BootstrapServers = bootstrapServers,
+  GroupId = System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+  AutoOffsetReset = AutoOffsetReset.Latest
+};
+
+var kafkaConsumer = new SensorsTableConsumer(consumerConfig);
+
+var subscription = kafkaConsumer.ConnectToTopicAsync()
+  .Take(100)
+  .Subscribe(c => Console.WriteLine($"Value: {c.Value}"));
 ```
 
 [Blazor server side example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB) - Kafka.DotNet.ksqlDb.Experimental.sln
