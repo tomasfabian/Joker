@@ -124,7 +124,7 @@ static async Task Main(string[] args)
 Consume row-level table changes (CDC - Change Data Capture) from  Sql Server databases with the Debezium connector streaming platform. 
 ### Nuget
 ```
-Install-Package Kafka.DotNet.SqlServer -Version 0.1.0-rc.2
+Install-Package Kafka.DotNet.SqlServer -Version 0.1.0
 ```
 Full example is available in [Kafka.DotNet.ksqlDB repository](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/tree/main/Kafka.DotNet.SqlServer):
 ```C#
