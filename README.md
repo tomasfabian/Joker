@@ -27,6 +27,144 @@ using var disposable = context.CreateQueryStream<Tweet>()
   }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
 ```
 
+# CDC - Push notifications from Sql Server tables with Kafka
+Monitor Sql Server tables for changes and forward them to the appropriate Kafka topics. You can consume (react to) these row-level table changes (CDC - Change Data Capture) from Sql Server databases with Kafka.DotNet.SqlServer package together with the Debezium connector streaming platform. 
+### Nuget
+```
+Install-Package Kafka.DotNet.SqlServer -Version 0.2.0-rc.2
+```
+[Kafka.DotNet.SqlServer WIKI](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/blob/main/Kafka.DotNet.SqlServer/Wiki.md)
+
+Full example is available in [Blazor example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/tree/main/Samples/Blazor.Sample) - Kafka.DotNet.InsideOut.sln:
+```C#
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Kafka.DotNet.ksqlDB.KSql.Linq;
+using Kafka.DotNet.ksqlDB.KSql.Query.Context;
+using Kafka.DotNet.ksqlDB.KSql.Query.Options;
+using Kafka.DotNet.SqlServer.Cdc;
+using Kafka.DotNet.SqlServer.Cdc.Extensions;
+
+class Program
+{
+  static string connectionString = @"Server=127.0.0.1,1433;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Sensors;MultipleActiveResultSets=true";
+
+  static string bootstrapServers = "localhost:29092";
+  static string KsqlDbUrl => @"http:\\localhost:8088";
+
+  static string tableName = "Sensors";
+  static string schemaName = "dbo";
+
+  private static ISqlServerCdcClient CdcClient { get; set; }
+
+  static async Task Main(string[] args)
+  {
+    CdcClient = new CdcClient(connectionString);
+
+    await CreateSensorsCdcStreamAsync();
+
+    await TryEnableCdcAsync();
+
+    await CreateConnectorAsync();
+
+    await using var context = new KSqlDBContext(KsqlDbUrl);
+
+    var semaphoreSlim = new SemaphoreSlim(0, 1);
+
+    var cdcSubscription = context.CreateQuery<RawDatabaseChangeObject<IoTSensor>>("sqlserversensors")
+      .WithOffsetResetPolicy(AutoOffsetReset.Latest)
+      .Take(5)
+      .ToObservable()
+      .Subscribe(cdc =>
+        {
+          var operationType = cdc.OperationType;
+          Console.WriteLine(operationType);
+
+          switch (operationType)
+          {
+            case ChangeDataCaptureType.Created:
+              Console.WriteLine($"Value: {cdc.EntityAfter.Value}");
+              break;
+            case ChangeDataCaptureType.Updated:
+
+              Console.WriteLine($"Value before: {cdc.EntityBefore.Value}");
+              Console.WriteLine($"Value after: {cdc.EntityAfter.Value}");
+              break;
+            case ChangeDataCaptureType.Deleted:
+              Console.WriteLine($"Value: {cdc.EntityBefore.Value}");
+              break;
+          }
+        }, onError: error =>
+        {
+          semaphoreSlim.Release();
+
+          Console.WriteLine($"Exception: {error.Message}");
+        },
+        onCompleted: () =>
+        {
+          semaphoreSlim.Release();
+          Console.WriteLine("Completed");
+        });
+
+
+    await semaphoreSlim.WaitAsync();
+
+    using (cdcSubscription)
+    {
+    }
+  }
+}
+
+public record IoTSensor
+{
+	public string SensorId { get; set; }
+	public int Value { get; set; }
+}
+```
+
+Consuming table change notifications directly from a Kakka topic:
+```C#
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Blazor.Sample.Data.Sensors;
+using Confluent.Kafka;
+using Kafka.DotNet.InsideOut.Consumer;
+using Kafka.DotNet.SqlServer.Cdc;
+
+async Task ConsumeFromTopicAsync()
+{
+  string bootstrapServers = "localhost:29092";
+
+  var consumerConfig = new ConsumerConfig
+  {
+    BootstrapServers = bootstrapServers,
+    GroupId = "Client-01",
+    AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
+  };
+
+  var kafkaConsumer =
+    new KafkaConsumer<string, DatabaseChangeObject<IoTSensor>>("sqlserver2019.dbo.Sensors", consumerConfig);
+
+  var dataChanges = kafkaConsumer.ConnectToTopic().ToAsyncEnumerable().Where(c => c.Message.Value.OperationType != ChangeDataCaptureType.Read).Take(2);
+	
+  await foreach (var consumeResult in dataChanges)
+  {
+    var message = consumeResult.Message;
+    var changeNotification = message.Value; 
+
+    Console.WriteLine(changeNotification.OperationType);
+    Console.WriteLine(changeNotification.Before?.Value);
+    Console.WriteLine(changeNotification.After?.Value);
+  }
+
+  using (kafkaConsumer)
+  {		
+  }
+}
+```
+
 # Kafka stream processing
 [Kafka.DotNet.InsideOut](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/blob/main/Kafka.DotNet.InsideOut/Wiki.md) is a client API for producing and consuming kafka topics and ksqlDB push queries and views generated with Kafka.DotNet.ksqlDB
 ```
@@ -119,100 +257,6 @@ static async Task Main(string[] args)
 ```
 
 [Blazor server side example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB) - Kafka.DotNet.InsideOut.sln
-
-# CDC - Push notifications from Sql Server tables with Kafka
-Consume row-level table changes (CDC - Change Data Capture) from  Sql Server databases with the Debezium connector streaming platform. 
-### Nuget
-```
-Install-Package Kafka.DotNet.SqlServer -Version 0.1.0
-```
-Full example is available in [Kafka.DotNet.ksqlDB repository](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/tree/main/Kafka.DotNet.SqlServer):
-```C#
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.KSql.Linq;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.KSql.Query.Options;
-using Kafka.DotNet.SqlServer.Cdc;
-using Kafka.DotNet.SqlServer.Cdc.Extensions;
-
-class Program
-{
-  static string connectionString = @"Server=127.0.0.1,1433;User Id = SA;Password=<YourNewStrong@Passw0rd>;Initial Catalog = Sensors;MultipleActiveResultSets=true";
-
-  static string bootstrapServers = "localhost:29092";
-  static string KsqlDbUrl => @"http:\\localhost:8088";
-
-  static string tableName = "Sensors";
-  static string schemaName = "dbo";
-
-  private static ISqlServerCdcClient CdcProvider { get; set; }
-
-  static async Task Main(string[] args)
-  {
-    CdcProvider = new CdcClient(connectionString);
-
-    await CreateSensorsCdcStreamAsync();
-
-    await TryEnableCdcAsync();
-
-    await CreateConnectorAsync();
-
-    await using var context = new KSqlDBContext(KsqlDbUrl);
-
-    var semaphoreSlim = new SemaphoreSlim(0, 1);
-
-    var cdcSubscription = context.CreateQuery<DatabaseChangeObject<IoTSensor>>("sqlserversensors")
-      .WithOffsetResetPolicy(AutoOffsetReset.Latest)
-      .Take(5)
-      .ToObservable()
-      .Subscribe(cdc =>
-        {
-          var operationType = cdc.OperationType;
-          Console.WriteLine(operationType);
-
-          switch (operationType)
-          {
-            case ChangeDataCaptureType.Created:
-              Console.WriteLine($"Value: {cdc.EntityAfter.Value}");
-              break;
-            case ChangeDataCaptureType.Updated:
-
-              Console.WriteLine($"Value before: {cdc.EntityBefore.Value}");
-              Console.WriteLine($"Value after: {cdc.EntityAfter.Value}");
-              break;
-            case ChangeDataCaptureType.Deleted:
-              Console.WriteLine($"Value: {cdc.EntityBefore.Value}");
-              break;
-          }
-        }, onError: error =>
-        {
-          semaphoreSlim.Release();
-
-          Console.WriteLine($"Exception: {error.Message}");
-        },
-        onCompleted: () =>
-        {
-          semaphoreSlim.Release();
-          Console.WriteLine("Completed");
-        });
-
-
-    await semaphoreSlim.WaitAsync();
-
-    using (cdcSubscription)
-    {
-    }
-  }
-}
-
-public record IoTSensor
-{
-	public string SensorId { get; set; }
-	public int Value { get; set; }
-}
-```
 
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
