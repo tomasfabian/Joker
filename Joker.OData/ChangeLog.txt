@@ -1,4 +1,21 @@
-﻿2.2.0
+﻿3.0.0
+Breaking changes:
+`ODataController<TEntity>`
+Signature changes:
+- from Task<int> OnPost to Task<IActionResult> OnPostAsync(TEntity entity)
+- from Task<int> OnPut to Task<IActionResult> OnPutAsync(TEntity entity)
+- from Task<int> OnPatch to Task<IActionResult> OnPatchAsync(TEntity entity)
+- from Task<int> OnDelete to Task<IActionResult> OnDeleteAsync(params object[] keys) 
+- Added virtual ValidatePostAsync to Post, ValidatePatchAsync to Patch, ValidatePutAsync into Put and ValidateDeleteAsync into Delete
+
+Base call change:
+- Patch does not call OnPut anymore but OnPatch
+
+`ReadOnlyODataController<TEntity>`
+Signature changes:
+- OkObjectResult Get return type changed to IActionResult
+
+2.2.0
 - added UseODataBatching middleware into ODataStartup OnRegisterMiddleWares
 
 2.1.0
