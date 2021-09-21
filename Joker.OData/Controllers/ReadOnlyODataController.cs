@@ -55,7 +55,7 @@ namespace Joker.OData.Controllers
     }
 
     [EnableQuery]
-    public OkObjectResult Get(ODataQueryOptions<TEntity> queryOptions)
+    public IActionResult Get(ODataQueryOptions<TEntity> queryOptions)
     {
       AuthenticateQuery(queryOptions);
 

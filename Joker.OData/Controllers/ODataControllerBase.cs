@@ -35,42 +35,73 @@ namespace Joker.OData.Controllers
 
     public async Task<IActionResult> Post([FromBody]TEntity entity)
     {
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
+      var validationResult = await ValidatePostAsync(entity);
 
-      await OnPost(entity);
+      if (validationResult != null)
+        return validationResult;
 
+      var actionResult = await OnPostAsync(entity);
+
+      if (actionResult != null)
+        return actionResult;
+      
       return Created(entity);
     }
 
-    protected virtual Task<int> OnPost(TEntity entity)
+    protected virtual Task<IActionResult> ValidatePostAsync(TEntity entity)
+    {
+      return ValidateModelStateAsync(entity);
+    }
+
+    protected virtual async Task<IActionResult> OnPostAsync(TEntity entity)
     {
       repository.Add(entity);
 
-      return repository.SaveChangesAsync();
+      await repository.SaveChangesAsync();
+
+      return null;
     }
 
     #endregion
 
     #region Patch
 
-    public async Task<IActionResult> Patch(Delta<TEntity> entity)
+    public async Task<IActionResult> Patch(Delta<TEntity> delta)
     {
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
       var keys = GetKeysFromPath();
-
+      
       var entityToUpdate = repository.GetAll().FirstOrDefault(CreateKeysPredicate(keys));
 
       if (entityToUpdate == null)
         return NotFound();
 
-      entity.Patch(entityToUpdate);
+      delta.Patch(entityToUpdate);
+      
+      var validationResult = await ValidatePatchAsync(delta, entityToUpdate);
 
-      var result = await OnPut(entityToUpdate);
+      if (validationResult != null)
+        return validationResult;
+
+      var actionResult = await OnPatchAsync(delta, entityToUpdate);
+
+      if (actionResult != null)
+        return actionResult;
 
       return Updated(entityToUpdate);
+    }
+    
+    protected virtual async Task<IActionResult> OnPatchAsync(Delta<TEntity> delta, TEntity patchedEntity)
+    {
+      repository.Update(patchedEntity);
+
+      await repository.SaveChangesAsync();
+
+      return null;
+    }
+
+    protected virtual Task<IActionResult> ValidatePatchAsync(Delta<TEntity> delta, TEntity patchedEntity)
+    {
+      return ValidateModelStateAsync(patchedEntity);
     }
 
     #endregion
@@ -79,19 +110,31 @@ namespace Joker.OData.Controllers
 
     public async Task<IActionResult> Put([FromBody]TEntity entity)
     {
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
+      var validationResult = await ValidatePutAsync(entity);
 
-      await OnPut(entity);
+      if (validationResult != null)
+        return validationResult;
+
+      var actionResult = await OnPutAsync(entity);
+      
+      if (actionResult != null)
+        return actionResult;
 
       return Updated(entity);
     }
 
-    protected virtual Task<int> OnPut(TEntity entity)
+    protected virtual async Task<IActionResult> OnPutAsync(TEntity entity)
     {
       repository.Update(entity);
 
-      return repository.SaveChangesAsync();
+      await repository.SaveChangesAsync();
+
+      return null;
+    }
+
+    protected virtual Task<IActionResult> ValidatePutAsync(TEntity entity)
+    {
+      return ValidateModelStateAsync(entity);
     }
 
     #endregion
@@ -101,27 +144,38 @@ namespace Joker.OData.Controllers
     public async Task<IActionResult> Delete()
     {
       var keys = GetKeysFromPath();
+      
+      var validationResult = await ValidateDeleteAsync(keys);
 
-      var result = await OnDelete(keys);
+      if (validationResult != null)
+        return validationResult;
+
+      var actionResult = await OnDeleteAsync(keys);
+
+      if (actionResult != null)
+        return actionResult;
 
       return StatusCode((int)HttpStatusCode.NoContent);
     }
 
-    #endregion
-
-    #region OnDelete
-
-    protected virtual Task<int> OnDelete(params object[] keys)
-    {
+    protected virtual async Task<IActionResult> OnDeleteAsync(params object[] keys)
+    {      
       repository.Remove(keys);
 
-      return repository.SaveChangesAsync();
+      await repository.SaveChangesAsync();
+
+      return null;
+    }
+
+    protected virtual Task<IActionResult> ValidateDeleteAsync(object[] keys)
+    {
+      return Task.FromResult<IActionResult>(null);
     }
 
     #endregion
 
     #region TryGetDbSet
-    
+
     protected virtual dynamic TryGetDbSet(Type entityType)
     {
       return null;
@@ -217,6 +271,22 @@ namespace Joker.OData.Controllers
       await repository.SaveChangesAsync();
 
       return StatusCode((int)HttpStatusCode.NoContent);
+    }
+
+    #endregion
+
+    #region ValidateModelStateAsync
+
+    protected virtual Task<IActionResult> ValidateModelStateAsync(TEntity entity)
+    {
+      if (!ModelState.IsValid)
+      {
+        IActionResult badRequest = BadRequest(ModelState);
+
+        return Task.FromResult(badRequest);
+      }
+
+      return Task.FromResult<IActionResult>(null);
     }
 
     #endregion
