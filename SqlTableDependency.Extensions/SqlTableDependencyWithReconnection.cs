@@ -430,6 +430,51 @@ END";
     
     //hopefully temp fix for:
     //https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency/issues/188
+
+    //modify drop all subscript to not use cursor to drop conversation handles
+    public const string ScriptDropAll = @"DECLARE @conversation_handle UNIQUEIDENTIFIER;
+    DECLARE @schema_id INT;
+    SELECT @schema_id = schema_id FROM sys.schemas WITH (NOLOCK) WHERE name = N'{2}';
+
+    PRINT N'SqlTableDependency: Dropping trigger [{2}].[tr_{0}_Sender].';
+    IF EXISTS (SELECT * FROM sys.triggers WITH (NOLOCK) WHERE object_id = OBJECT_ID(N'[{2}].[tr_{0}_Sender]')) DROP TRIGGER [{2}].[tr_{0}_Sender];
+
+    PRINT N'SqlTableDependency: Deactivating queue [{2}].[{0}_Sender].';
+    IF EXISTS (SELECT * FROM sys.service_queues WITH (NOLOCK) WHERE schema_id = @schema_id AND name = N'{0}_Sender') EXEC (N'ALTER QUEUE [{2}].[{0}_Sender] WITH ACTIVATION (STATUS = OFF)');
+
+    PRINT N'SqlTableDependency: Ending conversations {0}.';
+    SELECT top(1)  @conversation_handle = conversation_handle  FROM sys.conversation_endpoints WITH (NOLOCK) WHERE far_service LIKE N'{0}_%' ORDER BY is_initiator ASC;
+    WHILE @@ROWCOUNT >1
+    BEGIN
+    select @conversation_handle 
+    END CONVERSATION @conversation_handle WITH CLEANUP;
+    SELECT top(1)  @conversation_handle = conversation_handle  FROM sys.conversation_endpoints WITH (NOLOCK) WHERE far_service LIKE N'{0}_%' ORDER BY is_initiator ASC;
+    END
+
+    PRINT N'SqlTableDependency: Dropping service broker {0}_Receiver.';
+    IF EXISTS (SELECT * FROM sys.services WITH (NOLOCK) WHERE name = N'{0}_Receiver') DROP SERVICE [{0}_Receiver];
+    PRINT N'SqlTableDependency: Dropping service broker {0}_Sender.';
+    IF EXISTS (SELECT * FROM sys.services WITH (NOLOCK) WHERE name = N'{0}_Sender') DROP SERVICE [{0}_Sender];
+
+    PRINT N'SqlTableDependency: Dropping queue {2}.[{0}_Receiver].';
+    IF EXISTS (SELECT * FROM sys.service_queues WITH (NOLOCK) WHERE schema_id = @schema_id AND name = N'{0}_Receiver') DROP QUEUE [{2}].[{0}_Receiver];
+    PRINT N'SqlTableDependency: Dropping queue {2}.[{0}_Sender].';
+    IF EXISTS (SELECT * FROM sys.service_queues WITH (NOLOCK) WHERE schema_id = @schema_id AND name = N'{0}_Sender') DROP QUEUE [{2}].[{0}_Sender];
+
+    PRINT N'SqlTableDependency: Dropping contract {0}.';
+    IF EXISTS (SELECT * FROM sys.service_contracts WITH (NOLOCK) WHERE name = N'{0}') DROP CONTRACT [{0}];
+    PRINT N'SqlTableDependency: Dropping messages.';
+    {1}
+
+    PRINT N'SqlTableDependency: Dropping activation procedure {0}_QueueActivationSender.';
+    IF EXISTS (SELECT * FROM sys.objects WITH (NOLOCK) WHERE schema_id = @schema_id AND name = N'{0}_QueueActivationSender') DROP PROCEDURE [{2}].[{0}_QueueActivationSender];";
+
+    protected override string PrepareScriptDropAll(string dropMessages)
+    {
+      var script = string.Format(ScriptDropAll, _dataBaseObjectsNamingConvention, dropMessages, _schemaName);
+      return this.ActivateDatabaseLogging ? script : this.RemoveLogOperations(script);
+    }
+    
     protected override IList<string> CreateSqlServerDatabaseObjects(IEnumerable<TableColumnInfo> userInterestedColumns, string columnsForUpdateOf, int watchDogTimeOut)
     {
       var processableMessages = new List<string>();
