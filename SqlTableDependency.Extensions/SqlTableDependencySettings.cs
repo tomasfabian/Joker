@@ -2,9 +2,9 @@
 using TableDependency.SqlClient.Base.Enums;
 
 namespace SqlTableDependency.Extensions
-{        
+{
   /// <summary>
-  /// Additional settings for <see cref="SqlTableDependency{T}" /> class.
+  /// Additional settings for <see cref="TableDependency.SqlClient.SqlTableDependency{T}" /> class.
   /// </summary>
   public class SqlTableDependencySettings<TEntity> 
     where TEntity : class
@@ -18,6 +18,11 @@ namespace SqlTableDependency.Extensions
     /// Name of the table in database.
     /// </value>
     public string TableName { get; set; }
+
+    /// <value>
+    /// Far service name in the database. Applies only to <see cref="Enums.LifetimeScope.UniqueScope" />.
+    /// </value>
+    public string FarServiceUniqueName { get; set; }
     
     /// <value>
     /// List of columns that need to monitor for changing on order to receive notifications.

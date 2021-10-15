@@ -77,6 +77,27 @@ namespace SqlTableDependency.Extensions
 
     #endregion
 
+    #region Settings
+
+    internal SqlTableDependencySettings<TEntity> Settings { get; set; }
+
+    #endregion
+
+    #region UniqueName
+
+    public virtual string UniqueName
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(Settings?.FarServiceUniqueName))
+          return Environment.MachineName;
+
+        return Settings.FarServiceUniqueName;
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Events
