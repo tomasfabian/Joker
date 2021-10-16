@@ -11,9 +11,9 @@
     <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, CQRS, MSSQL Service Broker, Event sourcing</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/SqlTableDependency.Extensions/ChangeLog.md</PackageReleaseNotes>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
+    <AssemblyVersion>3.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
@@ -21,7 +21,7 @@
   <Import Project="..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
 
   <ItemGroup>
-    <None Include="..\Joker.Redis\License.txt">
+    <None Include=".\License.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
