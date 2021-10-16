@@ -24,7 +24,7 @@ namespace SqlTableDependency.Extensions.Tests
   public class SqlTableDependencyProviderTests : TestBase
   {
     private Mock<ITableDependency<TestModel>> tableDependencyMoq;
-    private string connectionString = @"TestConnection";
+    private string connectionString = "TestConnection";
 
     private readonly TimeSpan testConnectionTimeStamp = TimeSpan.FromSeconds(10);
 
