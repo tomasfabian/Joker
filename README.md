@@ -2,49 +2,82 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 
 <img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 
-# Kafka.DotNet.ksqlDB push queries LINQ provider
-Kafka.DotNet.ksqlDB package generates ksql queries from your C# linq queries. For more information check the [Wiki](https://github.com/tomasfabian/Joker/wiki/Kafka.DotNet.ksqlDB---push-queries-LINQ-provider). You can filter, project, limit etc your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/)
+# ksqlDB.RestApi.Client push queries LINQ provider
+This project was moved to a separate (repository ksqlDB.RestApi.Client)[https://github.com/tomasfabian/ksqlDB.RestApi.Client-DotNet]
 
-This project was moved to a separate (repository Kafka.DotNet.ksqlDB)[https://github.com/tomasfabian/Kafka.DotNet.ksqlDB]
+This package generates ksql queries from your .NET C# linq queries. You can filter, project, limit, etc. your push notifications server side with [ksqlDB push queries](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/).
+You can continually process computations over unbounded (theoretically never-ending) streams of data.
+It also allows you to execute SQL [statements](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/) via the Rest API like inserting records into streams and creating tables, types etc. or exucecute admin operations such as listing streams.
+
+[ksqlDB.RestApi.Client](https://github.com/tomasfabian/ksqlDB.RestApi.Client-DotNet) is a contribution to [Confluent ksqldb-clients](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-clients/)
+
+Install with NuGet package manager:
 ```
-Install-Package Kafka.DotNet.ksqlDB
+Install-Package ksqlDB.RestApi.Client
+```
+or with .NET CLI
+```
+dotnet add package ksqlDB.RestApi.Client
 ```
 ```C#
-await using var context = new KSqlDBContext(@"http:\\localhost:8088");
+using System;
+using ConsoleAppKsqlDB;
+using ksqlDB.RestApi.Client.KSql.Linq;
+using ksqlDB.RestApi.Client.KSql.Query.Context;
+using ksqlDB.RestApi.Client.KSql.Query.Options;
+using ksqlDB.RestApi.Client.Sample.Model;
+
+var ksqlDbUrl = @"http:\\localhost:8088";
+
+await using var context = new KSqlDBContext(ksqlDbUrl);
 
 using var disposable = context.CreateQueryStream<Tweet>()
+  .WithOffsetResetPolicy(AutoOffsetReset.Latest)
   .Where(p => p.Message != "Hello world" || p.Id == 1)
-  .Where(p => p.RowTime >= 1510923225000)
-  .Select(l => new { l.Id, l.Message, l.RowTime })
-  .Take(2)     
-  .ToObservable() // client side processing starts here lazily after subscription
-  .Delay(TimeSpan.FromSeconds(2)) // IObservable extensions
-  .ObserveOn(TaskPoolScheduler.Default)
+  .Select(l => new { l.Message, l.Id })
+  .Take(2)
   .Subscribe(tweetMessage =>
   {
     Console.WriteLine($"{nameof(Tweet)}: {tweetMessage.Id} - {tweetMessage.Message}");
-    Console.WriteLine();
   }, error => { Console.WriteLine($"Exception: {error.Message}"); }, () => Console.WriteLine("Completed"));
+
+Console.WriteLine("Press any key to stop the subscription");
+
+Console.ReadKey();
+
+namespace ConsoleAppKsqlDB
+{
+  public class Tweet : Record
+  {
+    public int Id { get; set; }
+
+    public string Message { get; set; }
+  }
+}
 ```
 
 # CDC - Push notifications from Sql Server tables with Kafka
-Monitor Sql Server tables for changes and forward them to the appropriate Kafka topics. You can consume (react to) these row-level table changes (CDC - Change Data Capture) from Sql Server databases with Kafka.DotNet.SqlServer package together with the Debezium connector streaming platform. 
+Monitor Sql Server tables for changes and forward them to the appropriate Kafka topics. You can consume (react to) these row-level table changes (CDC - Change Data Capture) from Sql Server databases with SqlServer.Connector package together with the Debezium connector streaming platform. 
 ### Nuget
 ```
-Install-Package Kafka.DotNet.SqlServer -Version 0.2.0-rc.2
+Install-Package SqlServer.Connector -Version 0.3.0
+Install-Package ksqlDB.RestApi.Client
 ```
-[Kafka.DotNet.SqlServer WIKI](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/blob/main/Kafka.DotNet.SqlServer/Wiki.md)
 
-Full example is available in [Blazor example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/tree/main/Samples/Blazor.Sample) - Kafka.DotNet.InsideOut.sln:
+[SqlServer.Connector WIKI](https://github.com/tomasfabian/ksqlDB.RestApi.Client-DotNet/blob/main/SqlServer.Connector/Wiki.md)
+
+Full example is available in [Blazor example](https://github.com/tomasfabian/ksqlDB.RestApi.Client-DotNet/tree/main/Samples/Blazor.Sample) - InsideOut.sln: (The initial run takes a few minutes until all containers are up and running.)
+
+The following example demonstrates ksqldb server side filtering of database transactions: 
 ```C#
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.KSql.Linq;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.KSql.Query.Options;
-using Kafka.DotNet.SqlServer.Cdc;
-using Kafka.DotNet.SqlServer.Cdc.Extensions;
+using ksqlDB.RestApi.Client.KSql.Linq;
+using ksqlDB.RestApi.Client.KSql.Query.Context;
+using ksqlDB.RestApi.Client.KSql.Query.Options;
+using SqlServer.Connector.Cdc;
+using SqlServer.Connector.Cdc.Extensions;
 
 class Program
 {
@@ -72,8 +105,9 @@ class Program
 
     var semaphoreSlim = new SemaphoreSlim(0, 1);
 
-    var cdcSubscription = context.CreateQuery<RawDatabaseChangeObject<IoTSensor>>("sqlserversensors")
+    var cdcSubscription = context.CreateQuery<IoTSensorChange>("sqlserversensors")
       .WithOffsetResetPolicy(AutoOffsetReset.Latest)
+      .Where(c => c.Op != "r" && (c.After == null || c.After.SensorId != "d542a2b3-c"))
       .Take(5)
       .ToObservable()
       .Subscribe(cdc =>
@@ -84,15 +118,15 @@ class Program
           switch (operationType)
           {
             case ChangeDataCaptureType.Created:
-              Console.WriteLine($"Value: {cdc.EntityAfter.Value}");
+              Console.WriteLine($"Value: {cdc.After.Value}");
               break;
             case ChangeDataCaptureType.Updated:
 
-              Console.WriteLine($"Value before: {cdc.EntityBefore.Value}");
-              Console.WriteLine($"Value after: {cdc.EntityAfter.Value}");
+              Console.WriteLine($"Value before: {cdc.Before.Value}");
+              Console.WriteLine($"Value after: {cdc.After.Value}");
               break;
             case ChangeDataCaptureType.Deleted:
-              Console.WriteLine($"Value: {cdc.EntityBefore.Value}");
+              Console.WriteLine($"Value: {cdc.Before.Value}");
               break;
           }
         }, onError: error =>
@@ -114,149 +148,46 @@ class Program
     {
     }
   }
+
+  private static async Task CreateSensorsCdcStreamAsync(CancellationToken cancellationToken = default)
+  {
+    string fromName = "sqlserversensors";
+    string kafkaTopic = "sqlserver2019.dbo.Sensors";
+
+    var ksqlDbUrl = Configuration[ConfigKeys.KSqlDb_Url];
+
+    var httpClientFactory = new HttpClientFactory(new Uri(ksqlDbUrl));
+
+    var restApiClient = new KSqlDbRestApiClient(httpClientFactory);
+
+    EntityCreationMetadata metadata = new()
+    {
+      EntityName = fromName,
+      KafkaTopic = kafkaTopic,
+      ValueFormat = SerializationFormats.Json,
+      Partitions = 1,
+      Replicas = 1
+    };
+
+    var createTypeResponse = await restApiClient.CreateTypeAsync<IoTSensor>(cancellationToken);
+    createTypeResponse = await restApiClient.CreateTypeAsync<IoTSensorChange>(cancellationToken);
+
+    var httpResponseMessage = await restApiClient.CreateStreamAsync<DatabaseChangeObject<IoTSensor>>(metadata, ifNotExists: true, cancellationToken: cancellationToken)
+      .ConfigureAwait(false);
+  }
+}
+
+public record IoTSensorChange : DatabaseChangeObject<IoTSensor>
+{
 }
 
 public record IoTSensor
 {
-	public string SensorId { get; set; }
-	public int Value { get; set; }
-}
-```
-
-Consuming table change notifications directly from a Kakka topic:
-```C#
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazor.Sample.Data.Sensors;
-using Confluent.Kafka;
-using Kafka.DotNet.InsideOut.Consumer;
-using Kafka.DotNet.SqlServer.Cdc;
-
-async Task ConsumeFromTopicAsync()
-{
-  string bootstrapServers = "localhost:29092";
-
-  var consumerConfig = new ConsumerConfig
-  {
-    BootstrapServers = bootstrapServers,
-    GroupId = "Client-01",
-    AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
-  };
-
-  var kafkaConsumer =
-    new KafkaConsumer<string, DatabaseChangeObject<IoTSensor>>("sqlserver2019.dbo.Sensors", consumerConfig);
-
-  var dataChanges = kafkaConsumer.ConnectToTopic().ToAsyncEnumerable().Where(c => c.Message.Value.OperationType != ChangeDataCaptureType.Read).Take(2);
-	
-  await foreach (var consumeResult in dataChanges)
-  {
-    var message = consumeResult.Message;
-    var changeNotification = message.Value; 
-
-    Console.WriteLine(changeNotification.OperationType);
-    Console.WriteLine(changeNotification.Before?.Value);
-    Console.WriteLine(changeNotification.After?.Value);
-  }
-
-  using (kafkaConsumer)
-  {		
-  }
-}
-```
-
-# Kafka stream processing
-[Kafka.DotNet.InsideOut](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB/blob/main/Kafka.DotNet.InsideOut/Wiki.md) is a client API for producing and consuming kafka topics and ksqlDB push queries and views generated with Kafka.DotNet.ksqlDB
-```
-Install-Package Kafka.DotNet.ksqlDB
-```
-
-```C#
-using System.Threading.Tasks;
-using Kafka.DotNet.ksqlDB.KSql.Linq.Statements;
-using Kafka.DotNet.ksqlDB.KSql.Query.Context;
-using Kafka.DotNet.ksqlDB.KSql.RestApi.Extensions;
-
-private string KsqlDbUrl => "http://localhost:8088";
-
-private async Task CreateOrReplaceMaterializedTableAsync()
-{
-  string ksqlDbUrl = Configuration[ConfigKeys.KSqlDb_Url];
-
-  await using var context = new KSqlDBContext(ksqlDbUrl);
-
-  var statement = context.CreateOrReplaceTableStatement(tableName: "SensorsTable")
-    .As<IoTSensor>(TopicNames.IotSensors)
-    .Where(c => c.SensorId != "Sensor-5")
-    .GroupBy(c => c.SensorId)
-    .Select(c => new {SensorId = c.Key, Count = c.Count(), AvgValue = c.Avg(a => a.Value) });
-
-  var httpResponseMessage = await statement.ExecuteStatementAsync();
-
-  if (httpResponseMessage.IsSuccessStatusCode)
-  {
-    var statementResponses = httpResponseMessage.ToStatementResponses();
-  }
-  else
-  {
-    var statementResponse = httpResponseMessage.ToStatementResponse();
-  }
-}
-```
-```C#
-public class SensorsTableConsumer : KafkaConsumer<string, IoTSensorStats>
-{
-  public SensorsTableConsumer(ConsumerConfig consumerConfig)
-    : base("SENSORSTABLE", consumerConfig)
-  {
-  }
-}
-
-public record IoTSensorStats
-{
+  [Key]
   public string SensorId { get; set; }
-  public double AvgValue { get; set; }
-  public int Count { get; set; }
+  public int Value { get; set; }
 }
 ```
-
-```
-Install-Package Kafka.DotNet.InsideOut -Version 1.0.0
-Install-Package System.Interactive.Async -Version 5.0.0
-```
-
-```C#
-using System;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
-using Confluent.Kafka;
-using Kafka.DotNet.InsideOut.Consumer;
-
-const string bootstrapServers = "localhost:29092";
-
-static async Task Main(string[] args)
-{
-  var consumerConfig = new ConsumerConfig
-                       {
-                         BootstrapServers = bootstrapServers,
-                         GroupId = "Client-01",
-                         AutoOffsetReset = AutoOffsetReset.Latest
-                       };
-
-  var kafkaConsumer = new KafkaConsumer<string, IoTSensorStats>("IoTSensors", consumerConfig);
-
-  await foreach (var consumeResult in kafkaConsumer.ConnectToTopic().ToAsyncEnumerable().Take(10))
-  {
-    Console.WriteLine(consumeResult.Message);
-  }
-
-  using (kafkaConsumer)
-  { }
-}
-```
-
-[Blazor server side example](https://github.com/tomasfabian/Kafka.DotNet.ksqlDB) - Kafka.DotNet.InsideOut.sln
 
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
