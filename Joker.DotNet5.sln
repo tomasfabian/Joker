@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions", "SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj", "{889EA023-4804-4D80-9337-A61E317A1A68}"
 EndProject
@@ -85,27 +85,7 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Joker.WinUI3.Desktop (Packa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.BlazorApp.Sample.NET5", "Samples\Blazor.WebAssembly\Joker.BlazorApp.Sample\Joker.BlazorApp.Sample.NET5.csproj", "{9BE3F19A-A0A6-4E07-B34F-602F6F8DB617}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB", "Joker.Kafka\Kafka.DotNet.ksqlDB.csproj", "{AB089018-DFD5-44DF-97C7-843C6929D64D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.Tests", "Tests\Joker.Kafka.Tests\Kafka.DotNet.ksqlDB.Tests.csproj", "{C5B77655-CABD-4A5A-B7CB-A6D933C47823}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{313D069C-35C9-4375-872C-0F58CA2B8471}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.Sample", "Samples\Kafka\Kafka.DotNet.ksqlDB.Sample\Kafka.DotNet.ksqlDB.Sample.csproj", "{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{CC0F10E8-879B-463F-B626-0E90AA638FEC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.DotNet.ksqlDB.IntegrationTests", "Tests\Kafka.DotNet.ksqlDB.IntegrationTests\Kafka.DotNet.ksqlDB.IntegrationTests.csproj", "{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}"
-EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{28c8ed4f-505f-4344-8ed1-d52355af59f7}*SharedItemsImports = 13
-		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{91a40717-e13f-491f-8ac2-41c9c06caa3e}*SharedItemsImports = 13
-		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{9ed0d53d-263e-475b-b0d9-550444305c54}*SharedItemsImports = 5
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{b83f5c43-647f-4028-872b-0e327f5131eb}*SharedItemsImports = 5
-		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{c7235bb3-fee8-4dc2-9f44-9a35a324556f}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|arm64 = Debug|arm64
@@ -589,70 +569,6 @@ Global
 		{9BE3F19A-A0A6-4E07-B34F-602F6F8DB617}.Release|x64.Build.0 = Release|Any CPU
 		{9BE3F19A-A0A6-4E07-B34F-602F6F8DB617}.Release|x86.ActiveCfg = Release|Any CPU
 		{9BE3F19A-A0A6-4E07-B34F-602F6F8DB617}.Release|x86.Build.0 = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|arm64.Build.0 = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|x64.Build.0 = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Debug|x86.Build.0 = Debug|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|arm64.ActiveCfg = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|arm64.Build.0 = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|x64.ActiveCfg = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|x64.Build.0 = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|x86.ActiveCfg = Release|Any CPU
-		{AB089018-DFD5-44DF-97C7-843C6929D64D}.Release|x86.Build.0 = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|arm64.Build.0 = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|x64.Build.0 = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Debug|x86.Build.0 = Debug|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|arm64.ActiveCfg = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|arm64.Build.0 = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|x64.ActiveCfg = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|x64.Build.0 = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|x86.ActiveCfg = Release|Any CPU
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823}.Release|x86.Build.0 = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|arm64.Build.0 = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|x64.Build.0 = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Debug|x86.Build.0 = Debug|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|arm64.ActiveCfg = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|arm64.Build.0 = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|x64.ActiveCfg = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|x64.Build.0 = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|x86.ActiveCfg = Release|Any CPU
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0}.Release|x86.Build.0 = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|arm64.Build.0 = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|x64.Build.0 = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Debug|x86.Build.0 = Debug|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|arm64.ActiveCfg = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|arm64.Build.0 = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|x64.ActiveCfg = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|x64.Build.0 = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|x86.ActiveCfg = Release|Any CPU
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -694,14 +610,16 @@ Global
 		{9ED0D53D-263E-475B-B0D9-550444305C54} = {14370E1E-EE30-4A3B-8300-62420D2C18A7}
 		{946B79C3-8587-4096-AB44-EC6DCEB048CD} = {14370E1E-EE30-4A3B-8300-62420D2C18A7}
 		{9BE3F19A-A0A6-4E07-B34F-602F6F8DB617} = {90794264-2AF3-4B01-8F0D-B48FEE83DA33}
-		{AB089018-DFD5-44DF-97C7-843C6929D64D} = {F0552F7C-3F9C-4BDF-96C3-F793546E1BD5}
-		{C5B77655-CABD-4A5A-B7CB-A6D933C47823} = {CC0F10E8-879B-463F-B626-0E90AA638FEC}
-		{313D069C-35C9-4375-872C-0F58CA2B8471} = {9A38AC52-C490-403F-AFF0-76EE1F3C1A39}
-		{D8FC3FEA-127E-4D80-8428-DE7EA18BD7F0} = {313D069C-35C9-4375-872C-0F58CA2B8471}
-		{CC0F10E8-879B-463F-B626-0E90AA638FEC} = {7C3B0334-137C-4DAC-BABB-05AB79C18BDB}
-		{4C9B88C8-33BC-4F7C-8D50-41B769FCB56D} = {CC0F10E8-879B-463F-B626-0E90AA638FEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{28c8ed4f-505f-4344-8ed1-d52355af59f7}*SharedItemsImports = 13
+		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{91a40717-e13f-491f-8ac2-41c9c06caa3e}*SharedItemsImports = 13
+		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{9ed0d53d-263e-475b-b0d9-550444305c54}*SharedItemsImports = 5
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{b83f5c43-647f-4028-872b-0e327f5131eb}*SharedItemsImports = 5
+		Samples\WinUI3\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems*{c7235bb3-fee8-4dc2-9f44-9a35a324556f}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal
