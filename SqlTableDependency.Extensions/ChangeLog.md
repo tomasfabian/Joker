@@ -1,5 +1,8 @@
 ﻿# SqlTableDependency.Extensions
 
+### 3.2.0
+- fixes FarServiceUniqueName seems to be ignored #23 by @AlexisPicot 
+
 ### 3.1.0
 - SqlTableDependencyEx - extracted fixes for SqlTableDependency
 - `SqlTableDependencySettings<TEntity>` FarServiceUniqueName
