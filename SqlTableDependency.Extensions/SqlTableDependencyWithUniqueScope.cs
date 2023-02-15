@@ -9,9 +9,11 @@ namespace SqlTableDependency.Extensions
   {
     #region Constructors
 
-    public SqlTableDependencyWithUniqueScope(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false)
-      : base(connectionString, tableName, schemaName, mapper, updateOf, filter, notifyOn, executeUserPermissionCheck,
-        includeOldValues)
+    public SqlTableDependencyWithUniqueScope(string connectionString, string tableName = null, string schemaName = null,
+      IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null,
+      DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false,
+      SqlTableDependencySettings<TEntity> sqlTableDependency = null)
+      : base(connectionString, tableName, schemaName, mapper, updateOf, filter, notifyOn, executeUserPermissionCheck, includeOldValues, sqlTableDependency)
     {
     }
 

@@ -11,9 +11,9 @@
     <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, CQRS, MSSQL Service Broker, Event sourcing</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
-    <Version>3.1.0</Version>
+    <Version>3.2.0-rc.1</Version>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/SqlTableDependency.Extensions/ChangeLog.md</PackageReleaseNotes>
-    <AssemblyVersion>3.1.0</AssemblyVersion>
+    <AssemblyVersion>3.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
