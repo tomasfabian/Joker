@@ -141,6 +141,11 @@ namespace Joker.OData.Controllers
 
     #region Delete
 
+    public async Task<IActionResult> Delete(ODataOptions oDataOptions)
+    {
+      return await Delete();
+    }
+
     public async Task<IActionResult> Delete()
     {
       var keys = GetKeysFromPath();

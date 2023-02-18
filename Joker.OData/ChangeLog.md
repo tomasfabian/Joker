@@ -1,5 +1,9 @@
 ﻿# Joker.OData
 
+# 4.0.0
+- TFM changed from netcoreapp3.1 to .net6.0
+- upgraded .NET package dependencies
+
 # 3.0.0
 ### Breaking changes:
 `ODataController<TEntity>`
