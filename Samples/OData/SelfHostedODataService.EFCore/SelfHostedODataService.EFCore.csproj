@@ -3,7 +3,7 @@
   <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>$(DotNetVersion)</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
     <UserSecretsId>780e3d94-afd4-4a43-9798-b82383b2530e</UserSecretsId>
@@ -23,11 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.OData" Version="3.0.0" />
-    <PackageReference Include="Joker.Redis" Version="2.2.0" />
-    <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces"  Version="7.0.0"/>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
@@ -48,11 +46,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.EntityFrameworkCore\Joker.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" />
+    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
     <ProjectReference Include="..\..\Sample.DataCore\Sample.DataCore.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SignalR\Hubs\" />
   </ItemGroup>
 </Project>

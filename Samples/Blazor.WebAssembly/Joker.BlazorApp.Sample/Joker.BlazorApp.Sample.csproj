@@ -16,10 +16,7 @@
   <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
