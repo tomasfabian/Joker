@@ -1,5 +1,5 @@
 ﻿<Project>
   <ItemGroup>
-     <PackageReference Include="Microsoft.OData.Client" Version="7.6.4" />
+     <PackageReference Include="Microsoft.OData.Client" Version="7.13.0" />
   </ItemGroup>
 </Project>
