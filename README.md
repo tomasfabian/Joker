@@ -2,6 +2,8 @@ Data change notifications from Sql Server via [SqlTableDependency](https://githu
 
 <img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
 
+Set docker-compose.csproj as startup project in Joker.sln
+
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
