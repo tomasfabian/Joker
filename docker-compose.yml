@@ -9,8 +9,9 @@ volumes:
 
 services:
 
-  sqln:
+  sql-server:
     image: "mcr.microsoft.com/mssql/server:2017-latest" 
+    container_name: sql-server
     ports:
       - "1402:1433"
     networks:
@@ -28,19 +29,29 @@ services:
     ports:
       - "6379:6379"
 
-  selfhostedodataservice:
-    image: ${DOCKER_REGISTRY-}selfhostedodataservice
+  selfhostedodataservice.efcore:
+    image: ${DOCKER_REGISTRY-}selfhostedodataservice.efcore
     build:
       context: .
-      dockerfile: Samples/OData/SelfHostedODataService/Dockerfile
+      dockerfile: Samples/OData/SelfHostedODataService.EFCore/Dockerfile
     networks: 
       - sqlnetwork
     environment:
       - "REDISHOST=redis-server"
-      - "DBHOST=sqln"
+      - "DBHOST=sql-server"
     ports:
       - 3000:80
       - 5001:443
     depends_on: 
-      - sqln
+      - sql-server
       - redis-server
+
+  #joker.blazorapp.sample:
+  #  image: ${DOCKER_REGISTRY-}jokerblazorappsample
+  #  build:
+  #    context: .
+  #    dockerfile: Samples/Blazor.WebAssembly/Joker.BlazorApp.Sample/Dockerfile
+  #  networks: 
+  #    - sqlnetwork
+  #  depends_on: 
+  #    - selfhostedodataservice.efcore
