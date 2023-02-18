@@ -16,8 +16,4 @@
     <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

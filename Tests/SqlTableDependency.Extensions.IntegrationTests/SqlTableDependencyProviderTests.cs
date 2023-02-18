@@ -253,7 +253,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
         .FirstOrDefaultAsync()
         .ToTask();
 
-      productEntityChange.ChangeType.Should().BeEquivalentTo(ChangeType.Create);
+      productEntityChange.ChangeType.Should().Be(ChangeType.Create);
 
       product.Name = "Updated";
       AddOrUpdateProduct(product);
@@ -263,7 +263,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
         .FirstOrDefaultAsync()
         .ToTask();
 
-      productUpdated.ChangeType.Should().BeEquivalentTo(ChangeType.Update);
+      productUpdated.ChangeType.Should().Be(ChangeType.Update);
 
       DeleteProduct(product);
 
@@ -272,7 +272,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
         .FirstOrDefaultAsync()
         .ToTask();
 
-      productDeleted.ChangeType.Should().BeEquivalentTo(ChangeType.Delete);
+      productDeleted.ChangeType.Should().Be(ChangeType.Delete);
     }
 
     [TestMethod]

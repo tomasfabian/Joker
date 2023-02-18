@@ -10,14 +10,6 @@
     <Compile Include="..\UnitTests\Schedulers\ReactiveTestSchedulersFactory.cs" Link="Schedulers\ReactiveTestSchedulersFactory.cs" />
     <Compile Include="..\UnitTests\TestBase.cs" Link="TestBase.cs" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Joker" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Schedulers\" />
-  </ItemGroup>
 
   <Import Project="..\..\NugetProjects\UnitTests\Microsoft.NET.Test.Sdk.csprojimport" />
   <Import Project="..\..\NugetProjects\UnitTests\MSTest.TestAdapter.csprojimport" />
@@ -28,4 +20,7 @@
   <Import Project="..\..\NugetProjects\UnitTests\Microsoft.Reactive.Testing.csprojimport" />
   <Import Project="..\..\NugetProjects\UnitTests\Ninject.MockingKernel.Moq.csprojimport" />
 
+  <ItemGroup>
+	  <ProjectReference Include="..\..\Joker\Joker.csproj" />
+  </ItemGroup>
 </Project>
