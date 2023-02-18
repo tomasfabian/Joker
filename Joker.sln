@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions", "SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj", "{889EA023-4804-4D80-9337-A61E317A1A68}"
 EndProject
@@ -41,8 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlTableDependency.Extensions.IntegrationTests", "Tests\SqlTableDependency.Extensions.IntegrationTests\SqlTableDependency.Extensions.IntegrationTests.csproj", "{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C6601B25-1578-406B-A7B7-DDF1205E2B2C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.OData", "Joker.OData\Joker.OData.csproj", "{11097D7F-143B-4971-AA5F-E79C5A736AAC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Joker.EntityFramework", "Joker.EntityFramework\Joker.EntityFramework.csproj", "{B75986F5-B43E-46CD-BE42-B3D703694FD2}"
@@ -75,12 +73,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{D8F332EF-469
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{4FD87675-B0D8-4DAE-BA39-6D76DF38B3F2}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C6601B25-1578-406B-A7B7-DDF1205E2B2C}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{28c8ed4f-505f-4344-8ed1-d52355af59f7}*SharedItemsImports = 13
-		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{b83f5c43-647f-4028-872b-0e327f5131eb}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -146,10 +141,6 @@ Global
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FCDDD1D-1F8E-4892-8B17-4FE9D10A0C29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11097D7F-143B-4971-AA5F-E79C5A736AAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11097D7F-143B-4971-AA5F-E79C5A736AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11097D7F-143B-4971-AA5F-E79C5A736AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -190,6 +181,10 @@ Global
 		{B83F5C43-647F-4028-872B-0E327F5131EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B83F5C43-647F-4028-872B-0E327F5131EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B83F5C43-647F-4028-872B-0E327F5131EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6601B25-1578-406B-A7B7-DDF1205E2B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -229,5 +224,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D126F5EC-9F52-488C-AA73-0EFAF4AF94B3}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{0243a0f3-cb5c-47c3-8d80-bb1f9c78818c}*SharedItemsImports = 5
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{28c8ed4f-505f-4344-8ed1-d52355af59f7}*SharedItemsImports = 13
+		Samples\Joker.PubSubUI.Shared\Joker.PubSubUI.Shared.projitems*{b83f5c43-647f-4028-872b-0e327f5131eb}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
