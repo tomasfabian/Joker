@@ -2,7 +2,7 @@
 
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
+    <TargetFrameworks>$(DotNetVersion);net472</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,14 +16,15 @@
 
   <Import Project="..\..\NugetProjects\EntityFramework.csprojimport" />
   <Import Project="..\..\NugetProjects\NLog.csprojimport" />
+  <Import Project="..\..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker.EntityFramework" Version="1.1.0" />
     <PackageReference Include="Automapper" Version="10.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFramework\Joker.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
 

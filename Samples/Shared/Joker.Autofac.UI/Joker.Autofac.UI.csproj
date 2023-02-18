@@ -11,11 +11,8 @@
   <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
   </ItemGroup>
 

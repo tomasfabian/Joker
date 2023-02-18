@@ -31,7 +31,6 @@ namespace SqlTableDependency.Extensions.Sample
       await redisPublisher.PublishAsync("messages", "hello2");
       await redisPublisher.SetStringAsync("statusVersion", DateTime.Now.ToString(CultureInfo.InvariantCulture));
       var statusVersion = await redisSubscriber.GetStringAsync("statusVersion");
-      DateTime statusDateTimeVersion = DateTime.Parse(statusVersion);
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 

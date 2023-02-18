@@ -3,16 +3,13 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFramework>$(DotNetVersion)</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Joker.Redis" Version="2.2.0" />
-  </ItemGroup>
 
   <Import Project="..\..\NugetProjects\StackExchange.Redis.csprojimport" />
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>

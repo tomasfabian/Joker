@@ -3,15 +3,13 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>$(DotNetVersion)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Automapper" Version="10.0.0" />
-    <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
   </ItemGroup>
 
   <Import Project="..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
@@ -31,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.EntityFrameworkCore\Joker.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Joker\Joker.csproj" />
+    <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
 

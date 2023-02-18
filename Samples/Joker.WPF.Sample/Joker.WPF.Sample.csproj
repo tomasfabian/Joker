@@ -3,18 +3,18 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>$(NetCoreVersion);net472</TargetFrameworks>
+    <TargetFrameworks>$(DotNetWindowsVersion);net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-    <PackageReference Include="Joker.Redis" Version="2.2.0" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
+    <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
     <ProjectReference Include="..\OData\OData.Client\OData.Client.csproj" />
     <ProjectReference Include="..\Sample.Data\Sample.Data.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
