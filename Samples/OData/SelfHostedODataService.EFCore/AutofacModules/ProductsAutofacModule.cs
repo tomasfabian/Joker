@@ -64,7 +64,7 @@ namespace SelfHostedODataService.EFCore.AutofacModules
         .InstancePerLifetimeScope();
 
       builder.RegisterType<BooksRepository>()
-        .AsSelf()
+        .As<IRepository<Book>, IReadOnlyRepository<Book>>()
         .InstancePerLifetimeScope();
     }
   }

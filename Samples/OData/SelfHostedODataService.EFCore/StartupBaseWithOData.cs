@@ -38,6 +38,7 @@ namespace SelfHostedODataService.EFCore
       oDataModelBuilder.Namespace = "Example";
 
       oDataModelBuilder.AddPluralizedEntitySet<Product>();
+      oDataModelBuilder.AddPluralizedEntitySet<Book>();
 
       return oDataModelBuilder;
     }

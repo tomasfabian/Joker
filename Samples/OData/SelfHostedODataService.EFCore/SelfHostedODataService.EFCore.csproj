@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\AuthorsController.cs" />
-    <Compile Remove="Controllers\BooksController.cs" />
     <Compile Remove="Controllers\PublishersController.cs" />
   </ItemGroup>
 
