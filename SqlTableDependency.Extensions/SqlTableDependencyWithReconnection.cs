@@ -50,9 +50,15 @@ namespace SqlTableDependency.Extensions
   {
     #region Constructors
 
-    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false)
+    public SqlTableDependencyWithReconnection(string connectionString, string tableName = null, string schemaName = null, 
+      IModelToTableMapper<TEntity> mapper = null, IUpdateOfModel<TEntity> updateOf = null, ITableDependencyFilter filter = null, 
+      DmlTriggerType notifyOn = DmlTriggerType.All, bool executeUserPermissionCheck = true, bool includeOldValues = false, 
+      SqlTableDependencySettings<TEntity> settings = null)
       : base(connectionString, tableName, schemaName, mapper, updateOf, filter, notifyOn, executeUserPermissionCheck, includeOldValues)
     {
+      Settings = settings;
+
+      _dataBaseObjectsNamingConvention = GetBaseObjectsNamingConvention();
     }
 
     #endregion

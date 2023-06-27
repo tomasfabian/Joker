@@ -279,10 +279,7 @@ namespace SqlTableDependency.Extensions
             schemaName: SchemaName, mapper: modelToTableMapper, updateOf: sqlTableDependencySettings.UpdateOf,
             filter: sqlTableDependencySettings.Filter, notifyOn: sqlTableDependencySettings.NotifyOn,
             executeUserPermissionCheck: sqlTableDependencySettings.ExecuteUserPermissionCheck,
-            includeOldValues: sqlTableDependencySettings.IncludeOldValues)
-                 {
-                   Settings = Settings
-                 };
+            includeOldValues: sqlTableDependencySettings.IncludeOldValues, Settings);
 
         default:
           return null;
