@@ -26,8 +26,6 @@ The main purpose of `SqlTableDependency.Extensions` is to simplify the process o
 
 With this package, you can easily subscribe to table changes and receive notifications in your application whenever a row is inserted, updated, or deleted in a specified SQL Server table. 
 
-Fixes critical bug in https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency/issues/229
-
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
