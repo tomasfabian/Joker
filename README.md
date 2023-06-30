@@ -26,6 +26,8 @@ The main purpose of `SqlTableDependency.Extensions` is to simplify the process o
 
 With this package, you can easily subscribe to table changes and receive notifications in your application whenever a row is inserted, updated, or deleted in a specified SQL Server table. 
 
+Fixes critical bug in https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency/issues/229
+
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
@@ -43,14 +45,15 @@ https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependen
 
 Currently there are 3 LifetimeScopes:
 
-## ConnectionScope:
-If the connection is lost, the database objects will be deleted either after a timeout period or during disposal. Upon each reconnection, the database objects are recreated.
+## UniqueScope:
+If the connection is lost, database objects will only be deleted after a timeout period. Upon reconnection, the database objects are recreated, but only if the conversation handle no longer exists.Otherwise, the database objects are preserved and reused.
+If the application was closed without cleaning the conversation, it will be reused upon app restart. This ensures that data changes within the timeout period are not lost, and messages will be delivered after the reconnection.
 
 ## ApplicationScope:
 In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart. You shouldn't lost data changes within the timeout period. The messages will be delivered after the reconnection.
 
-## UniqueScope:
-In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts. You shouldn't lost data changes within the timeout period. The messages will be delivered after the reconnection.
+## ConnectionScope:
+If the connection is lost, the database objects will be deleted either after a timeout period or during disposal. Upon each reconnection, the database objects are recreated.
 
 [Wiki Samples](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Samples)
 
