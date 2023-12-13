@@ -1,5 +1,6 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-    </PropertyGroup>
+	<PropertyGroup>
+		<!--<TargetFramework>net8.0</TargetFramework>-->
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+	</PropertyGroup>
 </Project>
