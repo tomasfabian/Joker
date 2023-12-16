@@ -5,12 +5,12 @@
 		<TargetFramework>$(DotNetVersion)</TargetFramework>
 
 		<IsPackable>false</IsPackable>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
-	<Import Project="..\..\NugetProjects\UnitTests\Microsoft.NET.Test.Sdk.csprojimport" />
-	<Import Project="..\..\NugetProjects\UnitTests\MSTest.TestAdapter.csprojimport" />
-	<Import Project="..\..\NugetProjects\UnitTests\MSTest.TestFramework.csprojimport" />
-	<Import Project="..\..\NugetProjects\UnitTests\coverlet.collector.csprojimport" />
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
@@ -19,7 +19,7 @@
 		<ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
 		<ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
 		<ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
-		<ProjectReference Include="..\IntegrationTests\IntegrationTests.csproj" />
+		<ProjectReference Include="..\UnitTests\UnitTests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
