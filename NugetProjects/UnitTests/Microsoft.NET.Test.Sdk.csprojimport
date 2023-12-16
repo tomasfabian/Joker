@@ -1,5 +1,0 @@
-﻿<Project>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-  </ItemGroup>
-</Project>
