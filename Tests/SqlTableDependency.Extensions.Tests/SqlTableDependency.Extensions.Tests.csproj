@@ -3,13 +3,19 @@
   <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <TargetFramework>$(DotNetVersion)</TargetFramework>
-
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 	
   <ItemGroup>
     <ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="MSTest.TestAdapter" />
+	  <PackageReference Include="MSTest.TestFramework" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" />
   </ItemGroup>
 
 </Project>

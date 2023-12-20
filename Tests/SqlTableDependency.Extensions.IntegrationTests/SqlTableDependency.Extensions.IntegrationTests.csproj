@@ -3,13 +3,14 @@
 	<Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
 	<PropertyGroup>
 		<TargetFramework>$(DotNetVersion)</TargetFramework>
-
-		<IsPackable>false</IsPackable>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 	</ItemGroup>
 
 	<ItemGroup>
