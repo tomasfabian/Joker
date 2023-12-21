@@ -2,7 +2,7 @@
   <PropertyGroup>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <DotNetVersion>net7.0</DotNetVersion>
-    <DotNetWindowsVersion>net5.0-windows10.0.19041</DotNetWindowsVersion>
+    <DotNetWindowsVersion>net6.0-windows10.0.19041</DotNetWindowsVersion>
     <DotNetFrameworkVersion>net472</DotNetFrameworkVersion>
   </PropertyGroup>
 </Project>
