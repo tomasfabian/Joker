@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Joker.OData.Hosting;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,14 +10,14 @@ namespace SelfHostedODataService.EFCore
 {
   public class ODataHost : ODataHost<ODataStartupWithPubSub>
   {
-    protected override void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
-    {
-      webHostBuilder
+    protected override void OnCreateHostBuilder(IHostBuilder hostBuilder)
+    { 
+      hostBuilder
         .UseSerilog();
-
-      base.OnConfigureWebHostBuilder(webHostBuilder);
+      
+      base.OnCreateHostBuilder(hostBuilder);
     }
-
+        
     protected override void OnHostBuilt(IHost host)
     {
       if (Debugger.IsAttached)

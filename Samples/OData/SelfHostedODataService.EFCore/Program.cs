@@ -16,14 +16,14 @@ namespace SelfHostedODataService.EFCore
       var startupSettings = new KestrelODataWebHostConfig()
       {
         ConfigureServices = services =>
-        {          
+        {
           services.AddHostedService<ProductChangesHostedService>();
           services.AddHostedService<SqlTableDependencyProviderHostedService>();
         }
       };
       
       ConfigureLogging();
-
+      
       await new ODataHost().RunAsync(args, startupSettings);
     }
 

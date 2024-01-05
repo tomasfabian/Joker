@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Joker.OData.Hosting;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Sample.Data.Context;
@@ -11,12 +10,12 @@ namespace SelfHostedODataService
 {
   public class ODataHost : ODataHost<ODataStartupWithPubSub>
   {
-    protected override void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
+    protected override void OnCreateHostBuilder(IHostBuilder hostBuilder)
     {
-      webHostBuilder
-        .UseSerilog();
+        hostBuilder
+            .UseSerilog();
       
-      base.OnConfigureWebHostBuilder(webHostBuilder);
+      base.OnCreateHostBuilder(hostBuilder);
     }
 
     protected override void OnHostBuilt(IHost host)

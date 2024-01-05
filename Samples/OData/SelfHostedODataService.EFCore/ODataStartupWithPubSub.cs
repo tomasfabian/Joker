@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,13 +19,8 @@ using StackExchange.Redis;
 
 namespace SelfHostedODataService.EFCore
 {
-  public class ODataStartupWithPubSub : StartupBaseWithOData
+  public class ODataStartupWithPubSub(IWebHostEnvironment env) : StartupBaseWithOData(env)
   {
-    public ODataStartupWithPubSub(IWebHostEnvironment env) 
-      : base(env)
-    {
-    }
-
     protected override void RegisterTypes(ContainerBuilder builder)
     {
       base.RegisterTypes(builder);
@@ -70,8 +66,8 @@ namespace SelfHostedODataService.EFCore
 
     #region ConfigureSignalR
 
-    private readonly SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Guid.NewGuid().ToByteArray());
-    private readonly JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+    private readonly SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString() + Guid.NewGuid())); //TODO: add secret key to configuration
+    private readonly JwtSecurityTokenHandler jwtTokenHandler = new();
 
     private void ConfigureSignalR(IServiceCollection services)
     {
