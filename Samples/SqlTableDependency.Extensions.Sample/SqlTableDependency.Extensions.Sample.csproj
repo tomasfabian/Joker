@@ -6,11 +6,9 @@
     <TargetFramework>$(DotNetVersion)</TargetFramework>
   </PropertyGroup>
 
-  <Import Project="..\..\NugetProjects\StackExchange.Redis.csprojimport" />
-
   <ItemGroup>
     <ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
-    <ProjectReference Include="..\Sample.Data\Sample.Data.csproj" />
+    <ProjectReference Include="..\Sample.DataCore\Sample.DataCore.csproj" />
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
 
