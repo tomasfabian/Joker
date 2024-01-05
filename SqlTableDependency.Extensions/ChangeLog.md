@@ -3,6 +3,7 @@
 ### 4.0.0
 Upgraded package references:
 - System.Reactive v6.0.0
+- System.Configuration.ConfigurationManager v8.0.0
 
 ### 3.2.0
 - fixes FarServiceUniqueName seems to be ignored #23 by @AlexisPicot 

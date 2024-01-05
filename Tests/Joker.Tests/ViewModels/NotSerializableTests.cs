@@ -20,8 +20,6 @@ namespace Joker.MVVM.Tests.ViewModels
     {
       base.TestInitialize();
       
-      //Init();
-
       ClassUnderTest = CreateReactiveListTestViewModel();
       ClassUnderTest.SubscribeToDataChanges();
 
@@ -56,7 +54,7 @@ namespace Joker.MVVM.Tests.ViewModels
     #region Tests
 
     [TestMethod]
-    [ExpectedException(typeof(SerializationException))]
+    [ExpectedException(typeof(NotSupportedException))]
     public void ThrowException()
     {
       //Arrange

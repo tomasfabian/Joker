@@ -46,13 +46,3 @@ services:
     depends_on: 
       - sql-server
       - redis-server
-
-  #joker.blazorapp.sample:
-  #  image: ${DOCKER_REGISTRY-}jokerblazorappsample
-  #  build:
-  #    context: .
-  #    dockerfile: Samples/Blazor.WebAssembly/Joker.BlazorApp.Sample/Dockerfile
-  #  networks: 
-  #    - sqlnetwork
-  #  depends_on: 
-  #    - selfhostedodataservice.efcore
