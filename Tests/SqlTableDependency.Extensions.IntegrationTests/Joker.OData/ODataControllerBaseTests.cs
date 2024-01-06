@@ -1,14 +1,14 @@
-﻿using FluentAssertions;
-using Microsoft.OData.Client;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sample.Domain.Models;
-using System;
+﻿using System;
 using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.OData.Client;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sample.Domain.Models;
 using UnitTests;
 
-namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
+namespace SqlTableDependency.Extensions.IntegrationTests.Joker.OData
 {
   [TestClass]
   public class ODataControllerBaseTests : TestBase
@@ -20,7 +20,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     private const string IntegrationTests = "OData.IntegrationTests";
 
     private static readonly EnglishPluralizationService EnglishPluralizationService = new();
-    
+
     private ODataServiceContext dataServiceContext;
 
     #endregion
@@ -31,7 +31,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     public override void TestInitialize()
     {
       base.TestInitialize();
-      
+
       dataServiceContext = CreateDataServiceContext();
     }
 
@@ -56,8 +56,8 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     {
       var entitiesCount = await dataServiceContext.Books.EntitiesCount();
 
-      var book = new Book {Id = "Id" + RandomInt(), Title = "OData"};
-      
+      var book = new Book { Id = "Id" + RandomInt(), Title = "OData" };
+
       dataServiceContext.AddObject(book);
 
       await dataServiceContext.SaveChangesAsync(saveChangesOptions);
@@ -89,13 +89,14 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     [TestMethod]
     [TestCategory(IntegrationTests)]
     [DataRow(SaveChangesOptions.None)]
-    // [DataRow(SaveChangesOptions.BatchWithSingleChangeset)]
+    [DataRow(SaveChangesOptions.BatchWithSingleChangeset)]
     public async Task References(SaveChangesOptions saveChangesOptions)
     {
-      var book = new Book() {Id = "Id" + RandomInt(), Title = "Title " + RandomInt()};
-      var publisher = new Publisher() {Title = "New Publisher " + RandomInt()};
-      var author = new Author() {LastName = "New Publisher " + RandomInt()};
-      
+      var id = RandomInt();
+      var book = new Book() { Id = "Id" + id, Title = "Title " + id };
+      var publisher = new Publisher() { Title = "New Publisher " + id };
+      var author = new Author() { LastName = "New Publisher " + id };
+
       dataServiceContext.AddObject(author);
       dataServiceContext.AddObject(publisher);
       dataServiceContext.AddObject(book);
@@ -105,7 +106,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
 
       var dataServiceResponse = await dataServiceContext.SaveChangesAsync(saveChangesOptions);
 
-      dataServiceResponse.Select(c => c.StatusCode).SequenceEqual(new[] {201, 201, 204});
+      dataServiceResponse.Select(c => c.StatusCode).SequenceEqual(new[] { 201, 201, 204 });
 
       var authorWithBooks = await GetAuthorAsync(author.Id);
       authorWithBooks.Should().NotBeNull("Author was saved");
@@ -118,11 +119,12 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
       var bookWithPublisher = await GetBookAsync(book.Id);
       bookWithPublisher.Publisher.Should().NotBeNull("Reference was added");
 
-      dataServiceContext.DeleteLink(publisher, "Books", book);
+      dataServiceContext.DeleteLink(author, "Books", book);
 
       dataServiceResponse = await dataServiceContext.SaveChangesAsync(saveChangesOptions);
+
       bookWithPublisher = await GetBookAsync(book.Id);
-      bookWithPublisher.Publisher.Should().BeNull("Reference was removed");
+      bookWithPublisher.Authors.Any().Should().BeFalse("Reference was removed");
 
       dataServiceContext.DeleteObject(book);
       dataServiceContext.DeleteObject(author);
@@ -159,8 +161,8 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     [TestMethod]
     public async Task SetLink_ThenRemoveLink_ThenUpdate_ThenDelete_CompoundKey()
     {
-      var book = new Book() {Id = "Id" + RandomInt(), Title = "Title " + RandomInt()};
-      var publisher = new Publisher() {Title = "New Publisher " + RandomInt()};
+      var book = new Book() { Id = "Id" + RandomInt(), Title = "Title " + RandomInt() };
+      var publisher = new Publisher() { Title = "New Publisher " + RandomInt() };
 
       dataServiceContext.AddObject(book);
       dataServiceContext.AddObject(publisher);
@@ -168,7 +170,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
       dataServiceContext.SetLink(book, nameof(Book.Publisher), publisher);
 
       var dataServiceResponse = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.None);
-      
+
       var bookWithPublisher = await GetBookAsync(book.Id);
       bookWithPublisher.Should().NotBeNull("Book was saved");
       bookWithPublisher.Publisher.PublisherId1.Should().Be(publisher.PublisherId1, "Compound key1");
@@ -177,7 +179,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
       dataServiceContext.SetLink(book, nameof(Book.Publisher), null);
 
       dataServiceResponse = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.None);
-      
+
       var refreshedBookWithoutPublisher = await GetBookAsync(book.Id);
       refreshedBookWithoutPublisher.Publisher.Should().BeNull("Book was removed from publisher");
 
@@ -185,7 +187,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
 
       dataServiceContext.UpdateObject(publisher);
       dataServiceResponse = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.None);
-      
+
       var refreshedPublisher = await GetPublisherAsync(publisher);
       refreshedPublisher.Title.Should().Be(publisher.Title, "Publishers title was updated");
       refreshedPublisher.Books.Any().Should().BeFalse("Books were removed from publisher");
@@ -209,11 +211,9 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     [ExpectedException(typeof(DataServiceRequestException))]
     public async Task Batch_UniqueKeyViolation_Throws()
     {
-      var productsCount = await dataServiceContext.Authors.EntitiesCount();
-
-      dataServiceContext.AddObject(new Author() {LastName = new Random().Next(1, 100000).ToString()});
-      dataServiceContext.AddObject(new Author() {LastName = "Asimov"});
-      dataServiceContext.AddObject(new Author() {LastName = new Random().Next(1, 100000).ToString()});
+      dataServiceContext.AddObject(new Author() { LastName = new Random().Next(1, 100000).ToString() });
+      dataServiceContext.AddObject(new Author() { LastName = "Asimov" });
+      dataServiceContext.AddObject(new Author() { LastName = new Random().Next(1, 100000).ToString() });
 
       var dataServiceResponse = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.BatchWithSingleChangeset);
     }
@@ -223,13 +223,13 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
     {
       var productsCount = await dataServiceContext.Authors.EntitiesCount();
 
-      var author1 = new Author {LastName = new Random().Next(1, 100000).ToString()};
-      var author2 = new Author {LastName = new Random().Next(1, 100000).ToString()};
+      var author1 = new Author { LastName = new Random().Next(1, 100000).ToString() };
+      var author2 = new Author { LastName = new Random().Next(1, 100000).ToString() };
       dataServiceContext.AddObject(author1);
       dataServiceContext.AddObject(author2);
 
       var dataServiceResponse = await dataServiceContext.SaveChangesAsync(SaveChangesOptions.BatchWithSingleChangeset);
-      
+
       var newProductsCount = await dataServiceContext.Authors.EntitiesCount();
 
       newProductsCount.Should().Be(productsCount + 2, "Two books were added in a single batch");

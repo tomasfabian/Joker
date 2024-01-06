@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity.Infrastructure.Pluralization;
 using Microsoft.OData.Client;
 
-namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
+namespace SqlTableDependency.Extensions.IntegrationTests.Joker.OData
 {
   public static class DataServiceContextExtensions
   {

@@ -5,7 +5,7 @@ using Microsoft.OData.Client;
 using Microsoft.OData.Edm;
 using Sample.Domain.Models;
 
-namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
+namespace SqlTableDependency.Extensions.IntegrationTests.Joker.OData
 {
   public class ODataServiceContext : DataServiceContext
   {
