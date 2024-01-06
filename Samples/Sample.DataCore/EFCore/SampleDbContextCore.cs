@@ -40,7 +40,6 @@ namespace Sample.DataCore.EFCore
       {
         var changeTracker = base.ChangeTracker;
 
-        changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         changeTracker.LazyLoadingEnabled = false;
 
         return changeTracker;
