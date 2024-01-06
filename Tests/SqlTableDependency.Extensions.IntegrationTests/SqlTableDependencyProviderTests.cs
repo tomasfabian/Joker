@@ -1,7 +1,5 @@
 using System;
-using System.Configuration;
 using System.Data.Entity.Migrations;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -12,6 +10,7 @@ using Joker.Extensions;
 using Joker.Factories.Schedulers;
 using Joker.Redis.ConnectionMultiplexers;
 using Joker.Redis.Notifications;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sample.Data.Context;
 using Sample.Domain.Models;
@@ -27,8 +26,9 @@ namespace SqlTableDependency.Extensions.IntegrationTests
   [TestClass]
   public class SqlTableDependencyProviderTests : TestBase
   {
-    private static readonly string RedisUrl = ConfigurationManager.AppSettings["RedisUrl"];
-    private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["SampleDbContext"].ConnectionString;
+    private static readonly IConfigurationRoot Configuration = Extensions.IntegrationTests.Configuration.Configuration.Build();
+    private static readonly string RedisUrl = Configuration.GetSection("RedisUrl").Value;
+    private static readonly string ConnectionString = Configuration.GetConnectionString("SampleDbContext");
 
     private static ProductsSqlTableDependencyProvider tableDependencyProvider;
 
@@ -81,7 +81,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 
               SqlConnectionProvider.KillSessions(ConnectionString);
               
-              product = InsertNewProduct();
+              product = InsertNewProduct().Result;
             }
           });
 
@@ -128,14 +128,14 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 
     public async Task OnInserted()
     {
-      var product = InsertNewProduct();
+      var product = await InsertNewProduct();
 
       await tableDependencyProvider.LastInsertedProductChanged.Where(c => c.Id == product.Id).WaitFirst();
 
       tableDependencyProvider.LastInsertedProduct.Should().NotBeNull();
     }
 
-    private static Product InsertNewProduct()
+    private static Task<Product> InsertNewProduct()
     {
       var product = new Product
       {
@@ -152,7 +152,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
       
       product.Name = "Updated";
 
-      AddOrUpdateProduct(product);
+      await AddOrUpdateProduct(product);
 
       await tableDependencyProvider.LastUpdatedProductChanged.WaitFirst();
 
@@ -187,14 +187,14 @@ namespace SqlTableDependency.Extensions.IntegrationTests
       //new SqlConnectionProvider().IsServiceBrokerEnabled(ConnectionString).Should().BeFalse();
     }
 
-    private static Product AddOrUpdateProduct(Product product)
+    private static async Task<Product> AddOrUpdateProduct(Product product)
     {
       try
       {
         using var sampleDbContext = new SampleDbContext(ConnectionString);
 
         sampleDbContext.Products.AddOrUpdate(product);
-        sampleDbContext.SaveChanges();
+        await sampleDbContext.SaveChangesAsync();
 
         // var products = sampleDbContext.Products.ToList();
 
@@ -246,7 +246,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
 
       await domainEntitiesSubscriber.Subscribe();
 
-      var product = InsertNewProduct();
+      var product = await InsertNewProduct();
 
       var productEntityChange = await reactiveDataWithStatus.WhenDataChanges
         .Where(c => c.Entity.Id == product.Id)
@@ -256,7 +256,7 @@ namespace SqlTableDependency.Extensions.IntegrationTests
       productEntityChange.ChangeType.Should().Be(ChangeType.Create);
 
       product.Name = "Updated";
-      AddOrUpdateProduct(product);
+      await AddOrUpdateProduct(product);
 
       var productUpdated = await reactiveDataWithStatus.WhenDataChanges
         .Where(c => c.Entity.Id == product.Id && c.ChangeType == ChangeType.Update)

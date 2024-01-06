@@ -3,7 +3,6 @@ using Microsoft.OData.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sample.Domain.Models;
 using System;
-using System.Configuration;
 using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +15,11 @@ namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
   {
     #region Fields
 
-    private static readonly string ODataUrl = ConfigurationManager.AppSettings["ODataUrl"];
+    private static readonly string ODataUrl = Configuration.Configuration.Build().GetSection("ODataUrl").Value;
 
     private const string IntegrationTests = "OData.IntegrationTests";
 
-    private static readonly EnglishPluralizationService EnglishPluralizationService = new EnglishPluralizationService();
+    private static readonly EnglishPluralizationService EnglishPluralizationService = new();
     
     private ODataServiceContext dataServiceContext;
 
