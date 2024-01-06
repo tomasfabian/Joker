@@ -11,11 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\AuthorsController.cs" />
-    <Compile Remove="Controllers\PublishersController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\SelfHostedODataService\HostedServices\ProductChangesHostedService.cs" Link="HostedServices\ProductChangesHostedService.cs" />
     <Compile Include="..\SelfHostedODataService\SignalR\Hubs\DataChangesHub.cs" Link="SignalR\Hubs\DataChangesHub.cs" />
     <Compile Include="..\SelfHostedODataService\SignalR\Hubs\IDataChangesHub.cs" Link="SignalR\Hubs\IDataChangesHub.cs" />
