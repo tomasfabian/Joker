@@ -66,7 +66,8 @@ namespace Joker.OData.Controllers
 
     #region Patch
 
-    public async Task<IActionResult> Patch(Delta<TEntity> delta)
+    [HttpPatch]
+    public async Task<IActionResult> Patch(object key, Delta<TEntity> delta)
     {
       var keys = GetKeysFromPath();
       
@@ -108,7 +109,8 @@ namespace Joker.OData.Controllers
 
     #region Put
 
-    public async Task<IActionResult> Put([FromBody]TEntity entity)
+    [HttpPut]
+    public async Task<IActionResult> Put(object key, [FromBody]TEntity entity)
     {
       var validationResult = await ValidatePutAsync(entity);
 
@@ -141,7 +143,8 @@ namespace Joker.OData.Controllers
 
     #region Delete
 
-    public async Task<IActionResult> Delete(ODataOptions oDataOptions)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(object key, ODataOptions oDataOptions)
     {
       return await Delete();
     }
@@ -200,11 +203,10 @@ namespace Joker.OData.Controllers
     {
       var keys = GetKeysFromPath();
       var keyPredicate = CreateKeysPredicate(keys);
-      var entity = GetAll().Where(keyPredicate).FirstOrDefault();
+      var entity = GetAll().Where(keyPredicate).FirstOrDefault(); //TODO: use Find in case of disabled change tracking?  
 
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");
-
 
       var odataPath = Request.CreateODataPath(link);
 
@@ -238,7 +240,8 @@ namespace Joker.OData.Controllers
 
     #region DeleteRef
 
-    public async Task<IActionResult> DeleteRef(string navigationProperty)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteRef(object key, string navigationProperty)
     {
       return await OnDeleteRef(navigationProperty);
     }
