@@ -1,21 +1,13 @@
-using System;
-using Microsoft.Extensions.Configuration;
 using OData.Client;
-using System.Net.Http;
 
 namespace Joker.BlazorApp.Sample.Factories.OData
 {
-  public class ODataServiceContextFactory : IODataServiceContextFactory
+  public class ODataServiceContextFactory(HttpClient httpClient, IConfiguration configuration)
+    : IODataServiceContextFactory
   {
-    private readonly HttpClient httpClient;
-    private readonly IConfiguration configuration;
+    private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly IConfiguration configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-    public ODataServiceContextFactory(HttpClient httpClient, IConfiguration configuration)
-    {
-      this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-      this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-    }
-  
     public ODataServiceContext Create(string url)
     {
       return new ODataServiceContext(new Uri(url), httpClient);
