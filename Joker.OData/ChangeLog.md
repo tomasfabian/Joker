@@ -1,0 +1,103 @@
+﻿# Joker.OData
+
+# 5.0.0-preview
+- OData 8 migration
+
+# 4.0.0
+- TFM changed from netcoreapp3.1 to .net6.0
+- upgraded .NET package dependencies
+
+# 3.0.0
+### Breaking changes:
+`ODataController<TEntity>`
+Signature changes:
+- from `Task<int> OnPost` to `Task<IActionResult> OnPostAsync(TEntity entity)`
+- from `Task<int> OnPut` to `Task<IActionResult> OnPutAsync(TEntity entity)`
+- from `Task<int> OnPatch` to `Task<IActionResult> OnPatchAsync(TEntity entity)`
+- from `Task<int> OnDelete` to `Task<IActionResult> OnDeleteAsync(params object[] keys)` 
+- Added virtual ValidatePostAsync to Post, ValidatePatchAsync to Patch, ValidatePutAsync into Put and ValidateDeleteAsync into Delete
+
+Base call change:
+- Patch does not call OnPut anymore but OnPatch
+
+`ReadOnlyODataController<TEntity>`
+Signature changes:
+- OkObjectResult Get return type changed to IActionResult
+
+# 2.2.0
+- added UseODataBatching middleware into ODataStartup OnRegisterMiddleWares
+
+# 2.1.0
+- ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
+- StartupBase UseCors
+- StartupBase AddDefaultCorsPolicy
+
+# 2.0.0
+- Autofac.Extensions.DependencyInjection 5.0.1 updated to 7.0.2. See https://github.com/autofac/Autofac/releases/tag/v6.0.0 and bellow
+- ApiHost added OnHostBuilt
+
+# 1.6.0
+- extracted StartupBase from ODataStartupBase for AspNetCore applications
+- added UseAuthentication (StartupSettings.UseAuthentication)
+- added OnAddExtensions - StartupBase calls UseAuthentication, UseAuthorization and UseRouting based on settings
+- ApiStartup base class for non OData AspNetCore apis
+- ApiHost - host for non OData AspNetCore apis (MVC, WebApi)
+- added IISWebHostConfig and KestrelHostConfig for non OData AspNetCore apis (MVC, WebApi)
+- added Microsoft.Extensions.Diagnostics.HealthChecks. StartupSettings.UseHealthChecks
+
+# 1.4.1
+- fixed UseAuthorization, called between UseRouting and UseEndpoints for endpoint routing
+
+# 1.4.0
+- added optional appsettings.json configuration
+- removed dependency EntityFramework
+- HttpsRedirection is disabled by default in developement mode
+
+# 1.3.0
+- added virtaul method ReadOnlyODataController.OnCreateODataValidationSettings
+### Breaking change:
+- ReadOnlyODataController.MaxExpansionDepth property was removed
+
+# 1.2.0
+### Breaking change:
+- ODataControllerBase Delete - added support for different key types. OnDelete parameter int key was changed to object[] keys 
+
+# 1.1.0
+- ErrorLoggerMiddleware
+
+# 1.0.0
+- ODataController DeleteRef
+- StartupSettings, ODataStartupSettings, WebApiStartupSettings
+- Endpoint routing
+
+### Breaking changes:
+- ODataStartupConfig was renamed to ODataWebHostConfig
+- KestrelODataStartupConfig was renamed to KestrelODataWebHostConfig
+- IISHostedODataStartupConfig was renamed to IISODataWebHostConfig
+
+- ODataStartup namespace Joker.OData changed to Joker.OData.Startup
+- Repository and ReadOnlyRepository were moved to Joker.EntityFramework.Repositories
+
+# 0.9.0
+Changed:
+- Repository implementation
+- ReadOnlyODataController
+- ODataControllerBase generic compound keys support
+- AddPluralizedEntitySet extension method
+- ODataController CreateRef
+
+### Breaking change:
+- ODataControllerBase `IRepository<TEnity>` injection
+
+# 0.8.1
+Added:
+- ODataStartupConfig
+- ODataHost
+
+- IIS integration (breaking change for ODataHost<>.Run) config is not optional anymore. There are to options IISHostedODataStartupConfig or KestrelODataStartupConfig
+- fixed application of kestrel options
+
+# 0.8.0
+Added:
+- ODataStartup
+- ODataControllerBase

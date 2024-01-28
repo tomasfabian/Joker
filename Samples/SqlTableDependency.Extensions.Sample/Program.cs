@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Configuration;
-using System.Data.Entity.Migrations;
 using System.Globalization;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
 using Joker.Notifications;
 using Joker.Redis.ConnectionMultiplexers;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Sample.Data.Context;
+using Sample.DataCore.EFCore;
 using Sample.Domain.Models;
 using SqlTableDependency.Extensions.Notifications;
 using SqlTableDependency.Extensions.Sample.Logging;
@@ -31,7 +31,6 @@ namespace SqlTableDependency.Extensions.Sample
       await redisPublisher.PublishAsync("messages", "hello2");
       await redisPublisher.SetStringAsync("statusVersion", DateTime.Now.ToString(CultureInfo.InvariantCulture));
       var statusVersion = await redisSubscriber.GetStringAsync("statusVersion");
-      DateTime statusDateTimeVersion = DateTime.Parse(statusVersion);
 
       using var productsProvider = new ProductsSqlTableDependencyProvider(connectionString, ThreadPoolScheduler.Instance, new ConsoleLogger());
 
@@ -42,7 +41,7 @@ namespace SqlTableDependency.Extensions.Sample
 
       productsProvider.SubscribeToEntityChanges();
 
-      AddOrUpdateProduct(connectionString);
+      await AddOrUpdateProduct(connectionString);
 
       Console.WriteLine("Press a key to stop.");
       Console.ReadKey();
@@ -63,21 +62,33 @@ namespace SqlTableDependency.Extensions.Sample
       productsWithTableAttributeProvider.SubscribeToEntityChanges();
 
       IDisposable whenEntityRecordChangesSubscription = productsWithTableAttributeProvider.WhenEntityRecordChanges
-        .Subscribe(c => Console.WriteLine($@"{c.ChangeType} - {c.EntityOldValues?.ReNameD} -> {c.Entity.ReNameD}"));
+        .Subscribe(c => Console.WriteLine($"{c.ChangeType} - {c.EntityOldValues?.ReNameD} -> {c.Entity.ReNameD}"));
 
       Console.ReadKey();
 
-      productsWithTableAttributeProvider.Dispose();
       whenEntityRecordChangesSubscription.Dispose();
     }
 
-    private static void AddOrUpdateProduct(string connectionString)
+    private static async Task AddOrUpdateProduct(string connectionString)
     {
-      using var sampleDbContext = new SampleDbContext(connectionString);
-      sampleDbContext.Products.AddOrUpdate(new Product { Id = 1, Name = "New Product3" });
-      sampleDbContext.SaveChanges();
+      var optionsBuilder = new DbContextOptionsBuilder<SampleDbContextCore>();
+      optionsBuilder.UseSqlServer(connectionString);
 
-      var products = sampleDbContext.Products.ToList();
+      await using var sampleDbContext = new SampleDbContextCore(optionsBuilder.Options);
+
+      int id = 1;
+      var product = await sampleDbContext.Products.FirstOrDefaultAsync(c => c.Id == id);
+      if (product == null)
+        sampleDbContext.Products.Add(new Product { Name = "New Product" });
+      else
+      {
+        product.Name = "New Product - changed";
+        sampleDbContext.Products.Update(product);
+      }
+
+      await sampleDbContext.SaveChangesAsync();
+
+      var products = sampleDbContext.Products.AsNoTracking().ToList();
     }
 
     private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl)
@@ -103,6 +114,19 @@ namespace SqlTableDependency.Extensions.Sample
       redisSubscriber.WhenIsConnectedChanges.Subscribe(c => Console.WriteLine($"REDIS is connected: {c}"));
 
       return redisSubscriber;
+    }
+    private static async Task DeleteAllAsync(string connectionString)
+    {
+      var optionsBuilder = new DbContextOptionsBuilder<SampleDbContextCore>();
+      optionsBuilder.UseSqlServer(connectionString);
+
+      await using var dbContext = new SampleDbContextCore(optionsBuilder.Options);
+
+      dbContext.Authors.RemoveRange(dbContext.Authors);
+      dbContext.Books.RemoveRange(dbContext.Books);
+      dbContext.Publishers.RemoveRange(dbContext.Publishers);
+
+      int result = await dbContext.SaveChangesAsync();
     }
   }
 }

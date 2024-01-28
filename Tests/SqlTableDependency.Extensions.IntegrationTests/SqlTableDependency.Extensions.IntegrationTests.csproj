@@ -1,36 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework> 
+	<Import Project="..\..\ProjectDefinitions\Constants.csprojimport" />
+	<PropertyGroup>
+		<TargetFramework>$(DotNetVersion)</TargetFramework>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestAdapter" />
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+	</ItemGroup>
 
-  <Import Project="..\..\NugetProjects\UnitTests\Microsoft.NET.Test.Sdk.csprojimport" />
-  <Import Project="..\..\NugetProjects\UnitTests\MSTest.TestAdapter.csprojimport" />
-  <Import Project="..\..\NugetProjects\UnitTests\MSTest.TestFramework.csprojimport" />
-  <Import Project="..\..\NugetProjects\UnitTests\coverlet.collector.csprojimport" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
+		<ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
+		<ProjectReference Include="..\..\Joker.OData\Joker.OData.csproj" />
+		<ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
+		<ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
+		<ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
+		<ProjectReference Include="..\UnitTests\UnitTests.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-     <PackageReference Include="Joker.OData" Version="2.0.0" /> 
-     <PackageReference Include="Joker.MVVM" Version="2.0.0" /> 
-     <PackageReference Include="Joker.Redis" Version="2.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
-    <ProjectReference Include="..\..\Samples\Sample.Domain\Sample.Domain.csproj" />
-    <ProjectReference Include="..\IntegrationTests\IntegrationTests.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
-    <Copy SourceFiles="App.config" DestinationFiles="$(OutDir)\testhost.dll.config" />
-    <Copy SourceFiles="App.config" DestinationFiles="$(OutDir)\testhost.x86.dll.config" />
-    <Copy SourceFiles="App.config" DestinationFiles="$(OutDir)\ReSharperTestRunner64.dll.config" />
-  </Target>
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

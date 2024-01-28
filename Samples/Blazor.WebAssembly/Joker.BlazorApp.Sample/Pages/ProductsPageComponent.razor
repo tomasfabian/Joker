@@ -1,4 +1,5 @@
-﻿@page "/productspagecomponent"
+﻿@page "/"
+@page "/products"
 @inherits ProductsPageComponentBase
 
 <h1>All products</h1>
@@ -10,16 +11,16 @@
     else
     {
         <div class="col-12 row">
-            <div class="col-3 row">
-                <b>IsLoading: </b>
-                @ViewModel.ProductsListViewModel?.IsLoading
+            <div class="col-3 row align-items-center">
+                <b class="col-auto">Is loading: </b>
+                <span class="col-auto">@ViewModel.ProductsListViewModel?.IsLoading</span>
             </div>
-            <div class="col-3 row">
-                <b>IsOffline: </b>
-                @ViewModel.IsOffline
+            <div class="col-3 row align-items-center">
+                <b class="col-auto">Is offline: </b>
+                <span class="col-auto">@ViewModel.IsOffline</span>
             </div>
         </div>
-        
+
         @if (ViewModel != null)
         {
             <div class="col-12 row">
@@ -29,12 +30,12 @@
                     <div class="form-group">
                         <label for="newProductName" class="col-form-label">Name </label>
                         <div>
-                            <input class="form-control" id="newProductName" @bind="@ViewModel.NewProductName" @bind:event="oninput" placeholder="Enter new product name"/>
+                            <input class="form-control" id="newProductName" @bind="@ViewModel.NewProductName" @bind:event="oninput" placeholder="Enter new product name" />
                             <ValidationMessage class="offset-sm-3" For="@(() => ViewModel.NewProductName)"></ValidationMessage>
                         </div>
                     </div>
 
-                    <button disabled="@(!ViewModel.AddNew.CanExecute(null))" type="submit" class="btn btn-primary">
+                    <button disabled="@(!ViewModel.AddNew.CanExecute(null))" type="submit" class="btn btn-primary" style="margin-top: 5px;">
                         <span class="oi oi-plus" title="add" aria-hidden="true" style="color: #fff"> Add</span>
                     </button>
                 </EditForm>
@@ -49,25 +50,26 @@
                 {
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th></th>
-                            <th style="width:auto;text-align:left">Name</th>
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th style="width:auto;text-align:left">Name</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach (var product in ViewModel.ProductsListViewModel?.Items)
-                        {
-                            <tr @key="product.Id" @onclick="@(() => ViewModel.ProductsListViewModel.SelectedItem = product)">
-                                <td>
-                                    @product.Name
-                                </td>
+                            @foreach (var product in ViewModel.ProductsListViewModel?.Items)
+                            {
+                                <tr @key="product.Id" @onclick="@(() => ViewModel.ProductsListViewModel.SelectedItem = product)">
+                                    <td>
+                                        @product.Name
+                                    </td>
 
-                                <a class="btn btn-danger" @onclick="(e=> product.Delete.Execute(null))">
-                                    <span class="oi oi-trash" title="delete" aria-hidden="true" style="color: #fff"></span>
-                                </a>
-                            </tr>
-                        }
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="e => product.Delete.Execute(null)">
+                                            <span class="oi oi-trash" title="delete" aria-hidden="true" style="color: #fff"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 }

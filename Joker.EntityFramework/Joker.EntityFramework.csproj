@@ -2,7 +2,7 @@
 
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;$(NetCoreVersion);net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;$(DotNetVersion);net472</TargetFrameworks>
     <Copyright>@tomasfabian</Copyright>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Authors>Tomas Fabian</Authors>
@@ -11,9 +11,8 @@
     <Description>Entity Framework extensions</Description>
     <PackageTags>Entity Framework extensions</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.EntityFramework/ChangeLog.txt</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>

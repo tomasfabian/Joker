@@ -1,35 +1,35 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
+	<Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\Microsoft.OData.Extensions.Client.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.SignalR.Client.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\System.Net.Http.Json.csprojimport" />
-  <Import Project="..\..\..\NugetProjects\WebAssembly\Microsoft.AspNetCore.Components.WebAssembly.csprojimport" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />
-  </ItemGroup>
+	<Import Project="..\..\..\NugetProjects\Ninject.csprojimport" />
+	<Import Project="..\..\..\NugetProjects\Prism.Core.csprojimport" />
+	<Import Project="..\..\..\NugetProjects\Microsoft.OData.Extensions.Client.csprojimport" />
+	<Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
+	<Import Project="..\..\..\NugetProjects\System.Net.Http.Json.csprojimport" />
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
-    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
-    <ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
+		<ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj" />
+		<ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
+		<ProjectReference Include="..\..\Shared\Joker.Autofac.UI\Joker.Autofac.UI.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Update="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 </Project>

@@ -14,12 +14,24 @@ namespace OData.Client
   {
     #region Constructors
 
-    public ODataServiceContext(Uri serviceRoot)
+    public ODataServiceContext(Uri serviceRoot, HttpClient httpClient)
       : base(serviceRoot, ODataProtocolVersion.V4)
     {
+      if(httpClient != null)
+        HttpRequestTransportMode = HttpRequestTransportMode.HttpClient; 
+      
       if (EdmModel == null)
       {
-        Format.LoadServiceModel = () => GetServiceModel(GetMetadataUri());
+        switch (HttpRequestTransportMode)
+        {
+          case HttpRequestTransportMode.HttpClient: 
+            Format.LoadServiceModel = () => GetServiceModelAsync(httpClient).Result;
+            break;
+          case HttpRequestTransportMode.HttpWebRequest: 
+            Format.LoadServiceModel = () => GetServiceModel(GetMetadataUri());
+            break;
+        }
+        
         Format.UseJson();
       }
       else
@@ -50,10 +62,10 @@ namespace OData.Client
       using (var stream = response.GetResponseStream())
       using (var reader = XmlReader.Create(stream))
       {
-        return Microsoft.OData.Edm.Csdl.CsdlReader.Parse(reader);
+        return CsdlReader.Parse(reader);
       }
     }
-
+    
     private DataServiceQuery<Product> products;
 
     public DataServiceQuery<Product> Products => products = products ?? CreateQuery<Product>("Products");

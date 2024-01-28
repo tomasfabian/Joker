@@ -69,7 +69,13 @@ namespace Joker.OData.Hosting
           OnConfigureWebHostBuilder(webHostBuilder);
         });
 
+      OnCreateHostBuilder(hostBuilder);
+
       return hostBuilder;
+    }
+        
+    protected virtual void OnCreateHostBuilder(IHostBuilder hostBuilder)
+    {
     }
 
     protected virtual void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)

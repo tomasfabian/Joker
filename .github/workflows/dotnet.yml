@@ -1,0 +1,37 @@
+name: .NET
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      Test_Project_Path: Tests\SqlTableDependency.Extensions.Tests\SqlTableDependency.Extensions.Tests.csproj
+      Joker_MVVM_Test_Project_Path: Tests\Joker.Tests\Joker.MVVM.Tests.csproj
+      Joker_Redis_Test_Project_Path: Tests\Joker.Redis.Tests\Joker.Redis.Tests.csproj
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 8.0
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Clean
+      run: dotnet clean Joker.sln --configuration Release && dotnet nuget locals all --clear
+    - name: Install dependencies
+      run: dotnet restore Joker.sln
+    - name: Build with dotnet
+      run: dotnet build Joker.sln --configuration Release
+    
+    # Test
+    - name: Execute Unit Tests
+      run: dotnet test $env:Test_Project_Path
+    - name: Execute Joker.MVVM Unit Tests
+      run: dotnet test $env:Joker_MVVM_Test_Project_Path
+    - name: Execute Joker.Redis Unit Tests
+      run: dotnet test $env:Joker_Redis_Test_Project_Path

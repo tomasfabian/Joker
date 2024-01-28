@@ -1,4 +1,8 @@
-﻿2.3.3
+﻿2.3.4
+- SqlTableDependencyWithReconnection.Dispose finalizer fix
+- removed duplicated code from overridden Stop
+
+2.3.3
 - Joker 1.7
 
 2.3.2

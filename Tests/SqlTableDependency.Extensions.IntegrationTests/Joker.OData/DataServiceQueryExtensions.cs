@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.OData.Client;
 
-namespace SqlTableDependency.Extensions.IntegrationTests.Dev.Joker.OData
+namespace SqlTableDependency.Extensions.IntegrationTests.Joker.OData
 {
   public static class DataServiceQueryExtensions
   {

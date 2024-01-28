@@ -1,9 +1,15 @@
+Data change notifications from SQL Server via [SqlTableDependency](https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency), [OData](https://docs.microsoft.com/en-us/odata/overview) and [Redis](https://github.com/StackExchange/StackExchange.Redis) to different [.NET](https://dotnet.microsoft.com/) clients ([WinUI3 - UWP and Win32 apps](https://microsoft.github.io/microsoft-ui-xaml/about.html#what-is-it), [WPF](https://github.com/dotnet/wpf), [Blazor Wasm](https://docs.microsoft.com/sk-sk/aspnet/core/blazor/?view=aspnetcore-5.0#blazor-webassembly), etc). Blazor Wasm notifications are redirected with [SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr).
+
+<img src="jokerinaction.gif" alt="Joker in action" width="1024"/>
+
+Set docker-compose.csproj as startup project in Joker.sln
+
 # Joker Model-View-ViewModel:
 Reactive view models for data changes
 
 * [Joker.MVVM wiki](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Joker.MVVM)
 
-Install-Package Joker.MVVM -Version 1.4.1
+Install-Package Joker.MVVM
 
 # Joker OData:
 Plumbing code for OData web services. Support for batching and end points. Please help out the community by sharing your suggestions and code improvements:
@@ -11,39 +17,41 @@ Plumbing code for OData web services. Support for batching and end points. Pleas
 
 # Preview:
 [Redis TableDependency status notifier](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Redis-TableDependency-status-notifier---preview)
-Sql server data changes refresher via Redis with End to end reconnections
+SQL server data changes refresher via Redis with End to end reconnections
 
 # SqlTableDependency.Extensions
-If sharing increases coupling, should we share at all? Is it time for decoupling?
+The `SqlTableDependency.Extensions` .NET package is a library that provides convenient and efficient ways to monitor and receive real-time notifications for changes in SQL Server database tables. It is built on top of the [SqlTableDependency](https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency) library and extends its functionality.
 
-I don't think so.
+The main purpose of `SqlTableDependency.Extensions` is to simplify the process of setting up and handling database table change notifications in .NET applications.
 
-Please use data streaming and process it with the help of reactive programming and event driven paradigms. 
+With this package, you can easily subscribe to table changes and receive notifications in your application whenever a row is inserted, updated, or deleted in a specified SQL Server table. 
 
 ## Install:
 https://www.nuget.org/packages/SqlTableDependency.Extensions/
 
-Install-Package SqlTableDependency.Extensions -Version 2.3.2
+Install-Package SqlTableDependency.Extensions
 
 or
 
-dotnet add package SqlTableDependency.Extensions --version 2.3.2
+dotnet add package SqlTableDependency.Extensions --version 3.0.0
 
 ## See:
-Following package is based on christiandelbianco's SqlTableDependency:
+Following package is based on christiandelbianco's `SqlTableDependency`:
 https://github.com/christiandelbianco/monitor-table-change-with-sqltabledependency
 
-SqlTableDependency.Extension.SqlTableDependencyProvider provides periodic reconnections in case of any error, like lost connection etc.
+`SqlTableDependency.Extension.SqlTableDependencyProvider` provides periodic reconnections in case of any error, like lost connection etc.
 
 Currently there are 3 LifetimeScopes:
-## ConnectionScope:
-In case that the connection is lost, database objects will be deleted after timeout period or during disposal. During all reconnections the database objects are newly (re)created.
-
-## ApplicationScope:
-In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart.
 
 ## UniqueScope:
-In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated only in case, that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed and the conversation was not cleaned it will be reused after app restarts.
+If the connection is lost, database objects will only be deleted after a timeout period. Upon reconnection, the database objects are recreated, but only if the conversation handle no longer exists.Otherwise, the database objects are preserved and reused.
+If the application was closed without cleaning the conversation, it will be reused upon app restart. This ensures that data changes within the timeout period are not lost, and messages will be delivered after the reconnection.
+
+## ApplicationScope:
+In case that the connection is lost, database objects will be deleted only after timeout period. After reconnection the database objects are recreated in case that the conversation handle does not exist anymore. Otherwise the database objects are preserved and reused. If the application was closed the conversation will not continue after app restart. You shouldn't lost data changes within the timeout period. The messages will be delivered after the reconnection.
+
+## ConnectionScope:
+If the connection is lost, the database objects will be deleted either after a timeout period or during disposal. Upon each reconnection, the database objects are recreated.
 
 [Wiki Samples](https://github.com/tomasfabian/SqlTableDependency.Extensions/wiki/Samples)
 
@@ -174,7 +182,7 @@ namespace SqlTableDependency.Extensions.Sample
 # Joker.Redis
 SqlServer PubSub notifications via Redis and SqlTableDependencyProvider extension
 
-Install-Package Joker.Redis -Version 1.3.0
+Install-Package Joker.Redis
 
 Download and run redis-server (https://redis.io/download) or use Docker (see above).
 
@@ -250,3 +258,5 @@ private static async Task<RedisSubscriber> CreateRedisSubscriber(string redisUrl
       reactiveProductsViewModel.Dispose();
     }
 ```
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tomasfabian)

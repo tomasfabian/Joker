@@ -1,32 +1,36 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Joker.OData.Hosting;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Sample.Data.Context;
+using SelfHostedODataService.Configuration;
 using Serilog;
 
 namespace SelfHostedODataService
 {
-  public class ODataHost : ODataHost<StartupForBlazorAndOData>
+  public class ODataHost : ODataHost<ODataStartupWithPubSub>
   {
-    protected override void OnConfigureWebHostBuilder(IWebHostBuilder webHostBuilder)
+    protected override void OnCreateHostBuilder(IHostBuilder hostBuilder)
     {
-      webHostBuilder
-        .UseSerilog();
-
-      base.OnConfigureWebHostBuilder(webHostBuilder);
+        hostBuilder
+            .UseSerilog();
+      
+      base.OnCreateHostBuilder(hostBuilder);
     }
 
     protected override void OnHostBuilt(IHost host)
     {
       if (Debugger.IsAttached)
       {
-        var connectionStringSetting = ConfigurationManager.ConnectionStrings["FargoEntities"];
+        var configuration = new ConfigurationBuilder()
+          .AddEnvironmentVariables()
+          .Build();
+        
+        var connectionString = new ProductsConfigurationProvider(configuration).GetDatabaseConnectionString();
 
-        var dbContext = new SampleDbContext(connectionStringSetting.ConnectionString);
+        var dbContext = new SampleDbContext(connectionString);
 
-        dbContext.MigrateDatabase(connectionStringSetting.ConnectionString);
+        dbContext.MigrateDatabase(connectionString);
 
         dbContext.Dispose();
       }

@@ -105,11 +105,20 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Joker">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Joker.MVVM">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Joker.Redis">
+      <Version>2.2.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.WinUI">
-      <Version>3.0.0-preview1.200515.3</Version>
+      <Version>3.0.0-preview3.201113.0</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
@@ -119,33 +128,17 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Joker.MVVM\Joker.MVVM.csproj">
-      <Project>{5444ed98-8b50-4e4d-942d-2a5033c25c50}</Project>
-      <Name>Joker.MVVM</Name>
+    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.csproj">
+      <Project>{69b98f43-671f-41ae-9ab9-4a5ef595ef87}</Project>
+      <Name>OData.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj">
-      <Project>{af87f8ec-5dee-4491-aef5-462c2a14eae8}</Project>
-      <Name>Joker.Redis</Name>
+    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj">
+      <Project>{973cec04-0379-4c72-a3c8-ef20b6ff4b97}</Project>
+      <Name>Sample.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Joker\Joker.csproj">
-      <Project>{474364f9-a65d-49ad-a549-e2a45480169c}</Project>
-      <Name>Joker</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj">
-      <Project>{39387fcc-3e62-4f7d-b55c-6bc73cf76a69}</Project>
-      <Name>SqlTableDependency.Extensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OData\OData.Client\OData.Client.Dev.csproj">
-      <Project>{ad7c4f44-6f96-4b3b-9327-741b54a9bcfe}</Project>
-      <Name>OData.Client.Dev</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.Dev.csproj">
-      <Project>{c2d54b20-0b54-407c-8792-9040974deefc}</Project>
-      <Name>Sample.Domain.Dev</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.Dev.csproj">
-      <Project>{d00e3338-fd42-4992-b8a0-f54c13318361}</Project>
-      <Name>Joker.Ninject.UI.Dev</Name>
+    <ProjectReference Include="..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj">
+      <Project>{8d56d455-fa49-48e1-9c2e-c87d51138de1}</Project>
+      <Name>Joker.Ninject.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

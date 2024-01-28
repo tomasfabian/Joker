@@ -1,5 +1,5 @@
 ﻿<Project>
   <ItemGroup>
-    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+    <PackageReference Include="Dynamitey" Version="3.0.3" />
   </ItemGroup>
 </Project>

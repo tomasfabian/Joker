@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Joker.BlazorApp.Sample.Navigation;
+﻿using Joker.BlazorApp.Sample.Navigation;
 using Joker.Disposables;
 using Joker.Extensions.Disposables;
 using Microsoft.AspNetCore.Components;

@@ -2,7 +2,7 @@
 using Joker.PubSubUI.Shared.Navigation;
 #if HAS_UNO
 using Windows.UI.Xaml.Controls;
-#elif NETCOREAPP || NETFRAMEWORK
+#elif WINDOWS || NETCOREAPP || NETFRAMEWORK
 using System.Windows;      
 #elif NETSTANDARD
 #else
@@ -15,10 +15,10 @@ namespace Joker.PubSubUI.Shared.Navigation
   {
     public void ShowMessage(string message)
     {
-#if NETCOREAPP || NETFRAMEWORK
-
+#if WINDOWS || NETCOREAPP || NETFRAMEWORK
       MessageBox.Show(message);
 #elif NETSTANDARD
+        Console.WriteLine(message);
 #else
       ContentDialog dialog = new ContentDialog()
       {
@@ -29,6 +29,6 @@ namespace Joker.PubSubUI.Shared.Navigation
 
       dialog.ShowAsync();
 #endif
+        }
     }
-  }
 }

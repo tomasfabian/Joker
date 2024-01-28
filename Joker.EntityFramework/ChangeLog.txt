@@ -1,4 +1,10 @@
-﻿1.1.0
+﻿2.0.0
+- upgraded .NET package dependencies
+
+Replaced not supported **TFM**s:
+- netcoreapp3.1 was changed to net6.0
+
+1.1.0
 Breaking change
 - Repository.SaveChangesAsync added parameter cancellationToken
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using Autofac;
-using AutoMapper;
 using Joker.Factories.Schedulers;
 using Joker.OData.Batch;
 using Joker.OData.Extensions.OData;
 using Joker.OData.Startup;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +25,11 @@ namespace SelfHostedODataService.EFCore
   {
     public StartupBaseWithOData(IWebHostEnvironment env)
       : base(env)
-    {
+    { 
+      SetSettings(startupSettings =>
+      {
+        startupSettings.UseCors = true;
+      });
     }
 
     protected override ODataModelBuilder OnCreateEdmModel(ODataModelBuilder oDataModelBuilder)
@@ -33,6 +37,11 @@ namespace SelfHostedODataService.EFCore
       oDataModelBuilder.Namespace = "Example";
 
       oDataModelBuilder.AddPluralizedEntitySet<Product>();
+      oDataModelBuilder.AddPluralizedEntitySet<Book>();
+      oDataModelBuilder.AddPluralizedEntitySet<Author>();
+      oDataModelBuilder.AddPluralizedEntitySet<Publisher>();
+
+      oDataModelBuilder.EntityType<Publisher>().HasKey(c => new { c.PublisherId1, c.PublisherId2 });
 
       return oDataModelBuilder;
     }
@@ -50,6 +59,11 @@ namespace SelfHostedODataService.EFCore
       config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
 
       LogManager.Configuration = config;
+    }
+    
+    protected override void OnConfigureCorsPolicy(CorsOptions options)
+    {
+      AddDefaultCorsPolicy(options);
     }
 
     protected override void OnConfigureServices(IServiceCollection services)

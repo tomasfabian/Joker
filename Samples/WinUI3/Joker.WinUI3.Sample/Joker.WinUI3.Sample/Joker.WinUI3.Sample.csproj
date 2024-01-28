@@ -1,54 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
-    <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
-    <RootNamespace>Joker.WinUI3.Sample</RootNamespace>
-
+    <RootNamespace>Joker.WinUI3.Sampple</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>AnyCPU;x86;x64</Platforms>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
-    <RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>
+    <Platforms>x86;x64</Platforms>
+    <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
-    <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
-    
-    <PackageReference Include="System.Reactive" Version="4.4.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.6" />
-    <PackageReference Include="Microsoft.WinUI" Version="3.0.0-preview1.200515.3" />
+    <PackageReference Include="Microsoft.WinUI" Version="3.0.0-preview3.201113.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="App.xaml" />
-    <None Remove="MainWindow.xaml" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
+    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
+    <PackageReference Include="Joker.Redis" Version="2.2.0" /> 
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Joker.MVVM\Joker.MVVM.csproj" />
-    <ProjectReference Include="..\..\..\..\Joker.Redis\Joker.Redis.csproj" />
-    <ProjectReference Include="..\..\..\..\Joker\Joker.csproj" />
-    <ProjectReference Include="..\..\..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />
-    <ProjectReference Include="..\..\..\OData\OData.Client\OData.Client.Dev.csproj" />
-    <ProjectReference Include="..\..\..\Sample.Domain\Sample.Domain.Dev.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.Dev.csproj" />
+    <ProjectReference Include="..\..\..\OData\OData.Client\OData.Client.csproj" />
+    <ProjectReference Include="..\..\..\Sample.Domain\Sample.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Joker.Ninject.UI\Joker.Ninject.UI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Page Update="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
   <Import Project="..\..\Joker.WinUI3.Shared\Joker.WinUI3.Shared.projitems" Label="Shared" />
-
 </Project>

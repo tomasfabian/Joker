@@ -77,6 +77,18 @@ namespace Joker.OData.Startup
 
     #endregion
 
+    #region OnRegisterMiddleWares
+
+    protected override void OnRegisterMiddleWares(IApplicationBuilder app)
+    {
+      if (ODataStartupSettings.EnableODataBatchHandler)
+        app.UseODataBatching();
+
+      base.OnRegisterMiddleWares(app);
+    }
+
+    #endregion
+
     #region OnConfigureOData
 
     protected override void OnConfigureOData(IApplicationBuilder app)

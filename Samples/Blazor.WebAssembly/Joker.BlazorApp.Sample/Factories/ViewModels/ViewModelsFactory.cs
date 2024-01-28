@@ -1,4 +1,3 @@
-using System;
 using Autofac;
 using Autofac.Core;
 using Joker.PubSubUI.Shared.Factories.ViewModels;
@@ -7,14 +6,9 @@ using Sample.Domain.Models;
 
 namespace Joker.BlazorApp.Sample.Factories.ViewModels
 {
-  public class ViewModelsFactory : IViewModelsFactory
+  public class ViewModelsFactory(ILifetimeScope container) : IViewModelsFactory
   {
-    protected readonly ILifetimeScope Container;
-
-    public ViewModelsFactory(ILifetimeScope container)
-    {
-      Container = container ?? throw new ArgumentNullException(nameof(container));
-    }
+    protected readonly ILifetimeScope Container = container ?? throw new ArgumentNullException(nameof(container));
 
     public ProductViewModel CreateProductViewModel(Product product)
     {

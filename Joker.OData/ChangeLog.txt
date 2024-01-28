@@ -1,8 +1,27 @@
-﻿3.0.0-preview
-- OData 8-preview migration
+﻿3.0.0
+Breaking changes:
+`ODataController<TEntity>`
+Signature changes:
+- from Task<int> OnPost to Task<IActionResult> OnPostAsync(TEntity entity)
+- from Task<int> OnPut to Task<IActionResult> OnPutAsync(TEntity entity)
+- from Task<int> OnPatch to Task<IActionResult> OnPatchAsync(TEntity entity)
+- from Task<int> OnDelete to Task<IActionResult> OnDeleteAsync(params object[] keys) 
+- Added virtual ValidatePostAsync to Post, ValidatePatchAsync to Patch, ValidatePutAsync into Put and ValidateDeleteAsync into Delete
+
+Base call change:
+- Patch does not call OnPut anymore but OnPatch
+
+`ReadOnlyODataController<TEntity>`
+Signature changes:
+- OkObjectResult Get return type changed to IActionResult
+
+2.2.0
+- added UseODataBatching middleware into ODataStartup OnRegisterMiddleWares
 
 2.1.0
 - ODataStartupBase.OnRegisterEdmModel - registration of IEdmModel to IServicesCollection. Default is singleton
+- StartupBase UseCors
+- StartupBase AddDefaultCorsPolicy
 
 2.0.0
 - Autofac.Extensions.DependencyInjection 5.0.1 updated to 7.0.2. See https://github.com/autofac/Autofac/releases/tag/v6.0.0 and bellow

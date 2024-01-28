@@ -11,7 +11,7 @@
     "SelfHostedODataService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:5001/Index",
+      "launchUrl": "https://localhost:5001/$metadata",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

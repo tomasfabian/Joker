@@ -1,13 +1,10 @@
-﻿using Joker.BlazorApp.Sample.Subscribers;
-using Joker.Platforms.Factories.Schedulers;
+﻿using Joker.Platforms.Factories.Schedulers;
 using Joker.PubSubUI.Shared.ViewModels.Products;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Joker.Extensions;
 using Joker.Extensions.Disposables;
 using Joker.Notifications;
@@ -29,7 +26,7 @@ namespace Joker.BlazorApp.Sample.Pages
 
     #endregion
     
-    private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private readonly CompositeDisposable compositeDisposable = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,7 +53,7 @@ namespace Joker.BlazorApp.Sample.Pages
         .DisposeWith(compositeDisposable);
     }
 
-    private readonly SerialDisposable productWasUpdatedSubscription = new SerialDisposable();
+    private readonly SerialDisposable productWasUpdatedSubscription = new();
 
     private void SubscribeToInnerPropertyChanges()
     {

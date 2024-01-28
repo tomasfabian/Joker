@@ -1,4 +1,11 @@
-﻿2.0.0
+﻿3.0.0
+- upgraded .NET package dependencies
+
+Replaced not supported **TFM**s:
+- netcoreapp3.1 was changed to net6.0
+- removed netstandard2.1
+
+2.0.0
 - EF Core 5
 
 2.0.0 RC

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,7 +40,6 @@ namespace Sample.DataCore.EFCore
       {
         var changeTracker = base.ChangeTracker;
 
-        changeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         changeTracker.LazyLoadingEnabled = false;
 
         return changeTracker;
@@ -64,6 +61,7 @@ namespace Sample.DataCore.EFCore
       base.OnModelCreating(modelBuilder);
 
       modelBuilder.Entity<Product>()
+        .ToTable(tb => tb.HasTrigger("ProductsBU"))
         .Property(f => f.Timestamp)
         .HasDefaultValueSql("GetDate()");
 

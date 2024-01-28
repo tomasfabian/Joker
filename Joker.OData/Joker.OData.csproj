@@ -3,7 +3,7 @@
   <Import Project="..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>$(DotNetVersion)</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Copyright>@tomasfabian</Copyright>
     <Authors>Tomas Fabian</Authors>
@@ -12,11 +12,10 @@
     <Description>OData endpoint setup for Kestrel and IIS with Sql transaction scope for batch operations. ODataController with CRUD, CreateRef and DeleteRef.</Description>
     <PackageTags>OData batch web API service Kestrel</PackageTags>
     <RepositoryUrl>https://github.com/tomasfabian/SqlTableDependency.Extensions</RepositoryUrl>
-    <Version>3.0.0-preview</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <Version>4.0.0</Version>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.OData/ChangeLog.txt</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/Joker.OData/ChangeLog.md</PackageReleaseNotes>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\Microsoft.OData.Client.csprojimport" />
@@ -26,9 +25,8 @@
   <Import Project="..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

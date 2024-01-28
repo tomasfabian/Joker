@@ -11,21 +11,17 @@
     <PackageTags>SQL Server, SQL table dependency notifications,connection recovery, CQRS, MSSQL Service Broker, Event sourcing</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Copyright>@tomasfabian</Copyright>
-    <Version>2.3.3</Version>
-    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/SqlTableDependency.Extensions/ChangeLog.txt</PackageReleaseNotes>
-    <AssemblyVersion>2.3.3.0</AssemblyVersion>
+    <Version>4.0.0</Version>
+    <PackageReleaseNotes>https://github.com/tomasfabian/Joker/blob/master/SqlTableDependency.Extensions/ChangeLog.md</PackageReleaseNotes>
+    <AssemblyVersion>4.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\NugetProjects\System.Reactive.csprojimport" />
   <Import Project="..\NugetProjects\SqlTableDependency.csprojimport" />
   <Import Project="..\NugetProjects\System.Configuration.ConfigurationManager.csprojimport" />
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Joker\Joker.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\Joker.Redis\License.txt">
+    <None Include=".\License.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
@@ -41,5 +37,9 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>SqlTableDependency.Extensions.IntegrationTests.Dev</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Joker\Joker.csproj" />
   </ItemGroup>
 </Project>

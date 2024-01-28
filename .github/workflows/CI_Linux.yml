@@ -13,10 +13,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 3.1.402
+        dotnet-version: 8.0.x
     - name: Start Redis server
       run: docker run --name redis-server -p 6379:6379 -d redis
     - name: Start MS SQL server

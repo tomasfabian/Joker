@@ -3,7 +3,7 @@
   <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>$(DotNetVersion)</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
     <UserSecretsId>780e3d94-afd4-4a43-9798-b82383b2530e</UserSecretsId>
@@ -11,21 +11,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\AuthorsController.cs" />
-    <Compile Remove="Controllers\BooksController.cs" />
-    <Compile Remove="Controllers\PublishersController.cs" />
+    <Compile Include="..\SelfHostedODataService\HostedServices\ProductChangesHostedService.cs" Link="HostedServices\ProductChangesHostedService.cs" />
+    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\DataChangesHub.cs" Link="SignalR\Hubs\DataChangesHub.cs" />
+    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\IDataChangesHub.cs" Link="SignalR\Hubs\IDataChangesHub.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Joker.OData" Version="2.0.0" />
-    <PackageReference Include="Joker.Redis" Version="2.2.0" />
-    <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 
   <Import Project="..\..\..\NugetProjects\EntityFrameworkCore.SqlServer.csprojimport" />
   <Import Project="..\..\..\NugetProjects\Serilog.AspNetCore.csprojimport" />
+  <Import Project="..\..\..\NugetProjects\Microsoft.AspNetCore.Authentication.JwtBearer.csprojimport"></Import>
   <Import Project="..\..\..\NugetProjects\Autofac.Extensions.DependencyInjection.csprojimport" />
 
   <ItemGroup>
@@ -41,6 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Joker.EntityFrameworkCore\Joker.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\..\Joker.OData\Joker.OData.csproj" />
+    <ProjectReference Include="..\..\..\Joker.Redis\Joker.Redis.csproj" />
+    <ProjectReference Include="..\..\..\Joker\Joker.csproj" />
     <ProjectReference Include="..\..\Sample.DataCore\Sample.DataCore.csproj" />
     <ProjectReference Include="..\..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>

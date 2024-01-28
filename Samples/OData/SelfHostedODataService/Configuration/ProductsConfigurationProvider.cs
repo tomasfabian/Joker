@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Configuration;
 using System.Data.SqlClient;
 using Joker.Extensions;
 using Microsoft.Extensions.Configuration;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace SelfHostedODataService.Configuration
 {

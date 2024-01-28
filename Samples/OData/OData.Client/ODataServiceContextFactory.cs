@@ -7,7 +7,7 @@ namespace OData.Client
   {
     public ODataServiceContext Create(string url)
     {
-      return new ODataServiceContext(new Uri(url));
+      return new ODataServiceContext(new Uri(url), httpClient: null);
     }
 
     public ODataServiceContext CreateODataContext()

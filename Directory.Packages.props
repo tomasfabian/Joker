@@ -1,12 +1,12 @@
 <Project>
-  <ItemGroup>
-    <!--<PackageReference Include="Joker" Version="2.0.0" />
-    <PackageReference Include="Joker.MVVM" Version="2.0.0" />
-    <PackageReference Include="Joker.Redis" Version="2.2.0" />
-    <PackageReference Include="Joker.OData" Version="1.4.1" />
-    <PackageReference Include="Joker.EntityFramework" Version="1.1.0" />
-    <PackageReference Include="Joker.EntityFrameworkCore" Version="2.0.0-alpha" />
-
-    <PackageReference Include="SqlTableDependency.Extensions" Version="2.3.3" />-->
-  </ItemGroup>
+	<ItemGroup Label="Unit testing Nugets">
+		<PackageVersion Include="FluentAssertions" Version="6.12.0" />
+		<PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.0" />
+		<PackageVersion Include="coverlet.collector" Version="6.0.0" />
+		<PackageVersion Include="Moq" Version="4.20.70" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageVersion Include="Ninject.MockingKernel.Moq" Version="3.3.0" />
+	</ItemGroup>
 </Project>
