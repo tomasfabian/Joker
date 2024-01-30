@@ -1,25 +1,21 @@
 ﻿using System;
-using Autofac;
 using Joker.OData.Batch;
-using Joker.OData.Routing.Conventions;
+using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.OData;
-using Microsoft.AspNetCore.OData.Batch;
-using Microsoft.AspNetCore.OData.Routing.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
-
+using Microsoft.AspNetCore.OData;
 namespace Joker.OData.Startup
 {
   public abstract class ODataStartupBase : StartupBase
   {
     #region Fields
-    
+
     internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
-    
+
     #endregion
 
     #region Constructors
@@ -32,7 +28,7 @@ namespace Joker.OData.Startup
     #endregion
 
     #region Properties
-    
+
     private IEdmModel edmModel;
 
     public IEdmModel EdmModel => edmModel ?? (edmModel = CreateEdmModel());
@@ -40,6 +36,21 @@ namespace Joker.OData.Startup
     #endregion
 
     #region Methods
+
+    #region ConfigureOData
+
+    private void ConfigureOData(IApplicationBuilder app)
+    {
+      OnConfigureOData(app);
+    }
+
+    #region OnConfigureOData
+
+    protected abstract void OnConfigureOData(IApplicationBuilder app);
+
+    #endregion
+
+    #endregion
 
     #region CreateODataBatchHandler
 
@@ -57,7 +68,7 @@ namespace Joker.OData.Startup
     protected virtual ODataBatchHandler OnCreateODataBatchHandler()
     {
       ODataBatchHandler odataBatchHandler = new TransactionScopeODataBatchHandler();
-      
+
       odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 60;
       odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 10;
 
@@ -92,8 +103,6 @@ namespace Joker.OData.Startup
 
     protected override void OnConfigureServices(IServiceCollection services)
     {
-      OnRegisterEdmModel(services);
-
       IEdmModel model = null;
       services
         .AddOptions<ODataOptions>()
@@ -104,39 +113,40 @@ namespace Joker.OData.Startup
 
       base.OnConfigureServices(services);
 
-      var oDataBuilder = services.AddOData(options =>
-      {
-        if(StartupSettings.UseUtcTimeZone)
-          options.SetTimeZoneInfo(TimeZoneInfo.Utc);
-
-        options.EnableContinueOnErrorHeader = ODataStartupSettings.EnableODataBatchHandler;
-
-        options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
-
-        if (ODataStartupSettings.EnableODataBatchHandler)
+      var oDataBuilder = services.AddControllers()
+        .AddOData(options =>
         {
-          options.AddModel(ODataStartupSettings.ODataRoutePrefix, model,
-            CreateODataBatchHandler());
-        }
-        else
-        {
-          options.AddModel(ODataStartupSettings.ODataRoutePrefix, model,
-            CreateODataBatchHandler());
-        }
-      });
+          if (StartupSettings.UseUtcTimeZone)
+            options.TimeZone = TimeZoneInfo.Utc;
 
-      oDataBuilder.AddConvention<RefRoutingConvention>();
-      oDataBuilder.AddConvention<KeylessEntityRoutingConvention>();
+          options.EnableContinueOnErrorHeader = ODataStartupSettings.EnableODataBatchHandler;
+
+          options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
+
+          if (ODataStartupSettings.EnableODataBatchHandler)
+          {
+            options.AddRouteComponents(ODataStartupSettings.ODataRoutePrefix, model, CreateODataBatchHandler());
+          }
+          else
+          {
+            options.AddRouteComponents(ODataStartupSettings.ODataRoutePrefix, model);
+          }
+        });
+
+      // oDataBuilder.AddConvention<RefRoutingConvention>();
+      // oDataBuilder.AddConvention<KeylessEntityRoutingConvention>();
     }
 
     #endregion
 
-    #region OnRegisterEdmModel
+    #region OnConfigureApp
 
-    //protected virtual void OnRegisterEdmModel(IServiceCollection services)
-    //{
-    //  services.AddSingleton(EdmModel);
-    //}
+    protected override void OnConfigureApp(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
+    {
+      ConfigureOData(app);
+
+      base.OnConfigureApp(app, env, applicationLifetime);
+    }
 
     #endregion
 

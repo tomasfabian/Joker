@@ -1,14 +1,15 @@
 ﻿using Dynamitey;
 using Joker.Contracts.Data;
-using Joker.OData.Extensions.OData;
 using Joker.OData.Extensions.Types;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Deltas;
+using Microsoft.AspNetCore.OData.Extensions;
 
 namespace Joker.OData.Controllers
 {
@@ -208,7 +209,7 @@ namespace Joker.OData.Controllers
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");
 
-      var odataPath = Request.CreateODataPath(link);
+      var odataPath = Request.ODataFeature().Path;
 
       var relatedObjectKeys = GetKeysFromPath(odataPath);
 

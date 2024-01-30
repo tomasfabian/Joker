@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Joker.Contracts.Data;
 using Joker.Domain;
 using Joker.OData.Controllers;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.EntityFrameworkCore;
 
 namespace SelfHostedODataService.EFCore.Controllers
