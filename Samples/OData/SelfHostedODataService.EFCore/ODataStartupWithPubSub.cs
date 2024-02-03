@@ -57,11 +57,11 @@ namespace SelfHostedODataService.EFCore
     {
       base.OnUseEndpoints(endpoints);
       
-      endpoints.MapGet("generateToken", c => c.Response.WriteAsync(GenerateJwtToken(c)));
+      endpoints.MapGet("odata/generateToken", c => c.Response.WriteAsync(GenerateJwtToken(c)));
 
       endpoints.MapRazorPages();
 
-      endpoints.MapHub<DataChangesHub>("/dataChangesHub");
+      endpoints.MapHub<DataChangesHub>("odata/dataChangesHub");
     }
 
     #region ConfigureSignalR
