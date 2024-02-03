@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Extensions;
+using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
 {
@@ -34,7 +35,7 @@ namespace Joker.OData.Controllers
 
     #region Post
 
-    public async Task<IActionResult> Post([FromBody]TEntity entity)
+    public async Task<IActionResult> Post([FromBody] TEntity entity)
     {
       var validationResult = await ValidatePostAsync(entity);
 
@@ -45,7 +46,7 @@ namespace Joker.OData.Controllers
 
       if (actionResult != null)
         return actionResult;
-      
+
       return Created(entity);
     }
 
@@ -71,14 +72,14 @@ namespace Joker.OData.Controllers
     public async Task<IActionResult> Patch(object key, Delta<TEntity> delta)
     {
       var keys = GetKeysFromPath();
-      
+
       var entityToUpdate = repository.GetAll().FirstOrDefault(CreateKeysPredicate(keys));
 
       if (entityToUpdate == null)
         return NotFound();
 
       delta.Patch(entityToUpdate);
-      
+
       var validationResult = await ValidatePatchAsync(delta, entityToUpdate);
 
       if (validationResult != null)
@@ -91,7 +92,7 @@ namespace Joker.OData.Controllers
 
       return Updated(entityToUpdate);
     }
-    
+
     protected virtual async Task<IActionResult> OnPatchAsync(Delta<TEntity> delta, TEntity patchedEntity)
     {
       repository.Update(patchedEntity);
@@ -111,7 +112,7 @@ namespace Joker.OData.Controllers
     #region Put
 
     [HttpPut]
-    public async Task<IActionResult> Put(object key, [FromBody]TEntity entity)
+    public async Task<IActionResult> Put(object key, [FromBody] TEntity entity)
     {
       var validationResult = await ValidatePutAsync(entity);
 
@@ -119,7 +120,7 @@ namespace Joker.OData.Controllers
         return validationResult;
 
       var actionResult = await OnPutAsync(entity);
-      
+
       if (actionResult != null)
         return actionResult;
 
@@ -153,7 +154,7 @@ namespace Joker.OData.Controllers
     public async Task<IActionResult> Delete()
     {
       var keys = GetKeysFromPath();
-      
+
       var validationResult = await ValidateDeleteAsync(keys);
 
       if (validationResult != null)
@@ -168,7 +169,7 @@ namespace Joker.OData.Controllers
     }
 
     protected virtual async Task<IActionResult> OnDeleteAsync(params object[] keys)
-    {      
+    {
       repository.Remove(keys);
 
       await repository.SaveChangesAsync();
@@ -191,11 +192,11 @@ namespace Joker.OData.Controllers
     }
 
     #endregion
-    
+
     #region CreateRef
-    
+
     [AcceptVerbs("POST", "PUT")]
-    public async Task<IActionResult> CreateRef(string navigationProperty, [FromBody] Uri link)
+    public async Task<IActionResult> CreateRef(object key, string navigationProperty, [FromBody] Uri link)
     {
       return await OnCreateRef(navigationProperty, link);
     }
@@ -209,16 +210,17 @@ namespace Joker.OData.Controllers
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");
 
-      var odataPath = Request.ODataFeature().Path;
+      var edmModel = Request.GetModel();
+
+      var baseAddress = Request.ODataFeature().BaseAddress;
+      var oDataUriParser = new ODataUriParser(edmModel, new Uri(baseAddress), link);
+      var odataPath = oDataUriParser.ParsePath();
 
       var relatedObjectKeys = GetKeysFromPath(odataPath);
 
       var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
 
-      var navigationPropertyType = type.GetCollectionGenericType();
-
-      if (navigationPropertyType == null)
-        navigationPropertyType = type;
+      var navigationPropertyType = type.GetCollectionGenericType() ?? type;
 
       dynamic relatedRepository = TryGetDbSet(navigationPropertyType);
       dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);
@@ -234,7 +236,7 @@ namespace Joker.OData.Controllers
 
       await repository.SaveChangesAsync();
 
-      return StatusCode((int) HttpStatusCode.NoContent);
+      return StatusCode((int)HttpStatusCode.NoContent);
     }
 
     #endregion
@@ -248,14 +250,14 @@ namespace Joker.OData.Controllers
     }
 
     protected virtual async Task<IActionResult> OnDeleteRef(string navigationProperty)
-    {      
+    {
       var keys = GetKeysFromPath();
       var keyPredicate = CreateKeysPredicate(keys);
       var entity = repository.GetAllIncluding(navigationProperty).Where(keyPredicate).FirstOrDefault();
 
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");
-      
+
       var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
 
       var navigationPropertyType = type.GetCollectionGenericType();
@@ -265,7 +267,7 @@ namespace Joker.OData.Controllers
 
       if (typeof(ICollection).IsAssignableFrom(type))
       {
-        var relatedObjectKeys = GetAllKeysFromPath().Last().Select(c => c.Value).ToArray();
+        var relatedObjectKeys = GetAllKeysFromPath();
 
         dynamic relatedRepository = TryGetDbSet(navigationPropertyType);
         dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);

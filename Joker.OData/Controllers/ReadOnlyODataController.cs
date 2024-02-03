@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Query.Validator;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.OData.Edm;
 using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
@@ -86,13 +87,6 @@ namespace Joker.OData.Controllers
 
     #endregion
 
-    private bool HasKeyInODataPath()
-    {
-      var odataPath = Request.ODataFeature().Path;
-
-      return odataPath.OfType<KeySegment>().Any();
-    }
-
     #region GetKeysFromPath
 
     protected object[] GetKeysFromPath()
@@ -115,17 +109,15 @@ namespace Joker.OData.Controllers
       return value;
     }
 
-    protected IEnumerable<IEnumerable<KeyValuePair<string, object>>> GetAllKeysFromPath()
+    protected object[] GetAllKeysFromPath()
     {
-      var odataPath = Request.ODataFeature().Path;
-
-      var keySegment = odataPath.OfType<KeySegment>();
-      if (keySegment == null)
-        throw new InvalidOperationException("The link does not contain a key.");
-
-      var keys = keySegment.Select(c => c.Keys);
-
-      return keys;
+      var link = Request.Query["$id"];
+      var oDataFeature = Request.ODataFeature();
+      var uriBuilder = new UriBuilder(Request.Scheme, Request.Host.Host, Request.Host.Port ?? -1); //TODO: get relativeUri differently
+      var baseAddress = uriBuilder.Uri + oDataFeature.RoutePrefix;
+      var oDataUriParser = new ODataUriParser(Request.GetModel(), new Uri(baseAddress), new Uri(link));
+      var odataPath = oDataUriParser.ParsePath();
+      return GetKeysFromPath(odataPath);
     }
 
     #endregion

@@ -4,8 +4,6 @@
   {
     public bool EnableODataBatchHandler { get; private set; } = true;
 
-    // public string ODataRouteName { get; private set; } = "odata";
-
     public string ODataRoutePrefix { get; private set; } = "odata";
 
     public ODataStartupSettings DisableODataBatchHandler()
@@ -14,13 +12,6 @@
 
       return this;
     }
-
-    // public ODataStartupSettings SetODataRouteName(string value)
-    // {
-    //   ODataRouteName = value;
-    //
-    //   return this;
-    // }
 
     public ODataStartupSettings SetODataRoutePrefix(string value)
     {

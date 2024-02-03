@@ -10,20 +10,11 @@ using Microsoft.OData.ModelBuilder;
 using Microsoft.AspNetCore.OData;
 namespace Joker.OData.Startup
 {
-  public abstract class ODataStartupBase : StartupBase
+  public abstract class ODataStartupBase(IWebHostEnvironment env) : StartupBase(env)
   {
     #region Fields
 
-    internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
-
-    #endregion
-
-    #region Constructors
-
-    protected ODataStartupBase(IWebHostEnvironment env)
-      : base(env)
-    {
-    }
+    internal readonly ODataStartupSettings ODataStartupSettings = new();
 
     #endregion
 
@@ -31,7 +22,7 @@ namespace Joker.OData.Startup
 
     private IEdmModel edmModel;
 
-    public IEdmModel EdmModel => edmModel ?? (edmModel = CreateEdmModel());
+    public IEdmModel EdmModel => edmModel ??= CreateEdmModel();
 
     #endregion
 

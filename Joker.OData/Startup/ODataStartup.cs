@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.OData;
@@ -93,24 +92,6 @@ namespace Joker.OData.Startup
 
     protected override void OnConfigureOData(IApplicationBuilder app)
     {
-      // app.UseEndpoints(endpoints =>
-      // {
-      // endpoints.EnableDependencyInjection();
-      //
-      // endpoints.Select().Expand().Filter().OrderBy().MaxTop(null).Count();
-
-      //    var edmModel = app.ApplicationServices.GetService<IEdmModel>() ?? EdmModel;
-
-      //    if (ODataStartupSettings.EnableODataBatchHandler)
-      //    {
-      //      endpoints.EnableContinueOnErrorHeader();
-
-      //      endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel,
-      //        CreateODataBatchHandler());
-      //    }
-      //    else
-      //      endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel);
-      // });
     }
 
     #endregion
