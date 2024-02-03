@@ -1,38 +1,28 @@
 ﻿using System;
 using Joker.OData.Batch;
-using Microsoft.AspNet.OData.Batch;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
-
+using Microsoft.OData.ModelBuilder;
+using Microsoft.AspNetCore.OData;
 namespace Joker.OData.Startup
 {
-  public abstract class ODataStartupBase : StartupBase
+  public abstract class ODataStartupBase(IWebHostEnvironment env) : StartupBase(env)
   {
     #region Fields
-    
-    internal readonly ODataStartupSettings ODataStartupSettings = new ODataStartupSettings();
-    
-    #endregion
 
-    #region Constructors
-
-    protected ODataStartupBase(IWebHostEnvironment env)
-      : base(env)
-    {
-    }
+    internal readonly ODataStartupSettings ODataStartupSettings = new();
 
     #endregion
 
     #region Properties
-    
+
     private IEdmModel edmModel;
 
-    public IEdmModel EdmModel => edmModel ?? (edmModel = CreateEdmModel());
+    public IEdmModel EdmModel => edmModel ??= CreateEdmModel();
 
     #endregion
 
@@ -69,7 +59,7 @@ namespace Joker.OData.Startup
     protected virtual ODataBatchHandler OnCreateODataBatchHandler()
     {
       ODataBatchHandler odataBatchHandler = new TransactionScopeODataBatchHandler();
-      
+
       odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 60;
       odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 10;
 
@@ -104,9 +94,38 @@ namespace Joker.OData.Startup
 
     protected override void OnConfigureServices(IServiceCollection services)
     {
+      IEdmModel model = null;
+      services
+        .AddOptions<ODataOptions>()
+        .Configure<IEdmModel>((odataOptions, edmModel) =>
+        {
+          model = edmModel ?? EdmModel;
+        });
+
       base.OnConfigureServices(services);
 
-      services.AddOData();
+      var oDataBuilder = services.AddControllers()
+        .AddOData(options =>
+        {
+          if (StartupSettings.UseUtcTimeZone)
+            options.TimeZone = TimeZoneInfo.Utc;
+
+          options.EnableContinueOnErrorHeader = ODataStartupSettings.EnableODataBatchHandler;
+
+          options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
+
+          if (ODataStartupSettings.EnableODataBatchHandler)
+          {
+            options.AddRouteComponents(ODataStartupSettings.ODataRoutePrefix, model, CreateODataBatchHandler());
+          }
+          else
+          {
+            options.AddRouteComponents(ODataStartupSettings.ODataRoutePrefix, model);
+          }
+        });
+
+      // oDataBuilder.AddConvention<RefRoutingConvention>();
+      // oDataBuilder.AddConvention<KeylessEntityRoutingConvention>();
     }
 
     #endregion

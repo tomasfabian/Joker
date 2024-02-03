@@ -1,9 +1,8 @@
 ﻿using System;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OData.Edm;
 
 namespace Joker.OData.Startup
 {
@@ -93,24 +92,6 @@ namespace Joker.OData.Startup
 
     protected override void OnConfigureOData(IApplicationBuilder app)
     {
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.EnableDependencyInjection();
-
-        endpoints.Select().Expand().Filter().OrderBy().MaxTop(null).Count();
-
-        var edmModel = app.ApplicationServices.GetService<IEdmModel>() ?? EdmModel;
-
-        if (ODataStartupSettings.EnableODataBatchHandler)
-        {
-          endpoints.EnableContinueOnErrorHeader();
-
-          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel,
-            CreateODataBatchHandler());
-        }
-        else
-          endpoints.MapODataRoute(ODataStartupSettings.ODataRouteName, ODataStartupSettings.ODataRoutePrefix, edmModel);
-      });
     }
 
     #endregion

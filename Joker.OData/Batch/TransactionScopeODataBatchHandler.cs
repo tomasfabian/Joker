@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Joker.Contracts.Data;
-using Microsoft.AspNet.OData.Batch;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.AspNetCore.OData.Extensions;
 using IDbTransaction = Joker.Contracts.Data.IDbTransaction;
 
 namespace Joker.OData.Batch

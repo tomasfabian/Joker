@@ -1,5 +1,8 @@
 ﻿# Joker.OData
 
+# 5.0.0-preview
+- OData 8 migration
+
 # 4.0.0
 - TFM changed from netcoreapp3.1 to .net6.0
 - upgraded .NET package dependencies
