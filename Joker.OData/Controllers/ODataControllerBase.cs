@@ -7,10 +7,9 @@ using System.Collections;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Joker.OData.Extensions.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.AspNetCore.OData.Extensions;
-using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
 {
@@ -210,12 +209,8 @@ namespace Joker.OData.Controllers
       if (entity == null)
         return NotFound($"{nameof(TEntity)}: {keys}");
 
-      var edmModel = Request.GetModel();
-
-      var baseAddress = Request.ODataFeature().BaseAddress;
-      var oDataUriParser = new ODataUriParser(edmModel, new Uri(baseAddress), link);
-      var odataPath = oDataUriParser.ParsePath();
-
+      var odataPath = Request.GetODataPath(link);
+      
       var relatedObjectKeys = GetKeysFromPath(odataPath);
 
       var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
