@@ -11,12 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\SelfHostedODataService\HostedServices\ProductChangesHostedService.cs" Link="HostedServices\ProductChangesHostedService.cs" />
-    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\DataChangesHub.cs" Link="SignalR\Hubs\DataChangesHub.cs" />
-    <Compile Include="..\SelfHostedODataService\SignalR\Hubs\IDataChangesHub.cs" Link="SignalR\Hubs\IDataChangesHub.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
