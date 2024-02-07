@@ -70,7 +70,7 @@ namespace Joker.OData.Controllers
     [HttpPatch]
     public async Task<IActionResult> Patch(object key, Delta<TEntity> delta)
     {
-      var keys = GetKeysFromPath();
+      var keys = Request.GetKeysFromODataPath();
 
       var entityToUpdate = repository.GetAll().FirstOrDefault(CreateKeysPredicate(keys));
 
@@ -152,7 +152,7 @@ namespace Joker.OData.Controllers
 
     public async Task<IActionResult> Delete()
     {
-      var keys = GetKeysFromPath();
+      var keys = Request.GetKeysFromODataPath();
 
       var validationResult = await ValidateDeleteAsync(keys);
 
@@ -202,7 +202,7 @@ namespace Joker.OData.Controllers
 
     protected virtual async Task<IActionResult> OnCreateRef(string navigationProperty, Uri link)
     {
-      var keys = GetKeysFromPath();
+      var keys = Request.GetKeysFromODataPath();
       var keyPredicate = CreateKeysPredicate(keys);
       var entity = GetAll().Where(keyPredicate).FirstOrDefault(); //TODO: use Find in case of disabled change tracking?  
 
@@ -211,7 +211,7 @@ namespace Joker.OData.Controllers
 
       var odataPath = Request.GetODataPath(link);
       
-      var relatedObjectKeys = GetKeysFromPath(odataPath);
+      var relatedObjectKeys = ODataPathHelpers.GetKeysFromPath(odataPath);
 
       var type = typeof(TEntity).GetProperty(navigationProperty).PropertyType;
 
@@ -246,7 +246,7 @@ namespace Joker.OData.Controllers
 
     protected virtual async Task<IActionResult> OnDeleteRef(string navigationProperty)
     {
-      var keys = GetKeysFromPath();
+      var keys = Request.GetKeysFromODataPath();
       var keyPredicate = CreateKeysPredicate(keys);
       var entity = repository.GetAllIncluding(navigationProperty).Where(keyPredicate).FirstOrDefault();
 
@@ -262,7 +262,7 @@ namespace Joker.OData.Controllers
 
       if (typeof(ICollection).IsAssignableFrom(type))
       {
-        var relatedObjectKeys = GetAllKeysFromPath();
+        var relatedObjectKeys = Request.GetAllKeysFromODataPath();
 
         dynamic relatedRepository = TryGetDbSet(navigationPropertyType);
         dynamic relatedEntity = relatedRepository.Find(relatedObjectKeys);

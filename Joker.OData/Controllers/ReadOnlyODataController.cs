@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Joker.Contracts.Data;
 using Joker.OData.Extensions.Expressions;
+using Joker.OData.Extensions.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Extensions;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Query.Validator;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.OData.Edm;
-using Microsoft.OData.UriParser;
 
 namespace Joker.OData.Controllers
 {
@@ -49,7 +46,7 @@ namespace Joker.OData.Controllers
     [EnableQuery]
     public SingleResult<TEntity> Get(object key, ODataQueryOptions<TEntity> queryOptions)
     {
-      var keyPredicate = CreateKeysPredicate(GetKeysFromPath());
+      var keyPredicate = CreateKeysPredicate(Request.GetKeysFromODataPath());
 
       IQueryable<TEntity> result = OnGetAll(queryOptions).Where(keyPredicate);
 
@@ -83,41 +80,6 @@ namespace Joker.OData.Controllers
     protected virtual Expression<Func<TEntity, bool>> CreateKeysPredicate(params object[] keys)
     {
       return ExpressionExtensions.CreatePredicate<TEntity>(keys);
-    }
-
-    #endregion
-
-    #region GetKeysFromPath
-
-    protected object[] GetKeysFromPath()
-    {
-      var odataPath = Request.ODataFeature().Path;
-
-      var value = GetKeysFromPath(odataPath);
-
-      return value;
-    }
-
-    protected object[] GetKeysFromPath(ODataPath odataPath)
-    {
-      var keySegment = odataPath.OfType<KeySegment>().FirstOrDefault();
-      if (keySegment == null)
-        throw new InvalidOperationException("The link does not contain a key.");
-
-      var value = keySegment.Keys.Select(c => c.Value).ToArray();
-
-      return value;
-    }
-
-    protected object[] GetAllKeysFromPath()
-    {
-      var link = Request.Query["$id"];
-      var oDataFeature = Request.ODataFeature();
-      var uriBuilder = new UriBuilder(Request.Scheme, Request.Host.Host, Request.Host.Port ?? -1); //TODO: get relativeUri differently
-      var baseAddress = uriBuilder.Uri + oDataFeature.RoutePrefix;
-      var oDataUriParser = new ODataUriParser(Request.GetModel(), new Uri(baseAddress), new Uri(link));
-      var odataPath = oDataUriParser.ParsePath();
-      return GetKeysFromPath(odataPath);
     }
 
     #endregion

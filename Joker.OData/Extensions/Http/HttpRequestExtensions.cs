@@ -16,4 +16,24 @@ public static class HttpRequestExtensions
     var odataPath = oDataUriParser.ParsePath();
     return odataPath;
   }
+
+  public static object[] GetAllKeysFromODataPath(this HttpRequest request)
+  {
+    var link = request.Query["$id"];
+    var oDataFeature = request.ODataFeature();
+    var uriBuilder = new UriBuilder(request.Scheme, request.Host.Host, request.Host.Port ?? -1);
+    var baseAddress = uriBuilder.Uri + oDataFeature.RoutePrefix;
+    var oDataUriParser = new ODataUriParser(request.GetModel(), new Uri(baseAddress), new Uri(link));
+    var odataPath = oDataUriParser.ParsePath();
+    return ODataPathHelpers.GetKeysFromPath(odataPath);
+  }
+
+  public static object[] GetKeysFromODataPath(this HttpRequest request)
+  {
+    var odataPath = request.ODataFeature().Path;
+
+    var value = ODataPathHelpers.GetKeysFromPath(odataPath);
+
+    return value;
+  }
 }
