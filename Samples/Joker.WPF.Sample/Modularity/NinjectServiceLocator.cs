@@ -17,12 +17,12 @@ namespace Joker.WPF.Sample.Modularity
 
     protected override object DoGetInstance(Type serviceType, string key)
     {
-      return string.IsNullOrEmpty(key) ? this.kernel.Get(serviceType, new IParameter[0]) : this.kernel.Get(serviceType, key, new IParameter[0]);
+      return string.IsNullOrEmpty(key) ? kernel.Get(serviceType, Array.Empty<IParameter>()) : kernel.Get(serviceType, key, Array.Empty<IParameter>());
     }
 
     protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
     {
-      return this.kernel.GetAll(serviceType, new IParameter[0]);
+      return kernel.GetAll(serviceType, Array.Empty<IParameter>());
     }
   }
 }

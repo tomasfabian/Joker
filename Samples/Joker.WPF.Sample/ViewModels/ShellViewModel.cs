@@ -45,11 +45,11 @@ namespace Joker.WPF.Sample.ViewModels
       //1. Use inversion of control
       EntityChangesViewModel = viewModelsFactory.CreateProductsEntityChangesViewModel();
       domainEntitiesSubscriber.Subscribe();
-      
+
       //****
 
-      //2. User poor mans dependency injection
-      //Manually created objects examples
+      //2. Use poor man's dependency injection
+      //Examples of manually created objects
       //Initialize().ToObservable()
       //  .Subscribe();
     }

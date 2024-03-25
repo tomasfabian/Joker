@@ -32,7 +32,7 @@ namespace SqlTableDependency.Extensions.Tests.SqlTableDependencies
     
     #region SqlConnectionProvider
 
-    private readonly Mock<ISqlConnectionProvider> sqlConnectionProviderMock = new Mock<ISqlConnectionProvider>();
+    private readonly Mock<ISqlConnectionProvider> sqlConnectionProviderMock = new();
 
     protected override ISqlConnectionProvider SqlConnectionProvider => sqlConnectionProviderMock.Object;
 

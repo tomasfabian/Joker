@@ -62,12 +62,10 @@ namespace SqlTableDependency.Extensions.Sample
 
     public static void Example(string connectionString)
     {
-      using (var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance))
-      {
-        sqlTableDependency.SubscribeToEntityChanges();
+      using var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance);
+      sqlTableDependency.SubscribeToEntityChanges();
 
-        Console.ReadKey();
-      }
+      Console.ReadKey();
     }
   }
 
@@ -104,42 +102,40 @@ namespace SqlTableDependency.Extensions.Sample
 
     public static void Example(string connectionString)
     {
-      using (var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance))
-      {
-        IDisposable whenEntityRecordChangesSubscription =
-          sqlTableDependency.WhenEntityRecordChanges
-            .Where(c => c.ChangeType == ChangeType.Update)
-            .Subscribe(c =>
+      using var sqlTableDependency = new ProductsSqlTableDependencyProvider2(connectionString, ThreadPoolScheduler.Instance);
+      IDisposable whenEntityRecordChangesSubscription =
+        sqlTableDependency.WhenEntityRecordChanges
+          .Where(c => c.ChangeType == ChangeType.Update)
+          .Subscribe(c =>
+          {
+            var entity = c.Entity;
+            Console.WriteLine("Id: " + entity.Id);
+            Console.WriteLine("Name: " + entity.Name);
+
+            var oldValues = c.EntityOldValues;
+
+            if (oldValues != null)
             {
-              var entity = c.Entity;
-              Console.WriteLine("Id: " + entity.Id);
-              Console.WriteLine("Name: " + entity.Name);
+              Console.WriteLine(Environment.NewLine);
 
-              var oldValues = c.EntityOldValues;
+              Console.WriteLine("Id (OLD): " + oldValues.Id);
+              Console.WriteLine("Name (OLD): " + oldValues.Name);
+            }
+          });
 
-              if (oldValues != null)
-              {
-                Console.WriteLine(Environment.NewLine);
+      IDisposable whenStatusChangesSubscription =
+        sqlTableDependency.WhenStatusChanges
+          .Subscribe(status =>
+          {
+            Console.WriteLine($"SqlTableDependency Status {status}");
+          });
 
-                Console.WriteLine("Id (OLD): " + oldValues.Id);
-                Console.WriteLine("Name (OLD): " + oldValues.Name);
-              }
-            });
+      sqlTableDependency.SubscribeToEntityChanges();
 
-        IDisposable whenStatusChangesSubscription =
-          sqlTableDependency.WhenStatusChanges
-            .Subscribe(status =>
-            {
-              Console.WriteLine($"SqlTableDependency Status {status}");
-            });
+      Console.ReadKey();
 
-        sqlTableDependency.SubscribeToEntityChanges();
-
-        Console.ReadKey();
-
-        whenEntityRecordChangesSubscription.Dispose();
-        whenStatusChangesSubscription.Dispose();
-      }
+      whenEntityRecordChangesSubscription.Dispose();
+      whenStatusChangesSubscription.Dispose();
     }
   }
 
@@ -150,20 +146,18 @@ namespace SqlTableDependency.Extensions.Sample
       var mapper = new ModelToTableMapper<Product>();
       mapper.AddMapping(c => c.Id, "Id");
       mapper.AddMapping(c => c.Name, "Name");
-      
-      using (var sqlTableDependency = new SqlTableDependency<Product>(connectionString, "Products", mapper: mapper, includeOldValues: true))
-      {
-        sqlTableDependency.OnChanged += OnChanged;
-        sqlTableDependency.OnError += OnError;
-        sqlTableDependency.OnStatusChanged += OnStatusChanged;
-        sqlTableDependency.Start();
 
-        Console.ReadKey();
+      using var sqlTableDependency = new SqlTableDependency<Product>(connectionString, "Products", mapper: mapper, includeOldValues: true);
+      sqlTableDependency.OnChanged += OnChanged;
+      sqlTableDependency.OnError += OnError;
+      sqlTableDependency.OnStatusChanged += OnStatusChanged;
+      sqlTableDependency.Start();
 
-        sqlTableDependency.OnChanged -= OnChanged;
-        sqlTableDependency.OnError -= OnError;
-        sqlTableDependency.OnStatusChanged -= OnStatusChanged;
-      }
+      Console.ReadKey();
+
+      sqlTableDependency.OnChanged -= OnChanged;
+      sqlTableDependency.OnError -= OnError;
+      sqlTableDependency.OnStatusChanged -= OnStatusChanged;
     }
 
     private static void OnError(object sender, ErrorEventArgs e)
@@ -178,19 +172,19 @@ namespace SqlTableDependency.Extensions.Sample
 
     private static void OnChanged(object sender, RecordChangedEventArgs<Product> e)
     {
-      if (e.ChangeType == ChangeType.Update)
+      if (e.ChangeType != ChangeType.Update)
+        return;
+      
+      Console.WriteLine("Id: " + e.Entity.Id);
+      Console.WriteLine("Name: " + e.Entity.Name);
+
+      if(e.EntityOldValues != null)
       {
-        Console.WriteLine("Id: " + e.Entity.Id);
-        Console.WriteLine("Name: " + e.Entity.Name);
+        Console.WriteLine(Environment.NewLine);
 
-        if(e.EntityOldValues != null)
-        {
-          Console.WriteLine(Environment.NewLine);
-
-          var changedEntity = e.EntityOldValues;
-          Console.WriteLine("Id (OLD): " + changedEntity.Id);
-          Console.WriteLine("Name (OLD): " + changedEntity.Name);
-        }
+        var changedEntity = e.EntityOldValues;
+        Console.WriteLine("Id (OLD): " + changedEntity.Id);
+        Console.WriteLine("Name (OLD): " + changedEntity.Name);
       }
     }
   }

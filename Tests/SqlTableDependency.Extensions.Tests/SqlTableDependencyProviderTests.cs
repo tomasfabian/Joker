@@ -24,7 +24,7 @@ namespace SqlTableDependency.Extensions.Tests
   public class SqlTableDependencyProviderTests : TestBase
   {
     private Mock<ITableDependency<TestModel>> tableDependencyMoq;
-    private string connectionString = "TestConnection";
+    private readonly string connectionString = "TestConnection";
 
     private readonly TimeSpan testConnectionTimeStamp = TimeSpan.FromSeconds(10);
 
@@ -204,7 +204,7 @@ namespace SqlTableDependency.Extensions.Tests
       var tableName = sqlDependencyProvider.TableName;
       
       //Assert
-      tableName.Should().Be(typeof(TestModel).Name);
+      tableName.Should().Be(nameof(TestModel));
     }
 
     [TestMethod]
