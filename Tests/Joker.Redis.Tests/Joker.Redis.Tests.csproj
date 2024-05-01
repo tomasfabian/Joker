@@ -8,12 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest.TestAdapter" />
-		<PackageReference Include="MSTest.TestFramework" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\Joker\Joker.csproj" />
 		<ProjectReference Include="..\..\Joker.Redis\Joker.Redis.csproj" />
 		<ProjectReference Include="..\..\SqlTableDependency.Extensions\SqlTableDependency.Extensions.csproj" />

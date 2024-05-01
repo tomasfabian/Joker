@@ -11,11 +11,8 @@
 		<PackageReference Include="Moq" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="coverlet.collector" />
-		<PackageReference Include="MSTest.TestAdapter" />
-		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="Microsoft.Reactive.Testing" />
 		<PackageReference Include="Ninject.MockingKernel.Moq" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -8,12 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest.TestAdapter" />
-		<PackageReference Include="MSTest.TestFramework" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\Samples\Sample.Data\Sample.Data.csproj" />
 		<ProjectReference Include="..\..\Joker.MVVM\Joker.MVVM.csproj" />
 		<ProjectReference Include="..\..\Joker.OData\Joker.OData.csproj" />

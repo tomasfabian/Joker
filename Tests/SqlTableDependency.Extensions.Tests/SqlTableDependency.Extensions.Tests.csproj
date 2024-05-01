@@ -12,10 +12,4 @@
     <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="MSTest.TestAdapter" />
-	  <PackageReference Include="MSTest.TestFramework" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" />
-  </ItemGroup>
-
 </Project>
