@@ -3,6 +3,7 @@
   <Import Project="..\..\..\ProjectDefinitions\Constants.csprojimport" />
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
+	<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
   <Import Project="..\..\..\NugetProjects\System.ComponentModel.Annotations.csprojimport" />
